@@ -16,7 +16,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
-    authenticationStore: { authEmail, setAuthEmail, setAuthToken, validationError },
+    authenticationStore: { login, authEmail, setAuthEmail, setAuthToken, validationError },
   } = useStores()
 
   useEffect(() => {
@@ -34,20 +34,20 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
   const error = isSubmitted ? validationError : ""
 
-  function login() {
+  async function authenticate() {
     setIsSubmitted(true)
     setAttemptsCount(attemptsCount + 1)
 
     if (validationError) return
 
     // Make a request to your server to get an authentication token.
+    var token = await login(authPassword)
     // If successful, reset the fields and set the token.
     setIsSubmitted(false)
     setAuthPassword("")
     setAuthEmail("")
 
-    // We'll mock this with a fake token.
-    setAuthToken(String(Date.now()))
+    setAuthToken(token)
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -102,7 +102,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         secureTextEntry={isAuthPasswordHidden}
         labelTx="loginScreen.passwordFieldLabel"
         placeholderTx="loginScreen.passwordFieldPlaceholder"
-        onSubmitEditing={login}
+        onSubmitEditing={authenticate}
         RightAccessory={PasswordRightAccessory}
       />
 
@@ -111,7 +111,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         tx="loginScreen.tapToLogIn"
         style={$tapButton}
         preset="reversed"
-        onPress={login}
+        onPress={authenticate}
       />
     </Screen>
   )

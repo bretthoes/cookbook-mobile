@@ -10,6 +10,7 @@ import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
 import type { ApiConfig, ApiFeedResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
+import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 
 /**
  * Configuring the apisauce instance.
@@ -67,6 +68,37 @@ export class Api {
         })) ?? []
 
       return { kind: "ok", episodes }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Logs in the user with the provided email and password.
+   */
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
+    // make the api call
+    const response: ApiResponse<any> = await this.apisauce.post("/Users/login", {
+      email,
+      password,
+    })
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // return the response data
+    try {
+      const authResult = AuthResultModel.create(response.data)
+      return { kind: "ok", authResult }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
