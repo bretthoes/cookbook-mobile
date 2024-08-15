@@ -34,6 +34,9 @@
       }
     },
     "ios": {
+      "config": {
+        "usesNonExemptEncryption": false
+      },
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
@@ -54,6 +57,12 @@
       "bundler": "metro"
     },
     "plugins": [
+      [
+        "expo-secure-store", 
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
+        }
+      ],
       "expo-localization",
       [
         "expo-build-properties",
