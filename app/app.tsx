@@ -48,6 +48,7 @@ const config = {
         },
         DemoDebug: "debug",
         DemoPodcastList: "podcast",
+        CookbookList: "cookbook",
         DemoCommunity: "community",
       },
     },

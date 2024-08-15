@@ -34,6 +34,20 @@ export interface ApiFeedResponse {
   items: EpisodeItem[]
 }
 
+export interface CookbookItem {
+  id: number,
+  creatorPersonId: number,
+  title: string,
+  imagePath: string,
+}
+
+export interface ApiCookbooksResponse {
+  pageNumber: number,
+  totalPages: number,
+  totalCount: number,
+  items: CookbookItem[]
+}
+
 /**
  * The options used to configure apisauce.
  */
