@@ -58,8 +58,13 @@ const Stack = createNativeStackNavigator<AppStackParamList>()
 
 const AppStack = observer(function AppStack() {
   const {
-    authenticationStore: { isAuthenticated },
+    authenticationStore: { isAuthenticated, loadStoredTokens },
   } = useStores()
+
+  React.useEffect(() => {
+      loadStoredTokens()
+  }, [loadStoredTokens])
+  
 
   return (
     <Stack.Navigator

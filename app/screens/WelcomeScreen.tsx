@@ -24,10 +24,15 @@ export const WelcomeScreen: FC<WelcomeScreenProps> = observer(function WelcomeSc
     navigation.navigate("Demo", { screen: "DemoShowroom", params: {} })
   }
 
+  async function handleLogout() {
+    await logout()
+  }
+
+  // TODO async call in a hook
   useHeader(
     {
       rightTx: "common.logOut",
-      onRightPress: logout,
+      onRightPress: handleLogout,
     },
     [logout],
   )

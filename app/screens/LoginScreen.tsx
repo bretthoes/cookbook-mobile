@@ -16,21 +16,21 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
-    authenticationStore: { login, authEmail, setAuthEmail, setAuthToken, validationError },
+    authenticationStore: { login, authEmail, setAuthEmail, validationError },
   } = useStores()
 
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
-    setAuthEmail("ignite@infinite.red")
-    setAuthPassword("ign1teIsAwes0m3")
+    setAuthEmail("bretthoes@gmail.com")
+    setAuthPassword("Admin123!")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
       setAuthPassword("")
       setAuthEmail("")
     }
-  }, [])
+  }, [setAuthEmail])
 
   const error = isSubmitted ? validationError : ""
 
@@ -41,13 +41,12 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
     if (validationError) return
 
     // Make a request to your server to get an authentication token.
-    var token = await login(authPassword)
-    // If successful, reset the fields and set the token.
+    await login(authPassword)
+
+    // If successful, reset the fields
     setIsSubmitted(false)
     setAuthPassword("")
     setAuthEmail("")
-
-    setAuthToken(token)
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(

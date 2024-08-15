@@ -45,6 +45,10 @@ export const DemoDebugScreen: FC<DemoTabScreenProps<"DemoDebug">> = function Dem
     [],
   )
 
+  const handleLogout = async () => {
+    await logout()
+  }
+
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
       <Text
@@ -108,7 +112,7 @@ export const DemoDebugScreen: FC<DemoTabScreenProps<"DemoDebug">> = function Dem
         <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
       </View>
       <View style={$buttonContainer}>
-        <Button style={$button} tx="common.logOut" onPress={logout} />
+        <Button style={$button} tx="common.logOut" onPress={handleLogout} />
       </View>
     </Screen>
   )
