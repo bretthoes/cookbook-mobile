@@ -150,7 +150,11 @@ const CookbookCard = observer(function CookbookCard({
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
-    return rnrImages[Math.floor(Math.random() * rnrImages.length)]
+    if (cookbook.imagePath) {
+      return { uri: `${cookbook.getImagePath}` }
+    } else {
+      return rnrImages[Math.floor(Math.random() * rnrImages.length)]
+    }
   }, [])
 
   // Grey heart
