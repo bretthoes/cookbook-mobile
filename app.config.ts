@@ -22,5 +22,6 @@ module.exports = ({ config }: ConfigContext): Partial<ExpoConfig> => {
       require("./plugins/withSplashScreen").withSplashScreen,
     ],
     name: 'Shared Cookbook',
+    slug: 'shared-cookbook'
   }
 }
