@@ -91,13 +91,11 @@ export class Api {
    * Gets a list of cookbooks with pagination.
    */
   async getCookbooks(pageNumber = 1, pageSize = 10): Promise<{ kind: "ok"; cookbooks: CookbookSnapshotIn[] } | GeneralApiProblem> {
-    console.debug("getCookbooks 1")
-
     // prepare query parameters
     const params = { PageNumber: pageNumber, PageSize: pageSize }
 
     // use the authorizedRequest method to make the API call with query parameters
-    const response = await this.authorizedRequest("Cookbooks", "GET", params)
+    const response: ApiResponse<ApiCookbooksResponse> = await this.authorizedRequest("Cookbooks", "GET", params)
 
     // handle any errors
     if (!response.ok) {
