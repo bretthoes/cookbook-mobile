@@ -151,7 +151,7 @@ const CookbookCard = observer(function CookbookCard({
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (cookbook.imagePath) {
-      return { uri: `${cookbook.getImagePath}` }
+      return { src: `${cookbook.getImagePath}` }
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)]
     }
@@ -254,24 +254,24 @@ const CookbookCard = observer(function CookbookCard({
       verticalAlignment="force-footer-bottom"
       onPress={handlePressCard}
       onLongPress={handlePressFavorite}
-      // HeadingComponent={
-      //   <View style={$metadata}>
-      //     <Text
-      //       style={$metadataText}
-      //       size="xxs"
-      //       accessibilityLabel={cookbook.datePublished.accessibilityLabel}
-      //     >
-      //       {cookbook.datePublished.textLabel}
-      //     </Text>
-      //     <Text
-      //       style={$metadataText}
-      //       size="xxs"
-      //       accessibilityLabel={cookbook.duration.accessibilityLabel}
-      //     >
-      //       {cookbook.duration.textLabel}
-      //     </Text>
-      //   </View>
-      // }
+      HeadingComponent={
+        <View style={$metadata}>
+          <Text
+            style={$metadataText}
+            size="xxs"
+            accessibilityLabel={''}
+          >
+            {''}
+          </Text>
+          <Text
+            style={$metadataText}
+            size="xxs"
+            accessibilityLabel={''}
+          >
+            {''}
+          </Text>
+        </View>
+      }
       content={`${cookbook.parsedTitleAndSubtitle.title}`}
       {...accessibilityHintProps}
       RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
@@ -343,6 +343,18 @@ const $iconContainer: ViewStyle = {
   width: ICON_SIZE,
   flexDirection: "row",
   marginEnd: spacing.sm,
+}
+
+const $metadata: TextStyle = {
+  color: colors.textDim,
+  marginTop: spacing.xs,
+  flexDirection: "row",
+}
+
+const $metadataText: TextStyle = {
+  color: colors.textDim,
+  marginEnd: spacing.md,
+  marginBottom: spacing.xs,
 }
 
 const $favoriteButton: ViewStyle = {
