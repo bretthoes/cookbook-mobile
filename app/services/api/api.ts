@@ -154,23 +154,18 @@ export class Api {
   }
 
   async refreshAuthToken() {
-    console.debug('refreshAuthToken 1')
     const refreshToken = await SecureStore.getItemAsync("refreshToken")
-    console.debug('refreshAuthToken 2')
     if (!refreshToken) throw new Error("No refresh token available")
 
     const response: ApiResponse<any> = await this.apisauce.post("/Users/refresh", {
       refreshToken,
     })
-    console.debug('refreshAuthToken 3')
     if (response.ok) {
-      console.debug('refreshAuthToken 4')
       const authResult = AuthResultModel.create(response.data)
       await SecureStore.setItemAsync("accessToken", authResult.accessToken)
       await SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
       return authResult.accessToken
     } else {
-      console.debug('refreshAuthToken 5')
       throw new Error("Unable to refresh token")
     }
   }
