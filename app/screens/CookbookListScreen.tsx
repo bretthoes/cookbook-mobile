@@ -21,6 +21,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated"
 import {
+  AutoImage,
   Button,
   ButtonAccessoryProps,
   Card,
@@ -151,7 +152,7 @@ const CookbookCard = observer(function CookbookCard({
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (cookbook.imagePath) {
-      return { src: `${cookbook.getImagePath}` }
+      return { uri: `${cookbook.getImagePath}` }
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)]
     }
@@ -274,7 +275,7 @@ const CookbookCard = observer(function CookbookCard({
       }
       content={`${cookbook.parsedTitleAndSubtitle.title}`}
       {...accessibilityHintProps}
-      RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
+      RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
       FooterComponent={
         <Button
           onPress={handlePressFavorite}
@@ -326,7 +327,9 @@ const $item: ViewStyle = {
 
 const $itemThumbnail: ImageStyle = {
   marginTop: spacing.sm,
-  borderRadius: 50,
+  height: 90,
+  width: 90,
+  borderRadius: 5,
   alignSelf: "flex-start",
 }
 
