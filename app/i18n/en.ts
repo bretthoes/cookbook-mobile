@@ -119,6 +119,27 @@ const en = {
         "No favorites have been added yet. Tap the heart on an episode to add it to your favorites!",
     },
   },
+  cookbookListScreen: {
+    title: "Cookbooks",
+    onlyFavorites: "Only Show Favorites",
+    favoriteButton: "Favorite",
+    unfavoriteButton: "Unfavorite",
+    accessibility: {
+      cardHint:
+        "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
+      switch: "Switch on to only show favorites",
+      favoriteAction: "Toggle Favorite",
+      favoriteIcon: "Cookbook not favorited",
+      unfavoriteIcon: "Cookbook favorited",
+      publishLabel: "Published {{date}}",
+      durationLabel: "Duration: {{hours}} hours {{minutes}} minutes {{seconds}} seconds",
+    },
+    noFavoritesEmptyState: {
+      heading: "This looks a bit empty",
+      content:
+        "No favorites have been added yet. Tap the heart on an cookbook to add it to your favorites!",
+    },
+  },
 }
 
 export default en

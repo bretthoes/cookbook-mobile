@@ -3,7 +3,6 @@ import React, { ComponentType, FC, useEffect, useMemo } from "react"
 import {
   AccessibilityProps,
   ActivityIndicator,
-  Image,
   ImageSourcePropType,
   ImageStyle,
   Platform,
@@ -91,12 +90,12 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
                 style={$emptyState}
                 headingTx={
                   cookbookStore.favoritesOnly
-                    ? "demoPodcastListScreen.noFavoritesEmptyState.heading"
+                    ? "cookbookListScreen.noFavoritesEmptyState.heading"
                     : undefined
                 }
                 contentTx={
                   cookbookStore.favoritesOnly
-                    ? "demoPodcastListScreen.noFavoritesEmptyState.content"
+                    ? "cookbookListScreen.noFavoritesEmptyState.content"
                     : undefined
                 }
                 button={cookbookStore.favoritesOnly ? "" : undefined}
@@ -108,7 +107,7 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
           }
           ListHeaderComponent={
             <View style={$heading}>
-              <Text preset="heading" tx="demoPodcastListScreen.title" />
+              <Text preset="heading" tx="cookbookListScreen.title" />
               {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
                 <View style={$toggle}>
                   <Toggle
@@ -117,10 +116,10 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
                       cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
                     }
                     variant="switch"
-                    labelTx="demoPodcastListScreen.onlyFavorites"
+                    labelTx="cookbookListScreen.onlyFavorites"
                     labelPosition="left"
                     labelStyle={$labelStyle}
-                    accessibilityLabel={translate("demoPodcastListScreen.accessibility.switch")}
+                    accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
                   />
                 </View>
               )}
@@ -191,7 +190,7 @@ const CookbookCard = observer(function CookbookCard({
       Platform.select<AccessibilityProps>({
         ios: {
           accessibilityLabel: cookbook.title,
-          accessibilityHint: translate("demoPodcastListScreen.accessibility.cardHint", {
+          accessibilityHint: translate("cookbookListScreen.accessibility.cardHint", {
             action: isFavorite ? "unfavorite" : "favorite",
           }),
         },
@@ -200,7 +199,7 @@ const CookbookCard = observer(function CookbookCard({
           accessibilityActions: [
             {
               name: "longpress",
-              label: translate("demoPodcastListScreen.accessibility.favoriteAction"),
+              label: translate("cookbookListScreen.accessibility.favoriteAction"),
             },
           ],
           onAccessibilityAction: ({ nativeEvent }) => {
@@ -283,8 +282,8 @@ const CookbookCard = observer(function CookbookCard({
           style={[$favoriteButton, isFavorite && $unFavoriteButton]}
           accessibilityLabel={
             isFavorite
-              ? translate("demoPodcastListScreen.accessibility.unfavoriteIcon")
-              : translate("demoPodcastListScreen.accessibility.favoriteIcon")
+              ? translate("cookbookListScreen.accessibility.unfavoriteIcon")
+              : translate("cookbookListScreen.accessibility.favoriteIcon")
           }
           LeftAccessory={ButtonLeftAccessory}
         >
@@ -294,8 +293,8 @@ const CookbookCard = observer(function CookbookCard({
             weight="medium"
             text={
               isFavorite
-                ? translate("demoPodcastListScreen.unfavoriteButton")
-                : translate("demoPodcastListScreen.favoriteButton")
+                ? translate("cookbookListScreen.unfavoriteButton")
+                : translate("cookbookListScreen.favoriteButton")
             }
           />
         </Button>
