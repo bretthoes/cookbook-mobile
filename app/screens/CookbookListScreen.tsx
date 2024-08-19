@@ -37,6 +37,14 @@ import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { Cookbook } from "app/models/Cookbook"
+import { CookbookStackParamList } from "app/navigators/CookbookNavigator"
+import { useNavigation } from "@react-navigation/native"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+
+type CookbookListScreenNavigationProp = NativeStackNavigationProp<
+  CookbookStackParamList,
+  "CookbookList"
+>
 
 const ICON_SIZE = 14
 
@@ -217,8 +225,10 @@ const CookbookCard = observer(function CookbookCard({
     liked.value = withSpring(liked.value ? 0 : 1)
   }
 
+  const navigation = useNavigation<CookbookListScreenNavigationProp>()
+
   const handlePressCard = () => {
-    // TODO open cookbook
+    navigation.navigate("CookbookDetail", { cookbookId: cookbook.id })
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
