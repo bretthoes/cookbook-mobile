@@ -36,9 +36,9 @@ export interface ApiFeedResponse {
 
 export interface CookbookItem {
   id: number,
-  creatorPersonId: number,
   title: string,
   imagePath: string,
+  membersCount: number
 }
 
 export interface ApiCookbooksResponse {

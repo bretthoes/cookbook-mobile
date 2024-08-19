@@ -9,9 +9,9 @@ export const CookbookModel = types
   .model("Cookbook")
   .props({
     id: types.integer,
-    creatorPersonId: types.integer,
     title: "",
     imagePath: "",
+    membersCount: types.integer
   })
   .actions(withSetPropAction)
   .views((cookbook) => ({
