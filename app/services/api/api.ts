@@ -45,10 +45,8 @@ export class Api {
   }
 
   async setAuthorizationHeader(apisauce: ApisauceInstance) {
-    console.debug('setAuthorizationHeader')
     const accessToken = await SecureStore.getItemAsync("accessToken");
     if (accessToken) {
-      console.debug('setAuthorizationHeader 2')
       apisauce.setHeader("Authorization", `Bearer ${accessToken}`);
     }
   }
