@@ -248,6 +248,20 @@ const CookbookCard = observer(function CookbookCard({
     [],
   )
 
+  const MemberButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
+    () =>
+      function MemberButtonLeftAccessory() {
+        return (
+              <Icon
+                icon="community"
+                size={ICON_SIZE}
+                color={colors.palette.neutral800} // black
+              />
+        )
+      },
+    [],
+  )
+
   return (
     <Card
       style={$item}
@@ -276,28 +290,40 @@ const CookbookCard = observer(function CookbookCard({
       {...accessibilityHintProps}
       RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
       FooterComponent={
-        <Button
-          onPress={handlePressFavorite}
-          onLongPress={handlePressFavorite}
-          style={[$favoriteButton, isFavorite && $unFavoriteButton]}
-          accessibilityLabel={
-            isFavorite
-              ? translate("cookbookListScreen.accessibility.unfavoriteIcon")
-              : translate("cookbookListScreen.accessibility.favoriteIcon")
-          }
-          LeftAccessory={ButtonLeftAccessory}
-        >
-          <Text
-            size="xxs"
-            accessibilityLabel={"accessibilityLabel"}
-            weight="medium"
-            text={
+        <View style={$buttonRow}>
+          <Button
+            onPress={handlePressFavorite}
+            onLongPress={handlePressFavorite}
+            style={[$favoriteButton, isFavorite && $unFavoriteButton]}
+            accessibilityLabel={
               isFavorite
-                ? translate("cookbookListScreen.unfavoriteButton")
-                : translate("cookbookListScreen.favoriteButton")
+                ? translate("cookbookListScreen.accessibility.unfavoriteIcon")
+                : translate("cookbookListScreen.accessibility.favoriteIcon")
             }
-          />
-        </Button>
+            LeftAccessory={ButtonLeftAccessory}
+          >
+            <Text
+              size="xxs"
+              accessibilityLabel={"accessibilityLabel"}
+              weight="medium"
+              text={
+                isFavorite
+                  ? translate("cookbookListScreen.unfavoriteButton")
+                  : translate("cookbookListScreen.favoriteButton")
+              }
+            />
+          </Button>
+          <Button
+            style={$favoriteButton}
+            LeftAccessory={MemberButtonLeftAccessory}
+          >
+            <Text
+              size="xxs"
+              weight="medium"
+              text={"  " + cookbook.membersCount.toString()}
+            />
+          </Button>
+        </View>
       }
     />
   )
@@ -345,6 +371,11 @@ const $iconContainer: ViewStyle = {
   width: ICON_SIZE,
   flexDirection: "row",
   marginEnd: spacing.sm,
+}
+
+const $buttonRow: ViewStyle = {
+  flexDirection: "row",
+  gap: 4
 }
 
 const $metadata: TextStyle = {
