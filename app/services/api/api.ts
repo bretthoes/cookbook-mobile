@@ -8,11 +8,12 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse } from "./api.types"
+import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse, ApiRecipesResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from 'expo-secure-store';
 import { CookbookSnapshotIn } from "app/models/Cookbook"
+import { RecipeSnapshotIn } from "app/models/Recipe"
 
 /**
  * Configuring the apisauce instance.
@@ -112,6 +113,41 @@ export class Api {
         })) ?? []
 
       return { kind: "ok", cookbooks }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Gets a list of recipes matching a cookbookId with pagination.
+   */
+  async getRecipes(cookbookId: number, pageNumber = 1, pageSize = 10): Promise<{ kind: "ok"; recipes: RecipeSnapshotIn[] } | GeneralApiProblem> {
+    // prepare query parameters
+    const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
+
+    // use the authorizedRequest method to make the API call with query parameters
+    const response: ApiResponse<ApiRecipesResponse> = await this.authorizedRequest("Recipes", "GET", params)
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const rawData = response.data
+
+      // this is where we transform the data into the shape we expect for our MST model.
+      const recipes: RecipeSnapshotIn[] =
+        rawData?.items.map((raw: RecipeSnapshotIn) => ({
+          ...raw,
+        })) ?? []
+
+      return { kind: "ok", recipes }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)

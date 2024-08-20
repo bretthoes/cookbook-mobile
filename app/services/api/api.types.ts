@@ -48,6 +48,18 @@ export interface ApiCookbooksResponse {
   items: CookbookItem[]
 }
 
+export interface RecipeItem {
+  id: number,
+  title: string,
+}
+
+export interface ApiRecipesResponse {
+  pageNumber: number,
+  totalPages: number,
+  totalCount: number,
+  items: RecipeItem[]
+}
+
 /**
  * The options used to configure apisauce.
  */
