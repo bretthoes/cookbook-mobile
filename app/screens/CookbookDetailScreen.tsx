@@ -1,43 +1,39 @@
-import React from "react"
-import { View, Text, StyleSheet } from "react-native"
-import { RouteProp, useRoute } from "@react-navigation/native"
-import { CookbookStackParamList } from "../navigators/CookbookNavigator"
+import React, { FC, useEffect } from "react"
+import { useStores } from "../models"
+import { DemoTabScreenProps } from "../navigators/DemoNavigator"
+import { delay } from "../utils/delay"
+import { observer } from "mobx-react-lite"
+import { Screen } from "../components"
 
-type CookbookDetailScreenRouteProp = RouteProp<CookbookStackParamList, "CookbookDetail">
+export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = observer(
+  function CookbookDetailScreen(_props) {
+    const { recipeStore } = useStores()
 
-const mockCookbooks = {
-  "1": { title: "Italian Cuisine", description: "A collection of traditional Italian recipes." },
-  "2": { title: "Healthy Meals", description: "Delicious and nutritious meals for a healthy lifestyle." },
-  "3": { title: "Quick & Easy", description: "Recipes you can prepare in 30 minutes or less." },
-}
+    const [refreshing, setRefreshing] = React.useState(false)
+    const [isLoading, setIsLoading] = React.useState(false)
 
-export function CookbookDetailScreen() {
-  const route = useRoute<CookbookDetailScreenRouteProp>()
-  const { cookbookId } = route.params
+    // initially, kick off a background refresh without the refreshing UI
+    useEffect(() => {
+      ;(async function load() {
+        setIsLoading(true)
+        await recipeStore.fetchRecipes(_props.route.params.cookbookId)
+        setIsLoading(false)
+      })()
+    }, [recipeStore])
 
-  const cookbook = mockCookbooks[1] || { title: "Cookbook Not Found", description: "" }
+    // simulate a longer refresh, if the refresh is too fast for UX
+    async function manualRefresh() {
+      setRefreshing(true)
+      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbookId), delay(750)])
+      setRefreshing(false)
+    }
 
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{cookbook.title}</Text>
-      <Text style={styles.description}>{cookbook.description}</Text>
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-    backgroundColor: "#fff",
+    return (
+      <Screen
+        preset="fixed"
+        safeAreaEdges={["top"]}
+      >
+      </Screen>
+    )
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 12,
-  },
-  description: {
-    fontSize: 16,
-    color: "#666",
-  },
-})
+)
