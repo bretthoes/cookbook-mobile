@@ -69,7 +69,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
             }
             ListHeaderComponent={
               <View style={$heading}>
-                <Text preset="heading" tx="cookbookListScreen.title" />
+                <Text preset="heading" tx="cookbookDetailsScreen.title" />
                 {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
                   <View style={$toggle}>
                     <Toggle

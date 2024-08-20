@@ -121,7 +121,7 @@ const en = {
     },
   },
   cookbookListScreen: {
-    title: "Cookbooks",
+    title: "My Cookbooks",
     onlyFavorites: "Only Show Favorites",
     favoriteButton: "Favorite",
     unfavoriteButton: "Unfavorite",
@@ -140,6 +140,9 @@ const en = {
       content:
         "No favorites have been added yet. Tap the heart on an cookbook to add it to your favorites!",
     },
+  },
+  cookbookDetailsScreen: {
+    title: "Recipes"  
   },
 }
 
