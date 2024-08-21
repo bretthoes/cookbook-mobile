@@ -142,7 +142,8 @@ const en = {
     },
   },
   cookbookDetailsScreen: {
-    title: "Recipes"  
+    title: "Recipes",
+    searchPlaceholder: "Search"
   },
 }
 

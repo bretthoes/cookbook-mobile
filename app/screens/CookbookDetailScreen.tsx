@@ -1,11 +1,11 @@
-import React, { FC, useEffect } from "react"
+import React, { FC, useEffect, useState } from "react"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
 import { EmptyState, ListItem, ListView, Screen, Toggle } from "../components"
-import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Recipe } from "app/models/Recipe"
 import { Text } from "../components"
@@ -16,6 +16,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
 
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
+    const [searchQuery, setSearchQuery] = useState("")
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -33,6 +34,13 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
       setRefreshing(false)
     }
 
+    // Filter the recipes based on the search query
+    const filteredRecipes = recipeStore.recipesForList
+      .slice()
+      .filter((recipe) =>
+        recipe.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+
     return (
       <Screen
         preset="fixed"
@@ -41,7 +49,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
       >
         <View style={$listStyle}>
           <ListView<Recipe>
-            data={recipeStore.recipesForList.slice()}
+            data={filteredRecipes}
             estimatedItemSize={59}
             ListEmptyComponent={
               isLoading ? (
@@ -68,23 +76,29 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
               )
             }
             ListHeaderComponent={
-              <View style={$heading}>
-                <Text preset="heading" tx="cookbookDetailsScreen.title" />
-                {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
-                  <View style={$toggle}>
-                    <Toggle
-                      value={recipeStore.favoritesOnly}
-                      onValueChange={() =>
-                        recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
-                      }
-                      variant="switch"
-                      labelTx="cookbookListScreen.onlyFavorites"
-                      labelPosition="left"
-                      labelStyle={$labelStyle}
-                      accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
-                    />
-                  </View>
-                )}
+                <View style={$heading}>
+                  <Text preset="heading" tx="cookbookDetailsScreen.title" />
+                  <TextInput
+                    style={$searchBar}
+                    placeholder={translate("cookbookDetailsScreen.searchPlaceholder")}
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                  />
+                  {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
+                    <View style={$toggle}>
+                      <Toggle
+                        value={recipeStore.favoritesOnly}
+                        onValueChange={() =>
+                          recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
+                        }
+                        variant="switch"
+                        labelTx="cookbookListScreen.onlyFavorites"
+                        labelPosition="left"
+                        labelStyle={$labelStyle}
+                        accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
+                      />
+                    </View>
+                  )}
               </View>
             }
             onRefresh={manualRefresh}
@@ -98,7 +112,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
               />
             )}
           />
-      </View>
+        </View>
       </Screen>
     )
   },
@@ -134,5 +148,14 @@ const $screenContentContainer: ViewStyle = {
 
 const $toggle: ViewStyle = {
   marginTop: spacing.md,
+}
+
+const $searchBar: TextStyle = {
+  padding: spacing.md,
+  marginBottom: spacing.md,
+  borderColor: colors.palette.neutral500,
+  borderWidth: 1,
+  borderRadius: spacing.xs,
+  backgroundColor: colors.palette.neutral100,
 }
 // #endregion
