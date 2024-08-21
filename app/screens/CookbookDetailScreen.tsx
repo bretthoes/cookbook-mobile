@@ -76,23 +76,23 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
               )
             }
             ListHeaderComponent={
-              <View style={$heading}>
-                <Text preset="heading" tx="cookbookDetailsScreen.title" />
+              <View>
+                <Text preset="heading" style={$heading} tx="cookbookDetailsScreen.title" />
                 <View style={$searchContainer}>
-                <TextInput
-                  style={$searchBar}
-                  placeholder={translate("cookbookDetailsScreen.searchPlaceholder")}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholderTextColor={colors.palette.neutral400}
-                />
-                <Animated.View style={[$searchIcon]}>
-                <Icon
-                  icon="heart" // TODO update icon to 'search'
-                  size={20}
-                  color={colors.palette.neutral600}
-                />
-                </Animated.View>
+                  <TextInput
+                    style={$searchBar}
+                    placeholder={translate("cookbookDetailsScreen.searchPlaceholder")}
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    placeholderTextColor={colors.palette.neutral400}
+                  />
+                  <Animated.View style={[$searchIcon]}>
+                    <Icon
+                      icon="heart" // TODO update icon to 'search'
+                      size={20}
+                      color={colors.palette.neutral600}
+                    />
+                  </Animated.View>
               </View>
                 {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
                   <View style={$toggle}>
@@ -115,6 +115,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
             refreshing={refreshing}
             renderItem={({ item, index }) => (
               <ListItem
+                style={$listItemStyle}
                 text={item.title}
                 rightIcon="caretRight"
                 TextProps={{ numberOfLines: 1 }}
@@ -140,6 +141,7 @@ const $emptyStateImage: ImageStyle = {
 
 const $heading: ViewStyle = {
   marginBottom: spacing.md,
+  paddingHorizontal: spacing.sm,
 }
 
 const $labelStyle: TextStyle = {
@@ -149,8 +151,11 @@ const $labelStyle: TextStyle = {
 const $listStyle: ViewStyle = {
   flex: 1,
   paddingTop: spacing.xl,
-  paddingHorizontal: spacing.sm,
   backgroundColor: colors.palette.neutral200,
+}
+
+const $listItemStyle: ViewStyle = {
+  paddingHorizontal: spacing.xs,
 }
 
 const $screenContentContainer: ViewStyle = {
@@ -159,14 +164,15 @@ const $screenContentContainer: ViewStyle = {
 
 const $toggle: ViewStyle = {
   marginTop: spacing.md,
+  paddingHorizontal: spacing.sm,
 }
 
 const $searchContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   paddingHorizontal: spacing.sm,
-  marginTop: spacing.md,
   marginBottom: spacing.md,
+  marginHorizontal: spacing.xs,
   borderColor: colors.palette.neutral500,
   borderWidth: 1,
   borderRadius: spacing.xs,
