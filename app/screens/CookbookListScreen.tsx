@@ -346,7 +346,7 @@ const $screenContentContainer: ViewStyle = {
 
 const $listContentContainer: ContentStyle = {
   paddingHorizontal: spacing.lg,
-  paddingTop: spacing.lg + spacing.xl,
+  paddingTop: spacing.xl,
   paddingBottom: spacing.lg,
 }
 
