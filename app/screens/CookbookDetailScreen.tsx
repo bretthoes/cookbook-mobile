@@ -182,7 +182,6 @@ const $searchContainer: ViewStyle = {
 const $searchBar: TextStyle = {
   flex: 1,
   paddingVertical: spacing.sm,
-  paddingHorizontal: spacing.md,
   color: colors.palette.neutral800,
 }
 
