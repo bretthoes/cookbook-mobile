@@ -9,13 +9,19 @@ import { ActivityIndicator, Animated, ImageStyle, TextInput, TextStyle, View, Vi
 import { colors, spacing } from "app/theme"
 import { Recipe } from "app/models/Recipe"
 import { Text } from "../components"
+import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
+import { Drawer } from "react-native-drawer-layout"
+import { Image } from "react-native"
+import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
+
+const logo = require("../../assets/images/logo.png")
 
 export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = observer(
   function CookbookDetailScreen(_props) {
     const { recipeStore } = useStores()
-
-    const [refreshing, setRefreshing] = React.useState(false)
-    const [isLoading, setIsLoading] = React.useState(false)
+    const [open, setOpen] = useState(false)
+    const [refreshing, setRefreshing] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
 
     // initially, kick off a background refresh without the refreshing UI
@@ -41,90 +47,114 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase()),
       )
 
+    const toggleDrawer = () => {
+      setOpen(!open)
+    }
+
+    const $drawerInsets = useSafeAreaInsetsStyle(["top"])
+
     return (
-      <Screen
-        preset="fixed"
-        safeAreaEdges={["top"]}
-        contentContainerStyle={$screenContentContainer}
+      <Drawer
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+        drawerType="back"
+        drawerPosition={"right"}
+        renderDrawerContent={() => (
+          <View style={[$drawer, $drawerInsets]}>
+            <View style={$logoContainer}>
+              <Image source={logo} style={$logoImage} />
+            </View>
+          </View>
+        )}
       >
-        <View style={$listStyle}>
-          <ListView<Recipe>
-            data={filteredRecipes}
-            estimatedItemSize={59}
-            ListEmptyComponent={
-              isLoading ? (
-                <ActivityIndicator />
-              ) : (
-                <EmptyState
-                  preset="generic"
-                  style={$emptyState}
-                  headingTx={
-                    recipeStore.favoritesOnly
-                      ? "cookbookListScreen.noFavoritesEmptyState.heading"
-                      : undefined
-                  }
-                  contentTx={
-                    recipeStore.favoritesOnly
-                      ? "cookbookListScreen.noFavoritesEmptyState.content"
-                      : undefined
-                  }
-                  button={recipeStore.favoritesOnly ? "" : undefined}
-                  buttonOnPress={manualRefresh}
-                  imageStyle={$emptyStateImage}
-                  ImageProps={{ resizeMode: "contain" }}
-                />
-              )
-            }
-            ListHeaderComponent={
-              <View>
-                <Text preset="heading" style={$heading} tx="cookbookDetailsScreen.title" />
-                <View style={$searchContainer}>
-                  <TextInput
-                    style={$searchBar}
-                    placeholder={translate("cookbookDetailsScreen.searchPlaceholder")}
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    placeholderTextColor={colors.palette.neutral400}
+        <Screen
+          preset="fixed"
+          safeAreaEdges={["top"]}
+          contentContainerStyle={$screenContentContainer}
+        >
+          <View style={$headerContainer}>
+            <Text preset="heading" tx="cookbookDetailsScreen.title" />
+            <DrawerIconButton onPress={toggleDrawer} />
+          </View>
+          <View style={$listStyle}>
+            <ListView<Recipe>
+              data={filteredRecipes}
+              estimatedItemSize={59}
+              ListEmptyComponent={
+                isLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <EmptyState
+                    preset="generic"
+                    style={$emptyState}
+                    headingTx={
+                      recipeStore.favoritesOnly
+                        ? "cookbookListScreen.noFavoritesEmptyState.heading"
+                        : undefined
+                    }
+                    contentTx={
+                      recipeStore.favoritesOnly
+                        ? "cookbookListScreen.noFavoritesEmptyState.content"
+                        : undefined
+                    }
+                    button={recipeStore.favoritesOnly ? "" : undefined}
+                    buttonOnPress={manualRefresh}
+                    imageStyle={$emptyStateImage}
+                    ImageProps={{ resizeMode: "contain" }}
                   />
-                  <Animated.View style={[$searchIcon]}>
-                    <Icon
-                      icon="debug"
-                      size={20}
-                      color={colors.palette.neutral600}
+                )
+              }
+              ListHeaderComponent={
+                <View>
+                  <View style={$searchContainer}>
+                    <TextInput
+                      style={$searchBar}
+                      placeholder={translate("cookbookDetailsScreen.searchPlaceholder")}
+                      value={searchQuery}
+                      onChangeText={setSearchQuery}
+                      placeholderTextColor={colors.palette.neutral400}
                     />
-                  </Animated.View>
-              </View>
-                {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
-                  <View style={$toggle}>
-                    <Toggle
-                      value={recipeStore.favoritesOnly}
-                      onValueChange={() =>
-                        recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
-                      }
-                      variant="switch"
-                      labelTx="cookbookListScreen.onlyFavorites"
-                      labelPosition="left"
-                      labelStyle={$labelStyle}
-                      accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
-                    />
+                    <Animated.View style={[$searchIcon]}>
+                      <Icon
+                        icon="debug"
+                        size={20}
+                        color={colors.palette.neutral600}
+                      />
+                    </Animated.View>
                   </View>
-                )}
-              </View>
-            }
-            onRefresh={manualRefresh}
-            refreshing={refreshing}
-            renderItem={({ item, index }) => (
-              <ListItem
-                style={$listItemStyle}
-                text={item.title}
-                rightIcon="caretRight"
-                TextProps={{ numberOfLines: 1 }}
-                topSeparator={index !== 0}
-              />
-            )}
-          />
-        </View>
-      </Screen>
+                  {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
+                    <View style={$toggle}>
+                      <Toggle
+                        value={recipeStore.favoritesOnly}
+                        onValueChange={() =>
+                          recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
+                        }
+                        variant="switch"
+                        labelTx="cookbookListScreen.onlyFavorites"
+                        labelPosition="left"
+                        labelStyle={$labelStyle}
+                        accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
+                      />
+                    </View>
+                  )}
+                </View>
+              }
+              onRefresh={manualRefresh}
+              refreshing={refreshing}
+              renderItem={({ item, index }) => (
+                <ListItem
+                  style={$listItemStyle}
+                  text={item.title}
+                  rightIcon="caretRight"
+                  TextProps={{ numberOfLines: 1 }}
+                  topSeparator={index !== 0}
+                />
+              )}
+            />
+          </View>
+        </Screen>
+      </Drawer>
     )
   },
 )
@@ -139,9 +169,12 @@ const $emptyStateImage: ImageStyle = {
   transform: [{ scaleX: isRTL ? -1 : 1 }],
 }
 
-const $heading: ViewStyle = {
-  marginBottom: spacing.md,
-  paddingHorizontal: spacing.sm,
+const $headerContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingTop: spacing.xl,
+  paddingHorizontal: spacing.md,
 }
 
 const $labelStyle: TextStyle = {
@@ -150,7 +183,6 @@ const $labelStyle: TextStyle = {
 
 const $listStyle: ViewStyle = {
   flex: 1,
-  paddingTop: spacing.xl,
   backgroundColor: colors.palette.neutral200,
 }
 
@@ -163,7 +195,7 @@ const $screenContentContainer: ViewStyle = {
 }
 
 const $toggle: ViewStyle = {
-  marginTop: spacing.md,
+  marginVertical: spacing.sm,
   paddingHorizontal: spacing.sm,
 }
 
@@ -171,7 +203,6 @@ const $searchContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   paddingHorizontal: spacing.sm,
-  marginBottom: spacing.md,
   marginHorizontal: spacing.xs,
   borderColor: colors.palette.neutral500,
   borderWidth: 1,
@@ -187,5 +218,22 @@ const $searchBar: TextStyle = {
 
 const $searchIcon: ViewStyle = {
   marginLeft: spacing.sm,
+}
+
+const $drawer: ViewStyle = {
+  backgroundColor: colors.background,
+  flex: 1,
+}
+
+const $logoImage: ImageStyle = {
+  height: 42,
+  width: 77,
+}
+
+const $logoContainer: ViewStyle = {
+  alignSelf: "flex-end",
+  justifyContent: "center",
+  height: 56,
+  paddingHorizontal: spacing.lg,
 }
 // #endregion

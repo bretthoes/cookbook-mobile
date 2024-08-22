@@ -138,7 +138,7 @@ const en = {
     noFavoritesEmptyState: {
       heading: "This looks a bit empty",
       content:
-        "No favorites have been added yet. Tap the heart on an cookbook to add it to your favorites!",
+        "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
     },
   },
   cookbookDetailsScreen: {
