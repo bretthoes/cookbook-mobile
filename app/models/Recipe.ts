@@ -9,6 +9,7 @@ export const RecipeModel = types
   .props({
     id: types.integer,
     title: "",
+    imagePath: ""
   })
   .actions(withSetPropAction)
   .views((recipe) => ({

@@ -88,7 +88,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
                   />
                   <Animated.View style={[$searchIcon]}>
                     <Icon
-                      icon="heart" // TODO update icon to 'search'
+                      icon="debug"
                       size={20}
                       color={colors.palette.neutral600}
                     />
