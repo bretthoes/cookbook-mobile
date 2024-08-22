@@ -16,7 +16,7 @@ import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 
 const logo = require("../../assets/images/logo.png")
 
-export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = observer(
+export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
   function CookbookDetailScreen(_props) {
     const { recipeStore } = useStores()
     const [open, setOpen] = useState(false)
@@ -74,7 +74,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
           contentContainerStyle={$screenContentContainer}
         >
           <View style={$headerContainer}>
-            <Text preset="heading" tx="cookbookDetailsScreen.title" />
+            <Text preset="heading" tx="recipeListScreen.title" />
             <DrawerIconButton onPress={toggleDrawer} />
           </View>
           <View style={$listStyle}>
@@ -110,7 +110,7 @@ export const CookbookDetailScreen: FC<DemoTabScreenProps<"CookbookDetail">> = ob
                   <View style={$searchContainer}>
                     <TextInput
                       style={$searchBar}
-                      placeholder={translate("cookbookDetailsScreen.searchPlaceholder")}
+                      placeholder={translate("recipeListScreen.searchPlaceholder")}
                       value={searchQuery}
                       onChangeText={setSearchQuery}
                       placeholderTextColor={colors.palette.neutral400}

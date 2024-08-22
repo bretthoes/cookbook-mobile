@@ -17,7 +17,7 @@ export type DemoTabParamList = {
   DemoPodcastList: undefined
   CookbookList: undefined
   CookbookTab: undefined
-  CookbookDetail:  {cookbookId: number }
+  RecipeList:  {cookbookId: number }
 }
 
 /**

@@ -141,7 +141,7 @@ const en = {
         "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
     },
   },
-  cookbookDetailsScreen: {
+  recipeListScreen: {
     title: "Recipes",
     searchPlaceholder: "Search"
   },

@@ -228,7 +228,7 @@ const CookbookCard = observer(function CookbookCard({
   const navigation = useNavigation<CookbookListScreenNavigationProp>()
 
   const handlePressCard = () => {
-    navigation.navigate("CookbookDetail", { cookbookId: cookbook.id })
+    navigation.navigate("RecipeList", { cookbookId: cookbook.id })
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
