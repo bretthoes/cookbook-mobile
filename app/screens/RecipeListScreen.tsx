@@ -77,7 +77,6 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
             <Text preset="heading" tx="recipeListScreen.title" />
             <DrawerIconButton onPress={toggleDrawer} />
           </View>
-          <View style={$listStyle}>
             <ListView<Recipe>
               data={filteredRecipes}
               estimatedItemSize={59}
@@ -115,13 +114,11 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                       onChangeText={setSearchQuery}
                       placeholderTextColor={colors.palette.neutral400}
                     />
-                    <Animated.View style={[$searchIcon]}>
-                      <Icon
-                        icon="debug"
-                        size={20}
-                        color={colors.palette.neutral600}
-                      />
-                    </Animated.View>
+                    <Icon
+                      icon="debug"
+                      size={20}
+                      color={colors.palette.neutral600}
+                    />
                   </View>
                   {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
                     <View style={$toggle}>
@@ -133,7 +130,6 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                         variant="switch"
                         labelTx="cookbookListScreen.onlyFavorites"
                         labelPosition="left"
-                        labelStyle={$labelStyle}
                         accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
                       />
                     </View>
@@ -152,7 +148,6 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                 />
               )}
             />
-          </View>
         </Screen>
       </Drawer>
     )
@@ -177,17 +172,10 @@ const $headerContainer: ViewStyle = {
   paddingHorizontal: spacing.md,
 }
 
-const $labelStyle: TextStyle = {
-  textAlign: "left",
-}
-
-const $listStyle: ViewStyle = {
-  flex: 1,
-  backgroundColor: colors.palette.neutral200,
-}
-
 const $listItemStyle: ViewStyle = {
-  paddingHorizontal: spacing.xs,
+  backgroundColor: colors.palette.neutral100,
+  paddingHorizontal: spacing.md,
+  marginHorizontal: spacing.lg,
 }
 
 const $screenContentContainer: ViewStyle = {
@@ -196,13 +184,14 @@ const $screenContentContainer: ViewStyle = {
 
 const $toggle: ViewStyle = {
   marginVertical: spacing.sm,
-  paddingHorizontal: spacing.sm,
+  paddingHorizontal: spacing.md,
 }
 
 const $searchContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
-  paddingHorizontal: spacing.sm,
+  paddingHorizontal: spacing.md,
+  paddingVertical: spacing.sm,
   marginHorizontal: spacing.xs,
   borderColor: colors.palette.neutral500,
   borderWidth: 1,
@@ -212,12 +201,6 @@ const $searchContainer: ViewStyle = {
 
 const $searchBar: TextStyle = {
   flex: 1,
-  paddingVertical: spacing.sm,
-  color: colors.palette.neutral800,
-}
-
-const $searchIcon: ViewStyle = {
-  marginLeft: spacing.sm,
 }
 
 const $drawer: ViewStyle = {
