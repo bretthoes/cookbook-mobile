@@ -5,7 +5,7 @@ import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
 import { EmptyState, Icon, ListItem, ListView, Screen, Toggle } from "../components"
-import { ActivityIndicator, Animated, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Recipe } from "app/models/Recipe"
 import { Text } from "../components"
@@ -175,7 +175,7 @@ const $headerContainer: ViewStyle = {
 const $listItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
   paddingHorizontal: spacing.md,
-  marginHorizontal: spacing.lg,
+  marginHorizontal: spacing.md,
 }
 
 const $screenContentContainer: ViewStyle = {
