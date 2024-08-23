@@ -139,13 +139,14 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
               onRefresh={manualRefresh}
               refreshing={refreshing}
               renderItem={({ item, index }) => (
-                <ListItem
-                  style={$listItemStyle}
-                  text={item.title}
-                  rightIcon="caretRight"
-                  TextProps={{ numberOfLines: 1 }}
-                  topSeparator={index !== 0}
-                />
+                <View style={$listItemStyle}>
+                  <ListItem
+                    text={item.title}
+                    rightIcon="caretRight"
+                    TextProps={{ numberOfLines: 1 }}
+                    topSeparator={index !== 0}
+                  />
+                </View>
               )}
             />
         </Screen>
@@ -175,7 +176,7 @@ const $headerContainer: ViewStyle = {
 const $listItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
   paddingHorizontal: spacing.md,
-  marginHorizontal: spacing.md,
+  marginHorizontal: spacing.lg,
 }
 
 const $screenContentContainer: ViewStyle = {
