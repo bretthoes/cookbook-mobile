@@ -9,6 +9,7 @@ import { DemoCommunityScreen, DemoShowroomScreen, DemoDebugScreen } from "../scr
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
 import { CookbookNavigator } from "./CookbookNavigator"
+import { Cookbook } from "app/models/Cookbook"
 
 export type DemoTabParamList = {
   DemoCommunity: undefined
@@ -17,7 +18,7 @@ export type DemoTabParamList = {
   DemoPodcastList: undefined
   CookbookList: undefined
   CookbookTab: undefined
-  RecipeList:  {cookbookId: number }
+  RecipeList:  {cookbook: Cookbook }
   RecipeDetails:  {recipeId: number }
 }
 

@@ -36,7 +36,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
-        await recipeStore.fetchRecipes(_props.route.params.cookbookId)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id)
         setIsLoading(false)
       })()
     }, [recipeStore])
@@ -44,7 +44,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbookId), delay(750)])
+      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id), delay(750)])
       setRefreshing(false)
     }
 
@@ -111,7 +111,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
               ListHeaderComponent={
                 <View>
                   <View style={$headerContainer}>
-                    <Text preset="heading" tx="recipeListScreen.title" />
+                    <Text preset="heading" text={_props.route.params.cookbook.title ?? "null"}/>
                     <DrawerIconButton onPress={toggleDrawer} />
                   </View>
                   <View style={$searchContainer}>
