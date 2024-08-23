@@ -13,8 +13,16 @@ import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
 import { Drawer } from "react-native-drawer-layout"
 import { Image } from "react-native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
+import { useNavigation } from "@react-navigation/native"
+import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { RecipeStackParamList } from "app/navigators"
 
 const logo = require("../../assets/images/logo.png")
+
+type RecipeListScreenNavigationProp = NativeStackNavigationProp<
+  RecipeStackParamList,
+  "RecipeDetails"
+>
 
 export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
   function CookbookDetailScreen(_props) {
@@ -52,6 +60,13 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     }
 
     const $drawerInsets = useSafeAreaInsetsStyle(["top"])
+
+    const navigation = useNavigation<RecipeListScreenNavigationProp>()
+
+    const handlePressItem = () => {
+      console.debug()
+      navigation.navigate("RecipeDetails", { recipeId: 1 }) // TODO pass id
+    }
 
     return (
       <Drawer
@@ -145,6 +160,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                   index === filteredRecipes.length - 1 && $borderBottom
                 ]}>
                   <ListItem
+                    onPress={handlePressItem}
                     text={item.title}
                     textStyle={$textStyle}
                     rightIcon="caretRight"
