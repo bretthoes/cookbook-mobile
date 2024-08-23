@@ -73,10 +73,6 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
           safeAreaEdges={["top"]}
           contentContainerStyle={$screenContentContainer}
         >
-          <View style={$headerContainer}>
-            <Text preset="heading" tx="recipeListScreen.title" />
-            <DrawerIconButton onPress={toggleDrawer} />
-          </View>
             <ListView<Recipe>
               data={filteredRecipes}
               estimatedItemSize={59}
@@ -106,6 +102,10 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
               }
               ListHeaderComponent={
                 <View>
+                  <View style={$headerContainer}>
+                    <Text preset="heading" tx="recipeListScreen.title" />
+                    <DrawerIconButton onPress={toggleDrawer} />
+                  </View>
                   <View style={$searchContainer}>
                     <TextInput
                       style={$searchBar}
@@ -139,12 +139,17 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
               onRefresh={manualRefresh}
               refreshing={refreshing}
               renderItem={({ item, index }) => (
-                <View style={$listItemStyle}>
+                <View style={[
+                  $listItemStyle,
+                  index === 0 && $borderTop,
+                  index === filteredRecipes.length - 1 && $borderBottom
+                ]}>
                   <ListItem
                     text={item.title}
                     rightIcon="caretRight"
                     TextProps={{ numberOfLines: 1 }}
-                    topSeparator={index !== 0}
+                    topSeparator
+                    bottomSeparator={index === filteredRecipes.length - 1}
                   />
                 </View>
               )}
@@ -163,6 +168,18 @@ const $emptyState: ViewStyle = {
 
 const $emptyStateImage: ImageStyle = {
   transform: [{ scaleX: isRTL ? -1 : 1 }],
+}
+
+const $borderTop: ViewStyle = {
+  borderTopLeftRadius: spacing.xs,
+  borderTopRightRadius: spacing.xs,
+  paddingTop: spacing.lg,
+}
+
+const $borderBottom: ViewStyle = {
+  borderBottomLeftRadius: spacing.xs,
+  borderBottomRightRadius: spacing.xs,
+  paddingBottom: spacing.lg,
 }
 
 const $headerContainer: ViewStyle = {
