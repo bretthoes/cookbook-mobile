@@ -178,7 +178,7 @@ const RecipeListItem = observer(function RecipeListItem({
   const navigation = useNavigation<RecipeListScreenNavigationProp>()
   
   const handlePressItem = () => {
-    navigation.navigate("RecipeDetails", { recipeId: recipe.id })
+    navigation.navigate("RecipeDetails", { recipe: recipe })
   }
 
 

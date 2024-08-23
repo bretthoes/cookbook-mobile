@@ -3,6 +3,7 @@ import { CookbookListScreen } from "app/screens/CookbookListScreen"
 import { RecipeListScreen } from "app/screens/RecipeListScreen"
 import { RecipeDetailsScreen } from "app/screens/RecipeDetailsScreen"
 import { Cookbook } from "app/models/Cookbook"
+import { Recipe } from "app/models/Recipe"
 
 export type CookbookStackParamList = {
   CookbookList: undefined
@@ -10,7 +11,7 @@ export type CookbookStackParamList = {
 }
 
 export type RecipeStackParamList = {
-  RecipeDetails: { recipeId: number }
+  RecipeDetails: { recipe: Recipe }
 }
 
 const CookbookStack = createNativeStackNavigator<CookbookStackParamList>()

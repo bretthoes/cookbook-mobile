@@ -14,7 +14,8 @@ const logo = require("../../assets/images/logo.png")
 
 export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = observer(
   function RecipeListScreen(_props) {
-    console.debug("recipeId=" + _props.route.params.recipeId)
+    console.debug("recipe id=" + _props.route.params.recipe.id)
+    console.debug("recipe title=" + _props.route.params.recipe.title)
     const { recipeStore } = useStores()
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
