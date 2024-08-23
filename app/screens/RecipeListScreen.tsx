@@ -61,13 +61,6 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
 
     const $drawerInsets = useSafeAreaInsetsStyle(["top"])
 
-    const navigation = useNavigation<RecipeListScreenNavigationProp>()
-
-    const handlePressItem = () => {
-      console.debug()
-      navigation.navigate("RecipeDetails", { recipeId: 1 }) // TODO pass id
-    }
-
     return (
       <Drawer
         open={open}
@@ -159,15 +152,10 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                   index === 0 && $borderTop,
                   index === filteredRecipes.length - 1 && $borderBottom
                 ]}>
-                  <ListItem
-                    onPress={handlePressItem}
-                    text={item.title}
-                    textStyle={$textStyle}
-                    rightIcon="caretRight"
-                    TextProps={{ numberOfLines: 1 }}
-                    topSeparator
-                    bottomSeparator={index === filteredRecipes.length - 1}
-                  />
+                  <RecipeListItem
+                    recipe={item}
+                    index={index}
+                    lastIndex = {filteredRecipes.length - 1} />
                 </View>
               )}
             />
@@ -176,6 +164,36 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     )
   },
 )
+
+const RecipeListItem = observer(function RecipeListItem({
+  recipe,
+  index,
+  lastIndex
+}: {
+  recipe: Recipe,
+  index: number,
+  lastIndex: number
+}) {
+  
+  const navigation = useNavigation<RecipeListScreenNavigationProp>()
+  
+  const handlePressItem = () => {
+    navigation.navigate("RecipeDetails", { recipeId: recipe.id })
+  }
+
+
+  return (
+    <ListItem
+        onPress={handlePressItem}
+        text={recipe.title}
+        textStyle={$textStyle}
+        rightIcon="caretRight"
+        TextProps={{ numberOfLines: 1 }}
+        topSeparator
+        bottomSeparator={index === lastIndex}
+      />
+  )
+})
 
 // #region Styles
 
