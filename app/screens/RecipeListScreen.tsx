@@ -6,7 +6,7 @@ import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
 import { EmptyState, Icon, ListItem, ListView, Screen, Toggle } from "../components"
 import { ActivityIndicator, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { colors, spacing } from "app/theme"
+import { colors, spacing, typography } from "app/theme"
 import { Recipe } from "app/models/Recipe"
 import { Text } from "../components"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
@@ -146,6 +146,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                 ]}>
                   <ListItem
                     text={item.title}
+                    textStyle={$textStyle}
                     rightIcon="caretRight"
                     TextProps={{ numberOfLines: 1 }}
                     topSeparator
@@ -188,6 +189,11 @@ const $headerContainer: ViewStyle = {
   justifyContent: "space-between",
   paddingTop: spacing.xl,
   paddingHorizontal: spacing.md,
+}
+
+const $textStyle: TextStyle = {
+  fontSize: 14, // TODO TextProps
+  fontFamily: typography.code?.normal,
 }
 
 const $listItemStyle: ViewStyle = {
