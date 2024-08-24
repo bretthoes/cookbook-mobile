@@ -51,6 +51,23 @@ export interface ApiCookbooksResponse {
 export interface RecipeItem {
   id: number,
   title: string,
+  authorId: number,
+  author: string,
+  summary: string,
+  imagePath: string,
+  videoPath: string,
+  preparationTimeInMinutes: number,
+  cookingTimeInMinutes: number,
+  bakingTimeInMinutes: number,
+  servings: number,
+  directions: RecipeDirection[],
+}
+
+export interface RecipeDirection {
+  id: number,
+  directionText: string,
+  ordinal: number,
+  imagePath: string,
 }
 
 export interface ApiRecipesResponse {

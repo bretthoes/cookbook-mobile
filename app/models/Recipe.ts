@@ -1,5 +1,6 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
+import { RecipeDirectionModel } from "./RecipeDirection"
 
 /**
  * This represents a recipe.
@@ -8,8 +9,17 @@ export const RecipeModel = types
   .model("Recipe")
   .props({
     id: types.integer,
-    title: "",
-    imagePath: ""
+    title: types.string,
+    authorId: types.integer,
+    author: types.string,
+    summary: types.maybeNull(types.string),
+    imagePath: types.maybeNull(types.string),
+    videoPath: types.maybeNull(types.string),
+    preparationTimeInMinutes: types.maybeNull(types.integer),
+    cookingTimeInMinutes: types.maybeNull(types.integer),
+    bakingTimeInMinutes: types.maybeNull(types.integer),
+    servings: types.maybeNull(types.integer),
+    directions: types.optional(types.array(RecipeDirectionModel), []),
   })
   .actions(withSetPropAction)
   .views((recipe) => ({

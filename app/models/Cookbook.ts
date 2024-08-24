@@ -9,8 +9,8 @@ export const CookbookModel = types
   .model("Cookbook")
   .props({
     id: types.integer,
-    title: "",
-    imagePath: "",
+    title: types.string,
+    imagePath: types.maybeNull(types.string),
     membersCount: types.integer
   })
   .actions(withSetPropAction)
