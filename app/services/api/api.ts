@@ -124,7 +124,7 @@ export class Api {
   /**
    * Gets a list of recipes matching a cookbookId with pagination.
    */
-  async getRecipes(cookbookId: number, pageNumber = 1, pageSize = 10): Promise<{ kind: "ok"; recipes: RecipeSnapshotIn[] } | GeneralApiProblem> {
+  async getRecipes(cookbookId: number, pageNumber = 1, pageSize = 99): Promise<{ kind: "ok"; recipes: RecipeSnapshotIn[] } | GeneralApiProblem> {
     // prepare query parameters
     const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
 
@@ -234,7 +234,7 @@ export class Api {
         this.apisauce.setHeader("Authorization", `Bearer ${newAccessToken}`)
         switch (method) {
           case "GET":
-            return await this.apisauce.get(endpoint)
+            return await this.apisauce.get(endpoint, body)
           case "POST":
             return await this.apisauce.post(endpoint, body)
           case "PUT":

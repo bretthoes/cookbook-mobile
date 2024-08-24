@@ -16,6 +16,10 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
   function RecipeListScreen(_props) {
     console.debug("recipe id=" + _props.route.params.recipe.id)
     console.debug("recipe title=" + _props.route.params.recipe.title)
+    console.debug("recipe author=" + _props.route.params.recipe.author)
+    console.debug("recipe direction=" + _props.route.params.recipe.directions[0]?.directionText)
+    console.debug("recipe image=" + _props.route.params.recipe.images[0]?.imageUrl)
+    console.debug("recipe ingredient=" + _props.route.params.recipe.ingredients[0]?.ingredientName)
     const { recipeStore } = useStores()
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
