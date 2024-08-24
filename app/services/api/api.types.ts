@@ -61,13 +61,28 @@ export interface RecipeItem {
   bakingTimeInMinutes: number,
   servings: number,
   directions: RecipeDirection[],
+  ingredients: RecipeIngredient[],
+  images: RecipeImage[]
 }
 
 export interface RecipeDirection {
   id: number,
   directionText: string,
   ordinal: number,
-  imagePath: string,
+  imagePath: string
+}
+
+export interface RecipeImage {
+  id: number,
+  imageUrl: string,
+  ordinal: number
+}
+
+export interface RecipeIngredient {
+  id: number,
+  ingredientName: string,
+  optional: boolean,
+  ordinal: number
 }
 
 export interface ApiRecipesResponse {
