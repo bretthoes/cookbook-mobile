@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, FC, useEffect, useMemo } from "react"
+import React, { ComponentType, FC, useEffect, useMemo, useState } from "react"
 import {
   AccessibilityProps,
   ActivityIndicator,
@@ -26,6 +26,7 @@ import {
   Card,
   EmptyState,
   Icon,
+  ListItem,
   ListView,
   Screen,
   Text,
@@ -40,6 +41,12 @@ import { Cookbook } from "app/models/Cookbook"
 import { CookbookStackParamList } from "app/navigators/CookbookNavigator"
 import { useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
+import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
+import { Drawer } from "react-native-drawer-layout"
+import { Image } from "react-native"
+import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
+
+const logo = require("../../assets/images/logo.png")
 
 type CookbookListScreenNavigationProp = NativeStackNavigationProp<
   CookbookStackParamList,
@@ -56,9 +63,10 @@ const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observer(
   function CookbookListScreen(_props) {
     const { cookbookStore } = useStores()
-
+    const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
+    const navigation = useNavigation<CookbookListScreenNavigationProp>()
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -76,7 +84,32 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
       setRefreshing(false)
     }
 
+    const toggleDrawer = () => {
+      setOpen(!open)
+    }
+
+    const $drawerInsets = useSafeAreaInsetsStyle(["top"])
+
     return (
+      <Drawer
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+        drawerType="back"
+        drawerPosition={"right"}
+        renderDrawerContent={() => (
+          <View style={[$drawer, $drawerInsets]}>
+            <View style={$logoContainer}>
+              <Image source={logo} style={$logoImage} />
+            </View>
+            <ListItem
+              text={translate("cookbookListScreen.add")}
+              textStyle={$right}
+              rightIcon="caretRight"
+            />
+          </View>
+        )}
+      >
       <Screen
         preset="fixed"
         safeAreaEdges={["top"]}
@@ -114,8 +147,11 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
             )
           }
           ListHeaderComponent={
-            <View style={$heading}>
-              <Text preset="heading" tx="cookbookListScreen.title" />
+            <View>
+              <View style={$headerContainer}>
+                <Text preset="heading" tx="cookbookListScreen.title" />
+                <DrawerIconButton onPress={toggleDrawer} />
+              </View>
               {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
                 <View style={$toggle}>
                   <Toggle
@@ -142,6 +178,7 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
           )}
         />
       </Screen>
+      </Drawer>
     )
   },
 )
@@ -350,10 +387,6 @@ const $listContentContainer: ContentStyle = {
   paddingBottom: spacing.lg,
 }
 
-const $heading: ViewStyle = {
-  marginBottom: spacing.md,
-}
-
 const $item: ViewStyle = {
   padding: spacing.md,
   marginTop: spacing.md,
@@ -424,5 +457,32 @@ const $emptyState: ViewStyle = {
 
 const $emptyStateImage: ImageStyle = {
   transform: [{ scaleX: isRTL ? -1 : 1 }],
+}
+
+const $headerContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+}
+
+const $right: TextStyle = {
+  textAlign: "right",
+}
+
+const $drawer: ViewStyle = {
+  backgroundColor: colors.background,
+  flex: 1,
+}
+
+const $logoImage: ImageStyle = {
+  height: 42,
+  width: 77,
+}
+
+const $logoContainer: ViewStyle = {
+  alignSelf: "flex-end",
+  justifyContent: "center",
+  height: 56,
+  paddingHorizontal: spacing.lg,
 }
 // #endregion

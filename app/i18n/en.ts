@@ -125,6 +125,7 @@ const en = {
     onlyFavorites: "Only Show Favorites",
     favoriteButton: "Favorite",
     unfavoriteButton: "Unfavorite",
+    add: "Add new cookbook",
     accessibility: {
       cardHint:
         "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
