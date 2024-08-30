@@ -8,7 +8,7 @@ export const RecipeIngredientModel = types
   .model("RecipeIngredient")
   .props({
     id: types.integer,
-    ingredientName: types.string,
+    name: types.string,
     optional: types.boolean,
     ordinal: types.integer
   })

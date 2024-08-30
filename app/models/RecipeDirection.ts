@@ -8,9 +8,9 @@ export const RecipeDirectionModel = types
   .model("RecipeDirection")
   .props({
     id: types.integer,
-    directionText: types.string,
+    text: types.string,
     ordinal: types.integer,
-    imagePath: types.maybeNull(types.string),
+    image: types.maybeNull(types.string),
   })
   .actions(withSetPropAction)
 

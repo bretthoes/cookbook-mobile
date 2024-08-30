@@ -67,9 +67,9 @@ export interface RecipeItem {
 
 export interface RecipeDirection {
   id: number,
-  directionText: string,
+  text: string,
   ordinal: number,
-  imagePath: string
+  image: string
 }
 
 export interface RecipeImage {
@@ -80,7 +80,7 @@ export interface RecipeImage {
 
 export interface RecipeIngredient {
   id: number,
-  ingredientName: string,
+  name: string,
   optional: boolean,
   ordinal: number
 }
