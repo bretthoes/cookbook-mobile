@@ -144,7 +144,9 @@ const en = {
   recipeListScreen: {
     title: "Recipes",
     searchPlaceholder: "Search",
-    addNewRecipe: "Add new recipe"
+    add: "Add new recipe",
+    invite: "Invite someone else",
+    leave: "Leave cookbook"
   },
 }
 

@@ -79,10 +79,19 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
               <Image source={logo} style={$logoImage} />
             </View>
             <ListItem
-              text={translate("recipeListScreen.addNewRecipe")}
+              text={translate("recipeListScreen.add")}
               textStyle={$right}
               rightIcon="caretRight"
-              onPress={handleAddRecipe}
+            />
+            <ListItem
+              text={translate("recipeListScreen.invite")}
+              textStyle={$right}
+              rightIcon="caretRight"
+            />
+            <ListItem
+              text={translate("recipeListScreen.leave")}
+              textStyle={$right}
+              rightIcon="caretRight"
             />
           </View>
         )}
