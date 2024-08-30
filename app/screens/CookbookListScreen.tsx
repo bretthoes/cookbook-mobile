@@ -195,8 +195,8 @@ const CookbookCard = observer(function CookbookCard({
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
-    if (cookbook.imagePath) {
-      return { uri: `${cookbook.getImagePath}` }
+    if (cookbook.image) {
+      return { uri: `${cookbook.getImage}` }
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)]
     }

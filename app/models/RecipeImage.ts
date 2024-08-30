@@ -8,7 +8,7 @@ export const RecipeImageModel = types
   .model("RecipeImage")
   .props({
     id: types.integer,
-    imageUrl: types.string,
+    name: types.string,
     ordinal: types.integer,
   })
   .actions(withSetPropAction)

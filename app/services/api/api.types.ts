@@ -37,7 +37,7 @@ export interface ApiFeedResponse {
 export interface CookbookItem {
   id: number,
   title: string,
-  imagePath: string,
+  image: string,
   membersCount: number
 }
 
@@ -54,7 +54,7 @@ export interface RecipeItem {
   authorId: number,
   author: string,
   summary: string,
-  imagePath: string,
+  thumbnail: string,
   videoPath: string,
   preparationTimeInMinutes: number,
   cookingTimeInMinutes: number,
@@ -74,7 +74,7 @@ export interface RecipeDirection {
 
 export interface RecipeImage {
   id: number,
-  imageUrl: string,
+  name: string,
   ordinal: number
 }
 

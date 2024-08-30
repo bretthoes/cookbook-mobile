@@ -10,7 +10,7 @@ export const CookbookModel = types
   .props({
     id: types.integer,
     title: types.string,
-    imagePath: types.maybeNull(types.string),
+    image: types.maybeNull(types.string),
     membersCount: types.integer
   })
   .actions(withSetPropAction)
@@ -26,8 +26,8 @@ export const CookbookModel = types
 
       return { title: titleMatches[1], subtitle: titleMatches[2] }
     },
-    get getImagePath() {
-      return cookbook.imagePath ? `${Config.S3_URL}/${cookbook.imagePath}` : cookbook.imagePath
+    get getImage() {
+      return cookbook.image ? `${Config.S3_URL}/${cookbook.image}` : ""
     },
   }))
 

@@ -15,7 +15,7 @@ export const RecipeModel = types
     authorId: types.integer,
     author: types.string,
     summary: types.maybeNull(types.string),
-    imagePath: types.maybeNull(types.string),
+    thumbnail: types.maybeNull(types.string),
     videoPath: types.maybeNull(types.string),
     preparationTimeInMinutes: types.maybeNull(types.integer),
     cookingTimeInMinutes: types.maybeNull(types.integer),
