@@ -31,6 +31,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     const [refreshing, setRefreshing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
     const [searchQuery, setSearchQuery] = useState("")
+    const navigation = useNavigation<RecipeListScreenNavigationProp>()
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -61,6 +62,10 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
 
     const $drawerInsets = useSafeAreaInsetsStyle(["top"])
 
+    const handleAddRecipe = () => {
+      navigation.navigate("AddRecipe", { cookbookId: _props.route.params.cookbook.id })
+    }
+
     return (
       <Drawer
         open={open}
@@ -73,6 +78,12 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
             <View style={$logoContainer}>
               <Image source={logo} style={$logoImage} />
             </View>
+            <ListItem
+              text={translate("recipeListScreen.addNewRecipe")}
+              textStyle={$right}
+              rightIcon="caretRight"
+              onPress={handleAddRecipe}
+            />
           </View>
         )}
       >
@@ -174,9 +185,9 @@ const RecipeListItem = observer(function RecipeListItem({
   index: number,
   lastIndex: number
 }) {
-  
-  const navigation = useNavigation<RecipeListScreenNavigationProp>()
-  
+
+const navigation = useNavigation<RecipeListScreenNavigationProp>()
+
   const handlePressItem = () => {
     navigation.navigate("RecipeDetails", { recipe: recipe })
   }
@@ -184,14 +195,14 @@ const RecipeListItem = observer(function RecipeListItem({
 
   return (
     <ListItem
-        onPress={handlePressItem}
-        text={recipe.title}
-        textStyle={$textStyle}
-        rightIcon="caretRight"
-        TextProps={{ numberOfLines: 1 }}
-        topSeparator
-        bottomSeparator={index === lastIndex}
-      />
+      onPress={handlePressItem}
+      text={recipe.title}
+      textStyle={$textStyle}
+      rightIcon="caretRight"
+      TextProps={{ numberOfLines: 1 }}
+      topSeparator
+      bottomSeparator={index === lastIndex}
+    />
   )
 })
 
@@ -223,6 +234,10 @@ const $headerContainer: ViewStyle = {
   justifyContent: "space-between",
   paddingTop: spacing.xl,
   paddingHorizontal: spacing.md,
+}
+
+const $right: TextStyle = {
+  textAlign: "right",
 }
 
 const $textStyle: TextStyle = {

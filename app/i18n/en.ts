@@ -143,7 +143,8 @@ const en = {
   },
   recipeListScreen: {
     title: "Recipes",
-    searchPlaceholder: "Search"
+    searchPlaceholder: "Search",
+    addNewRecipe: "Add new recipe"
   },
 }
 
