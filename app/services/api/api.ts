@@ -13,7 +13,7 @@ import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from 'expo-secure-store';
 import { CookbookSnapshotIn } from "app/models/Cookbook"
-import { RecipeSnapshotIn } from "app/models/Recipe"
+import { RecipeBriefSnapshotIn, RecipeSnapshotIn } from "app/models/Recipe"
 
 /**
  * Configuring the apisauce instance.
@@ -124,7 +124,7 @@ export class Api {
   /**
    * Gets a list of recipes matching a cookbookId with pagination.
    */
-  async getRecipes(cookbookId: number, pageNumber = 1, pageSize = 99): Promise<{ kind: "ok"; recipes: RecipeSnapshotIn[] } | GeneralApiProblem> {
+  async getRecipes(cookbookId: number, pageNumber = 1, pageSize = 99): Promise<{ kind: "ok"; recipes: RecipeBriefSnapshotIn[] } | GeneralApiProblem> {
     // prepare query parameters
     const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
 
@@ -142,8 +142,8 @@ export class Api {
       const rawData = response.data
 
       // this is where we transform the data into the shape we expect for our MST model.
-      const recipes: RecipeSnapshotIn[] =
-        rawData?.items.map((raw: RecipeSnapshotIn) => ({
+      const recipes: RecipeBriefSnapshotIn[] =
+        rawData?.items.map((raw: RecipeBriefSnapshotIn) => ({
           ...raw,
         })) ?? []
 

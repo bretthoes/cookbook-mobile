@@ -1,13 +1,13 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import { Recipe, RecipeModel } from "./Recipe"
+import { RecipeBrief, RecipeBriefModel, RecipeModel } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 
 export const RecipeStoreModel = types
   .model("RecipeStore")
   .props({
-    recipes: types.array(RecipeModel),
-    favorites: types.array(types.reference(RecipeModel)),
+    recipes: types.array(RecipeBriefModel),
+    favorites: types.array(types.reference(RecipeBriefModel)),
     favoritesOnly: false,
     currentRecipe: types.maybeNull(RecipeModel)
   })
@@ -29,10 +29,10 @@ export const RecipeStoreModel = types
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
     },
-    addFavorite(recipe: Recipe) {
+    addFavorite(recipe: RecipeBrief) {
       store.favorites.push(recipe)
     },
-    removeFavorite(recipe: Recipe) {
+    removeFavorite(recipe: RecipeBrief) {
       store.favorites.remove(recipe)
     },
   }))
@@ -41,12 +41,12 @@ export const RecipeStoreModel = types
       return store.favoritesOnly ? store.favorites : store.recipes
     },
 
-    hasFavorite(recipe: Recipe) {
+    hasFavorite(recipe: RecipeBrief) {
       return store.favorites.includes(recipe)
     },
   }))
   .actions((store) => ({
-    toggleFavorite(recipe: Recipe) {
+    toggleFavorite(recipe: RecipeBrief) {
       if (store.hasFavorite(recipe)) {
         store.removeFavorite(recipe)
       } else {
