@@ -9,6 +9,7 @@ export const RecipeStoreModel = types
     recipes: types.array(RecipeModel),
     favorites: types.array(types.reference(RecipeModel)),
     favoritesOnly: false,
+    currentRecipe: types.maybeNull(RecipeModel)
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -18,6 +19,14 @@ export const RecipeStoreModel = types
         store.setProp("recipes", response.recipes)
       } else {
         console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
+      }
+    },
+    async fetchRecipe(recipeId: number) {
+      const response = await api.getRecipe(recipeId)
+      if (response.kind === "ok") {
+        store.setProp("currentRecipe", response.recipe)
+      } else {
+        console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
     },
     addFavorite(recipe: Recipe) {

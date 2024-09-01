@@ -12,8 +12,8 @@ export const RecipeModel = types
   .props({
     id: types.integer,
     title: types.string,
-    authorId: types.integer,
-    author: types.string,
+    authorId: types.maybeNull(types.integer),
+    author: types.maybeNull(types.string),
     summary: types.maybeNull(types.string),
     thumbnail: types.maybeNull(types.string),
     videoPath: types.maybeNull(types.string),

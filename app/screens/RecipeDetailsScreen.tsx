@@ -8,18 +8,13 @@ import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
 import { Image } from "react-native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
+import { delay } from "app/utils/delay"
 
 const logo = require("../../assets/images/logo.png")
 
 
 export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = observer(
   function RecipeListScreen(_props) {
-    console.debug("recipe id=" + _props.route.params.recipe.id)
-    console.debug("recipe title=" + _props.route.params.recipe.title)
-    console.debug("recipe author=" + _props.route.params.recipe.author)
-    console.debug("recipe direction=" + _props.route.params.recipe.directions[0]?.text)
-    console.debug("recipe image=" + _props.route.params.recipe.images[0]?.name)
-    console.debug("recipe ingredient=" + _props.route.params.recipe.ingredients[0]?.name)
     const { recipeStore } = useStores()
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
@@ -30,7 +25,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
-        //await recipeStore.fetchRecipes(_props.route.params.cookbookId)
+        await recipeStore.fetchRecipe(_props.route.params.recipe.id)
         setIsLoading(false)
       })()
     }, [recipeStore])
@@ -38,10 +33,9 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      //await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbookId), delay(750)])
+      await Promise.all([recipeStore.fetchRecipe(_props.route.params.recipe.id), delay(750)])
       setRefreshing(false)
     }
-
 
     const $drawerInsets = useSafeAreaInsetsStyle(["top"])
 
