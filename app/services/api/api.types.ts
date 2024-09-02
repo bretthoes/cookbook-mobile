@@ -65,6 +65,11 @@ export interface RecipeItem {
   images: RecipeImage[]
 }
 
+export interface RecipeBriefItem {
+  id: number,
+  title: string
+}
+
 export interface RecipeDirection {
   id: number,
   text: string,
@@ -89,7 +94,9 @@ export interface ApiRecipesResponse {
   pageNumber: number,
   totalPages: number,
   totalCount: number,
-  items: RecipeItem[]
+  hasPreviousPage: boolean,
+  hasNextPage: boolean,
+  items: RecipeBriefItem[]
 }
 
 /**
