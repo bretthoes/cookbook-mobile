@@ -4,7 +4,7 @@ import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
-import { EmptyState, Icon, ListItem, ListView, Screen, Toggle } from "../components"
+import { EmptyState, Icon, ListItem, ListView, Screen, Toggle, Button } from "../components"
 import { ActivityIndicator, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { RecipeBrief } from "app/models/Recipe"
@@ -45,7 +45,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id), delay(750)])
+      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pageNumber), delay(750)])
       setRefreshing(false)
     }
 
@@ -64,6 +64,22 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
 
     const handleAddRecipe = () => {
       navigation.navigate("AddRecipe", { cookbookId: _props.route.params.cookbook.id })
+    }
+
+    const handleNextPage = async () => {
+      if (recipeStore.hasNextPage) {
+        setIsLoading(true)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pageNumber + 1)
+        setIsLoading(false)
+      }
+    }
+
+    const handlePreviousPage = async () => {
+      if (recipeStore.hasPreviousPage) {
+        setIsLoading(true)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pageNumber - 1)
+        setIsLoading(false)
+      }
     }
 
     return (
@@ -101,84 +117,99 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
           safeAreaEdges={["top"]}
           contentContainerStyle={$screenContentContainer}
         >
-            <ListView<RecipeBrief>
-              data={filteredRecipes}
-              estimatedItemSize={59}
-              ListEmptyComponent={
-                isLoading ? (
-                  <ActivityIndicator />
-                ) : (
-                  <EmptyState
-                    preset="generic"
-                    style={$emptyState}
-                    headingTx={
-                      recipeStore.favoritesOnly
-                        ? "cookbookListScreen.noFavoritesEmptyState.heading"
-                        : undefined
-                    }
-                    contentTx={
-                      recipeStore.favoritesOnly
-                        ? "cookbookListScreen.noFavoritesEmptyState.content"
-                        : undefined
-                    }
-                    button={recipeStore.favoritesOnly ? "" : undefined}
-                    buttonOnPress={manualRefresh}
-                    imageStyle={$emptyStateImage}
-                    ImageProps={{ resizeMode: "contain" }}
+          <ListView<RecipeBrief>
+            data={filteredRecipes}
+            estimatedItemSize={59}
+            ListEmptyComponent={
+              isLoading ? (
+                <ActivityIndicator />
+              ) : (
+                <EmptyState
+                  preset="generic"
+                  style={$emptyState}
+                  headingTx={
+                    recipeStore.favoritesOnly
+                      ? "cookbookListScreen.noFavoritesEmptyState.heading"
+                      : undefined
+                  }
+                  contentTx={
+                    recipeStore.favoritesOnly
+                      ? "cookbookListScreen.noFavoritesEmptyState.content"
+                      : undefined
+                  }
+                  button={recipeStore.favoritesOnly ? "" : undefined}
+                  buttonOnPress={manualRefresh}
+                  imageStyle={$emptyStateImage}
+                  ImageProps={{ resizeMode: "contain" }}
+                />
+              )
+            }
+            ListHeaderComponent={
+              <View>
+                <View style={$headerContainer}>
+                  <Text preset="heading" text={_props.route.params.cookbook.title ?? "null"}/>
+                  <DrawerIconButton onPress={toggleDrawer} />
+                </View>
+                <View style={$searchContainer}>
+                  <TextInput
+                    style={$searchBar}
+                    placeholder={translate("recipeListScreen.searchPlaceholder")}
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    placeholderTextColor={colors.palette.neutral400}
                   />
-                )
-              }
-              ListHeaderComponent={
-                <View>
-                  <View style={$headerContainer}>
-                    <Text preset="heading" text={_props.route.params.cookbook.title ?? "null"}/>
-                    <DrawerIconButton onPress={toggleDrawer} />
-                  </View>
-                  <View style={$searchContainer}>
-                    <TextInput
-                      style={$searchBar}
-                      placeholder={translate("recipeListScreen.searchPlaceholder")}
-                      value={searchQuery}
-                      onChangeText={setSearchQuery}
-                      placeholderTextColor={colors.palette.neutral400}
-                    />
-                    <Icon
-                      icon="debug"
-                      size={20}
-                      color={colors.palette.neutral600}
+                  <Icon
+                    icon="debug"
+                    size={20}
+                    color={colors.palette.neutral600}
+                  />
+                </View>
+                {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
+                  <View style={$toggle}>
+                    <Toggle
+                      value={recipeStore.favoritesOnly}
+                      onValueChange={() =>
+                        recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
+                      }
+                      variant="switch"
+                      labelTx="cookbookListScreen.onlyFavorites"
+                      labelPosition="left"
+                      accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
                     />
                   </View>
-                  {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
-                    <View style={$toggle}>
-                      <Toggle
-                        value={recipeStore.favoritesOnly}
-                        onValueChange={() =>
-                          recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
-                        }
-                        variant="switch"
-                        labelTx="cookbookListScreen.onlyFavorites"
-                        labelPosition="left"
-                        accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
-                      />
-                    </View>
-                  )}
+                )}
+                <View style={$paginationContainer}>
+                  <Button
+                    text="Previous"
+                    onPress={handlePreviousPage}
+                    disabled={!recipeStore.hasPreviousPage}
+                  />
+                  <Text>
+                    Page {recipeStore.pageNumber} of {recipeStore.totalPages} ({recipeStore.totalCount} items)
+                  </Text>
+                  <Button
+                    text="Next"
+                    onPress={handleNextPage}
+                    disabled={!recipeStore.hasNextPage}
+                  />
                 </View>
-              }
-              onRefresh={manualRefresh}
-              refreshing={refreshing}
-              renderItem={({ item, index }) => (
-                <View style={[
-                  $listItemStyle,
-                  index === 0 && $borderTop,
-                  index === filteredRecipes.length - 1 && $borderBottom
-                ]}>
-                  <RecipeListItem
-                    recipe={item}
-                    index={index}
-                    lastIndex = {filteredRecipes.length - 1} />
-                </View>
-              )}
-            />
+              </View>
+            }
+            onRefresh={manualRefresh}
+            refreshing={refreshing}
+            renderItem={({ item, index }) => (
+              <View style={[
+                $listItemStyle,
+                index === 0 && $borderTop,
+                index === filteredRecipes.length - 1 && $borderBottom
+              ]}>
+                <RecipeListItem
+                  recipe={item}
+                  index={index}
+                  lastIndex = {filteredRecipes.length - 1} />
+              </View>
+            )}
+          />
         </Screen>
       </Drawer>
     )
@@ -216,6 +247,13 @@ const navigation = useNavigation<RecipeListScreenNavigationProp>()
 })
 
 // #region Styles
+
+const $paginationContainer: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "space-between",
+  padding: spacing.md,
+  alignItems: "center",
+}
 
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,
