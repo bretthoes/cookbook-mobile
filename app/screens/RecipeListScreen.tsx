@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite"
 import { EmptyState, Icon, ListItem, ListView, Screen, Toggle } from "../components"
 import { ActivityIndicator, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
-import { Recipe } from "app/models/Recipe"
+import { RecipeBrief } from "app/models/Recipe"
 import { Text } from "../components"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
 import { Drawer } from "react-native-drawer-layout"
@@ -101,7 +101,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
           safeAreaEdges={["top"]}
           contentContainerStyle={$screenContentContainer}
         >
-            <ListView<Recipe>
+            <ListView<RecipeBrief>
               data={filteredRecipes}
               estimatedItemSize={59}
               ListEmptyComponent={
@@ -190,7 +190,7 @@ const RecipeListItem = observer(function RecipeListItem({
   index,
   lastIndex
 }: {
-  recipe: Recipe,
+  recipe: RecipeBrief,
   index: number,
   lastIndex: number
 }) {
@@ -198,7 +198,7 @@ const RecipeListItem = observer(function RecipeListItem({
 const navigation = useNavigation<RecipeListScreenNavigationProp>()
 
   const handlePressItem = () => {
-    navigation.navigate("RecipeDetails", { recipe: recipe })
+    navigation.navigate("RecipeDetails", { recipeId: recipe.id })
   }
 
 

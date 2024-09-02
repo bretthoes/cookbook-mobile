@@ -25,7 +25,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     useEffect(() => {
       ;(async function load() {
         setIsLoading(true)
-        await recipeStore.fetchRecipe(_props.route.params.recipe.id)
+        await recipeStore.fetchRecipe(_props.route.params.recipeId)
         setIsLoading(false)
       })()
     }, [recipeStore])
@@ -33,7 +33,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      await Promise.all([recipeStore.fetchRecipe(_props.route.params.recipe.id), delay(750)])
+      await Promise.all([recipeStore.fetchRecipe(_props.route.params.recipeId), delay(750)])
       setRefreshing(false)
     }
 

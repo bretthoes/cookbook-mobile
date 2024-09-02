@@ -9,14 +9,24 @@ export const RecipeStoreModel = types
     recipes: types.array(RecipeBriefModel),
     favorites: types.array(types.reference(RecipeBriefModel)),
     favoritesOnly: false,
-    currentRecipe: types.maybeNull(RecipeModel)
+    currentRecipe: types.maybeNull(RecipeModel),
+    pageNumber: types.optional(types.number, 1),
+    totalPages: types.optional(types.number, 1),
+    totalCount: types.optional(types.number, 0),
+    hasPreviousPage: types.optional(types.boolean, false),
+    hasNextPage: types.optional(types.boolean, false),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
-    async fetchRecipes(cookbookId: number) {
-      const response = await api.getRecipes(cookbookId)
+    async fetchRecipes(cookbookId: number, pageNumber = 1, pageSize = 10) {
+      const response = await api.getRecipes(cookbookId, pageNumber, pageSize)
       if (response.kind === "ok") {
         store.setProp("recipes", response.recipes)
+        store.setProp("pageNumber", response.pagination.pageNumber)
+        store.setProp("totalPages", response.pagination.totalPages)
+        store.setProp("totalCount", response.pagination.totalCount)
+        store.setProp("hasPreviousPage", response.pagination.hasPreviousPage)
+        store.setProp("hasNextPage", response.pagination.hasNextPage)
       } else {
         console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
       }

@@ -3,7 +3,6 @@ import { CookbookListScreen } from "app/screens/CookbookListScreen"
 import { RecipeListScreen } from "app/screens/RecipeListScreen"
 import { RecipeDetailsScreen } from "app/screens/RecipeDetailsScreen"
 import { Cookbook } from "app/models/Cookbook"
-import { Recipe } from "app/models/Recipe"
 import { AddRecipeScreen } from "app/screens/AddRecipe"
 
 export type CookbookStackParamList = {
@@ -12,7 +11,7 @@ export type CookbookStackParamList = {
 }
 
 export type RecipeStackParamList = {
-  RecipeDetails: { recipe: Recipe }
+  RecipeDetails: { recipeId: number }
   AddRecipe: { cookbookId: number }
 }
 

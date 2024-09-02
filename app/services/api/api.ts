@@ -124,7 +124,15 @@ export class Api {
   /**
    * Gets a list of recipes matching a cookbookId with pagination.
    */
-  async getRecipes(cookbookId: number, pageNumber = 1, pageSize = 10): Promise<{ kind: "ok"; recipes: RecipeBriefSnapshotIn[] } | GeneralApiProblem> {
+  async getRecipes(cookbookId: number, pageNumber: number, pageSize: number)
+  : Promise<{ kind: "ok"; recipes: RecipeBriefSnapshotIn[], 
+    pagination: {
+      pageNumber: number
+      totalPages: number
+      totalCount: number
+      hasPreviousPage: boolean 
+      hasNextPage: boolean
+    }} | GeneralApiProblem> {
     // prepare query parameters
     const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
 
@@ -147,7 +155,16 @@ export class Api {
           ...raw,
         })) ?? []
 
-      return { kind: "ok", recipes }
+        // Extract pagination details
+        const pagination = {
+          pageNumber: rawData?.pageNumber ?? 1,
+          totalPages: rawData?.totalPages ?? 1,
+          totalCount: rawData?.totalCount ?? 0,
+          hasPreviousPage: rawData?.hasPreviousPage ?? false,
+          hasNextPage: rawData?.hasNextPage ?? false,
+        }
+
+      return { kind: "ok", recipes, pagination }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
