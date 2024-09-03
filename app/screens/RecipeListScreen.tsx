@@ -66,6 +66,14 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
       navigation.navigate("AddRecipe", { cookbookId: _props.route.params.cookbook.id })
     }
 
+    const handleInvite = () => {
+      navigation.navigate("AddRecipe", { cookbookId: _props.route.params.cookbook.id })
+    }
+
+    const handleLeave = () => {
+      navigation.navigate("AddRecipe", { cookbookId: _props.route.params.cookbook.id })
+    }
+
     const handleNextPage = async () => {
       if (recipeStore.hasNextPage) {
         setIsLoading(true)
@@ -98,16 +106,19 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
               text={translate("recipeListScreen.add")}
               textStyle={$right}
               rightIcon="caretRight"
+              onPress={handleAddRecipe}
             />
             <ListItem
               text={translate("recipeListScreen.invite")}
               textStyle={$right}
               rightIcon="caretRight"
+              onPress={handleInvite}
             />
             <ListItem
               text={translate("recipeListScreen.leave")}
               textStyle={$right}
               rightIcon="caretRight"
+              onPress={handleLeave}
             />
           </View>
         )}
