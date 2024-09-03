@@ -164,35 +164,28 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                     color={colors.palette.neutral600}
                   />
                 </View>
-                {(recipeStore.favoritesOnly || recipeStore.recipesForList.length > 0) && (
-                  <View style={$toggle}>
-                    <Toggle
-                      value={recipeStore.favoritesOnly}
-                      onValueChange={() =>
-                        recipeStore.setProp("favoritesOnly", !recipeStore.favoritesOnly)
-                      }
-                      variant="switch"
-                      labelTx="cookbookListScreen.onlyFavorites"
-                      labelPosition="left"
-                      accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
+                {(recipeStore.recipes.length > 0) && (
+                  <View style={$paginationContainer}>
+                    <Button
+                      onPress={handlePreviousPage}
+                      disabled={!recipeStore.hasPreviousPage}
+                      RightAccessory={() => (
+                        <Icon icon="caretLeft" />
+                      )}
+                    >
+                    </Button>
+                    <Text>
+                      Page {recipeStore.pageNumber} of {recipeStore.totalPages} ({recipeStore.totalCount} items)
+                    </Text>
+                    <Button
+                      onPress={handleNextPage}
+                      disabled={!recipeStore.hasNextPage}
+                      RightAccessory={() => (
+                        <Icon icon="caretRight" />
+                      )}
                     />
                   </View>
                 )}
-                <View style={$paginationContainer}>
-                  <Button
-                    text="Previous"
-                    onPress={handlePreviousPage}
-                    disabled={!recipeStore.hasPreviousPage}
-                  />
-                  <Text>
-                    Page {recipeStore.pageNumber} of {recipeStore.totalPages} ({recipeStore.totalCount} items)
-                  </Text>
-                  <Button
-                    text="Next"
-                    onPress={handleNextPage}
-                    disabled={!recipeStore.hasNextPage}
-                  />
-                </View>
               </View>
             }
             onRefresh={manualRefresh}
@@ -300,11 +293,6 @@ const $listItemStyle: ViewStyle = {
 
 const $screenContentContainer: ViewStyle = {
   flex: 1,
-}
-
-const $toggle: ViewStyle = {
-  marginVertical: spacing.sm,
-  paddingHorizontal: spacing.md,
 }
 
 const $searchContainer: ViewStyle = {
