@@ -4,7 +4,7 @@ import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
-import { EmptyState, Icon, ListItem, ListView, Screen, Toggle, Button } from "../components"
+import { EmptyState, Icon, ListItem, ListView, Screen, Button } from "../components"
 import { ActivityIndicator, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing, typography } from "app/theme"
 import { RecipeBrief } from "app/models/Recipe"
@@ -158,7 +158,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
             ListHeaderComponent={
               <View>
                 <View style={$headerContainer}>
-                  <Text preset="heading" text={_props.route.params.cookbook.title ?? "null"}/>
+                  <Text preset="heading" text={_props.route.params.cookbook.title}/>
                   <DrawerIconButton onPress={toggleDrawer} />
                 </View>
                 <View style={$searchContainer}>

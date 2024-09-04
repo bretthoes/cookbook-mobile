@@ -2,13 +2,17 @@ import React, { FC, useEffect, useState } from "react"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { Screen } from "../components"
 import { ImageStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
 import { Image } from "react-native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { delay } from "app/utils/delay"
+import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
+import {
+  Screen,
+  Text,
+} from "../components"
 
 const logo = require("../../assets/images/logo.png")
 
@@ -37,6 +41,10 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
       setRefreshing(false)
     }
 
+    const toggleDrawer = () => {
+      setOpen(!open)
+    }
+
     const $drawerInsets = useSafeAreaInsetsStyle(["top"])
 
     return (
@@ -59,6 +67,10 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
           safeAreaEdges={["top"]}
           contentContainerStyle={$screenContentContainer}
         >
+          <View style={$headerContainer}>
+            <Text preset="subheading" text={recipeStore.currentRecipe?.title} />
+            <DrawerIconButton onPress={toggleDrawer} />
+          </View>
         </Screen>
       </Drawer>
     )
@@ -87,4 +99,11 @@ const $logoContainer: ViewStyle = {
   height: 56,
   paddingHorizontal: spacing.lg,
 }
+
+const $headerContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+}
+
 // #endregion
