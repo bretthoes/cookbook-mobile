@@ -2,20 +2,17 @@ import React, { FC, useEffect, useState } from "react"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { ImageStyle, View, ViewStyle } from "react-native"
+import { ImageStyle, View, ViewStyle, ScrollView } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
 import { Image } from "react-native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { delay } from "app/utils/delay"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
-import {
-  Screen,
-  Text,
-} from "../components"
+import { Screen, Text } from "../components"
+import { AutoImage } from "../components/AutoImage" // Ensure correct import path for AutoImage
 
 const logo = require("../../assets/images/logo.png")
-
 
 export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = observer(
   function RecipeListScreen(_props) {
@@ -71,6 +68,12 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             <Text preset="subheading" text={recipeStore.currentRecipe?.title} />
             <DrawerIconButton onPress={toggleDrawer} />
           </View>
+
+          <ScrollView contentContainerStyle={$imagesContainer}>
+            {recipeStore.currentRecipe?.images.map((image, index) => (
+              <AutoImage key={index} source={{ uri: image.getImage }} maxWidth={300} maxHeight={200} />
+            ))}
+          </ScrollView>
         </Screen>
       </Drawer>
     )
@@ -104,6 +107,11 @@ const $headerContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
+}
+
+const $imagesContainer: ViewStyle = {
+  marginTop: spacing.md,
+  paddingHorizontal: spacing.md,
 }
 
 // #endregion
