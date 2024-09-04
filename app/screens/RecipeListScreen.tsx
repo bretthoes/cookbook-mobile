@@ -25,7 +25,7 @@ type RecipeListScreenNavigationProp = NativeStackNavigationProp<
 >
 
 export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
-  function CookbookDetailScreen(_props) {
+  function RecipeListScreen(_props) {
     const { recipeStore } = useStores()
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
