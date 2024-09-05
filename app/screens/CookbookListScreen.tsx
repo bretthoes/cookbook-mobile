@@ -84,6 +84,10 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
       setRefreshing(false)
     }
 
+    const handleAddCookbook = () => {
+      navigation.navigate("AddCookbook")
+    }
+
     const toggleDrawer = () => {
       setOpen(!open)
     }
@@ -106,6 +110,7 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
               text={translate("cookbookListScreen.add")}
               textStyle={$right}
               rightIcon="caretRight"
+              onPress={handleAddCookbook}
             />
           </View>
         )}
