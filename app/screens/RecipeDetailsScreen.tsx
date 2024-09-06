@@ -84,13 +84,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             <Text preset="subheading" weight="light" text={recipeStore.currentRecipe?.author ?? ''} />
           </View>
 
-          {recipeStore.currentRecipe?.summary && (
-            <View style={$descriptionContainer}>
-              <Text weight="light" text="Description" />
-              <Text weight="light" text={recipeStore.currentRecipe?.summary ?? ""} />
-            </View>
-          )}
-
           <View style={$detailsContainer}>
             {recipeStore.currentRecipe?.servings && (
               <View>
@@ -117,6 +110,14 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
               </View>
             )}
           </View>
+
+          {recipeStore.currentRecipe?.summary && (
+            <View style={$descriptionContainer}>
+              <Text weight="light" text="Description" />
+              <Text weight="light" text={recipeStore.currentRecipe?.summary ?? ""} />
+            </View>
+          )}
+
         </Screen>
       </Drawer>
     )
@@ -174,6 +175,8 @@ const $descriptionContainer: ViewStyle = {
 
 const $detailsContainer: ViewStyle = {
   flexDirection: "row",
+  borderColor: colors.palette.neutral400,
+  borderWidth: spacing.xxxs,
   alignItems: "center",
   justifyContent: "space-evenly",
   backgroundColor: colors.palette.neutral300,
