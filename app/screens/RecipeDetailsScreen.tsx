@@ -72,7 +72,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
           )}
 
           <View style={$titleContainer}>
-            <Text preset="subheading" text={recipeStore.currentRecipe?.title} />
+            <Text preset="heading" weight="normal" text={recipeStore.currentRecipe?.title} />
             <Icon
               icon="heart"
               size={32}
@@ -81,21 +81,21 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
           </View>
 
           <View style={$subtitleContainer}>
-            <Text text={recipeStore.currentRecipe?.author ?? ''} />
+            <Text preset="subheading" weight="light" text={recipeStore.currentRecipe?.author ?? ''} />
           </View>
 
           <View style={$detailsContainer}>
             {recipeStore.currentRecipe?.servings && (
-              <Text text={`Servings:\n${recipeStore.currentRecipe?.servings}pp`} />
+              <Text weight="light" text={`Servings:\n${recipeStore.currentRecipe?.servings}pp`} />
             )}
             {recipeStore.currentRecipe?.bakingTimeInMinutes && (
-              <Text text={`Bake Time:\n${recipeStore.currentRecipe?.bakingTimeInMinutes}m`} />
+              <Text weight="light" text={`Bake Time:\n${recipeStore.currentRecipe?.bakingTimeInMinutes}m`} />
             )}
             {recipeStore.currentRecipe?.preparationTimeInMinutes && (
-              <Text text={`Prep Time:\n${recipeStore.currentRecipe?.preparationTimeInMinutes}m`} />
+              <Text weight="light" text={`Prep Time:\n${recipeStore.currentRecipe?.preparationTimeInMinutes}m`} />
             )}
             {recipeStore.currentRecipe?.cookingTimeInMinutes && (
-              <Text text={`Cook Time:\n${recipeStore.currentRecipe?.cookingTimeInMinutes}m`} />
+              <Text weight="light" text={`Cook Time:\n${recipeStore.currentRecipe?.cookingTimeInMinutes}m`} />
             )}
           </View>
         </Screen>
