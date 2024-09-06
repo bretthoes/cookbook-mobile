@@ -39,7 +39,7 @@ export function Slide(props: SlideProps) {
       >
         {data.map((image, index) => (
           <View key={index} style={{ width: viewportWidth }}>
-            <AutoImage source={{ uri: image.getImage }} maxWidth={viewportWidth} maxHeight={viewportWidth} />
+            <AutoImage source={{ uri: image.getImage }}  maxWidth={viewportWidth} />
           </View>
         ))}
       </ScrollView>
