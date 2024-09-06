@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { ImageStyle, View, ViewStyle, ScrollView } from "react-native"
+import { ImageStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
 import { Image } from "react-native"
@@ -10,7 +10,7 @@ import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { delay } from "app/utils/delay"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
 import { Screen, Text } from "../components"
-import { AutoImage } from "../components/AutoImage" // Ensure correct import path for AutoImage
+import { Slide } from "app/components/Slide"
 
 const logo = require("../../assets/images/logo.png")
 
@@ -20,7 +20,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [searchQuery, setSearchQuery] = useState("")
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -69,11 +68,9 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             <DrawerIconButton onPress={toggleDrawer} />
           </View>
 
-          <ScrollView contentContainerStyle={$imagesContainer}>
-            {recipeStore.currentRecipe?.images.map((image, index) => (
-              <AutoImage key={index} source={{ uri: image.getImage }} maxWidth={300} maxHeight={200} />
-            ))}
-          </ScrollView>
+          {recipeStore.currentRecipe?.images && (
+            <Slide data={recipeStore.currentRecipe?.images} />
+          )}
         </Screen>
       </Drawer>
     )
@@ -107,11 +104,6 @@ const $headerContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
-}
-
-const $imagesContainer: ViewStyle = {
-  marginTop: spacing.md,
-  paddingHorizontal: spacing.md,
 }
 
 // #endregion
