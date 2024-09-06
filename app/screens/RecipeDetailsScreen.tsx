@@ -104,6 +104,7 @@ const $headerContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
+  marginHorizontal: spacing.sm,
 }
 
 // #endregion

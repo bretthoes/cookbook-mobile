@@ -1,6 +1,6 @@
-import { spacing } from "app/theme"
-import React from "react"
-import { Dimensions, ScrollView, View, ViewStyle } from "react-native"
+import { spacing, colors } from "app/theme"
+import React, { useState } from "react"
+import { Dimensions, ScrollView, View, ViewStyle, NativeScrollEvent, NativeSyntheticEvent } from "react-native"
 import { AutoImage } from "./AutoImage"
 import { RecipeImage } from "app/models/RecipeImage"
 
@@ -20,26 +20,65 @@ export interface SlideProps {
  */
 export function Slide(props: SlideProps) {
   const { data } = props
+  const [activeIndex, setActiveIndex] = useState(0)
 
+  // Handle scroll event to update the active dot based on the current image
+  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / viewportWidth)
+    setActiveIndex(slideIndex)
+  }
 
-  return <ScrollView
-    horizontal
-    pagingEnabled
-    showsHorizontalScrollIndicator={false}
-    contentContainerStyle={$scrollViewContent}
-  >
-    {data.map((image, index) => (
-      <View key={index} style={{ width: viewportWidth }}>
-        <AutoImage source={{ uri: image.getImage }} maxWidth={viewportWidth} maxHeight={viewportWidth} />
+  return (
+    <View>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+      >
+        {data.map((image, index) => (
+          <View key={index} style={{ width: viewportWidth }}>
+            <AutoImage source={{ uri: image.getImage }} maxWidth={viewportWidth} maxHeight={viewportWidth} />
+          </View>
+        ))}
+      </ScrollView>
+      <View style={$dotContainer}>
+        {data.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              $dot,
+              index === activeIndex ? $activeDot : $inactiveDot,
+            ]}
+          />
+        ))}
       </View>
-    ))}
-  </ScrollView>
+    </View>
+  )
 }
 
 // #region Styles
 
-const $scrollViewContent: ViewStyle = {
-  marginTop: spacing.md,
+const $dotContainer: ViewStyle = {
+  flexDirection: "row",
+  justifyContent: "center",
+  marginTop: spacing.sm,
+}
+
+const $dot: ViewStyle = {
+  width: spacing.xs,
+  height: spacing.xs,
+  borderRadius: spacing.xs,
+  marginHorizontal: spacing.xxs,
+}
+
+const $activeDot: ViewStyle = {
+  backgroundColor: colors.palette.neutral700,
+}
+
+const $inactiveDot: ViewStyle = {
+  backgroundColor: colors.palette.neutral300,
 }
 
 // #endregion
