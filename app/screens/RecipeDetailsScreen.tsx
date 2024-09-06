@@ -9,7 +9,7 @@ import { Image } from "react-native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { delay } from "app/utils/delay"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
-import { Screen, Text } from "../components"
+import { Icon, Screen, Text } from "../components"
 import { Slide } from "app/components/Slide"
 
 const logo = require("../../assets/images/logo.png")
@@ -64,13 +64,40 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
           contentContainerStyle={$screenContentContainer}
         >
           <View style={$headerContainer}>
-            <Text preset="subheading" text={recipeStore.currentRecipe?.title} />
             <DrawerIconButton onPress={toggleDrawer} />
           </View>
 
           {recipeStore.currentRecipe?.images && (
             <Slide data={recipeStore.currentRecipe?.images} />
           )}
+
+          <View style={$titleContainer}>
+            <Text preset="subheading" text={recipeStore.currentRecipe?.title} />
+            <Icon
+              icon="heart"
+              size={32}
+              color={colors.palette.primary400}
+            />
+          </View>
+
+          <View style={$subtitleContainer}>
+            <Text text={recipeStore.currentRecipe?.author ?? ''} />
+          </View>
+
+          <View style={$detailsContainer}>
+            {recipeStore.currentRecipe?.servings && (
+              <Text text={`Servings:\n${recipeStore.currentRecipe?.servings}pp`} />
+            )}
+            {recipeStore.currentRecipe?.bakingTimeInMinutes && (
+              <Text text={`Bake Time:\n${recipeStore.currentRecipe?.bakingTimeInMinutes}m`} />
+            )}
+            {recipeStore.currentRecipe?.preparationTimeInMinutes && (
+              <Text text={`Prep Time:\n${recipeStore.currentRecipe?.preparationTimeInMinutes}m`} />
+            )}
+            {recipeStore.currentRecipe?.cookingTimeInMinutes && (
+              <Text text={`Cook Time:\n${recipeStore.currentRecipe?.cookingTimeInMinutes}m`} />
+            )}
+          </View>
         </Screen>
       </Drawer>
     )
@@ -102,9 +129,32 @@ const $logoContainer: ViewStyle = {
 
 const $headerContainer: ViewStyle = {
   flexDirection: "row",
+  alignItems: "flex-end",
+  justifyContent: "flex-end",
+}
+
+const $titleContainer: ViewStyle = {
+  flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
   marginHorizontal: spacing.sm,
+}
+
+const $subtitleContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  marginHorizontal: spacing.sm,
+}
+
+const $detailsContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-evenly",
+  backgroundColor: colors.palette.neutral300,
+  borderRadius: spacing.sm,
+  margin: spacing.sm,
+  padding: spacing.md,
 }
 
 // #endregion

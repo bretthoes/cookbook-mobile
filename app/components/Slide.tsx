@@ -20,6 +20,7 @@ export interface SlideProps {
  */
 export function Slide(props: SlideProps) {
   const { data } = props
+  const shouldShowPagination = data.length > 1
   const [activeIndex, setActiveIndex] = useState(0)
 
   // Handle scroll event to update the active dot based on the current image
@@ -43,7 +44,8 @@ export function Slide(props: SlideProps) {
           </View>
         ))}
       </ScrollView>
-      <View style={$dotContainer}>
+      {shouldShowPagination && (
+        <View style={$dotContainer}>
         {data.map((_, index) => (
           <View
             key={index}
@@ -54,6 +56,7 @@ export function Slide(props: SlideProps) {
           />
         ))}
       </View>
+      )}
     </View>
   )
 }
