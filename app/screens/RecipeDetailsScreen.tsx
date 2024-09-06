@@ -84,18 +84,37 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             <Text preset="subheading" weight="light" text={recipeStore.currentRecipe?.author ?? ''} />
           </View>
 
+          {recipeStore.currentRecipe?.summary && (
+            <View style={$descriptionContainer}>
+              <Text weight="light" text="Description" />
+              <Text weight="light" text={recipeStore.currentRecipe?.summary ?? ""} />
+            </View>
+          )}
+
           <View style={$detailsContainer}>
             {recipeStore.currentRecipe?.servings && (
-              <Text weight="light" text={`Servings:\n${recipeStore.currentRecipe?.servings}pp`} />
+              <View>
+                <Text weight="light" text="Servings" />
+                <Text preset="heading" weight="light" text={`${recipeStore.currentRecipe?.servings}pp`} />
+              </View>
             )}
             {recipeStore.currentRecipe?.bakingTimeInMinutes && (
-              <Text weight="light" text={`Bake Time:\n${recipeStore.currentRecipe?.bakingTimeInMinutes}m`} />
+              <View>
+                <Text weight="light" text="Bake Time" />
+                <Text preset="heading" weight="light" text={`${recipeStore.currentRecipe?.bakingTimeInMinutes}m`} />
+              </View>
             )}
             {recipeStore.currentRecipe?.preparationTimeInMinutes && (
-              <Text weight="light" text={`Prep Time:\n${recipeStore.currentRecipe?.preparationTimeInMinutes}m`} />
+              <View>
+                <Text weight="light" text="Prep Time" />
+                <Text preset="heading" weight="light" text={`${recipeStore.currentRecipe?.preparationTimeInMinutes}m`} />
+              </View>
             )}
             {recipeStore.currentRecipe?.cookingTimeInMinutes && (
-              <Text weight="light" text={`Cook Time:\n${recipeStore.currentRecipe?.cookingTimeInMinutes}m`} />
+              <View>
+                <Text weight="light" text="Cook Time:" />
+                <Text preset="heading" weight="light" text={`${recipeStore.currentRecipe?.cookingTimeInMinutes}m`} />
+              </View>
             )}
           </View>
         </Screen>
@@ -147,12 +166,18 @@ const $subtitleContainer: ViewStyle = {
   marginHorizontal: spacing.sm,
 }
 
+const $descriptionContainer: ViewStyle = {
+  flexDirection: "column",
+  alignItems: "flex-start",
+  marginHorizontal: spacing.sm,
+}
+
 const $detailsContainer: ViewStyle = {
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-evenly",
   backgroundColor: colors.palette.neutral300,
-  borderRadius: spacing.sm,
+  borderRadius: spacing.md,
   margin: spacing.sm,
   padding: spacing.md,
 }
