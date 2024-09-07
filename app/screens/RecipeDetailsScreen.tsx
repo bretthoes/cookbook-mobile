@@ -15,7 +15,7 @@ import { Slide } from "app/components/Slide"
 const logo = require("../../assets/images/logo.png")
 
 export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = observer(
-  function RecipeListScreen(_props) {
+  function RecipeDetailsScreen(_props) {
     const { recipeStore } = useStores()
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
@@ -59,25 +59,17 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
         )}
       >
         <Screen
-          preset="fixed"
-          safeAreaEdges={["top"]}
+          preset="scroll"
           contentContainerStyle={$screenContentContainer}
         >
-          <View style={$headerContainer}>
-            <DrawerIconButton onPress={toggleDrawer} />
-          </View>
-
+          
           {recipeStore.currentRecipe?.images && (
             <Slide data={recipeStore.currentRecipe?.images} />
           )}
 
           <View style={$titleContainer}>
             <Text preset="heading" weight="normal" text={recipeStore.currentRecipe?.title} />
-            <Icon
-              icon="heart"
-              size={32}
-              color={colors.palette.primary400}
-            />
+            <DrawerIconButton onPress={toggleDrawer} />
           </View>
 
           <View style={$subtitleContainer}>
@@ -117,7 +109,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
               <Text weight="light" text={recipeStore.currentRecipe?.summary ?? ""} />
             </View>
           )}
-
+    
         </Screen>
       </Drawer>
     )
@@ -127,7 +119,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
 // #region Styles
 
 const $screenContentContainer: ViewStyle = {
-  flex: 1,
 }
 
 const $drawer: ViewStyle = {
@@ -145,12 +136,6 @@ const $logoContainer: ViewStyle = {
   justifyContent: "center",
   height: 56,
   paddingHorizontal: spacing.lg,
-}
-
-const $headerContainer: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "flex-end",
-  justifyContent: "flex-end",
 }
 
 const $titleContainer: ViewStyle = {

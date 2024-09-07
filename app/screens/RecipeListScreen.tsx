@@ -124,7 +124,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
         )}
       >
         <Screen
-          preset="fixed"
+          preset="scroll"
           safeAreaEdges={["top"]}
           contentContainerStyle={$screenContentContainer}
         >
