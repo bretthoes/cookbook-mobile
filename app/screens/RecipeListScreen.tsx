@@ -241,9 +241,9 @@ const navigation = useNavigation<RecipeListScreenNavigationProp>()
     <ListItem
       onPress={handlePressItem}
       text={recipe.title}
-      textStyle={$textStyle}
       rightIcon="caretRight"
-      TextProps={{ numberOfLines: 1 }}
+      textStyle={$customFont}
+      TextProps={{ numberOfLines: 1, size: "xs" }}
       topSeparator
       bottomSeparator={index === lastIndex}
     />
@@ -291,8 +291,7 @@ const $right: TextStyle = {
   textAlign: "right",
 }
 
-const $textStyle: TextStyle = {
-  fontSize: 14, // TODO TextProps
+const $customFont: TextStyle = {
   fontFamily: typography.code?.normal,
 }
 
