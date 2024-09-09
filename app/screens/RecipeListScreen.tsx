@@ -236,7 +236,6 @@ const navigation = useNavigation<RecipeListScreenNavigationProp>()
     navigation.navigate("RecipeDetails", { recipeId: recipe.id })
   }
 
-
   return (
     <ListItem
       onPress={handlePressItem}
