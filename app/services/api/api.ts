@@ -256,6 +256,7 @@ export class Api {
     try {
       await this.setAuthorizationHeader(this.apisauce)
       let response: ApiResponse<any>
+  
       switch (method) {
         case "GET":
           response = await this.apisauce.get(endpoint, body)
@@ -272,9 +273,18 @@ export class Api {
         default:
           throw new Error("Invalid HTTP method")
       }
-
+  
+      // If access token is expired
       if (response.status === 401) {
+        // Try to refresh the token
         const newAccessToken = await this.refreshAuthToken()
+  
+        if (!newAccessToken) {
+          // TODO Log out the user
+          throw new Error("Session expired. Please log in again.")
+        }
+  
+        // Set the new access token and retry the request
         this.apisauce.setHeader("Authorization", `Bearer ${newAccessToken}`)
         switch (method) {
           case "GET":
@@ -287,13 +297,13 @@ export class Api {
             return await this.apisauce.delete(endpoint, body)
         }
       }
-
+  
       return response
     } catch (error) {
       console.error("Request failed:", error)
       throw error
     }
-  }
+  }  
 }
 
 // Singleton instance of the API for convenience
