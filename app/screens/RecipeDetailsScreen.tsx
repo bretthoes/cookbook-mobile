@@ -2,15 +2,17 @@ import React, { FC, useEffect, useState } from "react"
 import { useStores } from "../models"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { ImageStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
 import { Image } from "react-native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { delay } from "app/utils/delay"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
-import { Icon, Screen, Text } from "../components"
+import { ListItem, ListView, Screen, Text } from "../components"
 import { Slide } from "app/components/Slide"
+import { RecipeIngredient } from "app/models/RecipeIngredient"
+import { RecipeDirection } from "app/models/RecipeDirection"
 
 const logo = require("../../assets/images/logo.png")
 
@@ -109,7 +111,62 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
               <Text weight="light" text={recipeStore.currentRecipe?.summary ?? ""} />
             </View>
           )}
-    
+
+          <View style={{minHeight: spacing.xxs}}>
+            <ListView<RecipeIngredient>
+              ListHeaderComponent={
+                <Text weight="light" text="Ingredients" style={{ paddingBottom: spacing.md }} />
+              }
+              renderItem={({item, index}) => (
+                <View style={[
+                  $listItemStyle,
+                  index === 0 && $borderTop,
+                  index === recipeStore.currentRecipe?.ingredients!.length! - 1 && $borderBottom
+                ]}>
+                  <ListItem text={`- ${item.name}`} />
+                </View>
+              )}
+              data={recipeStore.currentRecipe?.ingredients}
+              estimatedItemSize={59}
+              contentContainerStyle={$ingredientsContainer}
+              ListEmptyComponent={
+                isLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <View />
+                )
+              }
+              >
+            </ListView>
+          </View>
+
+          <View style={{minHeight: spacing.xxs }}>
+            <ListView<RecipeDirection>
+              ListHeaderComponent={
+                <Text weight="light" text="Directions" style={{ paddingBottom: spacing.md }}  />
+              }
+              renderItem={({item, index}) => (
+                <View style={[
+                  $listItemStyle,
+                  index === 0 && $borderTop,
+                  index === recipeStore.currentRecipe?.directions!.length! - 1 && $borderBottom
+                ]}>
+                  <ListItem text={`${item.ordinal}. ${item.text}`} />
+                </View>
+              )}
+              data={recipeStore.currentRecipe?.directions}
+              estimatedItemSize={59}
+              contentContainerStyle={$directionsContainer}
+              ListEmptyComponent={
+                isLoading ? (
+                  <ActivityIndicator />
+                ) : (
+                  <View />
+                )
+              }
+              >
+            </ListView>
+          </View>
         </Screen>
       </Drawer>
     )
@@ -120,6 +177,23 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
 
 const $screenContentContainer: ViewStyle = {
 }
+
+const $listItemStyle: ViewStyle = {
+  backgroundColor: colors.palette.neutral100,
+  paddingHorizontal: spacing.md,
+  marginHorizontal: spacing.sm,
+}
+
+const $borderTop: ViewStyle = {
+  borderTopLeftRadius: spacing.xs,
+  borderTopRightRadius: spacing.xs,
+}
+
+const $borderBottom: ViewStyle = {
+  borderBottomLeftRadius: spacing.xs,
+  borderBottomRightRadius: spacing.xs,
+}
+
 
 const $drawer: ViewStyle = {
   backgroundColor: colors.background,
@@ -168,6 +242,14 @@ const $detailsContainer: ViewStyle = {
   borderRadius: spacing.md,
   margin: spacing.sm,
   padding: spacing.md,
+}
+
+const $directionsContainer: ViewStyle = {
+  padding: spacing.md,
+}
+
+const $ingredientsContainer: ViewStyle = {
+  padding: spacing.md
 }
 
 // #endregion
