@@ -114,16 +114,22 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
 
           <View style={{minHeight: spacing.xxs}}>
             <ListView<RecipeIngredient>
+              onRefresh={manualRefresh}
+              refreshing={refreshing}
               ListHeaderComponent={
                 <Text weight="light" text="Ingredients" style={{ paddingBottom: spacing.md }} />
               }
               renderItem={({item, index}) => (
                 <View style={[
-                  $listItemStyle,
+                  $ingredientItemStyle,
                   index === 0 && $borderTop,
                   index === recipeStore.currentRecipe?.ingredients!.length! - 1 && $borderBottom
                 ]}>
-                  <ListItem text={`- ${item.name}`} />
+                  <CustomListItem 
+                    text={` - ${item.name}`} 
+                    index={index} 
+                    lastIndex = {recipeStore.currentRecipe?.ingredients.length! - 1}
+                    height={spacing.xl} />
                 </View>
               )}
               data={recipeStore.currentRecipe?.ingredients}
@@ -142,6 +148,8 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
 
           <View style={{minHeight: spacing.xxs }}>
             <ListView<RecipeDirection>
+              onRefresh={manualRefresh}
+              refreshing={refreshing}
               ListHeaderComponent={
                 <Text weight="light" text="Directions" style={{ paddingBottom: spacing.md }}  />
               }
@@ -151,7 +159,11 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                   index === 0 && $borderTop,
                   index === recipeStore.currentRecipe?.directions!.length! - 1 && $borderBottom
                 ]}>
-                  <ListItem text={`${item.ordinal}. ${item.text}`} />
+                  <CustomListItem 
+                    text={`${item.ordinal}. ${item.text}`} 
+                    index={index} 
+                    lastIndex = {recipeStore.currentRecipe?.directions.length! - 1}
+                    height={spacing.xl} />
                 </View>
               )}
               data={recipeStore.currentRecipe?.directions}
@@ -173,15 +185,48 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
   },
 )
 
+// TODO move to separate file
+const CustomListItem = observer(function CustomListItem({
+  text,
+  index,
+  lastIndex,
+  height,
+}: {
+  text: string,
+  index: number,
+  lastIndex: number,
+  height: number
+}) {
+
+  const handlePressItem = () => {
+    // strikethrough
+  }
+
+  return (
+    <ListItem
+      onPress={handlePressItem}
+      text={text}
+      topSeparator={index > 0}
+      bottomSeparator={index !== lastIndex}
+      TextProps={{size: "md"}}
+      height={height}
+    />
+  )
+})
+
 // #region Styles
 
 const $screenContentContainer: ViewStyle = {
 }
 
+const $ingredientItemStyle: ViewStyle = {
+  backgroundColor: colors.palette.neutral100,
+  paddingHorizontal: spacing.md
+}
+
 const $listItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
-  paddingHorizontal: spacing.md,
-  marginHorizontal: spacing.sm,
+  paddingHorizontal: spacing.md
 }
 
 const $borderTop: ViewStyle = {
