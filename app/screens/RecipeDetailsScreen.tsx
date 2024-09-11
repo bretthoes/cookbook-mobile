@@ -126,7 +126,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                   index === recipeStore.currentRecipe?.ingredients!.length! - 1 && $borderBottom
                 ]}>
                   <CustomListItem 
-                    text={` - ${item.name}`} 
+                    text={` - ${item?.name}`} 
                     index={index} 
                     lastIndex = {recipeStore.currentRecipe?.ingredients.length! - 1}
                     height={spacing.xl} />
