@@ -19,31 +19,41 @@ export const RecipeSummary = ({ recipe }: RecipeSummaryProps) => (
     </View>
 
     <View style={$detailsContainer}>
-            {recipe.servings && (
-              <View>
-                <Text weight="light" text="Servings" />
-                <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
-              </View>
-            )}
-            {recipe.bakingTimeInMinutes && (
-              <View>
-                <Text weight="light" text="Bake Time" />
-                <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
-              </View>
-            )}
-            {recipe.preparationTimeInMinutes && (
-              <View>
-                <Text weight="light" text="Prep Time" />
-                <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
-              </View>
-            )}
-            {recipe.cookingTimeInMinutes && (
-              <View>
-                <Text weight="light" text="Cook Time:" />
-                <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
-              </View>
-            )}
-          </View>
+      {recipe.servings && (
+        <View>
+          <Text weight="light" text="Servings" />
+          <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
+        </View>
+      )}
+
+      {recipe.bakingTimeInMinutes && (
+        <View>
+          <Text weight="light" text="Bake Time" />
+          <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
+        </View>
+      )}
+
+      {recipe.preparationTimeInMinutes && (
+        <View>
+          <Text weight="light" text="Prep Time" />
+          <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
+        </View>
+      )}
+      
+      {recipe.cookingTimeInMinutes && (
+        <View>
+          <Text weight="light" text="Cook Time:" />
+          <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
+        </View>
+      )}
+    </View>
+
+    {recipe.summary && (
+      <View style={$descriptionContainer}>
+        <Text weight="light" text="Description" />
+        <Text weight="light" text={recipe.summary ?? ""} />
+      </View>
+    )}
   </View>
 )
 
@@ -66,4 +76,10 @@ const $detailsContainer: ViewStyle = {
   borderRadius: spacing.md,
   margin: spacing.sm,
   padding: spacing.md,
+}
+
+const $descriptionContainer: ViewStyle = {
+  flexDirection: "column",
+  alignItems: "flex-start",
+  marginHorizontal: spacing.sm,
 }

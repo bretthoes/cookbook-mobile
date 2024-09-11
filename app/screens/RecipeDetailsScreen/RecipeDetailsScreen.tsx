@@ -61,13 +61,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             <RecipeSummary recipe={recipeStore.currentRecipe} />
           )}
 
-          {recipeStore.currentRecipe?.summary && (
-            <View style={$descriptionContainer}>
-              <Text weight="light" text="Description" />
-              <Text weight="light" text={recipeStore.currentRecipe?.summary ?? ""} />
-            </View>
-          )}
-
           <View style={{minHeight: spacing.xxs}}>
             <ListView<RecipeIngredient>
               onRefresh={manualRefresh}
@@ -164,12 +157,6 @@ const $borderTop: ViewStyle = {
 const $borderBottom: ViewStyle = {
   borderBottomLeftRadius: spacing.xs,
   borderBottomRightRadius: spacing.xs,
-}
-
-const $descriptionContainer: ViewStyle = {
-  flexDirection: "column",
-  alignItems: "flex-start",
-  marginHorizontal: spacing.sm,
 }
 
 const $directionsContainer: ViewStyle = {
