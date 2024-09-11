@@ -49,6 +49,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
         )}
       >
         <Screen
+          safeAreaEdges={recipeStore.currentRecipe?.images[0] ? [] : ["top"]}
           preset="scroll"
           contentContainerStyle={$screenContentContainer}
         >
@@ -61,7 +62,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             <RecipeSummary recipe={recipeStore.currentRecipe} />
           )}
 
-          {recipeStore.currentRecipe?.ingredients && (
+          {recipeStore.currentRecipe && (
             <View style={{minHeight: spacing.xxs}}>
               <ListView<RecipeIngredient>
                 onRefresh={manualRefresh}
@@ -76,7 +77,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                     index === recipeStore.currentRecipe?.ingredients!.length! - 1 && $borderBottom
                   ]}>
                     <CustomListItem 
-                      text={` - ${item.name}`} 
+                      text={` - ${item?.name}`} 
                       index={index} 
                       lastIndex = {recipeStore.currentRecipe?.ingredients.length! - 1}
                       height={spacing.xl} />
@@ -97,7 +98,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
             </View>
           )}
 
-          {recipeStore.currentRecipe?.directions && (
+          {recipeStore.currentRecipe && (
             <View style={{minHeight: spacing.xxs }}>
               <ListView<RecipeDirection>
                 onRefresh={manualRefresh}
@@ -109,12 +110,12 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                   <View style={[
                     $listItemStyle,
                     index === 0 && $borderTop,
-                    index === recipeStore.currentRecipe?.directions!.length! - 1 && $borderBottom
+                    index === (recipeStore.currentRecipe?.directions?.length ?? 0) - 1 && $borderBottom
                   ]}>
                     <CustomListItem 
-                      text={`${item.ordinal}. ${item.text}`} 
+                      text={`${item?.ordinal}. ${item?.text}`} 
                       index={index} 
-                      lastIndex = {recipeStore.currentRecipe?.directions.length! - 1}
+                      lastIndex = {(recipeStore.currentRecipe?.directions?.length ?? 0) - 1}
                       height={spacing.xl} />
                   </View>
                 )}

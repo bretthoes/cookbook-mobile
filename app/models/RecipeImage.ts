@@ -15,7 +15,7 @@ export const RecipeImageModel = types
   .actions(withSetPropAction)
   .views((image) => ({
     get getImage() {
-      return image.name ? `${Config.S3_URL}/${image.name}` : ""
+      return image?.name ? `${Config.S3_URL}/${image?.name}` : ""
     },
   }))
 
