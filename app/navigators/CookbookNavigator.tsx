@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { CookbookListScreen } from "app/screens/CookbookListScreen"
 import { RecipeListScreen } from "app/screens/RecipeListScreen"
-import { RecipeDetailsScreen } from "app/screens/RecipeDetailsScreen"
+import { RecipeDetailsScreen } from "app/screens/RecipeDetailsScreen/RecipeDetailsScreen"
 import { Cookbook } from "app/models/Cookbook"
 import { AddRecipeScreen } from "app/screens/AddRecipe"
 import { AddCookbookScreen } from "app/screens/AddCookbook"

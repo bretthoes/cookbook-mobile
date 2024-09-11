@@ -1,20 +1,18 @@
 import React, { FC, useEffect, useState } from "react"
-import { useStores } from "../models"
-import { DemoTabScreenProps } from "../navigators/DemoNavigator"
+import { useStores } from "../../models"
+import { DemoTabScreenProps } from "../../navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
-import { Image } from "react-native"
-import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { delay } from "app/utils/delay"
-import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
-import { ListItem, ListView, Screen, Text } from "../components"
+import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
+import { ListView, Screen, Text } from "../../components"
 import { Slide } from "app/components/Slide"
 import { RecipeIngredient } from "app/models/RecipeIngredient"
 import { RecipeDirection } from "app/models/RecipeDirection"
-
-const logo = require("../../assets/images/logo.png")
+import { CustomListItem } from "./CustomListItem"
+import { RecipeDrawer } from "./RecipeDrawer"
 
 export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = observer(
   function RecipeDetailsScreen(_props) {
@@ -43,8 +41,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
       setOpen(!open)
     }
 
-    const $drawerInsets = useSafeAreaInsetsStyle(["top"])
-
     return (
       <Drawer
         open={open}
@@ -53,11 +49,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
         drawerType="back"
         drawerPosition={"right"}
         renderDrawerContent={() => (
-          <View style={[$drawer, $drawerInsets]}>
-            <View style={$logoContainer}>
-              <Image source={logo} style={$logoImage} />
-            </View>
-          </View>
+          <RecipeDrawer />
         )}
       >
         <Screen
@@ -126,7 +118,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                   index === recipeStore.currentRecipe?.ingredients!.length! - 1 && $borderBottom
                 ]}>
                   <CustomListItem 
-                    text={` - ${item?.name}`} 
+                    text={` - ${item.name}`} 
                     index={index} 
                     lastIndex = {recipeStore.currentRecipe?.ingredients.length! - 1}
                     height={spacing.xl} />
@@ -185,35 +177,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
   },
 )
 
-// TODO move to separate file
-const CustomListItem = observer(function CustomListItem({
-  text,
-  index,
-  lastIndex,
-  height,
-}: {
-  text: string,
-  index: number,
-  lastIndex: number,
-  height: number
-}) {
-
-  const handlePressItem = () => {
-    // strikethrough
-  }
-
-  return (
-    <ListItem
-      onPress={handlePressItem}
-      text={text}
-      topSeparator={index > 0}
-      bottomSeparator={index !== lastIndex}
-      TextProps={{size: "md"}}
-      height={height}
-    />
-  )
-})
-
 // #region Styles
 
 const $screenContentContainer: ViewStyle = {
@@ -237,24 +200,6 @@ const $borderTop: ViewStyle = {
 const $borderBottom: ViewStyle = {
   borderBottomLeftRadius: spacing.xs,
   borderBottomRightRadius: spacing.xs,
-}
-
-
-const $drawer: ViewStyle = {
-  backgroundColor: colors.background,
-  flex: 1,
-}
-
-const $logoImage: ImageStyle = {
-  height: 42,
-  width: 77,
-}
-
-const $logoContainer: ViewStyle = {
-  alignSelf: "flex-end",
-  justifyContent: "center",
-  height: 56,
-  paddingHorizontal: spacing.lg,
 }
 
 const $titleContainer: ViewStyle = {
