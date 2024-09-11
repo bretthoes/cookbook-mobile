@@ -19,11 +19,31 @@ export const RecipeSummary = ({ recipe }: RecipeSummaryProps) => (
     </View>
 
     <View style={$detailsContainer}>
-      {recipe.servings && <Text weight="light" text={`Servings: ${recipe.servings}pp`} />}
-      {recipe.bakingTimeInMinutes && <Text weight="light" text={`Bake Time: ${recipe.bakingTimeInMinutes}m`} />}
-      {recipe.preparationTimeInMinutes && <Text weight="light" text={`Prep Time: ${recipe.preparationTimeInMinutes}m`} />}
-      {recipe.cookingTimeInMinutes && <Text weight="light" text={`Cook Time: ${recipe.cookingTimeInMinutes}m`} />}
-    </View>
+            {recipe.servings && (
+              <View>
+                <Text weight="light" text="Servings" />
+                <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
+              </View>
+            )}
+            {recipe.bakingTimeInMinutes && (
+              <View>
+                <Text weight="light" text="Bake Time" />
+                <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
+              </View>
+            )}
+            {recipe.preparationTimeInMinutes && (
+              <View>
+                <Text weight="light" text="Prep Time" />
+                <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
+              </View>
+            )}
+            {recipe.cookingTimeInMinutes && (
+              <View>
+                <Text weight="light" text="Cook Time:" />
+                <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
+              </View>
+            )}
+          </View>
   </View>
 )
 
