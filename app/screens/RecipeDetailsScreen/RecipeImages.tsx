@@ -1,24 +1,16 @@
 import { spacing, colors } from "app/theme"
 import React, { useState } from "react"
 import { Dimensions, ScrollView, View, ViewStyle, NativeScrollEvent, NativeSyntheticEvent } from "react-native"
-import { AutoImage } from "./AutoImage"
+import { AutoImage } from "../../components/AutoImage"
 import { RecipeImage } from "app/models/RecipeImage"
 
 const { width: viewportWidth } = Dimensions.get("window")
 
-export interface SlideProps {
-  /**
-   * The images to be displayed in the carousel slide
-   */
+export interface RecipeImagesProps {
   data: RecipeImage[],
 }
 
-/**
- * A slide component to display an array of images.
- * @param {SlideProps} props - The props for the `Slide` component.
- * @returns {JSX.Element} The rendered `Slide` component.
- */
-export function Slide(props: SlideProps) {
+export function RecipeImages(props: RecipeImagesProps) {
   const { data } = props
   const shouldShowPagination = data.length > 1
   const [activeIndex, setActiveIndex] = useState(0)
