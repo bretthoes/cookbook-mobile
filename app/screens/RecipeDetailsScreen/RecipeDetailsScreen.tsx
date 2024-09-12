@@ -70,7 +70,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                 ListHeaderComponent={
                   <Text 
                     weight="light" 
-                    text="Ingredients" 
+                    tx="recipeDetailsScreen.ingredients"
                     style={{ paddingBottom: spacing.md }} />
                 }
                 renderItem={({item, index}) => (
@@ -109,7 +109,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                 ListHeaderComponent={
                   <Text 
                     weight="light" 
-                    text="Directions" 
+                    tx="recipeDetailsScreen.directions"
                     style={{ paddingBottom: spacing.md }}  />
                 }
                 renderItem={({item, index}) => (

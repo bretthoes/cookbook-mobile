@@ -142,6 +142,15 @@ const en = {
         "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
     },
   },
+  recipeDetailsScreen: {
+    directions: "Directions",
+    ingredients: "Ingredients",
+    servings: "Servings",
+    cook: "Cook Time",
+    prep: "Prep Time",
+    bake: "Bake Time",
+    summary: "Summary"
+  },
   recipeListScreen: {
     title: "Recipes",
     searchPlaceholder: "Search",
