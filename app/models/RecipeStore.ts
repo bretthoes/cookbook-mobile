@@ -2,6 +2,7 @@ import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { RecipeBrief, RecipeBriefModel, RecipeModel } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
+import { PaginationModel } from "./Pagination"
 
 export const RecipeStoreModel = types
   .model("RecipeStore")
@@ -10,6 +11,7 @@ export const RecipeStoreModel = types
     favorites: types.array(types.reference(RecipeBriefModel)),
     favoritesOnly: false,
     currentRecipe: types.maybeNull(RecipeModel),
+    pagination: types.maybeNull(PaginationModel),
     pageNumber: types.optional(types.number, 1),
     totalPages: types.optional(types.number, 1),
     totalCount: types.optional(types.number, 0),
@@ -22,11 +24,7 @@ export const RecipeStoreModel = types
       const response = await api.getRecipes(cookbookId, pageNumber, pageSize)
       if (response.kind === "ok") {
         store.setProp("recipes", response.recipes)
-        store.setProp("pageNumber", response.pagination.pageNumber)
-        store.setProp("totalPages", response.pagination.totalPages)
-        store.setProp("totalCount", response.pagination.totalCount)
-        store.setProp("hasPreviousPage", response.pagination.hasPreviousPage)
-        store.setProp("hasNextPage", response.pagination.hasNextPage)
+        store.setProp("pagination", response.pagination)
       } else {
         console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
       }

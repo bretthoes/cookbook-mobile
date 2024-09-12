@@ -45,7 +45,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pageNumber), delay(750)])
+      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pagination?.pageNumber), delay(750)])
       setRefreshing(false)
     }
 
@@ -75,17 +75,17 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     }
 
     const handleNextPage = async () => {
-      if (recipeStore.hasNextPage) {
+      if (recipeStore.pagination?.hasNextPage) {
         setIsLoading(true)
-        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pageNumber + 1)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pagination.pageNumber + 1)
         setIsLoading(false)
       }
     }
 
     const handlePreviousPage = async () => {
-      if (recipeStore.hasPreviousPage) {
+      if (recipeStore.pagination?.hasPreviousPage) {
         setIsLoading(true)
-        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pageNumber - 1)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pagination.pageNumber - 1)
         setIsLoading(false)
       }
     }
@@ -179,18 +179,18 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                   <View style={$paginationContainer}>
                     <Button
                       onPress={handlePreviousPage}
-                      disabled={!recipeStore.hasPreviousPage}
+                      disabled={!recipeStore.pagination?.hasPreviousPage}
                       RightAccessory={() => (
                         <Icon icon="caretLeft" />
                       )}
                     >
                     </Button>
                     <Text>
-                      Page {recipeStore.pageNumber} of {recipeStore.totalPages} ({recipeStore.totalCount} items)
+                      Page {recipeStore.pagination?.pageNumber} of {recipeStore.pagination?.totalPages} ({recipeStore.pagination?.totalCount} items)
                     </Text>
                     <Button
                       onPress={handleNextPage}
-                      disabled={!recipeStore.hasNextPage}
+                      disabled={!recipeStore.pagination?.hasNextPage}
                       RightAccessory={() => (
                         <Icon icon="caretRight" />
                       )}
