@@ -179,7 +179,11 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                       onPress={handlePreviousPage}
                       disabled={!recipeStore.pagination?.hasPreviousPage}
                       RightAccessory={() => (
-                        <Icon icon="caretLeft" />
+                        <Icon 
+                          icon="caretLeft" 
+                          color={recipeStore.pagination?.hasPreviousPage
+                            ? colors.palette.neutral900
+                            : colors.palette.neutral300} />
                       )}
                     >
                     </Button>
@@ -190,7 +194,11 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                       onPress={handleNextPage}
                       disabled={!recipeStore.pagination?.hasNextPage}
                       RightAccessory={() => (
-                        <Icon icon="caretRight" />
+                        <Icon 
+                          icon="caretRight" 
+                          color={recipeStore.pagination?.hasNextPage
+                            ? colors.palette.neutral900
+                            : colors.palette.neutral300} />
                       )}
                     />
                   </View>
