@@ -77,12 +77,12 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                   <View style={[
                     $ingredientItemStyle,
                     index === 0 && $borderTop,
-                    index === (recipeStore.currentRecipe?.ingredients?.length ?? 1) - 1 && $borderBottom
+                    index === recipeStore.currentRecipe!.ingredients.length - 1 && $borderBottom
                   ]}>
                     <CustomListItem 
                       text={` - ${item?.name}`} 
                       index={index} 
-                      lastIndex = {(recipeStore.currentRecipe?.ingredients?.length ?? 1) - 1}
+                      lastIndex = {recipeStore.currentRecipe!.ingredients.length - 1}
                       height={spacing.xl} />
                   </View>
                 )}
@@ -116,12 +116,12 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                   <View style={[
                     $listItemStyle,
                     index === 0 && $borderTop,
-                    index === (recipeStore.currentRecipe?.directions?.length ?? 1) - 1 && $borderBottom
+                    index === recipeStore.currentRecipe!.directions.length - 1 && $borderBottom
                   ]}>
                     <CustomListItem 
                       text={`${item?.ordinal}. ${item?.text}`} 
                       index={index} 
-                      lastIndex = {(recipeStore.currentRecipe?.directions?.length ?? 1) - 1}
+                      lastIndex = {recipeStore.currentRecipe!.directions.length - 1}
                       height={spacing.xl} />
                   </View>
                 )}

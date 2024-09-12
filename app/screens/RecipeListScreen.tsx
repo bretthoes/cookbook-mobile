@@ -75,7 +75,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     const handleNextPage = async () => {
       if (recipeStore.recipes?.hasNextPage) {
         setIsLoading(true)
-        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.recipes?.pageNumber + 1)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.recipes.pageNumber + 1)
         setIsLoading(false)
       }
     }

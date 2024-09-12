@@ -21,9 +21,9 @@ export const RecipeModel = types
     cookingTimeInMinutes: types.maybeNull(types.integer),
     bakingTimeInMinutes: types.maybeNull(types.integer),
     servings: types.maybeNull(types.integer),
-    directions: types.optional(types.array(RecipeDirectionModel), []),
-    ingredients: types.optional(types.array(RecipeIngredientModel), []),
-    images: types.optional(types.array(RecipeImageModel), []),
+    directions: types.array(RecipeDirectionModel) ?? [],
+    ingredients: types.array(RecipeIngredientModel) ?? [],
+    images: types.array(RecipeImageModel) ?? [],
   })
   .actions(withSetPropAction)
   .views((recipe) => ({
