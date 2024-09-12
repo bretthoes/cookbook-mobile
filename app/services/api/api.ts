@@ -8,12 +8,13 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse, ApiRecipesResponse } from "./api.types"
+import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from 'expo-secure-store';
 import { CookbookSnapshotIn } from "app/models/Cookbook"
-import { RecipeBriefSnapshotIn, RecipeSnapshotIn } from "app/models/Recipe"
+import { RecipeSnapshotIn } from "app/models/Recipe"
+import { RecipeListSnapshotIn } from "app/models/RecipeList"
 
 /**
  * Configuring the apisauce instance.
@@ -125,19 +126,12 @@ export class Api {
    * Gets a list of recipes matching a cookbookId with pagination.
    */
   async getRecipes(cookbookId: number, pageNumber: number, pageSize: number)
-  : Promise<{ kind: "ok"; recipes: RecipeBriefSnapshotIn[], 
-    pagination: {
-      pageNumber: number
-      totalPages: number
-      totalCount: number
-      hasPreviousPage: boolean 
-      hasNextPage: boolean
-    }} | GeneralApiProblem> {
+  : Promise<{ kind: "ok"; recipes: RecipeListSnapshotIn} | GeneralApiProblem> {
     // prepare query parameters
     const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
 
     // use the authorizedRequest method to make the API call with query parameters
-    const response: ApiResponse<ApiRecipesResponse> = await this.authorizedRequest("Recipes", "GET", params)
+    const response: ApiResponse<RecipeListSnapshotIn> = await this.authorizedRequest("Recipes", "GET", params)
 
     // handle any errors
     if (!response.ok) {
@@ -147,24 +141,10 @@ export class Api {
 
     // transform the data into the format we are expecting
     try {
-      const rawData = response.data
+      const recipes = response.data
 
-      // this is where we transform the data into the shape we expect for our MST model.
-      const recipes: RecipeBriefSnapshotIn[] =
-        rawData?.items.map((raw: RecipeBriefSnapshotIn) => ({
-          ...raw,
-        })) ?? []
-
-        // Extract pagination details
-        const pagination = {
-          pageNumber: rawData?.pageNumber ?? 1,
-          totalPages: rawData?.totalPages ?? 1,
-          totalCount: rawData?.totalCount ?? 0,
-          hasPreviousPage: rawData?.hasPreviousPage ?? false,
-          hasNextPage: rawData?.hasNextPage ?? false,
-        }
-
-      return { kind: "ok", recipes, pagination }
+      if (recipes) return { kind: "ok", recipes }
+      else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)

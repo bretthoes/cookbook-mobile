@@ -43,16 +43,16 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     // simulate a longer refresh, if the refresh is too fast for UX
     async function manualRefresh() {
       setRefreshing(true)
-      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pagination?.pageNumber), delay(750)])
+      await Promise.all([recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.recipes?.pageNumber), delay(750)])
       setRefreshing(false)
     }
 
     // Filter the recipes based on the search query
-    const filteredRecipes = recipeStore.recipesForList
+    const filteredRecipes = recipeStore.recipes?.items
       .slice()
       .filter((recipe) =>
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase()),
-      )
+      ) ?? []
 
     const toggleDrawer = () => {
       setOpen(!open)
@@ -73,17 +73,17 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
     }
 
     const handleNextPage = async () => {
-      if (recipeStore.pagination?.hasNextPage) {
+      if (recipeStore.recipes?.hasNextPage) {
         setIsLoading(true)
-        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pagination.pageNumber + 1)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.recipes?.pageNumber + 1)
         setIsLoading(false)
       }
     }
 
     const handlePreviousPage = async () => {
-      if (recipeStore.pagination?.hasPreviousPage) {
+      if (recipeStore.recipes?.hasPreviousPage) {
         setIsLoading(true)
-        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.pagination.pageNumber - 1)
+        await recipeStore.fetchRecipes(_props.route.params.cookbook.id, recipeStore.recipes.pageNumber - 1)
         setIsLoading(false)
       }
     }
@@ -173,30 +173,30 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                     color={colors.palette.neutral600}
                   />
                 </View>
-                {(recipeStore.recipes.length > 0) && (
+                {(recipeStore.recipes?.items.length! > 0) && (
                   <View style={$paginationContainer}>
                     <Button
                       onPress={handlePreviousPage}
-                      disabled={!recipeStore.pagination?.hasPreviousPage}
+                      disabled={!recipeStore.recipes?.hasPreviousPage}
                       RightAccessory={() => (
                         <Icon 
                           icon="caretLeft" 
-                          color={recipeStore.pagination?.hasPreviousPage
+                          color={recipeStore.recipes?.hasPreviousPage
                             ? colors.palette.neutral900
                             : colors.palette.neutral300} />
                       )}
                     >
                     </Button>
                     <Text>
-                      Page {recipeStore.pagination?.pageNumber} of {recipeStore.pagination?.totalPages} ({recipeStore.pagination?.totalCount} items)
+                      Page {recipeStore.recipes?.pageNumber} of {recipeStore.recipes?.totalPages} ({recipeStore.recipes?.totalCount} items)
                     </Text>
                     <Button
                       onPress={handleNextPage}
-                      disabled={!recipeStore.pagination?.hasNextPage}
+                      disabled={!recipeStore.recipes?.hasNextPage}
                       RightAccessory={() => (
                         <Icon 
                           icon="caretRight" 
-                          color={recipeStore.pagination?.hasNextPage
+                          color={recipeStore.recipes?.hasNextPage
                             ? colors.palette.neutral900
                             : colors.palette.neutral300} />
                       )}
