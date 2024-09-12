@@ -10,7 +10,7 @@ import {
   TextStyle,
   View,
   ViewStyle,
-} from "react-native"
+ Image } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
 import Animated, {
   Extrapolate,
@@ -43,7 +43,6 @@ import { useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { Drawer } from "react-native-drawer-layout"
-import { Image } from "react-native"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
 
 const logo = require("../../assets/images/logo.png")
@@ -270,7 +269,7 @@ const CookbookCard = observer(function CookbookCard({
   const navigation = useNavigation<CookbookListScreenNavigationProp>()
 
   const handlePressCard = () => {
-    navigation.navigate("RecipeList", { cookbook: cookbook })
+    navigation.navigate("RecipeList", { cookbook })
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(

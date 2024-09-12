@@ -5,7 +5,7 @@ import { colors, spacing } from 'app/theme'
 const logo = require("../../../assets/images/logo.png")
 
 export const RecipeDrawer = () => (
-  <View style={[$drawer]}>
+  <View style={$drawer}>
     <View style={$logoContainer}>
       <Image source={logo} style={$logoImage} />
     </View>
