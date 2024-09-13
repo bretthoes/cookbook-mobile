@@ -20,6 +20,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
+    const toggleDrawer = () => { setOpen(!open) }
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -51,7 +52,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
         <Screen
           safeAreaEdges={recipeStore.currentRecipe?.images[0] ? [] : ["top"]}
           preset="scroll"
-          contentContainerStyle={$screenContentContainer}
         >
           
           {recipeStore.currentRecipe?.images && (
@@ -59,7 +59,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
           )}
 
           {recipeStore.currentRecipe && (
-            <RecipeSummary recipe={recipeStore.currentRecipe} />
+            <RecipeSummary recipe={recipeStore.currentRecipe} toggleDrawer={toggleDrawer} />
           )}
 
           {recipeStore.currentRecipe && (
@@ -146,9 +146,6 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
 )
 
 // #region Styles
-
-const $screenContentContainer: ViewStyle = {
-}
 
 const $ingredientItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,

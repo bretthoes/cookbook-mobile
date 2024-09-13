@@ -3,15 +3,18 @@ import { View, ViewStyle } from 'react-native'
 import { Text } from '../../components'
 import { spacing, colors } from 'app/theme'
 import { Recipe } from 'app/models/Recipe'
+import { DrawerIconButton } from '../DemoShowroomScreen/DrawerIconButton'
 
 export interface RecipeSummaryProps {
-  recipe: Recipe
+  recipe: Recipe,
+  toggleDrawer: () => void,
 }
 
-export const RecipeSummary = ({ recipe }: RecipeSummaryProps) => (
+export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
   <View>
     <View style={$titleContainer}>
       <Text preset="heading" weight="normal" text={recipe.title} />
+      <DrawerIconButton onPress={toggleDrawer} />
     </View>
 
     <View style={$subtitleContainer}>
@@ -60,6 +63,7 @@ export const RecipeSummary = ({ recipe }: RecipeSummaryProps) => (
 const $titleContainer: ViewStyle = {
   flexDirection: 'row',
   justifyContent: 'space-between',
+  alignItems: "center",
   marginHorizontal: spacing.sm,
 }
 
