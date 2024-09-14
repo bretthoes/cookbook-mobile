@@ -173,7 +173,7 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                     color={colors.palette.neutral600}
                   />
                 </View>
-                {(recipeStore.recipes?.items.length! > 0) && (
+                {(recipeStore.recipes?.hasMorePages) && (
                   <View style={$paginationContainer}>
                     <Button
                       onPress={handlePreviousPage}
