@@ -158,6 +158,12 @@ const en = {
     invite: "Invite someone else",
     leave: "Leave cookbook"
   },
+  recipeAddScreen: {
+    title: "Add Recipe",
+    titleHelper: "The title for the new recipe",
+    titleLabel: "Title",
+    titlePlacehoder: "Title"
+  }
 }
 
 export default en
