@@ -136,17 +136,6 @@ export const RecipeListScreen: FC<DemoTabScreenProps<"RecipeList">> = observer(
                 <EmptyState
                   preset="generic"
                   style={$emptyState}
-                  headingTx={
-                    recipeStore.favoritesOnly
-                      ? "cookbookListScreen.noFavoritesEmptyState.heading"
-                      : undefined
-                  }
-                  contentTx={
-                    recipeStore.favoritesOnly
-                      ? "cookbookListScreen.noFavoritesEmptyState.content"
-                      : undefined
-                  }
-                  button={recipeStore.favoritesOnly ? "" : undefined}
                   buttonOnPress={manualRefresh}
                   imageStyle={$emptyStateImage}
                   ImageProps={{ resizeMode: "contain" }}
