@@ -179,6 +179,32 @@ export class Api {
     }
   }
 
+  /**
+   * Saves a new recipe to the database.
+   */
+  async createRecipe(recipe: RecipeSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    // make the API call to get the recipe by id
+    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes`, "POST", { recipe })
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const recipeId = response.data
+
+      if (recipeId) return { kind: "ok" }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
 
   /**
    * Logs in the user with the provided email and password.
