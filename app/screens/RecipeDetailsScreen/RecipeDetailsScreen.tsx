@@ -74,7 +74,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                     style={{ paddingBottom: spacing.md }} />
                 }
                 renderItem={({item, index}) => (
-                  <View style={[
+                  item && <View style={[
                     $ingredientItemStyle,
                     index === 0 && $borderTop,
                     index === recipeStore.currentRecipe!.ingredients.length - 1 && $borderBottom
@@ -113,7 +113,7 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
                     style={{ paddingBottom: spacing.md }}  />
                 }
                 renderItem={({item, index}) => (
-                  <View style={[
+                  item && <View style={[
                     $listItemStyle,
                     index === 0 && $borderTop,
                     index === recipeStore.currentRecipe!.directions.length - 1 && $borderBottom
