@@ -5,8 +5,6 @@ import { View, ViewStyle } from "react-native"
 import { DemoUseCase } from "./DemoShowroomScreen/DemoUseCase"
 import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
 
-// TODO implement
-// TODO get text input component from template
 export const AddRecipeScreen = () => {
   const [titleInput, setTitleInput] = useState("")
   const [summaryInput, setSummaryInput] = useState("")
