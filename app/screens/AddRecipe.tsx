@@ -1,8 +1,7 @@
 import { Button, TextField, Text, Screen } from "app/components"
-import { colors, spacing, typography } from "app/theme"
+import { spacing } from "app/theme"
 import React, { useState } from "react"
-
-import { TextStyle, View, ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { DemoUseCase } from "./DemoShowroomScreen/DemoUseCase"
 import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
 
@@ -13,6 +12,7 @@ export const AddRecipeScreen = () => {
   const [summaryInput, setSummaryInput] = useState("")
   const [prepTimeInput, setPrepTimeInput] = useState("")
   const [cookTimeInput, setCookTimeInput] = useState("")
+  const [bakeTimeInput, setBakeTimeInput] = useState("")
   const [servingsInput, setServingsInput] = useState("")
   return (
     <Screen
@@ -52,12 +52,12 @@ export const AddRecipeScreen = () => {
         multiline
       />
 
-      <DemoDivider size={spacing.lg} />
+      <DemoDivider size={spacing.xxl} line />
 
       <TextField
         value={prepTimeInput}
         onChangeText={(value) => setPrepTimeInput(value)}
-        placeholder="Prep time in minutes"
+        placeholder="Prep time in minutes (optional)"
         inputMode="numeric"
         keyboardType="numeric"
       />
@@ -67,7 +67,17 @@ export const AddRecipeScreen = () => {
       <TextField
         value={cookTimeInput}
         onChangeText={(value) => setCookTimeInput(value)}
-        placeholder="Cook time in minutes"
+        placeholder="Cook time in minutes (optional)"
+        inputMode="numeric"
+        keyboardType="numeric"
+      />
+
+      <DemoDivider size={spacing.lg} />
+
+      <TextField
+        value={bakeTimeInput}
+        onChangeText={(value) => setBakeTimeInput(value)}
+        placeholder="Bake time in minutes (optional)"
         inputMode="numeric"
         keyboardType="numeric"
       />
@@ -77,10 +87,12 @@ export const AddRecipeScreen = () => {
       <TextField
         value={servingsInput}
         onChangeText={(value) => setServingsInput(value)}
-        placeholder="Servings"
+        placeholder="Servings (optional)"
         inputMode="numeric"
         keyboardType="numeric"
       />
+
+      <DemoDivider size={spacing.xxl} line />
 
     </DemoUseCase>
     </Screen>
