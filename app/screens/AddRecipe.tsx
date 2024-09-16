@@ -1,4 +1,4 @@
-import { Button, TextField, Text, Screen } from "app/components"
+import { Button, TextField, Text, Screen, Icon } from "app/components"
 import { spacing } from "app/theme"
 import React, { useState } from "react"
 import { View, ViewStyle } from "react-native"
@@ -12,6 +12,9 @@ export const AddRecipeScreen = () => {
   const [cookTimeInput, setCookTimeInput] = useState("")
   const [bakeTimeInput, setBakeTimeInput] = useState("")
   const [servingsInput, setServingsInput] = useState("")
+
+  const handleSaveRecipe = () => {}
+
   return (
     <Screen
       preset="fixed"
@@ -92,14 +95,23 @@ export const AddRecipeScreen = () => {
 
       <DemoDivider size={spacing.xxl} line />
 
+      <TextField
+        value={servingsInput}
+        onChangeText={(value) => setServingsInput(value)}
+        placeholder=""
+        label="Directions"
+        RightAccessory={() => (
+          <Icon
+            icon="bell"
+          />
+        )}
+      />
     </DemoUseCase>
     </Screen>
   )
 }
 
-const handleSaveRecipe = () => {
-}
-
+// #region Styles
 const $screenContentContainer: ViewStyle = {
   flex: 1,
   marginHorizontal: spacing.md,
