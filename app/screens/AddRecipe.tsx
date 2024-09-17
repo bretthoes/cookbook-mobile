@@ -13,8 +13,8 @@ export const AddRecipeScreen = () => {
   const [bakeTimeInput, setBakeTimeInput] = useState("")
   const [servingsInput, setServingsInput] = useState("")
 
-  const [directions, setDirections] = useState<string[]>([""])
-  const [ingredients, setIngredients] = useState<string[]>([""])
+  const [directions, setDirections] = useState([""])
+  const [ingredients, setIngredients] = useState([""])
 
   const handleSaveRecipe = () => {
   }
