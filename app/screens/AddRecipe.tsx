@@ -1,4 +1,4 @@
-import { Button, TextField, Text, Screen, Icon } from "app/components"
+import { Button, TextField, Text, Screen, Icon, ListView } from "app/components"
 import { spacing } from "app/theme"
 import React, { useState } from "react"
 import { View, ViewStyle } from "react-native"
@@ -13,11 +13,45 @@ export const AddRecipeScreen = () => {
   const [bakeTimeInput, setBakeTimeInput] = useState("")
   const [servingsInput, setServingsInput] = useState("")
 
-  const handleSaveRecipe = () => {}
+  const [directions, setDirections] = useState<string[]>([""])
+  const [ingredients, setIngredients] = useState<string[]>([""])
+
+  const handleSaveRecipe = () => {
+  }
+
+  const handleAddDirection = () => {
+    setDirections([...directions, ''])
+  }
+
+  const handleDirectionChange = (index: number, value: string) => {
+    const updatedDirections = [...directions]
+    updatedDirections[index] = value
+    setDirections(updatedDirections)
+  }
+
+  const handleRemoveDirection = (index: number) => {
+    const updatedDirections = directions.filter((_, i) => i !== index)
+    setDirections(updatedDirections)
+  }
+
+  const handleAddIngredient = () => {
+    setIngredients([...ingredients, ''])
+  }
+
+  const handleIngredientChange = (index: number, value: string) => {
+    const updatedIngredients = [...ingredients]
+    updatedIngredients[index] = value
+    setIngredients(updatedIngredients)
+  }
+
+  const handleRemoveIngredient = (index: number) => {
+    const updatedIngredients = ingredients.filter((_, i) => i !== index)
+    setIngredients(updatedIngredients)
+  }
 
   return (
     <Screen
-      preset="fixed"
+      preset="scroll"
       safeAreaEdges={["top"]}
       contentContainerStyle={$screenContentContainer}
     >
@@ -29,7 +63,7 @@ export const AddRecipeScreen = () => {
         />
         <Button
           text="Save"
-          style={$saveButton}
+          style={$buttonHeightOverride}
           onPress={handleSaveRecipe}
         />
       </View>
@@ -95,17 +129,99 @@ export const AddRecipeScreen = () => {
 
       <DemoDivider size={spacing.xxl} line />
 
-      <TextField
-        value={servingsInput}
-        onChangeText={(value) => setServingsInput(value)}
-        placeholder=""
-        label="Directions"
-        RightAccessory={() => (
-          <Icon
-            icon="bell"
-          />
-        )}
-      />
+      <View style={{minHeight: spacing.xxs}}>
+        <ListView
+          ListHeaderComponent={
+            <View>
+              <Text text="Ingredients" preset="bold" />
+              <DemoDivider size={spacing.md} />
+            </View>
+          }
+          ListFooterComponent={
+            <View>
+              <DemoDivider size={spacing.md} />
+              <Button
+                text="Add another ingredient"
+                onPress={handleAddIngredient}
+                style={$buttonHeightOverride}
+              />
+              <DemoDivider size={spacing.xl} />
+            </View>
+          }
+          estimatedItemSize={162}
+          data={ingredients}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View style={$directionItemContainer}>
+              <Text 
+                text={'-'}
+                style={$directionIndex}
+              />
+              <TextField
+                value={item}
+                onChangeText={(value) => handleIngredientChange(index, value)}
+                placeholder={`Add ingredient here...`}
+                containerStyle={$textFieldContainer}
+                RightAccessory={() => (
+                  <Icon 
+                    icon="x"
+                    onPress={() => handleRemoveIngredient(index)}
+                  />
+                )}
+              />
+            </View>
+          )}
+          ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+        />
+      </View>
+
+      <View style={{minHeight: spacing.xxs}}>
+        <ListView
+          ListHeaderComponent={
+            <View>
+              <Text text="Directions" preset="bold" />
+              <DemoDivider size={spacing.md} />
+            </View>
+          }
+          ListFooterComponent={
+            <View>
+              <DemoDivider size={spacing.md} />
+              <Button
+                text="Add another direction"
+                onPress={handleAddDirection}
+                style={$buttonHeightOverride}
+              />
+              <DemoDivider size={spacing.xl} />
+            </View>
+          }
+          estimatedItemSize={162}
+          data={directions}
+          keyExtractor={(_, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View style={$directionItemContainer}>
+              <Text 
+                text={`${index + 1}.`}
+                style={$directionIndex}
+              />
+              <TextField
+                value={item}
+                onChangeText={(value) => handleDirectionChange(index, value)}
+                placeholder={`Add direction here...`}
+                containerStyle={$textFieldContainer}
+                multiline
+                RightAccessory={() => (
+                  <Icon 
+                    icon="x"
+                    onPress={() => handleRemoveDirection(index)}
+                  />
+                )}
+              />
+            </View>
+          )}
+          ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+        />
+      </View>
+
     </DemoUseCase>
     </Screen>
   )
@@ -113,7 +229,6 @@ export const AddRecipeScreen = () => {
 
 // #region Styles
 const $screenContentContainer: ViewStyle = {
-  flex: 1,
   marginHorizontal: spacing.md,
   marginTop: spacing.xl
 }
@@ -124,6 +239,20 @@ const $titleContainer: ViewStyle = {
   alignItems: "center",
 }
 
-const $saveButton: ViewStyle = {
+const $buttonHeightOverride: ViewStyle = {
   minHeight: spacing.md,
+}
+
+const $directionItemContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+}
+
+const $directionIndex: ViewStyle = {
+  marginRight: spacing.sm,
+}
+
+const $textFieldContainer: ViewStyle = {
+  flex: 1,
+  minHeight: 50
 }
