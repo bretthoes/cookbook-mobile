@@ -82,6 +82,19 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       setIngredients(updatedIngredients)
     }
 
+    const [errorMessage, setErrorMessage] = useState("")
+    const handleTitleChange = (value: string) => {
+      setTitleInput(value)
+      
+      if (value.length < 3) {
+        setErrorMessage("Title must be at least 3 characters long.")
+      } else if (value.length > 20) {
+        setErrorMessage("Title must be less than 20 characters long.")
+      } else {
+        setErrorMessage("")
+      }
+    }
+
   return (
     <Screen
       preset="scroll"
@@ -107,8 +120,10 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       >
         <TextField
           value={titleInput}
-          onChangeText={(value) => setTitleInput(value)}
+          onChangeText={handleTitleChange}
           placeholderTx="recipeAddScreen.titlePlacehoder"
+          helper={errorMessage}
+          status={errorMessage ? "error" : undefined}
         />
 
         <DemoDivider size={spacing.lg} />
