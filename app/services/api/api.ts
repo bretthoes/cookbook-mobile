@@ -13,7 +13,7 @@ import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from 'expo-secure-store';
 import { CookbookSnapshotIn } from "app/models/Cookbook"
-import { RecipeSnapshotIn } from "app/models/Recipe"
+import { RecipeSnapshotIn, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
 
 /**
@@ -182,7 +182,7 @@ export class Api {
   /**
    * Saves a new recipe to the database.
    */
-  async createRecipe(recipe: RecipeSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async createRecipe(recipe: RecipeToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
     // make the API call to get the recipe by id
     const response: ApiResponse<number> = await this.authorizedRequest(`Recipes`, "POST", { recipe })
 

@@ -1,53 +1,86 @@
 import { Button, TextField, Text, Screen, Icon, ListView } from "app/components"
 import { spacing } from "app/theme"
-import React, { useState } from "react"
+import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
 import { DemoUseCase } from "./DemoShowroomScreen/DemoUseCase"
 import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
+import { RecipeToAddSnapshotIn } from "app/models/Recipe"
+import { useStores } from "app/models"
+import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
+import { observer } from "mobx-react-lite"
 
-export const AddRecipeScreen = () => {
-  const [titleInput, setTitleInput] = useState("")
-  const [summaryInput, setSummaryInput] = useState("")
-  const [prepTimeInput, setPrepTimeInput] = useState("")
-  const [cookTimeInput, setCookTimeInput] = useState("")
-  const [bakeTimeInput, setBakeTimeInput] = useState("")
-  const [servingsInput, setServingsInput] = useState("")
 
-  const [directions, setDirections] = useState([""])
-  const [ingredients, setIngredients] = useState([""])
+export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
+  function AddRecipeScreen(_props) {
+    const { recipeStore } = useStores()
+    const [titleInput, setTitleInput] = useState("")
+    const [summaryInput, setSummaryInput] = useState("")
+    const [prepTimeInput, setPrepTimeInput] = useState("")
+    const [cookTimeInput, setCookTimeInput] = useState("")
+    const [bakeTimeInput, setBakeTimeInput] = useState("")
+    const [servingsInput, setServingsInput] = useState("")
 
-  const handleSaveRecipe = () => {
-  }
+    const [directions, setDirections] = useState([""])
+    const [ingredients, setIngredients] = useState([""])
+    
+    const handleSaveRecipe = () => {
+      const newRecipe: RecipeToAddSnapshotIn = {
+        title: titleInput.trim(),
+        cookbookId: _props.route.params.cookbookId,
+        summary: summaryInput.trim() || null,
+        thumbnail: null, // TODO handle thumbnail logic
+        videoPath: null, // TODO handle videoPath logic
+        preparationTimeInMinutes: prepTimeInput ? parseInt(prepTimeInput) : null,
+        cookingTimeInMinutes: cookTimeInput ? parseInt(cookTimeInput) : null,
+        bakingTimeInMinutes: bakeTimeInput ? parseInt(bakeTimeInput) : null,
+        servings: servingsInput ? parseInt(servingsInput) : null,
+        directions: directions.map((dir, index) => ({
+          id: 0,
+          text: dir,
+          ordinal: index + 1,
+          image: null,
+        })),
+        ingredients: ingredients.map((dir, index) => ({
+          id: 0,
+          name: dir,
+          optional: false,
+          ordinal: index + 1,
+        })),      
+        images: [],  // TODO handle images logic
+      }
 
-  const handleAddDirection = () => {
-    setDirections([...directions, ''])
-  }
+      recipeStore.createRecipe(newRecipe);
+    }
 
-  const handleDirectionChange = (index: number, value: string) => {
-    const updatedDirections = [...directions]
-    updatedDirections[index] = value
-    setDirections(updatedDirections)
-  }
+    const handleAddDirection = () => {
+      setDirections([...directions, ""])
+    }
 
-  const handleRemoveDirection = (index: number) => {
-    const updatedDirections = directions.filter((_, i) => i !== index)
-    setDirections(updatedDirections)
-  }
+    const handleDirectionChange = (index: number, value: string) => {
+      const updatedDirections = [...directions]
+      updatedDirections[index] = value
+      setDirections(updatedDirections)
+    }
 
-  const handleAddIngredient = () => {
-    setIngredients([...ingredients, ''])
-  }
+    const handleRemoveDirection = (index: number) => {
+      const updatedDirections = directions.filter((_, i) => i !== index)
+      setDirections(updatedDirections)
+    }
 
-  const handleIngredientChange = (index: number, value: string) => {
-    const updatedIngredients = [...ingredients]
-    updatedIngredients[index] = value
-    setIngredients(updatedIngredients)
-  }
+    const handleAddIngredient = () => {
+      setIngredients([...ingredients, ""])
+    }
 
-  const handleRemoveIngredient = (index: number) => {
-    const updatedIngredients = ingredients.filter((_, i) => i !== index)
-    setIngredients(updatedIngredients)
-  }
+    const handleIngredientChange = (index: number, value: string) => {
+      const updatedIngredients = [...ingredients]
+      updatedIngredients[index] = value
+      setIngredients(updatedIngredients)
+    }
+
+    const handleRemoveIngredient = (index: number) => {
+      const updatedIngredients = ingredients.filter((_, i) => i !== index)
+      setIngredients(updatedIngredients)
+    }
 
   return (
     <Screen
@@ -72,165 +105,165 @@ export const AddRecipeScreen = () => {
         name=""
         description="Fill out the details for your new recipe."
       >
-      <TextField
-        value={titleInput}
-        onChangeText={(value) => setTitleInput(value)}
-        placeholderTx="recipeAddScreen.titlePlacehoder"
-      />
-
-      <DemoDivider size={spacing.lg} />
-
-      <TextField
-        value={summaryInput}
-        onChangeText={(value) => setSummaryInput(value)}
-        placeholder="Summary (optional)"
-        multiline
-      />
-
-      <DemoDivider size={spacing.xxl} line />
-
-      <TextField
-        value={prepTimeInput}
-        onChangeText={(value) => setPrepTimeInput(value)}
-        placeholder="Prep time in minutes (optional)"
-        inputMode="numeric"
-        keyboardType="numeric"
-      />
-
-      <DemoDivider size={spacing.lg} />
-
-      <TextField
-        value={cookTimeInput}
-        onChangeText={(value) => setCookTimeInput(value)}
-        placeholder="Cook time in minutes (optional)"
-        inputMode="numeric"
-        keyboardType="numeric"
-      />
-
-      <DemoDivider size={spacing.lg} />
-
-      <TextField
-        value={bakeTimeInput}
-        onChangeText={(value) => setBakeTimeInput(value)}
-        placeholder="Bake time in minutes (optional)"
-        inputMode="numeric"
-        keyboardType="numeric"
-      />
-
-      <DemoDivider size={spacing.lg} />
-
-      <TextField
-        value={servingsInput}
-        onChangeText={(value) => setServingsInput(value)}
-        placeholder="Servings (optional)"
-        inputMode="numeric"
-        keyboardType="numeric"
-      />
-
-      <DemoDivider size={spacing.xxl} line />
-
-      <View style={{minHeight: spacing.xxs}}>
-        <ListView
-          ListHeaderComponent={
-            <View>
-              <Text text="Ingredients" preset="bold" />
-              <DemoDivider size={spacing.md} />
-            </View>
-          }
-          ListFooterComponent={
-            <View>
-              <DemoDivider size={spacing.md} />
-              <Button
-                text="Add another ingredient"
-                onPress={handleAddIngredient}
-                style={$buttonHeightOverride}
-              />
-              <DemoDivider size={spacing.xl} />
-            </View>
-          }
-          estimatedItemSize={162}
-          data={ingredients}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <View style={$directionItemContainer}>
-              <Text 
-                text={'-'}
-                style={$directionIndex}
-              />
-              <TextField
-                value={item}
-                onChangeText={(value) => handleIngredientChange(index, value)}
-                placeholder={`Add ingredient here...`}
-                containerStyle={$textFieldContainer}
-                RightAccessory={() => (
-                  <Icon 
-                    icon="x"
-                    onPress={() => handleRemoveIngredient(index)}
-                  />
-                )}
-              />
-            </View>
-          )}
-          ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+        <TextField
+          value={titleInput}
+          onChangeText={(value) => setTitleInput(value)}
+          placeholderTx="recipeAddScreen.titlePlacehoder"
         />
-      </View>
 
-      <View style={{minHeight: spacing.xxs}}>
-        <ListView
-          ListHeaderComponent={
-            <View>
-              <Text text="Directions" preset="bold" />
-              <DemoDivider size={spacing.md} />
-            </View>
-          }
-          ListFooterComponent={
-            <View>
-              <DemoDivider size={spacing.md} />
-              <Button
-                text="Add another direction"
-                onPress={handleAddDirection}
-                style={$buttonHeightOverride}
-              />
-              <DemoDivider size={spacing.xl} />
-            </View>
-          }
-          estimatedItemSize={162}
-          data={directions}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <View style={$directionItemContainer}>
-              <Text 
-                text={`${index + 1}.`}
-                style={$directionIndex}
-              />
-              <TextField
-                value={item}
-                onChangeText={(value) => handleDirectionChange(index, value)}
-                placeholder={`Add direction here...`}
-                containerStyle={$textFieldContainer}
-                multiline
-                RightAccessory={() => (
-                  <Icon 
-                    icon="x"
-                    onPress={() => handleRemoveDirection(index)}
-                  />
-                )}
-              />
-            </View>
-          )}
-          ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+        <DemoDivider size={spacing.lg} />
+
+        <TextField
+          value={summaryInput}
+          onChangeText={(value) => setSummaryInput(value)}
+          placeholder="Summary (optional)"
+          multiline
         />
-      </View>
 
-    </DemoUseCase>
+        <DemoDivider size={spacing.xxl} line />
+
+        <TextField
+          value={prepTimeInput}
+          onChangeText={(value) => setPrepTimeInput(value)}
+          placeholder="Prep time in minutes (optional)"
+          inputMode="numeric"
+          keyboardType="numeric"
+        />
+
+        <DemoDivider size={spacing.lg} />
+
+        <TextField
+          value={cookTimeInput}
+          onChangeText={(value) => setCookTimeInput(value)}
+          placeholder="Cook time in minutes (optional)"
+          inputMode="numeric"
+          keyboardType="numeric"
+        />
+
+        <DemoDivider size={spacing.lg} />
+
+        <TextField
+          value={bakeTimeInput}
+          onChangeText={(value) => setBakeTimeInput(value)}
+          placeholder="Bake time in minutes (optional)"
+          inputMode="numeric"
+          keyboardType="numeric"
+        />
+
+        <DemoDivider size={spacing.lg} />
+
+        <TextField
+          value={servingsInput}
+          onChangeText={(value) => setServingsInput(value)}
+          placeholder="Servings (optional)"
+          inputMode="numeric"
+          keyboardType="numeric"
+        />
+
+        <DemoDivider size={spacing.xxl} line />
+
+        <View style={{minHeight: spacing.xxs}}>
+          <ListView
+            ListHeaderComponent={
+              <View>
+                <Text text="Ingredients" preset="bold" />
+                <DemoDivider size={spacing.md} />
+              </View>
+            }
+            ListFooterComponent={
+              <View>
+                <DemoDivider size={spacing.md} />
+                <Button
+                  text="Add another ingredient"
+                  onPress={handleAddIngredient}
+                  style={$buttonHeightOverride}
+                />
+                <DemoDivider size={spacing.xl} />
+              </View>
+            }
+            estimatedItemSize={162}
+            data={ingredients}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={$directionItemContainer}>
+                <Text 
+                  text={'-'}
+                  style={$directionIndex}
+                />
+                <TextField
+                  value={item}
+                  onChangeText={(value) => handleIngredientChange(index, value)}
+                  placeholder={`Add ingredient here...`}
+                  containerStyle={$textFieldContainer}
+                  RightAccessory={() => (
+                    <Icon 
+                      icon="x"
+                      onPress={() => handleRemoveIngredient(index)}
+                    />
+                  )}
+                />
+              </View>
+            )}
+            ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+          />
+        </View>
+
+        <View style={{minHeight: spacing.xxs}}>
+          <ListView
+            ListHeaderComponent={
+              <View>
+                <Text text="Directions" preset="bold" />
+                <DemoDivider size={spacing.md} />
+              </View>
+            }
+            ListFooterComponent={
+              <View>
+                <DemoDivider size={spacing.md} />
+                <Button
+                  text="Add another direction"
+                  onPress={handleAddDirection}
+                  style={$buttonHeightOverride}
+                />
+                <DemoDivider size={spacing.xl} />
+              </View>
+            }
+            estimatedItemSize={162}
+            data={directions}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={$directionItemContainer}>
+                <Text 
+                  text={`${index + 1}.`}
+                  style={$directionIndex}
+                />
+                <TextField
+                  value={item}
+                  onChangeText={(value) => handleDirectionChange(index, value)}
+                  placeholder={`Add direction here...`}
+                  containerStyle={$textFieldContainer}
+                  multiline
+                  RightAccessory={() => (
+                    <Icon 
+                      icon="x"
+                      onPress={() => handleRemoveDirection(index)}
+                    />
+                  )}
+                />
+              </View>
+            )}
+            ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+          />
+        </View>
+      </DemoUseCase>
     </Screen>
-  )
-}
+    )
+  }
+)
 
 // #region Styles
 const $screenContentContainer: ViewStyle = {
   marginHorizontal: spacing.md,
-  marginTop: spacing.xl
+  marginTop: spacing.xl,
 }
 
 const $titleContainer: ViewStyle = {
@@ -254,5 +287,6 @@ const $directionIndex: ViewStyle = {
 
 const $textFieldContainer: ViewStyle = {
   flex: 1,
-  minHeight: 50
+  minHeight: 50,
 }
+// #endregion

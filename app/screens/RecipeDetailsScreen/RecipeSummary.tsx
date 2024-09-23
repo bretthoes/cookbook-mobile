@@ -22,28 +22,28 @@ export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
     </View>
 
     <View style={$detailsContainer}>
-      {recipe.servings && (
+      {!!recipe.servings && (
         <View>
           <Text weight="light" tx="recipeDetailsScreen.servings" />
           <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
         </View>
       )}
 
-      {recipe.bakingTimeInMinutes && (
+      {!!recipe.bakingTimeInMinutes && (
         <View>
           <Text weight="light" tx="recipeDetailsScreen.bake" />
           <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
         </View>
       )}
 
-      {recipe.preparationTimeInMinutes && (
+      {!!recipe.preparationTimeInMinutes && (
         <View>
           <Text weight="light" tx="recipeDetailsScreen.prep" />
           <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
         </View>
       )}
       
-      {recipe.cookingTimeInMinutes && (
+      {!!recipe.cookingTimeInMinutes && (
         <View>
           <Text weight="light" tx="recipeDetailsScreen.cook" />
           <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
@@ -51,7 +51,7 @@ export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
       )}
     </View>
 
-    {recipe.summary && (
+    {!!recipe.summary && (
       <View style={$descriptionContainer}>
         <Text weight="light" tx="recipeDetailsScreen.summary" />
         <Text weight="light" text={recipe.summary ?? ""} />

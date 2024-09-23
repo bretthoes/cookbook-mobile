@@ -1,6 +1,6 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import { Recipe, RecipeModel } from "./Recipe"
+import { RecipeModel, RecipeToAddSnapshotIn } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { RecipeListModel } from "./RecipeList"
 
@@ -9,7 +9,6 @@ export const RecipeStoreModel = types
   .props({
     recipes: types.maybeNull(RecipeListModel),
     currentRecipe: types.maybeNull(RecipeModel),
-    recipeToAdd: types.maybeNull(RecipeModel)
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -29,11 +28,11 @@ export const RecipeStoreModel = types
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
     },
-    async createRecipe(newRecipe: Recipe) {
+    async createRecipe(newRecipe: RecipeToAddSnapshotIn) {
       try {
         const response = await api.createRecipe(newRecipe)
         if (response.kind === "ok") {
-          store.setProp("currentRecipe", newRecipe)
+          // TODO either return a model that can be assigned to currentRecipe or redirect page
         } else {
           console.error(`Error creating recipe: ${JSON.stringify(response)}`)
         }
