@@ -2,12 +2,14 @@ import { Button, TextField, Text, Screen, Icon, ListView } from "app/components"
 import { spacing } from "app/theme"
 import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
-import { DemoUseCase } from "./DemoShowroomScreen/DemoUseCase"
-import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
+import { DemoUseCase } from "../DemoShowroomScreen/DemoUseCase"
+import { DemoDivider } from "../DemoShowroomScreen/DemoDivider"
 import { RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { useStores } from "app/models"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
+import { RecipeInput } from "./RecipeInput"
+import { validateSummary, validateTimeInMinutes, validateTitle } from "./validation"
 
 
 export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
@@ -40,9 +42,9 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
           ordinal: index + 1,
           image: null,
         })),
-        ingredients: ingredients.map((dir, index) => ({
+        ingredients: ingredients.map((ing, index) => ({
           id: 0,
-          name: dir,
+          name: ing,
           optional: false,
           ordinal: index + 1,
         })),      
@@ -82,19 +84,6 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       setIngredients(updatedIngredients)
     }
 
-    const [errorMessage, setErrorMessage] = useState("")
-    const handleTitleChange = (value: string) => {
-      setTitleInput(value)
-      
-      if (value.length < 3) {
-        setErrorMessage("Title must be at least 3 characters long.")
-      } else if (value.length > 20) {
-        setErrorMessage("Title must be less than 20 characters long.")
-      } else {
-        setErrorMessage("")
-      }
-    }
-
   return (
     <Screen
       preset="scroll"
@@ -118,61 +107,61 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         name=""
         description="Fill out the details for your new recipe."
       >
-        <TextField
-          value={titleInput}
-          onChangeText={handleTitleChange}
-          placeholderTx="recipeAddScreen.titlePlacehoder"
-          helper={errorMessage}
-          status={errorMessage ? "error" : undefined}
+        <RecipeInput
+            value={titleInput}
+            onChangeText={setTitleInput}
+            placeholder="Enter recipe title"
+            validation={validateTitle}
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
+        <RecipeInput
           value={summaryInput}
-          onChangeText={(value) => setSummaryInput(value)}
-          placeholder="Summary (optional)"
+          onChangeText={setSummaryInput}
+          placeholder="Enter summary (optional)"
+          validation={validateSummary}
           multiline
         />
 
         <DemoDivider size={spacing.xxl} line />
 
-        <TextField
+        <RecipeInput
           value={prepTimeInput}
-          onChangeText={(value) => setPrepTimeInput(value)}
+          onChangeText={setPrepTimeInput}
           placeholder="Prep time in minutes (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+          validation={validateTimeInMinutes}
+          numeric
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
+        <RecipeInput
           value={cookTimeInput}
-          onChangeText={(value) => setCookTimeInput(value)}
+          onChangeText={setCookTimeInput}
           placeholder="Cook time in minutes (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+          validation={validateTimeInMinutes}
+          numeric
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
+        <RecipeInput
           value={bakeTimeInput}
-          onChangeText={(value) => setBakeTimeInput(value)}
+          onChangeText={setBakeTimeInput}
           placeholder="Bake time in minutes (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+          validation={validateTimeInMinutes}
+          numeric
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
+        <RecipeInput
           value={servingsInput}
-          onChangeText={(value) => setServingsInput(value)}
+          onChangeText={setServingsInput}
           placeholder="Servings (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+          validation={validateTimeInMinutes}
+          numeric
         />
 
         <DemoDivider size={spacing.xxl} line />
