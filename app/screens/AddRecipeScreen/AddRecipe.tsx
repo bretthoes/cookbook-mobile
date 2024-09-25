@@ -8,8 +8,7 @@ import { RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { useStores } from "app/models"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { RecipeInput } from "./RecipeInput"
-import { validateSummary, validateTimeInMinutes, validateTitle } from "./validation"
+import { validateSummary, validateText, validateTimeInMinutes } from "./validation"
 
 
 export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
@@ -107,16 +106,16 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         name=""
         description="Fill out the details for your new recipe."
       >
-        <RecipeInput
+        <TextField
             value={titleInput}
             onChangeText={setTitleInput}
             placeholder="Enter recipe title"
-            validation={validateTitle}
+            validation={validateText}
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <RecipeInput
+        <TextField
           value={summaryInput}
           onChangeText={setSummaryInput}
           placeholder="Enter summary (optional)"
@@ -126,42 +125,46 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
 
         <DemoDivider size={spacing.xxl} line />
 
-        <RecipeInput
+        <TextField
           value={prepTimeInput}
           onChangeText={setPrepTimeInput}
           placeholder="Prep time in minutes (optional)"
           validation={validateTimeInMinutes}
-          numeric
+          inputMode="numeric"
+          keyboardType="numeric"
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <RecipeInput
+        <TextField
           value={cookTimeInput}
           onChangeText={setCookTimeInput}
           placeholder="Cook time in minutes (optional)"
           validation={validateTimeInMinutes}
-          numeric
+          inputMode="numeric"
+          keyboardType="numeric"
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <RecipeInput
+        <TextField
           value={bakeTimeInput}
           onChangeText={setBakeTimeInput}
           placeholder="Bake time in minutes (optional)"
           validation={validateTimeInMinutes}
-          numeric
+          inputMode="numeric"
+          keyboardType="numeric"
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <RecipeInput
+        <TextField
           value={servingsInput}
           onChangeText={setServingsInput}
           placeholder="Servings (optional)"
           validation={validateTimeInMinutes}
-          numeric
+          inputMode="numeric"
+          keyboardType="numeric"
         />
 
         <DemoDivider size={spacing.xxl} line />
@@ -197,6 +200,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                 <TextField
                   value={item}
                   onChangeText={(value) => handleIngredientChange(index, value)}
+                  validation={validateText}
                   placeholder={`Add ingredient here...`}
                   containerStyle={$textFieldContainer}
                   RightAccessory={() => (
