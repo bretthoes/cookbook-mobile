@@ -1,4 +1,4 @@
-import React, { ComponentType, forwardRef, Ref, useImperativeHandle, useRef, useState } from "react"
+import React, { ComponentType, forwardRef, Ref, useImperativeHandle, useRef } from "react"
 import {
   StyleProp,
   TextInput,
@@ -24,18 +24,6 @@ export interface TextFieldProps extends Omit<TextInputProps, "ref"> {
    * A style modifier for different input states.
    */
   status?: "error" | "disabled"
-  /**
-   * Optional validation function that will populate helper text with error message.
-   * @param input - The text entered in the control.
-   * @returns {string | null} - Returns error message, or null if validation passes.
-   */
-  validation?: (input: string) => string | null
-  /**
-   * Callback to handle validation status changes
-   * @param isValid - boolean result of validation run.
-   * @returns {boolean} - Returns 
-   */
-  onValidationChange?: (isValid: boolean) => void
   /**
    * The label text to display if not using `labelTx`.
    */
@@ -127,8 +115,6 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
     helperTx,
     helperTxOptions,
     status,
-    validation,
-    onValidationChange,
     RightAccessory,
     LeftAccessory,
     HelperTextProps,
@@ -139,20 +125,6 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
     ...TextInputProps
   } = props
   const input = useRef<TextInput>(null)
-  const [errorMessage, setErrorMessage] = useState<string | null>("")
-  
-  // Handle text change with validation
-  const handleChange = (text: string) => {
-    TextInputProps.onChangeText?.(text)
-    
-    if (validation) {
-      const error = validation(text)
-      setErrorMessage(error)
-      if (onValidationChange) {
-        onValidationChange(!error)
-      }
-    }
-  }
 
   const disabled = TextInputProps.editable === false || status === "disabled"
 
@@ -234,7 +206,6 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
           placeholderTextColor={colors.textDim}
           {...TextInputProps}
           editable={!disabled}
-          onChangeText={handleChange}
           style={$inputStyles}
         />
 
@@ -248,10 +219,10 @@ export const TextField = forwardRef(function TextField(props: TextFieldProps, re
         )}
       </View>
 
-      {!!(helper || helperTx || errorMessage) && (
+      {!!(helper || helperTx) && (
         <Text
           preset="formHelper"
-          text={errorMessage || helper}
+          text={helper}
           tx={helperTx}
           txOptions={helperTxOptions}
           {...HelperTextProps}
