@@ -8,50 +8,46 @@ import { RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { useStores } from "app/models"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
-import { validateSummary, validateText, validateTimeInMinutes } from "./validation"
+import * as yup from "yup";
+import { Controller, ControllerFieldState, ControllerRenderProps, FieldValues, Form, useForm, UseFormStateReturn } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup"
+
 
 
 export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
   function AddRecipeScreen(_props) {
-    const { recipeStore } = useStores()
-    const [titleInput, setTitleInput] = useState("")
-    const [summaryInput, setSummaryInput] = useState("")
-    const [prepTimeInput, setPrepTimeInput] = useState("")
-    const [cookTimeInput, setCookTimeInput] = useState("")
-    const [bakeTimeInput, setBakeTimeInput] = useState("")
-    const [servingsInput, setServingsInput] = useState("")
-
+    console.debug('hello')
     const [directions, setDirections] = useState([""])
     const [ingredients, setIngredients] = useState([""])
-    
-    const handleSaveRecipe = () => {
-      const newRecipe: RecipeToAddSnapshotIn = {
-        title: titleInput.trim(),
-        cookbookId: _props.route.params.cookbookId,
-        summary: summaryInput.trim() || null,
-        thumbnail: null, // TODO handle thumbnail logic
-        videoPath: null, // TODO handle videoPath logic
-        preparationTimeInMinutes: prepTimeInput ? parseInt(prepTimeInput) : null,
-        cookingTimeInMinutes: cookTimeInput ? parseInt(cookTimeInput) : null,
-        bakingTimeInMinutes: bakeTimeInput ? parseInt(bakeTimeInput) : null,
-        servings: servingsInput ? parseInt(servingsInput) : null,
-        directions: directions.map((dir, index) => ({
-          id: 0,
-          text: dir,
-          ordinal: index + 1,
-          image: null,
-        })),
-        ingredients: ingredients.map((ing, index) => ({
-          id: 0,
-          name: ing,
-          optional: false,
-          ordinal: index + 1,
-        })),      
-        images: [],  // TODO handle images logic
-      }
 
-      recipeStore.createRecipe(newRecipe);
-    }
+    // const handleSaveRecipe = () => {
+    //   const newRecipe: RecipeToAddSnapshotIn = {
+    //     title: titleInput.trim(),
+    //     cookbookId: _props.route.params.cookbookId,
+    //     summary: summaryInput.trim() || null,
+    //     thumbnail: null, // TODO handle thumbnail logic
+    //     videoPath: null, // TODO handle videoPath logic
+    //     preparationTimeInMinutes: prepTimeInput ? parseInt(prepTimeInput) : null,
+    //     cookingTimeInMinutes: cookTimeInput ? parseInt(cookTimeInput) : null,
+    //     bakingTimeInMinutes: bakeTimeInput ? parseInt(bakeTimeInput) : null,
+    //     servings: servingsInput ? parseInt(servingsInput) : null,
+    //     directions: directions.map((dir, index) => ({
+    //       id: 0,
+    //       text: dir,
+    //       ordinal: index + 1,
+    //       image: null,
+    //     })),
+    //     ingredients: ingredients.map((ing, index) => ({
+    //       id: 0,
+    //       name: ing,
+    //       optional: false,
+    //       ordinal: index + 1,
+    //     })),      
+    //     images: [],  // TODO handle images logic
+    //   }
+
+    //   recipeStore.createRecipe(newRecipe);
+    // }
 
     const handleAddDirection = () => {
       setDirections([...directions, ""])
@@ -83,6 +79,46 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       setIngredients(updatedIngredients)
     }
 
+    // Define validation schema using yup
+    const schema = yup.object().shape({
+      title: yup.string().required("Title is required").min(3, "Title at least 3 characters").max(255, "Title at most 255 characters"),
+      summary: yup.string().nullable().min(3).max(255),
+      preparationTimeInMinutes: yup.string().nullable().min(0).max(999),
+      cookingTimeInMinutes: yup.number().nullable().min(0).max(999),
+      bakingTimeInMinutes: yup.number().nullable().min(0).max(999),
+      servings: yup.number().nullable().min(0).max(999),
+      ingredients: yup.array().of(yup.string().required("Ingredient is required").min(3).max(255)),
+      directions: yup.array().of(yup.string().required("Direction is required").min(3).max(255)),
+    })
+    const {
+      control,
+      handleSubmit,
+      formState: {errors},
+    } = useForm({
+      resolver: yupResolver(schema),
+      mode: "onChange",
+      defaultValues: {
+        // title: '', // This matches the schema requirement for 'title'
+        // summary: '', // Add other fields if needed
+        // preparationTimeInMinutes: null,
+        // cookingTimeInMinutes: null,
+        // bakingTimeInMinutes: null,
+        // servings: null,
+        // ingredients: [''],
+        // directions: [''],
+      },
+    })
+
+
+    const onPressSend = (formData: object) => {
+      
+      console.debug("onPressSend")
+      console.debug("Form errors: ", errors)
+      console.debug(formData)
+      console.debug("title="+schema.fields.title)
+      // Perform actions with the validated form data
+    };
+
   return (
     <Screen
       preset="scroll"
@@ -98,7 +134,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         <Button
           text="Save"
           style={$buttonHeightOverride}
-          onPress={handleSaveRecipe}
+          onPress={() => {handleSubmit(onPressSend)()}}
         />
       </View>
 
@@ -106,41 +142,57 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         name=""
         description="Fill out the details for your new recipe."
       >
-        <TextField
-            value={titleInput}
-            onChangeText={setTitleInput}
+        <Controller
+          name={"title"}
+          control={control}
+          render={({field: {onChange, value}}) => (
+          <TextField
+            value={value}
+            onChangeText={onChange}
             placeholder="Enter recipe title"
-            validation={validateText}
+            helper={errors.title?.message ?? ""}
+          />
+          )}
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
-          value={summaryInput}
-          onChangeText={setSummaryInput}
-          placeholder="Enter summary (optional)"
-          validation={validateSummary}
-          multiline
+        <Controller 
+          name={"summary"}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <TextField
+              value={value ?? ""}
+              onChangeText={onChange}
+              helper={errors.summary?.message ?? ""}
+              placeholder="Enter summary (optional)"
+              multiline
+            />
+          )}
         />
 
         <DemoDivider size={spacing.xxl} line />
 
-        <TextField
-          value={prepTimeInput}
-          onChangeText={setPrepTimeInput}
-          placeholder="Prep time in minutes (optional)"
-          validation={validateTimeInMinutes}
-          inputMode="numeric"
-          keyboardType="numeric"
+        <Controller 
+          name={"preparationTimeInMinutes"}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <TextField
+              value={value ?? ""} // TODO resolve this expecting string but needs to be numeric
+              onChangeText={onChange}
+              helper={errors.summary?.message ?? ""}
+              placeholder="Prep time in minutes (optional)"
+              inputMode="numeric"
+              keyboardType="numeric"
+              multiline
+            />
+          )}
         />
 
         <DemoDivider size={spacing.lg} />
 
         <TextField
-          value={cookTimeInput}
-          onChangeText={setCookTimeInput}
           placeholder="Cook time in minutes (optional)"
-          validation={validateTimeInMinutes}
           inputMode="numeric"
           keyboardType="numeric"
         />
@@ -148,10 +200,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         <DemoDivider size={spacing.lg} />
 
         <TextField
-          value={bakeTimeInput}
-          onChangeText={setBakeTimeInput}
           placeholder="Bake time in minutes (optional)"
-          validation={validateTimeInMinutes}
           inputMode="numeric"
           keyboardType="numeric"
         />
@@ -159,10 +208,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         <DemoDivider size={spacing.lg} />
 
         <TextField
-          value={servingsInput}
-          onChangeText={setServingsInput}
           placeholder="Servings (optional)"
-          validation={validateTimeInMinutes}
           inputMode="numeric"
           keyboardType="numeric"
         />
@@ -200,7 +246,6 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                 <TextField
                   value={item}
                   onChangeText={(value) => handleIngredientChange(index, value)}
-                  validation={validateText}
                   placeholder={`Add ingredient here...`}
                   containerStyle={$textFieldContainer}
                   RightAccessory={() => (
