@@ -9,45 +9,17 @@ import { useStores } from "app/models"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
 import { observer } from "mobx-react-lite"
 import * as yup from "yup";
-import { Controller, ControllerFieldState, ControllerRenderProps, FieldValues, Form, useForm, UseFormStateReturn } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup"
 
 
 
 export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
   function AddRecipeScreen(_props) {
-    console.debug('hello')
     const [directions, setDirections] = useState([""])
     const [ingredients, setIngredients] = useState([""])
+    const { recipeStore } = useStores()
 
-    // const handleSaveRecipe = () => {
-    //   const newRecipe: RecipeToAddSnapshotIn = {
-    //     title: titleInput.trim(),
-    //     cookbookId: _props.route.params.cookbookId,
-    //     summary: summaryInput.trim() || null,
-    //     thumbnail: null, // TODO handle thumbnail logic
-    //     videoPath: null, // TODO handle videoPath logic
-    //     preparationTimeInMinutes: prepTimeInput ? parseInt(prepTimeInput) : null,
-    //     cookingTimeInMinutes: cookTimeInput ? parseInt(cookTimeInput) : null,
-    //     bakingTimeInMinutes: bakeTimeInput ? parseInt(bakeTimeInput) : null,
-    //     servings: servingsInput ? parseInt(servingsInput) : null,
-    //     directions: directions.map((dir, index) => ({
-    //       id: 0,
-    //       text: dir,
-    //       ordinal: index + 1,
-    //       image: null,
-    //     })),
-    //     ingredients: ingredients.map((ing, index) => ({
-    //       id: 0,
-    //       name: ing,
-    //       optional: false,
-    //       ordinal: index + 1,
-    //     })),      
-    //     images: [],  // TODO handle images logic
-    //   }
-
-    //   recipeStore.createRecipe(newRecipe);
-    // }
 
     const handleAddDirection = () => {
       setDirections([...directions, ""])
@@ -79,11 +51,10 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       setIngredients(updatedIngredients)
     }
 
-    // Define validation schema using yup
     const schema = yup.object().shape({
       title: yup.string().required("Title is required").min(3, "Title at least 3 characters").max(255, "Title at most 255 characters"),
       summary: yup.string().nullable().min(3).max(255),
-      preparationTimeInMinutes: yup.string().nullable().min(0).max(999),
+      preparationTimeInMinutes: yup.number().nullable().min(0).max(999),
       cookingTimeInMinutes: yup.number().nullable().min(0).max(999),
       bakingTimeInMinutes: yup.number().nullable().min(0).max(999),
       servings: yup.number().nullable().min(0).max(999),
@@ -98,26 +69,48 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       resolver: yupResolver(schema),
       mode: "onChange",
       defaultValues: {
-        // title: '', // This matches the schema requirement for 'title'
-        // summary: '', // Add other fields if needed
-        // preparationTimeInMinutes: null,
-        // cookingTimeInMinutes: null,
-        // bakingTimeInMinutes: null,
-        // servings: null,
-        // ingredients: [''],
-        // directions: [''],
+        title: '',
+        summary: null,
+        preparationTimeInMinutes: null,
+        cookingTimeInMinutes: null,
+        bakingTimeInMinutes: null,
+        servings: null,
+        ingredients: [''],
+        directions: [''],
       },
     })
 
-
-    const onPressSend = (formData: object) => {
-      
-      console.debug("onPressSend")
-      console.debug("Form errors: ", errors)
-      console.debug(formData)
-      console.debug("title="+schema.fields.title)
-      // Perform actions with the validated form data
+    const onPressSend = (formData: any) => {
+      const newRecipe: RecipeToAddSnapshotIn = {
+        title: formData.title.trim(),
+        cookbookId: _props.route.params.cookbookId, // Assuming cookbookId is passed in route params
+        summary: formData.summary?.trim() || null,
+        thumbnail: null, // TODO handle thumbnail logic
+        videoPath: null, // TODO handle videoPath logic
+        preparationTimeInMinutes: formData.preparationTimeInMinutes ? parseInt(formData.preparationTimeInMinutes) : null,
+        cookingTimeInMinutes: formData.cookingTimeInMinutes ? parseInt(formData.cookingTimeInMinutes) : null,
+        bakingTimeInMinutes: formData.bakingTimeInMinutes ? parseInt(formData.bakingTimeInMinutes) : null,
+        servings: formData.servings ? parseInt(formData.servings) : null,
+        directions: directions.map((dir, index) => ({
+          id: 0,
+          text: dir,
+          ordinal: index + 1,
+          image: null,
+        })),
+        ingredients: ingredients.map((ing, index) => ({
+          id: 0,
+          name: ing,
+          optional: false,
+          ordinal: index + 1,
+        })),      
+        images: [],  // TODO handle images logic
+      };
+    
+      //recipeStore.createRecipe(newRecipe);
+    
+      console.debug("Form submitted: ", newRecipe);
     };
+    
 
   return (
     <Screen
@@ -178,7 +171,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
           control={control}
           render={({field: {onChange, value}}) => (
             <TextField
-              value={value ?? ""} // TODO resolve this expecting string but needs to be numeric
+              value={value ? String(value) : ""}
               onChangeText={onChange}
               helper={errors.summary?.message ?? ""}
               placeholder="Prep time in minutes (optional)"
@@ -191,26 +184,54 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
-          placeholder="Cook time in minutes (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+        <Controller 
+          name={"cookingTimeInMinutes"}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <TextField
+              value={value ? String(value) : ""}
+              onChangeText={onChange}
+              helper={errors.summary?.message ?? ""}
+              placeholder="Cook time in minutes (optional)"
+              inputMode="numeric"
+              keyboardType="numeric"
+            />
+          )}
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
-          placeholder="Bake time in minutes (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+
+        <Controller 
+          name={"bakingTimeInMinutes"}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <TextField
+              value={value ? String(value) : ""}
+              onChangeText={onChange}
+              helper={errors.summary?.message ?? ""}
+              placeholder="Bake time in minutes (optional)"
+              inputMode="numeric"
+              keyboardType="numeric"
+            />
+          )}
         />
 
         <DemoDivider size={spacing.lg} />
 
-        <TextField
-          placeholder="Servings (optional)"
-          inputMode="numeric"
-          keyboardType="numeric"
+        <Controller 
+          name={"servings"}
+          control={control}
+          render={({field: {onChange, value}}) => (
+            <TextField
+              value={value ? String(value) : ""}
+              onChangeText={onChange}
+              helper={errors.summary?.message ?? ""}
+              placeholder="Servings (optional)"
+              inputMode="numeric"
+              keyboardType="numeric"
+            />
+          )}
         />
 
         <DemoDivider size={spacing.xxl} line />
