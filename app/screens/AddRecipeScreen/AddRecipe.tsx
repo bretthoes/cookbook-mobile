@@ -54,12 +54,12 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
     const schema = yup.object().shape({
       title: yup.string().required("Title is required").min(3, "Title at least 3 characters").max(255, "Title at most 255 characters"),
       summary: yup.string().nullable().min(3).max(255),
-      preparationTimeInMinutes: yup.number().nullable().min(0).max(999),
-      cookingTimeInMinutes: yup.number().nullable().min(0).max(999),
-      bakingTimeInMinutes: yup.number().nullable().min(0).max(999),
+      preparationTimeInMinutes: yup.number().nullable().min(0).max(999, "Cannot exceed 1k"),
+      cookingTimeInMinutes: yup.number().nullable().min(0).max(999, "Cannot exceed 1k"),
+      bakingTimeInMinutes: yup.number().nullable().min(0).max(999, "Cannot exceed 1k"),
       servings: yup.number().nullable().min(0).max(999),
-      ingredients: yup.array().of(yup.string().required("Ingredient is required").min(3).max(255)),
-      directions: yup.array().of(yup.string().required("Direction is required").min(3).max(255)),
+      ingredients: yup.array().of(yup.string().required("Ingredient is required").min(3).max(255)).min(1, "Ingredients are required"),
+      directions: yup.array().of(yup.string().required("Direction is required").min(3).max(255)).min(1, "Directions are required"),
     })
     const {
       control,
@@ -81,6 +81,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
     })
 
     const onPressSend = (formData: any) => {
+      console.debug('yello')
       const newRecipe: RecipeToAddSnapshotIn = {
         title: formData.title.trim(),
         cookbookId: _props.route.params.cookbookId, // Assuming cookbookId is passed in route params
