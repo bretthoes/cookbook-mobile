@@ -81,7 +81,6 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
     })
 
     const onPressSend = (formData: any) => {
-      console.debug('yello')
       const newRecipe: RecipeToAddSnapshotIn = {
         title: formData.title.trim(),
         cookbookId: _props.route.params.cookbookId, // Assuming cookbookId is passed in route params
@@ -108,6 +107,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       };
     
       //recipeStore.createRecipe(newRecipe);
+      console.debug(JSON.stringify(newRecipe, null, 2))
     
       console.debug("Form submitted: ", newRecipe);
     };
