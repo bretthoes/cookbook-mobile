@@ -19,8 +19,14 @@ interface RecipeFormInputs {
   cookingTimeInMinutes: number | null
   bakingTimeInMinutes: number | null
   servings: number | null
-  ingredients: { name: string }[] // Array of ingredient objects with a 'name' field
-  directions: { text: string }[]  // Array of direction objects with a 'text' field
+  ingredients: {
+    name: string,
+    optional: boolean | null
+  }[]
+  directions: {
+    text: string,
+    image: string | null
+  }[]
 }
 
 export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
@@ -36,14 +42,16 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       servings: yup.number().nullable().defined().min(0).max(999), // Matches RecipeFormInputs
       ingredients: yup.array().required().of(
         yup.object({
-          name: yup.string().required("Ingredient is required").min(3, "Ingredient at least 3 characters").max(255, "Ingredient at most 255 characters")
+          name: yup.string().required("Ingredient is required").min(3, "Ingredient at least 3 characters").max(255, "Ingredient at most 255 characters"),
+          optional: yup.bool().nullable().defined().default(false),
         })
-      ).min(1, "At least one ingredient is required"),
+      ).min(1, "At least one ingredient is required").default([]),
       directions: yup.array().required().of(
         yup.object({
-          text: yup.string().required("Direction is required").min(3, "Direction at least 3 characters").max(255, "Direction at most 255 characters")
+          text: yup.string().required("Direction is required").min(3, "Direction at least 3 characters").max(255, "Direction at most 255 characters"),
+          image: yup.string().nullable().defined()
         })
-      ).min(1, "At least one direction is required"),
+      ).min(1, "At least one direction is required").default([]),
     })
 
     const {
@@ -240,53 +248,53 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         {/* Ingredients Section */}
         <View style={{minHeight: spacing.xxs}}>
           <ListView
-          ListHeaderComponent={
-            <View>
-              <Text text="Ingredients" preset="bold" />
-              <DemoDivider size={spacing.md} />
-            </View>
-          }
-          ListFooterComponent={
-            <View>
-              <DemoDivider size={spacing.md} />
-              <Button
-                text="Add another ingredient"
-                onPress={() => addIngredient({ name: "" })}
-                style={$buttonHeightOverride}
-              />
-              <DemoDivider size={spacing.xl} />
-            </View>
-          }
-          estimatedItemSize={162}
-          data={ingredientFields}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <View style={$directionItemContainer}>
-              <Text 
-                text={'-'}
-                style={$directionIndex}
-              />
-              <Controller
-                  control={control}
-                  name={`ingredients.${index}`}
-                  render={({ field }) => (
-                    <TextField
-                      value={field.value.name}
-                      onChangeText={field.onChange}
-                      placeholder="Add ingredient here..."
-                      containerStyle={$textFieldContainer}
-                      RightAccessory={() => (
-                        <Icon 
-                          icon="x"
-                          onPress={() => removeIngredient(index)}
-                        />
-                      )}
-                    />
-                  )}
+            ListHeaderComponent={
+              <View>
+                <Text text="Ingredients" preset="bold" />
+                <DemoDivider size={spacing.md} />
+              </View>
+            }
+            ListFooterComponent={
+              <View>
+                <DemoDivider size={spacing.md} />
+                <Button
+                  text="Add another ingredient"
+                  onPress={() => addIngredient({ name: "", optional: false })}
+                  style={$buttonHeightOverride}
                 />
-            </View>
-          )}
-          ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
+                <DemoDivider size={spacing.xl} />
+              </View>
+            }
+            estimatedItemSize={162}
+            data={ingredientFields}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item, index }) => (
+              <View style={$directionItemContainer}>
+                <Text 
+                  text={'-'}
+                  style={$directionIndex}
+                />
+                <Controller
+                    control={control}
+                    name={`ingredients.${index}.name`}
+                    render={({ field }) => (
+                      <TextField
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        placeholder="Add ingredient here..."
+                        containerStyle={$textFieldContainer}
+                        RightAccessory={() => (
+                          <Icon 
+                            icon="x"
+                            onPress={() => removeIngredient(index)}
+                          />
+                        )}
+                      />
+                    )}
+                  />
+              </View>
+            )}
+            ItemSeparatorComponent={() => <DemoDivider size={spacing.sm} />}
           />
         </View>
           
@@ -305,7 +313,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                 <DemoDivider size={spacing.md} />
                 <Button
                   text="Add another direction"
-                  onPress={() => addDirection({ text: "" })}
+                  onPress={() => addDirection({ text: "", image: "" })}
                   style={$buttonHeightOverride}
                 />
                 <DemoDivider size={spacing.xl} />
@@ -322,10 +330,10 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                 />
                 <Controller
                   control={control}
-                  name={`directions.${index}`}
+                  name={`directions.${index}.text`}
                   render={({ field }) => (
                     <TextField
-                      value={field.value.text}
+                      value={field.value}
                       onChangeText={field.onChange}
                       placeholder="Add direction here..."
                       containerStyle={$textFieldContainer}
