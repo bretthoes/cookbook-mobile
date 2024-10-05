@@ -45,13 +45,13 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
           name: yup.string().required("Ingredient is required").min(3, "Ingredient at least 3 characters").max(255, "Ingredient at most 255 characters"),
           optional: yup.bool().nullable().defined().default(false),
         })
-      ).min(1, "At least one ingredient is required").default([]),
+      ).min(1, "At least one ingredient is required"),
       directions: yup.array().required().of(
         yup.object({
           text: yup.string().required("Direction is required").min(3, "Direction at least 3 characters").max(255, "Direction at most 255 characters"),
-          image: yup.string().nullable().defined()
+          image: yup.string().nullable().defined().default(null)
         })
-      ).min(1, "At least one direction is required").default([]),
+      ).min(1, "At least one direction is required"),
     })
 
     const {
@@ -68,8 +68,8 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         cookingTimeInMinutes: null,
         bakingTimeInMinutes: null,
         servings: null,
-        ingredients: [],
-        directions: [],
+        ingredients: [{name: ""}],
+        directions: [{text: ""}],
       },
     })
     
@@ -120,7 +120,6 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
     }
     
-
   return (
     <Screen
       preset="scroll"
