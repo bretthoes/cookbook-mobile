@@ -11,7 +11,7 @@ import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
 import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store"
 import { CookbookSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotIn, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
@@ -47,9 +47,9 @@ export class Api {
   }
 
   async setAuthorizationHeader(apisauce: ApisauceInstance) {
-    const accessToken = await SecureStore.getItemAsync("accessToken");
+    const accessToken = await SecureStore.getItemAsync("accessToken")
     if (accessToken) {
-      apisauce.setHeader("Authorization", `Bearer ${accessToken}`);
+      apisauce.setHeader("Authorization", `Bearer ${accessToken}`)
     }
   }
 
@@ -90,12 +90,19 @@ export class Api {
   /**
    * Gets a list of cookbooks with pagination.
    */
-  async getCookbooks(pageNumber = 1, pageSize = 10): Promise<{ kind: "ok"; cookbooks: CookbookSnapshotIn[] } | GeneralApiProblem> {
+  async getCookbooks(
+    pageNumber = 1,
+    pageSize = 10,
+  ): Promise<{ kind: "ok"; cookbooks: CookbookSnapshotIn[] } | GeneralApiProblem> {
     // prepare query parameters
     const params = { PageNumber: pageNumber, PageSize: pageSize }
 
     // use the authorizedRequest method to make the API call with query parameters
-    const response: ApiResponse<ApiCookbooksResponse> = await this.authorizedRequest("Cookbooks", "GET", params)
+    const response: ApiResponse<ApiCookbooksResponse> = await this.authorizedRequest(
+      "Cookbooks",
+      "GET",
+      params,
+    )
 
     // handle any errors
     if (!response.ok) {
@@ -125,13 +132,20 @@ export class Api {
   /**
    * Gets a list of recipes matching a cookbookId with pagination.
    */
-  async getRecipes(cookbookId: number, pageNumber: number, pageSize: number)
-  : Promise<{ kind: "ok"; recipes: RecipeListSnapshotIn} | GeneralApiProblem> {
+  async getRecipes(
+    cookbookId: number,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ kind: "ok"; recipes: RecipeListSnapshotIn } | GeneralApiProblem> {
     // prepare query parameters
     const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
 
     // use the authorizedRequest method to make the API call with query parameters
-    const response: ApiResponse<RecipeListSnapshotIn> = await this.authorizedRequest("Recipes", "GET", params)
+    const response: ApiResponse<RecipeListSnapshotIn> = await this.authorizedRequest(
+      "Recipes",
+      "GET",
+      params,
+    )
 
     // handle any errors
     if (!response.ok) {
@@ -156,9 +170,14 @@ export class Api {
   /**
    * Gets a single recipe by its id.
    */
-  async getRecipe(recipeId: number): Promise<{ kind: "ok"; recipe: RecipeSnapshotIn } | GeneralApiProblem> {
+  async getRecipe(
+    recipeId: number,
+  ): Promise<{ kind: "ok"; recipe: RecipeSnapshotIn } | GeneralApiProblem> {
     // make the API call to get the recipe by id
-    const response: ApiResponse<RecipeSnapshotIn> = await this.authorizedRequest(`Recipes/${recipeId}`, "GET")
+    const response: ApiResponse<RecipeSnapshotIn> = await this.authorizedRequest(
+      `Recipes/${recipeId}`,
+      "GET",
+    )
 
     // handle any errors
     if (!response.ok) {
@@ -184,7 +203,9 @@ export class Api {
    */
   async createRecipe(recipe: RecipeToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
     // make the API call to get the recipe by id
-    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes`, "POST", { recipe })
+    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes`, "POST", {
+      recipe,
+    })
 
     // handle any errors
     if (!response.ok) {
@@ -204,7 +225,6 @@ export class Api {
       return { kind: "bad-data" }
     }
   }
-
 
   /**
    * Logs in the user with the provided email and password.
@@ -262,7 +282,7 @@ export class Api {
     try {
       await this.setAuthorizationHeader(this.apisauce)
       let response: ApiResponse<any>
-  
+
       switch (method) {
         case "GET":
           response = await this.apisauce.get(endpoint, body)
@@ -279,17 +299,17 @@ export class Api {
         default:
           throw new Error("Invalid HTTP method")
       }
-  
+
       // If access token is expired
       if (response.status === 401) {
         // Try to refresh the token
         const newAccessToken = await this.refreshAuthToken()
-  
+
         if (!newAccessToken) {
           // TODO Log out the user
           throw new Error("Session expired. Please log in again.")
         }
-  
+
         // Set the new access token and retry the request
         this.apisauce.setHeader("Authorization", `Bearer ${newAccessToken}`)
         switch (method) {
@@ -303,13 +323,13 @@ export class Api {
             return await this.apisauce.delete(endpoint, body)
         }
       }
-  
+
       return response
     } catch (error) {
       console.error("Request failed:", error)
       throw error
     }
-  }  
+  }
 }
 
 // Singleton instance of the API for convenience

@@ -1,6 +1,6 @@
-import React from 'react'
-import { View, Image, ImageStyle, ViewStyle } from 'react-native'
-import { colors, spacing } from 'app/theme'
+import React from "react"
+import { View, Image, ImageStyle, ViewStyle } from "react-native"
+import { colors, spacing } from "app/theme"
 
 const logo = require("../../../assets/images/logo.png")
 

@@ -11,7 +11,7 @@ export const RootStoreModel = types.model("RootStore").props({
   authenticationStore: types.optional(AuthenticationStoreModel, {}),
   episodeStore: types.optional(EpisodeStoreModel, {}),
   cookbookStore: types.optional(CookbookStoreModel, {}),
-  recipeStore: types.optional(RecipeStoreModel, {})
+  recipeStore: types.optional(RecipeStoreModel, {}),
 })
 
 /**

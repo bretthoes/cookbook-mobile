@@ -10,7 +10,8 @@ import {
   TextStyle,
   View,
   ViewStyle,
- Image } from "react-native"
+  Image,
+} from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
 import Animated, {
   Extrapolate,
@@ -114,74 +115,74 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
           </View>
         )}
       >
-      <Screen
-        preset="fixed"
-        safeAreaEdges={["top"]}
-        contentContainerStyle={$screenContentContainer}
-      >
-        <ListView<Cookbook>
-          contentContainerStyle={$listContentContainer}
-          data={cookbookStore.cookbooksForList.slice()}
-          extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
-          refreshing={refreshing}
-          estimatedItemSize={177}
-          onRefresh={manualRefresh}
-          ListEmptyComponent={
-            isLoading ? (
-              <ActivityIndicator />
-            ) : (
-              <EmptyState
-                preset="generic"
-                style={$emptyState}
-                headingTx={
-                  cookbookStore.favoritesOnly
-                    ? "cookbookListScreen.noFavoritesEmptyState.heading"
-                    : undefined
-                }
-                contentTx={
-                  cookbookStore.favoritesOnly
-                    ? "cookbookListScreen.noFavoritesEmptyState.content"
-                    : undefined
-                }
-                button={cookbookStore.favoritesOnly ? "" : undefined}
-                buttonOnPress={manualRefresh}
-                imageStyle={$emptyStateImage}
-                ImageProps={{ resizeMode: "contain" }}
-              />
-            )
-          }
-          ListHeaderComponent={
-            <View>
-              <View style={$headerContainer}>
-                <Text preset="heading" tx="cookbookListScreen.title" />
-                <DrawerIconButton onPress={toggleDrawer} />
-              </View>
-              {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
-                <View style={$toggle}>
-                  <Toggle
-                    value={cookbookStore.favoritesOnly}
-                    onValueChange={() =>
-                      cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
-                    }
-                    variant="switch"
-                    labelTx="cookbookListScreen.onlyFavorites"
-                    labelPosition="left"
-                    labelStyle={$labelStyle}
-                    accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
-                  />
+        <Screen
+          preset="fixed"
+          safeAreaEdges={["top"]}
+          contentContainerStyle={$screenContentContainer}
+        >
+          <ListView<Cookbook>
+            contentContainerStyle={$listContentContainer}
+            data={cookbookStore.cookbooksForList.slice()}
+            extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
+            refreshing={refreshing}
+            estimatedItemSize={177}
+            onRefresh={manualRefresh}
+            ListEmptyComponent={
+              isLoading ? (
+                <ActivityIndicator />
+              ) : (
+                <EmptyState
+                  preset="generic"
+                  style={$emptyState}
+                  headingTx={
+                    cookbookStore.favoritesOnly
+                      ? "cookbookListScreen.noFavoritesEmptyState.heading"
+                      : undefined
+                  }
+                  contentTx={
+                    cookbookStore.favoritesOnly
+                      ? "cookbookListScreen.noFavoritesEmptyState.content"
+                      : undefined
+                  }
+                  button={cookbookStore.favoritesOnly ? "" : undefined}
+                  buttonOnPress={manualRefresh}
+                  imageStyle={$emptyStateImage}
+                  ImageProps={{ resizeMode: "contain" }}
+                />
+              )
+            }
+            ListHeaderComponent={
+              <View>
+                <View style={$headerContainer}>
+                  <Text preset="heading" tx="cookbookListScreen.title" />
+                  <DrawerIconButton onPress={toggleDrawer} />
                 </View>
-              )}
-            </View>
-          }
-          renderItem={({ item }) => (
-            <CookbookCard
-              cookbook={item}
-              isFavorite={cookbookStore.hasFavorite(item)}
-              onPressFavorite={() => cookbookStore.toggleFavorite(item)}
-            />
-          )}
-        />
-      </Screen>
+                {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
+                  <View style={$toggle}>
+                    <Toggle
+                      value={cookbookStore.favoritesOnly}
+                      onValueChange={() =>
+                        cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
+                      }
+                      variant="switch"
+                      labelTx="cookbookListScreen.onlyFavorites"
+                      labelPosition="left"
+                      labelStyle={$labelStyle}
+                      accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
+                    />
+                  </View>
+                )}
+              </View>
+            }
+            renderItem={({ item }) => (
+              <CookbookCard
+                cookbook={item}
+                isFavorite={cookbookStore.hasFavorite(item)}
+                onPressFavorite={() => cookbookStore.toggleFavorite(item)}
+              />
+            )}
+          />
+        </Screen>
       </Drawer>
     )
   },
@@ -303,11 +304,11 @@ const CookbookCard = observer(function CookbookCard({
     () =>
       function MemberButtonLeftAccessory() {
         return (
-              <Icon
-                icon="community"
-                size={ICON_SIZE}
-                color={colors.palette.neutral800} // black
-              />
+          <Icon
+            icon="community"
+            size={ICON_SIZE}
+            color={colors.palette.neutral800} // black
+          />
         )
       },
     [],
@@ -321,19 +322,11 @@ const CookbookCard = observer(function CookbookCard({
       onLongPress={handlePressFavorite}
       HeadingComponent={
         <View style={$metadata}>
-          <Text
-            style={$metadataText}
-            size="xxs"
-            accessibilityLabel={''}
-          >
-            {''}
+          <Text style={$metadataText} size="xxs" accessibilityLabel={""}>
+            {""}
           </Text>
-          <Text
-            style={$metadataText}
-            size="xxs"
-            accessibilityLabel={''}
-          >
-            {''}
+          <Text style={$metadataText} size="xxs" accessibilityLabel={""}>
+            {""}
           </Text>
         </View>
       }
@@ -364,15 +357,8 @@ const CookbookCard = observer(function CookbookCard({
               }
             />
           </Button>
-          <Button
-            style={$favoriteButton}
-            LeftAccessory={MemberButtonLeftAccessory}
-          >
-            <Text
-              size="xxs"
-              weight="medium"
-              text={"  " + cookbook.membersCount.toString()}
-            />
+          <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory}>
+            <Text size="xxs" weight="medium" text={"  " + cookbook.membersCount.toString()} />
           </Button>
         </View>
       }
@@ -422,7 +408,7 @@ const $iconContainer: ViewStyle = {
 
 const $buttonRow: ViewStyle = {
   flexDirection: "row",
-  gap: 4
+  gap: 4,
 }
 
 const $metadata: TextStyle = {

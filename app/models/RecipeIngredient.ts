@@ -1,5 +1,5 @@
-import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree";
-import { withSetPropAction } from "./helpers/withSetPropAction";
+import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
+import { withSetPropAction } from "./helpers/withSetPropAction"
 
 /**
  * This represents an ingredient in a recipe.
@@ -10,7 +10,7 @@ export const RecipeIngredientModel = types
     id: types.integer,
     name: types.string,
     optional: types.boolean,
-    ordinal: types.integer
+    ordinal: types.integer,
   })
   .actions(withSetPropAction)
 

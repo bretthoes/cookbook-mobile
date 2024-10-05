@@ -39,7 +39,7 @@ export const RecipeStoreModel = types
       } catch (error) {
         console.error(`Error creating recipe: ${error}`)
       }
-    }
+    },
   }))
 
 export interface RecipeStore extends Instance<typeof RecipeStoreModel> {}

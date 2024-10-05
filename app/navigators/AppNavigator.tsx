@@ -62,9 +62,8 @@ const AppStack = observer(function AppStack() {
   } = useStores()
 
   React.useEffect(() => {
-      loadStoredTokens()
+    loadStoredTokens()
   }, [loadStoredTokens])
-  
 
   return (
     <Stack.Navigator

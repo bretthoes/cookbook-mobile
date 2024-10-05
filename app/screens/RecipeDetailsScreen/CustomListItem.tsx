@@ -7,12 +7,11 @@ export const CustomListItem = observer(function CustomListItem({
   lastIndex,
   height,
 }: {
-  text: string,
-  index: number,
-  lastIndex: number,
+  text: string
+  index: number
+  lastIndex: number
   height: number
 }) {
-
   const handlePressItem = () => {
     // strikethrough
   }
@@ -23,7 +22,7 @@ export const CustomListItem = observer(function CustomListItem({
       text={text}
       topSeparator={index > 0}
       bottomSeparator={index !== lastIndex}
-      TextProps={{size: "md"}}
+      TextProps={{ size: "md" }}
       height={height}
     />
   )

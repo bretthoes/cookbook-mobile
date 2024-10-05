@@ -35,16 +35,16 @@ export interface ApiFeedResponse {
 }
 
 export interface CookbookItem {
-  id: number,
-  title: string,
-  image: string,
+  id: number
+  title: string
+  image: string
   membersCount: number
 }
 
 export interface ApiCookbooksResponse {
-  pageNumber: number,
-  totalPages: number,
-  totalCount: number,
+  pageNumber: number
+  totalPages: number
+  totalCount: number
   items: CookbookItem[]
 }
 

@@ -11,7 +11,7 @@ export const CookbookModel = types
     id: types.integer,
     title: types.string,
     image: types.maybeNull(types.string),
-    membersCount: types.integer
+    membersCount: types.integer,
   })
   .actions(withSetPropAction)
   .views((cookbook) => ({

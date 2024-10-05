@@ -46,7 +46,7 @@ const en = {
     debugTab: "Debug",
     communityTab: "Community",
     podcastListTab: "Podcast",
-    cookbookListTab: "Cookbooks"
+    cookbookListTab: "Cookbooks",
   },
   demoCommunityScreen: {
     title: "Connect with the community",
@@ -127,8 +127,7 @@ const en = {
     unfavoriteButton: "Unfavorite",
     add: "Add new cookbook",
     accessibility: {
-      cardHint:
-        "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
+      cardHint: "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
       switch: "Switch on to only show favorites",
       favoriteAction: "Toggle Favorite",
       favoriteIcon: "Cookbook not favorited",
@@ -149,21 +148,21 @@ const en = {
     cook: "Cook Time",
     prep: "Prep Time",
     bake: "Bake Time",
-    summary: "Summary"
+    summary: "Summary",
   },
   recipeListScreen: {
     title: "Recipes",
     searchPlaceholder: "Search",
     add: "Add new recipe",
     invite: "Invite someone else",
-    leave: "Leave cookbook"
+    leave: "Leave cookbook",
   },
   recipeAddScreen: {
     title: "Add Recipe",
     titleHelper: "The title for the new recipe",
     titleLabel: "Title",
-    titlePlacehoder: "Title"
-  }
+    titlePlacehoder: "Title",
+  },
 }
 
 export default en

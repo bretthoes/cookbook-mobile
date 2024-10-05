@@ -1,6 +1,6 @@
-import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree";
-import { withSetPropAction } from "./helpers/withSetPropAction";
-import Config from "app/config";
+import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
+import { withSetPropAction } from "./helpers/withSetPropAction"
+import Config from "app/config"
 
 /**
  * This represents an image in a recipe.

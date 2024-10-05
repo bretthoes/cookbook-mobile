@@ -20,7 +20,9 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
     const [open, setOpen] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const toggleDrawer = () => { setOpen(!open) }
+    const toggleDrawer = () => {
+      setOpen(!open)
+    }
 
     // initially, kick off a background refresh without the refreshing UI
     useEffect(() => {
@@ -45,15 +47,9 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
         onClose={() => setOpen(false)}
         drawerType="back"
         drawerPosition={"right"}
-        renderDrawerContent={() => (
-          <RecipeDrawer />
-        )}
+        renderDrawerContent={() => <RecipeDrawer />}
       >
-        <Screen
-          safeAreaEdges={recipeStore.currentRecipe?.images[0] ? [] : ["top"]}
-          preset="scroll"
-        >
-          
+        <Screen safeAreaEdges={recipeStore.currentRecipe?.images[0] ? [] : ["top"]} preset="scroll">
           {recipeStore.currentRecipe?.images && (
             <RecipeImages data={recipeStore.currentRecipe?.images} />
           )}
@@ -63,80 +59,79 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
           )}
 
           {recipeStore.currentRecipe && (
-            <View style={{minHeight: spacing.xxs}}>
+            <View style={{ minHeight: spacing.xxs }}>
               <ListView<RecipeIngredient>
                 onRefresh={manualRefresh}
                 refreshing={refreshing}
                 ListHeaderComponent={
-                  <Text 
-                    weight="light" 
+                  <Text
+                    weight="light"
                     tx="recipeDetailsScreen.ingredients"
-                    style={{ paddingBottom: spacing.md }} />
+                    style={{ paddingBottom: spacing.md }}
+                  />
                 }
-                renderItem={({item, index}) => (
-                  item && <View style={[
-                    $ingredientItemStyle,
-                    index === 0 && $borderTop,
-                    index === recipeStore.currentRecipe!.ingredients.length - 1 && $borderBottom
-                  ]}>
-                    <CustomListItem 
-                      text={` - ${item?.name}`} 
-                      index={index} 
-                      lastIndex = {recipeStore.currentRecipe!.ingredients.length - 1}
-                      height={spacing.xl} />
-                  </View>
-                )}
+                renderItem={({ item, index }) =>
+                  item && (
+                    <View
+                      style={[
+                        $ingredientItemStyle,
+                        index === 0 && $borderTop,
+                        index === recipeStore.currentRecipe!.ingredients.length - 1 &&
+                          $borderBottom,
+                      ]}
+                    >
+                      <CustomListItem
+                        text={` - ${item?.name}`}
+                        index={index}
+                        lastIndex={recipeStore.currentRecipe!.ingredients.length - 1}
+                        height={spacing.xl}
+                      />
+                    </View>
+                  )
+                }
                 data={recipeStore.currentRecipe?.ingredients}
                 estimatedItemSize={59}
                 contentContainerStyle={$ingredientsContainer}
-                ListEmptyComponent={
-                  isLoading ? (
-                    <ActivityIndicator />
-                  ) : (
-                    <View />
-                  )
-                }
-                >
-              </ListView>
+                ListEmptyComponent={isLoading ? <ActivityIndicator /> : <View />}
+              ></ListView>
             </View>
           )}
 
           {recipeStore.currentRecipe && (
-            <View style={{minHeight: spacing.xxs }}>
+            <View style={{ minHeight: spacing.xxs }}>
               <ListView<RecipeDirection>
                 onRefresh={manualRefresh}
                 refreshing={refreshing}
                 ListHeaderComponent={
-                  <Text 
-                    weight="light" 
+                  <Text
+                    weight="light"
                     tx="recipeDetailsScreen.directions"
-                    style={{ paddingBottom: spacing.md }}  />
+                    style={{ paddingBottom: spacing.md }}
+                  />
                 }
-                renderItem={({item, index}) => (
-                  item && <View style={[
-                    $listItemStyle,
-                    index === 0 && $borderTop,
-                    index === recipeStore.currentRecipe!.directions.length - 1 && $borderBottom
-                  ]}>
-                    <CustomListItem 
-                      text={`${item?.ordinal}. ${item?.text}`} 
-                      index={index} 
-                      lastIndex = {recipeStore.currentRecipe!.directions.length - 1}
-                      height={spacing.xl} />
-                  </View>
-                )}
+                renderItem={({ item, index }) =>
+                  item && (
+                    <View
+                      style={[
+                        $listItemStyle,
+                        index === 0 && $borderTop,
+                        index === recipeStore.currentRecipe!.directions.length - 1 && $borderBottom,
+                      ]}
+                    >
+                      <CustomListItem
+                        text={`${item?.ordinal}. ${item?.text}`}
+                        index={index}
+                        lastIndex={recipeStore.currentRecipe!.directions.length - 1}
+                        height={spacing.xl}
+                      />
+                    </View>
+                  )
+                }
                 data={recipeStore.currentRecipe?.directions}
                 estimatedItemSize={59}
                 contentContainerStyle={$directionsContainer}
-                ListEmptyComponent={
-                  isLoading ? (
-                    <ActivityIndicator />
-                  ) : (
-                    <View />
-                  )
-                }
-                >
-              </ListView>
+                ListEmptyComponent={isLoading ? <ActivityIndicator /> : <View />}
+              ></ListView>
             </View>
           )}
         </Screen>
@@ -149,12 +144,12 @@ export const RecipeDetailsScreen: FC<DemoTabScreenProps<"RecipeDetails">> = obse
 
 const $ingredientItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
-  paddingHorizontal: spacing.md
+  paddingHorizontal: spacing.md,
 }
 
 const $listItemStyle: ViewStyle = {
   backgroundColor: colors.palette.neutral100,
-  paddingHorizontal: spacing.md
+  paddingHorizontal: spacing.md,
 }
 
 const $borderTop: ViewStyle = {
@@ -172,7 +167,7 @@ const $directionsContainer: ViewStyle = {
 }
 
 const $ingredientsContainer: ViewStyle = {
-  padding: spacing.md
+  padding: spacing.md,
 }
 
 // #endregion

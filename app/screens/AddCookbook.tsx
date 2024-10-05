@@ -11,5 +11,4 @@ export const AddCookbookScreen = () => {
   )
 }
 
-const handleSaveCookbook = () => {
-}
+const handleSaveCookbook = () => {}

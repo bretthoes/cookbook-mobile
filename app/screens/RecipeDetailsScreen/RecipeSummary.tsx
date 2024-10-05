@@ -1,13 +1,13 @@
-import React from 'react'
-import { View, ViewStyle } from 'react-native'
-import { Text } from '../../components'
-import { spacing, colors } from 'app/theme'
-import { Recipe } from 'app/models/Recipe'
-import { DrawerIconButton } from '../DemoShowroomScreen/DrawerIconButton'
+import React from "react"
+import { View, ViewStyle } from "react-native"
+import { Text } from "../../components"
+import { spacing, colors } from "app/theme"
+import { Recipe } from "app/models/Recipe"
+import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
 
 export interface RecipeSummaryProps {
-  recipe: Recipe,
-  toggleDrawer: () => void,
+  recipe: Recipe
+  toggleDrawer: () => void
 }
 
 export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
@@ -18,7 +18,7 @@ export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
     </View>
 
     <View style={$subtitleContainer}>
-      <Text preset="subheading" weight="light" text={recipe.author ?? ''} />
+      <Text preset="subheading" weight="light" text={recipe.author ?? ""} />
     </View>
 
     <View style={$detailsContainer}>
@@ -42,7 +42,7 @@ export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
           <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
         </View>
       )}
-      
+
       {!!recipe.cookingTimeInMinutes && (
         <View>
           <Text weight="light" tx="recipeDetailsScreen.cook" />
@@ -61,21 +61,21 @@ export const RecipeSummary = ({ recipe, toggleDrawer }: RecipeSummaryProps) => (
 )
 
 const $titleContainer: ViewStyle = {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
+  flexDirection: "row",
+  justifyContent: "space-between",
   alignItems: "center",
   marginHorizontal: spacing.sm,
 }
 
 const $subtitleContainer: ViewStyle = {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
+  flexDirection: "row",
+  justifyContent: "space-between",
   marginHorizontal: spacing.sm,
 }
 
 const $detailsContainer: ViewStyle = {
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
+  flexDirection: "row",
+  justifyContent: "space-evenly",
   backgroundColor: colors.palette.neutral300,
   borderRadius: spacing.md,
   borderColor: colors.palette.neutral400,

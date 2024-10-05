@@ -1,7 +1,7 @@
 import { api } from "../services/api"
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
-import * as SecureStore from 'expo-secure-store';
-import { AuthResultSnapshotIn } from "./AuthResult";
+import * as SecureStore from "expo-secure-store"
+import { AuthResultSnapshotIn } from "./AuthResult"
 
 export const AuthenticationStoreModel = types
   .model("AuthenticationStore")
@@ -36,7 +36,7 @@ export const AuthenticationStoreModel = types
         console.error(`Error logging in: ${JSON.stringify(response)}`)
       }
     },
-    async saveTokens(authResult: AuthResultSnapshotIn){
+    async saveTokens(authResult: AuthResultSnapshotIn) {
       await SecureStore.setItemAsync("accessToken", authResult.accessToken)
       await SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
       this.setAuthToken(authResult.accessToken)
@@ -51,7 +51,7 @@ export const AuthenticationStoreModel = types
       const accessToken = SecureStore.getItem("accessToken")
       if (accessToken) {
         this.setAuthToken(accessToken)
-      } 
+      }
     },
   }))
 

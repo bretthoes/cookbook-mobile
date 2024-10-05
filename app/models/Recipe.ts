@@ -72,7 +72,6 @@ export interface RecipeBrief extends Instance<typeof RecipeBriefModel> {}
 export interface RecipeBriefSnapshotOut extends SnapshotOut<typeof RecipeBriefModel> {}
 export interface RecipeBriefSnapshotIn extends SnapshotIn<typeof RecipeBriefModel> {}
 
-
 /**
  * This represents a recipe to be added.
  */
@@ -94,7 +93,6 @@ export const RecipeToAddModel = types
   })
   .actions(withSetPropAction)
 
-  export interface RecipeToAdd extends Instance<typeof RecipeToAddModel> {}
-  export interface RecipeToAddSnapshotOut extends SnapshotOut<typeof RecipeToAddModel> {}
-  export interface RecipeToAddSnapshotIn extends SnapshotIn<typeof RecipeToAddModel> {}
-  
+export interface RecipeToAdd extends Instance<typeof RecipeToAddModel> {}
+export interface RecipeToAddSnapshotOut extends SnapshotOut<typeof RecipeToAddModel> {}
+export interface RecipeToAddSnapshotIn extends SnapshotIn<typeof RecipeToAddModel> {}

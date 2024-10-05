@@ -1,13 +1,20 @@
 import { spacing, colors } from "app/theme"
 import React, { useState } from "react"
-import { Dimensions, ScrollView, View, ViewStyle, NativeScrollEvent, NativeSyntheticEvent } from "react-native"
+import {
+  Dimensions,
+  ScrollView,
+  View,
+  ViewStyle,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from "react-native"
 import { AutoImage } from "../../components/AutoImage"
 import { RecipeImage } from "app/models/RecipeImage"
 
 const { width: viewportWidth } = Dimensions.get("window")
 
 export interface RecipeImagesProps {
-  data: RecipeImage[],
+  data: RecipeImage[]
 }
 
 export function RecipeImages(props: RecipeImagesProps) {
@@ -32,22 +39,16 @@ export function RecipeImages(props: RecipeImagesProps) {
       >
         {data.map((image, index) => (
           <View key={index} style={{ width: viewportWidth }}>
-            <AutoImage source={{ uri: image.getImage }}  maxWidth={viewportWidth} />
+            <AutoImage source={{ uri: image.getImage }} maxWidth={viewportWidth} />
           </View>
         ))}
       </ScrollView>
       {shouldShowPagination && (
         <View style={$dotContainer}>
-        {data.map((_, index) => (
-          <View
-            key={index}
-            style={[
-              $dot,
-              index === activeIndex ? $activeDot : $inactiveDot,
-            ]}
-          />
-        ))}
-      </View>
+          {data.map((_, index) => (
+            <View key={index} style={[$dot, index === activeIndex ? $activeDot : $inactiveDot]} />
+          ))}
+        </View>
       )}
     </View>
   )
