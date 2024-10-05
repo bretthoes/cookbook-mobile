@@ -27,6 +27,7 @@ interface RecipeFormInputs {
     text: string
     image: string | null
   }[]
+  images: string[]
 }
 
 export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
@@ -39,7 +40,12 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         .required("Title is required")
         .min(3, "Title at least 3 characters")
         .max(255, "Title at most 255 characters"),
-      summary: yup.string().nullable().defined().min(3).max(255),
+      summary: yup
+        .string()
+        .nullable()
+        .defined()
+        .min(3, "Summary at least 3 characters")
+        .max(255, "Summary at most 255 characters"),
       preparationTimeInMinutes: yup
         .number()
         .nullable()
@@ -92,6 +98,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
           }),
         )
         .min(1, "At least one direction is required"),
+      images: yup.array().required().of(yup.string().required())
     })
 
     const {
@@ -110,6 +117,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         servings: null,
         ingredients: [{ name: "" }],
         directions: [{ text: "" }],
+        images: [],
       },
     })
 
@@ -156,7 +164,11 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
           optional: false,
           ordinal: index + 1,
         })),
-        images: [], // TODO handle images logic
+        images: formData.images.map((image, index) => ({
+          id: 0,
+          name: image,
+          ordinal: index + 1,
+        })),
       }
       console.debug(JSON.stringify(newRecipe, null, 2))
       //recipeStore.createRecipe(newRecipe)
@@ -182,6 +194,11 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         </View>
 
         <DemoUseCase name="" description="Fill out the details for your new recipe.">
+
+          <Button text="Add photos (max of 6)" />
+
+          <DemoDivider size={spacing.lg} />
+
           <Controller
             name={"title"}
             control={control}
@@ -318,6 +335,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                         containerStyle={$textFieldContainer}
                         status="error"
                         helper={errors.ingredients?.[index]?.name?.message ?? ""}
+                        maxLength={255}
                         RightAccessory={() => (
                           <Icon icon="x" onPress={() => removeIngredient(index)} />
                         )}
@@ -366,6 +384,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                         containerStyle={$textFieldContainer}
                         helper={errors.directions?.[index]?.text?.message ?? ""}
                         status="error"
+                        maxLength={255}
                         multiline
                         RightAccessory={() => (
                           <Icon icon="x" onPress={() => removeDirection(index)} />
