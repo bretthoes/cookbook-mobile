@@ -36,10 +36,10 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
     const schema = yup.object().shape({
       title: yup.string().required("Title is required").min(3, "Title at least 3 characters").max(255, "Title at most 255 characters"),
       summary: yup.string().nullable().defined().min(3).max(255), // Matches RecipeFormInputs
-      preparationTimeInMinutes: yup.number().nullable().defined().min(0).max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
-      cookingTimeInMinutes: yup.number().nullable().defined().min(0).max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
-      bakingTimeInMinutes: yup.number().nullable().defined().min(0).max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
-      servings: yup.number().nullable().defined().min(0).max(999), // Matches RecipeFormInputs
+      preparationTimeInMinutes: yup.number().nullable().defined().min(0, "Must be greater than 0").max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
+      cookingTimeInMinutes: yup.number().nullable().defined().min(0, "Must be greater than 0").max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
+      bakingTimeInMinutes: yup.number().nullable().defined().min(0, "Must be greater than 0").max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
+      servings: yup.number().nullable().defined().min(0, "Must be greater than 0").max(999, "Cannot exceed 1k"), // Matches RecipeFormInputs
       ingredients: yup.array().required().of(
         yup.object({
           name: yup.string().required("Ingredient is required").min(3, "Ingredient at least 3 characters").max(255, "Ingredient at most 255 characters"),
@@ -151,6 +151,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             value={value}
             onChangeText={onChange}
             placeholder="Enter recipe title"
+            status="error"
             helper={errors.title?.message ?? ""}
           />
           )}
@@ -181,11 +182,10 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             <TextField
               value={value ? String(value) : ""}
               onChangeText={onChange}
-              helper={errors.summary?.message ?? ""}
+              helper={errors.preparationTimeInMinutes?.message ?? ""}
               placeholder="Prep time in minutes (optional)"
               inputMode="numeric"
               keyboardType="numeric"
-              multiline
             />
           )}
         />
@@ -199,7 +199,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             <TextField
               value={value ? String(value) : ""}
               onChangeText={onChange}
-              helper={errors.summary?.message ?? ""}
+              helper={errors.cookingTimeInMinutes?.message ?? ""}
               placeholder="Cook time in minutes (optional)"
               inputMode="numeric"
               keyboardType="numeric"
@@ -217,7 +217,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             <TextField
               value={value ? String(value) : ""}
               onChangeText={onChange}
-              helper={errors.summary?.message ?? ""}
+              helper={errors.bakingTimeInMinutes?.message ?? ""}
               placeholder="Bake time in minutes (optional)"
               inputMode="numeric"
               keyboardType="numeric"
@@ -234,7 +234,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             <TextField
               value={value ? String(value) : ""}
               onChangeText={onChange}
-              helper={errors.summary?.message ?? ""}
+              helper={errors.servings?.message ?? ""}
               placeholder="Servings (optional)"
               inputMode="numeric"
               keyboardType="numeric"
@@ -266,8 +266,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             }
             estimatedItemSize={162}
             data={ingredientFields}
-            keyExtractor={(_, index) => index.toString()}
-            renderItem={({ item, index }) => (
+            renderItem={({ index }) => (
               <View style={$directionItemContainer}>
                 <Text 
                   text={'-'}
@@ -282,6 +281,8 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                         onChangeText={field.onChange}
                         placeholder="Add ingredient here..."
                         containerStyle={$textFieldContainer}
+                        status="error"
+                        helper={errors.ingredients?.[index]?.name?.message ?? ""}
                         RightAccessory={() => (
                           <Icon 
                             icon="x"
@@ -320,8 +321,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
             }
             estimatedItemSize={162}
             data={directionFields}
-            keyExtractor={(item, index) => item.id}
-            renderItem={({ item, index }) => (
+            renderItem={({ index }) => (
               <View style={$directionItemContainer}>
                 <Text 
                   text={`${index + 1}.`}
@@ -336,6 +336,8 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
                       onChangeText={field.onChange}
                       placeholder="Add direction here..."
                       containerStyle={$textFieldContainer}
+                      helper={errors.directions?.[index]?.text?.message ?? ""}
+                      status="error"
                       multiline
                       RightAccessory={() => (
                         <Icon 
