@@ -11,6 +11,7 @@ import { observer } from "mobx-react-lite"
 import * as yup from "yup"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
+import * as ImagePicker from "expo-image-picker"
 
 interface RecipeFormInputs {
   title: string
@@ -105,6 +106,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       control,
       handleSubmit,
       formState: { errors },
+      setValue,
     } = useForm<RecipeFormInputs>({
       resolver: yupResolver(schema),
       mode: "onChange",
@@ -138,6 +140,28 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       control,
       name: "directions",
     })
+
+    // Image picker function
+    const pickImage = async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+      if (status !== 'granted') {
+        alert('Please allow camera roll access in settings.')
+        return
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
+      })
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        // If the image is picked, add the URI to the images array
+        setValue("images", [...result.assets.map((asset) => asset.uri)])
+        // TODO instead of above, go directly to api to upload image(s). return key, use that to display here.
+      }
+    }
 
     const onPressSend = (formData: RecipeFormInputs) => {
       console.debug("Form submitted successfully")
@@ -195,7 +219,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
 
         <DemoUseCase name="" description="Fill out the details for your new recipe.">
 
-          <Button text="Add photos (max of 6)" />
+          <Button text="Add photos (max of 6)" onPress={pickImage} />
 
           <DemoDivider size={spacing.lg} />
 
