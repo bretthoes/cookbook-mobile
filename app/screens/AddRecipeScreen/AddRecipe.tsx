@@ -1,6 +1,6 @@
-import { Button, TextField, Text, Screen, Icon, ListView } from "app/components"
+import { Button, TextField, Text, Screen, Icon, ListView, AutoImage } from "app/components"
 import { spacing } from "app/theme"
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
 import { DemoUseCase } from "../DemoShowroomScreen/DemoUseCase"
 import { DemoDivider } from "../DemoShowroomScreen/DemoDivider"
@@ -155,6 +155,7 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         allowsMultipleSelection: true, // NOTE: This can not be used with option that allows cropping (allowsEditing)
         aspect: [1, 1],
       })
+      setImagesLocal(result.assets?.map(x => x.uri) ?? [])
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const uploadResponse = await api.uploadImage(result.assets);
@@ -199,6 +200,8 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       recipeStore.createRecipe(newRecipe)
     }
 
+    const [imagesLocal, setImagesLocal] = useState([""])
+
     const onError = (errors: any) => {
       console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
     }
@@ -220,6 +223,18 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
 
         <DemoUseCase name="" description="Fill out the details for your new recipe.">
 
+        {imagesLocal.length > 0 && (
+          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
+            {imagesLocal.map((imageUri, index) => (
+              <AutoImage
+                key={index}
+                source={{ uri: imageUri }} // Display each image using AutoImage
+                style={{ width: 100, height: 100, margin: 5 }} // Set the image size and spacing
+              />
+            ))}
+          </View>
+        )}
+        
           <Button text="Add photos (max of 6)" onPress={pickImage} />
 
           <DemoDivider size={spacing.lg} />
