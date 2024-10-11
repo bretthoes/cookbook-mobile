@@ -12,6 +12,7 @@ import * as yup from "yup"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
+import { api } from "app/services/api"
 
 interface RecipeFormInputs {
   title: string
@@ -151,21 +152,21 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
+        allowsMultipleSelection: true, // NOTE: This can not be used with option that allows cropping (allowsEditing)
         aspect: [1, 1],
-        quality: 1,
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        // If the image is picked, add the URI to the images array
-        setValue("images", [...result.assets.map((asset) => asset.uri)])
-        // TODO instead of above, go directly to api to upload image(s). return key, use that to display here.
+        const uploadResponse = await api.uploadImage(result.assets);
+        if (uploadResponse.kind === "ok") {
+          setValue("images", uploadResponse.keys);
+        } else {
+          alert("Image selection failed");
+        }
       }
     }
 
     const onPressSend = (formData: RecipeFormInputs) => {
-      console.debug("Form submitted successfully")
-      console.debug(JSON.stringify(formData, null, 2))
       const newRecipe: RecipeToAddSnapshotIn = {
         title: formData.title.trim(),
         cookbookId: _props.route.params.cookbookId,
@@ -194,8 +195,8 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
           ordinal: index + 1,
         })),
       }
-      console.debug(JSON.stringify(newRecipe, null, 2))
-      //recipeStore.createRecipe(newRecipe)
+      
+      recipeStore.createRecipe(newRecipe)
     }
 
     const onError = (errors: any) => {

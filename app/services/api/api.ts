@@ -15,6 +15,7 @@ import * as SecureStore from "expo-secure-store"
 import { CookbookSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotIn, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
+import { ImagePickerAsset } from "expo-image-picker"
 
 /**
  * Configuring the apisauce instance.
@@ -223,6 +224,46 @@ export class Api {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
       }
       return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Uploads an image to the server.
+   */
+  async uploadImage(images: ImagePickerAsset[]): Promise<{ kind: "ok"; keys: string[] } | GeneralApiProblem> {
+    const formData = new FormData();
+    images.forEach(image => {
+      const imageData = {
+        uri: image.uri,
+        name: image.fileName,
+        type: image.mimeType,
+      } as any
+      formData.append("file", imageData);
+    })
+    const accessToken = await SecureStore.getItemAsync("accessToken")
+
+    const response: ApiResponse<any> = await this.apisauce.post("Images", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": `Bearer ${accessToken}`
+      },
+    });
+
+    // Handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response);
+      if (problem) return problem;
+    }
+
+    // Process the response and return the uploaded file key
+    try {
+      const keys = response.data;
+      return { kind: "ok", keys };
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack);
+      }
+      return { kind: "bad-data" };
     }
   }
 
