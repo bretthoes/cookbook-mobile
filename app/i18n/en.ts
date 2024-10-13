@@ -160,7 +160,6 @@ const en = {
   recipeAddScreen: {
     title: "Add Recipe",
     titleHelper: "The title for the new recipe",
-    titleLabel: "Title",
     titlePlacehoder: "Title",
   },
 }

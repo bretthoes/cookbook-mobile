@@ -142,6 +142,9 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       name: "directions",
     })
 
+    const [imagesLocal, setImagesLocal] = useState([] as string[])
+
+
     // Image picker function
     const pickImage = async () => {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -178,15 +181,15 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         cookingTimeInMinutes: formData.cookingTimeInMinutes,
         bakingTimeInMinutes: formData.bakingTimeInMinutes,
         servings: formData.servings,
-        directions: formData.directions.map((dir, index) => ({
+        directions: formData.directions.map((direction, index) => ({
           id: 0,
-          text: dir.text,
+          text: direction.text,
           ordinal: index + 1,
           image: null,
         })),
-        ingredients: formData.ingredients.map((ing, index) => ({
+        ingredients: formData.ingredients.map((ingredient, index) => ({
           id: 0,
-          name: ing.name,
+          name: ingredient.name,
           optional: false,
           ordinal: index + 1,
         })),
@@ -199,8 +202,6 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
       
       recipeStore.createRecipe(newRecipe)
     }
-
-    const [imagesLocal, setImagesLocal] = useState([""])
 
     const onError = (errors: any) => {
       console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
