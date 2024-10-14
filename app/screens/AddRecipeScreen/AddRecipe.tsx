@@ -183,19 +183,19 @@ export const AddRecipeScreen: FC<DemoTabScreenProps<"AddRecipe">> = observer(
         servings: formData.servings,
         directions: formData.directions.map((direction, index) => ({
           id: 0,
-          text: direction.text,
+          text: direction.text.trim(),
           ordinal: index + 1,
           image: null,
         })),
         ingredients: formData.ingredients.map((ingredient, index) => ({
           id: 0,
-          name: ingredient.name,
+          name: ingredient.name.trim(),
           optional: false,
           ordinal: index + 1,
         })),
         images: formData.images.map((image, index) => ({
           id: 0,
-          name: image,
+          name: image.trim(),
           ordinal: index + 1,
         })),
       }

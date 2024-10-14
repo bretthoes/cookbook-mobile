@@ -12,7 +12,7 @@ import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse } from "./api.typ
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from "expo-secure-store"
-import { CookbookSnapshotIn } from "app/models/Cookbook"
+import { CookbookSnapshotIn, CookbookToAddSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotIn, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
@@ -122,6 +122,33 @@ export class Api {
         })) ?? []
 
       return { kind: "ok", cookbooks }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Saves a new cookbook to the database.
+   */
+  async createCookbook(cookbook: CookbookToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<number> = await this.authorizedRequest(`Cookbooks`, "POST", {
+      cookbook,
+    })
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const cookbookId = response.data
+
+      if (cookbookId) return { kind: "ok" }
+      else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)

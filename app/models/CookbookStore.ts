@@ -1,6 +1,6 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import { Cookbook, CookbookModel } from "./Cookbook"
+import { Cookbook, CookbookModel, CookbookToAddSnapshotIn } from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 
 export const CookbookStoreModel = types
@@ -44,7 +44,19 @@ export const CookbookStoreModel = types
         store.addFavorite(cookbook)
       }
     },
-  }))
+    async createCookbook(newCookbook: CookbookToAddSnapshotIn) {
+      try {
+        const response = await api.createCookbook(newCookbook)
+        if (response.kind === "ok") {
+        } else {
+          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
+        }
+      } catch (error) {
+        console.error(`Error creating cookbook: ${error}`)
+      }
+    },
+  })
+)
 
 export interface CookbookStore extends Instance<typeof CookbookStoreModel> {}
 export interface CookbookStoreSnapshot extends SnapshotOut<typeof CookbookStoreModel> {}

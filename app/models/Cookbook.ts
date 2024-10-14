@@ -34,3 +34,19 @@ export const CookbookModel = types
 export interface Cookbook extends Instance<typeof CookbookModel> {}
 export interface CookbookSnapshotOut extends SnapshotOut<typeof CookbookModel> {}
 export interface CookbookSnapshotIn extends SnapshotIn<typeof CookbookModel> {}
+
+
+/**
+ * This represents a cookbook to be added.
+ */
+export const CookbookToAddModel = types
+  .model("RecipeToAdd")
+  .props({
+    title: types.string,
+    image: types.maybeNull(types.string),
+  })
+  .actions(withSetPropAction)
+
+export interface CookbookToAdd extends Instance<typeof CookbookToAddModel> {}
+export interface CookbookToAddSnapshotOut extends SnapshotOut<typeof CookbookToAddModel> {}
+export interface CookbookToAddSnapshotIn extends SnapshotIn<typeof CookbookToAddModel> {}
