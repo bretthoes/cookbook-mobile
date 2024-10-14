@@ -98,7 +98,7 @@ export const AddCookbookScreen: FC<DemoTabScreenProps<"AddCookbook">> = observer
         contentContainerStyle={$screenContentContainer}
       >
         <View style={$titleContainer}>
-          <Text preset="heading" weight="normal" text="Add new recipe" />
+          <Text preset="heading" weight="normal" text="Add new cookbook" />
           <Button
             text="Save"
             style={$buttonHeightOverride}
@@ -106,20 +106,20 @@ export const AddCookbookScreen: FC<DemoTabScreenProps<"AddCookbook">> = observer
           />
         </View>
 
-        <DemoUseCase name="" description="Fill out the details for your new recipe.">
+        <DemoUseCase name="" description="Fill out the details for your new cookbook.">
 
         {imageLocal.length > 0 && (
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
             <AutoImage
               source={{ uri: imageLocal}}
-              style={{ width: 100, height: 100, margin: 5 }} // TODO: update static dimensions
+              style={{ width: 300, height: 300, margin: 5 }} // TODO: update static dimensions
               />
           </View>
         )}
         
-          <Button text="Add photos (max of 6)" onPress={pickImage} />
+          <Button text="Add cover photo (optional)" onPress={pickImage} />
 
-          <DemoDivider size={spacing.lg} />
+          <DemoDivider size={spacing.xxl} line />
 
           <Controller
             name={"title"}
@@ -128,13 +128,12 @@ export const AddCookbookScreen: FC<DemoTabScreenProps<"AddCookbook">> = observer
               <TextField
                 value={value}
                 onChangeText={onChange}
-                placeholder="Enter recipe title"
+                placeholder="Enter cookbook title"
                 status="error"
                 helper={errors.title?.message ?? ""}
               />
             )}
           />
-          <DemoDivider size={spacing.xxl} line />
         </DemoUseCase>
       </Screen>
     )
