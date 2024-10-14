@@ -19,7 +19,7 @@ interface CookbookFormInputs {
   image: string | null
 }
 
-export const AddCookbokScreen: FC<DemoTabScreenProps<"AddCookbook">> = observer(
+export const AddCookbookScreen: FC<DemoTabScreenProps<"AddCookbook">> = observer(
   function AddCookbokScreen(_props) {
     const { cookbookStore } = useStores()
 
