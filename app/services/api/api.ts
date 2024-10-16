@@ -134,8 +134,9 @@ export class Api {
    * Saves a new cookbook to the database.
    */
   async createCookbook(cookbook: CookbookToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
-    const response: ApiResponse<number> = await this.authorizedRequest(`Cookbooks`, "POST", {
-      cookbook,
+    const response: ApiResponse<number> = await this.authorizedRequest('Cookbooks', "POST", {
+      title: cookbook.title,
+      image: cookbook.image
     })
 
     // handle any errors
@@ -231,7 +232,7 @@ export class Api {
    */
   async createRecipe(recipe: RecipeToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
     // make the API call to get the recipe by id
-    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes`, "POST", {
+    const response: ApiResponse<number> = await this.authorizedRequest('Recipes', "POST", {
       recipe,
     })
 
