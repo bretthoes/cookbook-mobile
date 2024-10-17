@@ -8,8 +8,8 @@ import { translate } from "../i18n"
 import { DemoCommunityScreen, DemoShowroomScreen, DemoDebugScreen } from "../screens"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-import { CookbookNavigator } from "./CookbookNavigator"
 import { Cookbook } from "app/models/Cookbook"
+import { CookbookListScreen } from "app/screens/CookbookListScreen"
 
 export type DemoTabParamList = {
   DemoCommunity: undefined
@@ -17,7 +17,6 @@ export type DemoTabParamList = {
   DemoDebug: undefined
   DemoPodcastList: undefined
   CookbookList: undefined
-  CookbookTab: undefined
   RecipeList: { cookbook: Cookbook }
   RecipeDetails: { recipeId: number }
   AddRecipe: { cookbookId: number }
@@ -81,8 +80,8 @@ export function DemoNavigator() {
       />
 
       <Tab.Screen
-        name="CookbookTab"
-        component={CookbookNavigator}
+        name="CookbookList"
+        component={CookbookListScreen}
         options={{
           tabBarAccessibilityLabel: translate("demoNavigator.cookbookListTab"),
           tabBarLabel: translate("demoNavigator.cookbookListTab"),

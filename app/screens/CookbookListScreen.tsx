@@ -35,11 +35,10 @@ import {
 } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
-import { DemoTabScreenProps } from "../navigators/DemoNavigator"
+import { DemoTabParamList, DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { Cookbook } from "app/models/Cookbook"
-import { CookbookStackParamList } from "app/navigators/CookbookNavigator"
 import { useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
@@ -49,7 +48,7 @@ import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
 const logo = require("../../assets/images/logo.png")
 
 type CookbookListScreenNavigationProp = NativeStackNavigationProp<
-  CookbookStackParamList>
+  DemoTabParamList>
 
 const ICON_SIZE = 14
 
@@ -83,7 +82,7 @@ export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observ
     }
 
     const handleAddCookbook = () => {
-      navigation.navigate("AddCookbook")
+      navigation.navigate("AddCookbook",)
     }
 
     const toggleDrawer = () => {

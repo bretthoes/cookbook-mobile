@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
-import { DemoTabScreenProps } from "../navigators/DemoNavigator"
+import { DemoTabParamList, DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
 import { EmptyState, Icon, ListItem, ListView, Screen, Button, Text } from "../components"
@@ -21,12 +21,11 @@ import { Drawer } from "react-native-drawer-layout"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { useNavigation } from "@react-navigation/native"
 import { NativeStackNavigationProp } from "@react-navigation/native-stack"
-import { RecipeStackParamList } from "app/navigators"
 
 const logo = require("../../assets/images/logo.png")
 
 type RecipeListScreenNavigationProp = NativeStackNavigationProp<
-  RecipeStackParamList,
+  DemoTabParamList,
   "RecipeDetails"
 >
 

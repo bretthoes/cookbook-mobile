@@ -48,7 +48,7 @@ const config = {
         },
         DemoDebug: "debug",
         DemoPodcastList: "podcast",
-        CookbookList: "cookbook",
+        CookbookList: "cookbook", // TODO update with nested screens
         DemoCommunity: "community",
       },
     },
