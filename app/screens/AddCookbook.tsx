@@ -83,8 +83,16 @@ export const AddCookbookScreen: FC<DemoTabScreenProps<"AddCookbook">> = observer
         title: formData.title.trim(),
         image: formData.image
       }
-      
-      await cookbookStore.createCookbook(newCookbook)
+      try {
+        await cookbookStore.createCookbook(newCookbook)
+        // TODO navigate to newly created cookbook.need to do this with
+        // a navigator that watches a property in cookbook store that
+        // this will update. Going back from that screen should return
+        // to cookbook list screen, not to here (add cookbook screen).
+      }
+      catch (e) {
+        alert("Add cookbook failed");
+      }
     }
 
     const onError = (errors: any) => {

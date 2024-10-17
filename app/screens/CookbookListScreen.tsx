@@ -49,9 +49,7 @@ import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
 const logo = require("../../assets/images/logo.png")
 
 type CookbookListScreenNavigationProp = NativeStackNavigationProp<
-  CookbookStackParamList,
-  "CookbookList"
->
+  CookbookStackParamList>
 
 const ICON_SIZE = 14
 

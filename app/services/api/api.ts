@@ -133,7 +133,7 @@ export class Api {
   /**
    * Saves a new cookbook to the database.
    */
-  async createCookbook(cookbook: CookbookToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async createCookbook(cookbook: CookbookToAddSnapshotIn): Promise<{ kind: "ok"; cookbookId: number } | GeneralApiProblem> {
     const response: ApiResponse<number> = await this.authorizedRequest('Cookbooks', "POST", {
       title: cookbook.title,
       image: cookbook.image
@@ -148,7 +148,7 @@ export class Api {
     try {
       const cookbookId = response.data
 
-      if (cookbookId) return { kind: "ok" }
+      if (cookbookId) return { kind: "ok", cookbookId }
       else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {

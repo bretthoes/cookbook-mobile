@@ -20,6 +20,28 @@ export const CookbookStoreModel = types
         console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
       }
     },
+    async createCookbook(cookbookToAdd: CookbookToAddSnapshotIn) {
+      try {
+        const response = await api.createCookbook(cookbookToAdd)
+        if (response.kind === "ok") {
+          const addedCookbook = CookbookModel.create({
+            id: response.cookbookId,
+            title: cookbookToAdd.title,
+            image: cookbookToAdd.image,
+            membersCount: 1,
+          })
+          store.setProp("cookbooks", [
+            ...store.cookbooks,
+            addedCookbook
+          ])
+          // TODO update current cookbook with the one we just added
+        } else {
+          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
+        }
+      } catch (error) {
+        console.error(`Error creating cookbook: ${error}`)
+      }
+    },
     addFavorite(cookbook: Cookbook) {
       store.favorites.push(cookbook)
     },
@@ -42,17 +64,6 @@ export const CookbookStoreModel = types
         store.removeFavorite(cookbook)
       } else {
         store.addFavorite(cookbook)
-      }
-    },
-    async createCookbook(newCookbook: CookbookToAddSnapshotIn) {
-      try {
-        const response = await api.createCookbook(newCookbook)
-        if (response.kind === "ok") {
-        } else {
-          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
-        }
-      } catch (error) {
-        console.error(`Error creating cookbook: ${error}`)
       }
     },
   })
