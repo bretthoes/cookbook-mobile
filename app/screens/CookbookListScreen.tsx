@@ -35,21 +35,16 @@ import {
 } from "../components"
 import { isRTL, translate } from "../i18n"
 import { useStores } from "../models"
-import { DemoTabParamList, DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { colors, spacing } from "../theme"
 import { delay } from "../utils/delay"
 import { Cookbook } from "app/models/Cookbook"
 import { useNavigation } from "@react-navigation/native"
-import { NativeStackNavigationProp } from "@react-navigation/native-stack"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { Drawer } from "react-native-drawer-layout"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
+import { AppStackScreenProps } from "app/navigators"
 
 const logo = require("../../assets/images/logo.png")
-
-type CookbookListScreenNavigationProp = NativeStackNavigationProp<
-  DemoTabParamList>
-
 const ICON_SIZE = 14
 
 const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
@@ -57,132 +52,132 @@ const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
 const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
 const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
-export const CookbookListScreen: FC<DemoTabScreenProps<"CookbookList">> = observer(
-  function CookbookListScreen(_props) {
-    const { cookbookStore } = useStores()
-    const [open, setOpen] = useState(false)
-    const [refreshing, setRefreshing] = React.useState(false)
-    const [isLoading, setIsLoading] = React.useState(false)
-    const navigation = useNavigation<CookbookListScreenNavigationProp>()
+interface CookbookListScreenProps extends AppStackScreenProps<"CookbookList"> {}
 
-    // initially, kick off a background refresh without the refreshing UI
-    useEffect(() => {
-      ;(async function load() {
-        setIsLoading(true)
-        await cookbookStore.fetchCookbooks()
-        setIsLoading(false)
-      })()
-    }, [cookbookStore])
+export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function CookbookListScreen() {
+  // Pull in one of our MST stores
+  const { cookbookStore } = useStores()
+  const [open, setOpen] = useState(false)
+  const [refreshing, setRefreshing] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
+  const navigation = useNavigation()
+  // initially, kick off a background refresh without the refreshing UI
+  useEffect(() => {
+    ;(async function load() {
+      setIsLoading(true)
+      await cookbookStore.fetchCookbooks()
+      setIsLoading(false)
+    })()
+  }, [cookbookStore])
 
-    // simulate a longer refresh, if the refresh is too fast for UX
-    async function manualRefresh() {
-      setRefreshing(true)
-      await Promise.all([cookbookStore.fetchCookbooks(), delay(750)])
-      setRefreshing(false)
-    }
+  // simulate a longer refresh, if the refresh is too fast for UX
+  async function manualRefresh() {
+    setRefreshing(true)
+    await Promise.all([cookbookStore.fetchCookbooks(), delay(750)])
+    setRefreshing(false)
+  }
 
-    const handleAddCookbook = () => {
-      navigation.navigate("AddCookbook",)
-    }
+  const handleAddCookbook = () => {
+    //navigation.navigate("AddCookbook",)
+  }
 
-    const toggleDrawer = () => {
-      setOpen(!open)
-    }
+  const toggleDrawer = () => {
+    setOpen(!open)
+  }
 
-    const $drawerInsets = useSafeAreaInsetsStyle(["top"])
-
-    return (
-      <Drawer
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        drawerType="back"
-        drawerPosition={"right"}
-        renderDrawerContent={() => (
-          <View style={[$drawer, $drawerInsets]}>
-            <View style={$logoContainer}>
-              <Image source={logo} style={$logoImage} />
-            </View>
-            <ListItem
-              text={translate("cookbookListScreen.add")}
-              textStyle={$right}
-              rightIcon="caretRight"
-              onPress={handleAddCookbook}
-            />
+  const $drawerInsets = useSafeAreaInsetsStyle(["top"])
+  return (
+    <Drawer
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      drawerType="back"
+      drawerPosition={"right"}
+      renderDrawerContent={() => (
+        <View style={[$drawer, $drawerInsets]}>
+          <View style={$logoContainer}>
+            <Image source={logo} style={$logoImage} />
           </View>
-        )}
-      >
-        <Screen
-          preset="fixed"
-          safeAreaEdges={["top"]}
-          contentContainerStyle={$screenContentContainer}
-        >
-          <ListView<Cookbook>
-            contentContainerStyle={$listContentContainer}
-            data={cookbookStore.cookbooksForList.slice()}
-            extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
-            refreshing={refreshing}
-            estimatedItemSize={177}
-            onRefresh={manualRefresh}
-            ListEmptyComponent={
-              isLoading ? (
-                <ActivityIndicator />
-              ) : (
-                <EmptyState
-                  preset="generic"
-                  style={$emptyState}
-                  headingTx={
-                    cookbookStore.favoritesOnly
-                      ? "cookbookListScreen.noFavoritesEmptyState.heading"
-                      : undefined
-                  }
-                  contentTx={
-                    cookbookStore.favoritesOnly
-                      ? "cookbookListScreen.noFavoritesEmptyState.content"
-                      : undefined
-                  }
-                  button={cookbookStore.favoritesOnly ? "" : undefined}
-                  buttonOnPress={manualRefresh}
-                  imageStyle={$emptyStateImage}
-                  ImageProps={{ resizeMode: "contain" }}
-                />
-              )
-            }
-            ListHeaderComponent={
-              <View>
-                <View style={$headerContainer}>
-                  <Text preset="heading" tx="cookbookListScreen.title" />
-                  <DrawerIconButton onPress={toggleDrawer} />
-                </View>
-                {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
-                  <View style={$toggle}>
-                    <Toggle
-                      value={cookbookStore.favoritesOnly}
-                      onValueChange={() =>
-                        cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
-                      }
-                      variant="switch"
-                      labelTx="cookbookListScreen.onlyFavorites"
-                      labelPosition="left"
-                      labelStyle={$labelStyle}
-                      accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
-                    />
-                  </View>
-                )}
-              </View>
-            }
-            renderItem={({ item }) => (
-              <CookbookCard
-                cookbook={item}
-                isFavorite={cookbookStore.hasFavorite(item)}
-                onPressFavorite={() => cookbookStore.toggleFavorite(item)}
-              />
-            )}
+          <ListItem
+            text={translate("cookbookListScreen.add")}
+            textStyle={$right}
+            rightIcon="caretRight"
+            onPress={handleAddCookbook}
           />
-        </Screen>
-      </Drawer>
-    )
-  },
+        </View>
+      )}
+    >
+      <Screen
+        preset="fixed"
+        safeAreaEdges={["top"]}
+        contentContainerStyle={$root}
+      >
+        <ListView<Cookbook>
+          contentContainerStyle={$listContentContainer}
+          data={cookbookStore.cookbooksForList.slice()}
+          extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
+          refreshing={refreshing}
+          estimatedItemSize={177}
+          onRefresh={manualRefresh}
+          ListEmptyComponent={
+            isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyState
+                preset="generic"
+                style={$emptyState}
+                headingTx={
+                  cookbookStore.favoritesOnly
+                    ? "cookbookListScreen.noFavoritesEmptyState.heading"
+                    : undefined
+                }
+                contentTx={
+                  cookbookStore.favoritesOnly
+                    ? "cookbookListScreen.noFavoritesEmptyState.content"
+                    : undefined
+                }
+                button={cookbookStore.favoritesOnly ? "" : undefined}
+                buttonOnPress={manualRefresh}
+                imageStyle={$emptyStateImage}
+                ImageProps={{ resizeMode: "contain" }}
+              />
+            )
+          }
+          ListHeaderComponent={
+            <View>
+              <View style={$headerContainer}>
+                <Text preset="heading" tx="cookbookListScreen.title" />
+                <DrawerIconButton onPress={toggleDrawer} />
+              </View>
+              {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
+                <View style={$toggle}>
+                  <Toggle
+                    value={cookbookStore.favoritesOnly}
+                    onValueChange={() =>
+                      cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
+                    }
+                    variant="switch"
+                    labelTx="cookbookListScreen.onlyFavorites"
+                    labelPosition="left"
+                    labelStyle={$labelStyle}
+                    accessibilityLabel={translate("cookbookListScreen.accessibility.switch")}
+                  />
+                </View>
+              )}
+            </View>
+          }
+          renderItem={({ item }) => (
+            <CookbookCard
+              cookbook={item}
+              isFavorite={cookbookStore.hasFavorite(item)}
+              onPressFavorite={() => cookbookStore.toggleFavorite(item)}
+            />
+          )}
+        />
+      </Screen>
+    </Drawer>
+  )
+},
 )
 
 const CookbookCard = observer(function CookbookCard({
@@ -264,10 +259,10 @@ const CookbookCard = observer(function CookbookCard({
     liked.value = withSpring(liked.value ? 0 : 1)
   }
 
-  const navigation = useNavigation<CookbookListScreenNavigationProp>()
+  const navigation = useNavigation()
 
   const handlePressCard = () => {
-    navigation.navigate("RecipeList", { cookbook })
+    //navigation.navigate("RecipeList", { cookbook })
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
@@ -364,7 +359,7 @@ const CookbookCard = observer(function CookbookCard({
 })
 
 // #region Styles
-const $screenContentContainer: ViewStyle = {
+const $root: ViewStyle = {
   flex: 1,
 }
 
