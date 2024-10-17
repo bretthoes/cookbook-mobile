@@ -12,8 +12,8 @@ import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse } from "./api.typ
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from "expo-secure-store"
-import { CookbookSnapshotIn, CookbookToAddSnapshotIn } from "app/models/Cookbook"
-import { RecipeSnapshotIn, RecipeToAddSnapshotIn } from "app/models/Recipe"
+import { CookbookSnapshotOut, CookbookToAddSnapshotIn } from "app/models/Cookbook"
+import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
 
@@ -94,7 +94,7 @@ export class Api {
   async getCookbooks(
     pageNumber = 1,
     pageSize = 10,
-  ): Promise<{ kind: "ok"; cookbooks: CookbookSnapshotIn[] } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; cookbooks: CookbookSnapshotOut[] } | GeneralApiProblem> {
     // prepare query parameters
     const params = { PageNumber: pageNumber, PageSize: pageSize }
 
@@ -116,8 +116,8 @@ export class Api {
       const rawData = response.data
 
       // this is where we transform the data into the shape we expect for our MST model.
-      const cookbooks: CookbookSnapshotIn[] =
-        rawData?.items.map((raw: CookbookSnapshotIn) => ({
+      const cookbooks: CookbookSnapshotOut[] =
+        rawData?.items.map((raw: CookbookSnapshotOut) => ({
           ...raw,
         })) ?? []
 
@@ -201,9 +201,9 @@ export class Api {
    */
   async getRecipe(
     recipeId: number,
-  ): Promise<{ kind: "ok"; recipe: RecipeSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipe: RecipeSnapshotOut } | GeneralApiProblem> {
     // make the API call to get the recipe by id
-    const response: ApiResponse<RecipeSnapshotIn> = await this.authorizedRequest(
+    const response: ApiResponse<RecipeSnapshotOut> = await this.authorizedRequest(
       `Recipes/${recipeId}`,
       "GET",
     )
