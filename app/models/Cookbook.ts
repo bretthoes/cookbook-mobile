@@ -8,7 +8,7 @@ import Config from "app/config"
 export const CookbookModel = types
   .model("Cookbook")
   .props({
-    id: types.integer,
+    id: types.identifierNumber,
     title: types.string,
     image: types.maybeNull(types.string),
     membersCount: types.integer,

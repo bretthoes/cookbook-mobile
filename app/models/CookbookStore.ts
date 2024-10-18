@@ -7,6 +7,7 @@ export const CookbookStoreModel = types
   .model("CookbookStore")
   .props({
     cookbooks: types.array(CookbookModel),
+    currentCookbook: types.maybeNull(types.reference(CookbookModel)),
     favorites: types.array(types.reference(CookbookModel)),
     favoritesOnly: false,
   })
@@ -41,6 +42,12 @@ export const CookbookStoreModel = types
       } catch (error) {
         console.error(`Error creating cookbook: ${error}`)
       }
+    },
+    setCurrentCookbook(cookbook: Cookbook) {
+      store.currentCookbook = cookbook
+    },
+    clearCurrentCookbook() {
+      store.currentCookbook = null
     },
     addFavorite(cookbook: Cookbook) {
       store.favorites.push(cookbook)

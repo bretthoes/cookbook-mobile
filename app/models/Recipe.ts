@@ -10,7 +10,7 @@ import { RecipeIngredientModel } from "./RecipeIngredient"
 export const RecipeModel = types
   .model("Recipe")
   .props({
-    id: types.integer,
+    id: types.identifierNumber,
     title: types.string,
     authorId: types.maybeNull(types.integer),
     author: types.maybeNull(types.string),
@@ -50,7 +50,7 @@ export interface RecipeSnapshotIn extends SnapshotIn<typeof RecipeModel> {}
 export const RecipeBriefModel = types
   .model("RecipeBrief")
   .props({
-    id: types.integer,
+    id: types.identifierNumber,
     title: types.string,
   })
   .actions(withSetPropAction)

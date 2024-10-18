@@ -8,19 +8,13 @@ import { translate } from "../i18n"
 import { DemoCommunityScreen, DemoShowroomScreen, DemoDebugScreen } from "../screens"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-import { Cookbook } from "app/models/Cookbook"
 import { CookbookListScreen } from "app/screens/CookbookListScreen"
 
 export type DemoTabParamList = {
   DemoCommunity: undefined
   DemoShowroom: { queryIndex?: string; itemIndex?: string }
   DemoDebug: undefined
-  DemoPodcastList: undefined
   CookbookList: undefined
-  RecipeList: { cookbook: Cookbook }
-  RecipeDetails: { recipeId: number }
-  AddRecipe: { cookbookId: number }
-  AddCookbook: undefined
 }
 
 /**
