@@ -42,7 +42,7 @@ import { useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { Drawer } from "react-native-drawer-layout"
 import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
-import { AppStackScreenProps } from "app/navigators"
+import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
 
 const logo = require("../../assets/images/logo.png")
 const ICON_SIZE = 14
@@ -52,7 +52,7 @@ const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
 const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
 const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
-interface CookbookListScreenProps extends AppStackScreenProps<"CookbookList"> {}
+interface CookbookListScreenProps extends DemoTabScreenProps<"CookbookList"> {}
 
 export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function CookbookListScreen() {
   // Pull in one of our MST stores
@@ -189,6 +189,8 @@ const CookbookCard = observer(function CookbookCard({
   onPressFavorite: () => void
   isFavorite: boolean
 }) {
+
+  const { cookbookStore } = useStores()
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
@@ -259,10 +261,10 @@ const CookbookCard = observer(function CookbookCard({
     liked.value = withSpring(liked.value ? 0 : 1)
   }
 
-  const navigation = useNavigation()
-
+  const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>()
   const handlePressCard = () => {
-    //navigation.navigate("RecipeList", { cookbook })
+    cookbookStore.setCurrentCookbook(cookbook)
+    navigation.navigate("CookbookDetails")
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
