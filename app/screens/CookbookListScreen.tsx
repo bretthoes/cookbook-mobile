@@ -60,7 +60,7 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
   const [open, setOpen] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
-  const navigation = useNavigation()
+  const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>()
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
     ;(async function load() {
@@ -78,7 +78,7 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
   }
 
   const handleAddCookbook = () => {
-    //navigation.navigate("AddCookbook",)
+    navigation.navigate("AddCookbook",)
   }
 
   const toggleDrawer = () => {

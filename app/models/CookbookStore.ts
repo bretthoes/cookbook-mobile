@@ -35,7 +35,7 @@ export const CookbookStoreModel = types
             ...store.cookbooks,
             addedCookbook
           ])
-          // TODO update current cookbook with the one we just added
+          this.setCurrentCookbook(addedCookbook)
         } else {
           console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
         }

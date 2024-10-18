@@ -40,6 +40,7 @@ export type AppStackParamList = {
   // 🔥 Your screens go here
 	RecipeDetails: undefined
 	CookbookDetails: undefined
+	AddCookbook: undefined
 	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -84,6 +85,7 @@ const AppStack = observer(function AppStack() {
       {/** 🔥 Your screens go here */}
 			<Stack.Screen name="RecipeDetails" component={Screens.RecipeDetailsScreen} />
 			<Stack.Screen name="CookbookDetails" component={Screens.CookbookDetailsScreen} />
+			<Stack.Screen name="AddCookbook" component={Screens.AddCookbookScreen} />
 			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
