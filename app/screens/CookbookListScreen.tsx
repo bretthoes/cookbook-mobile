@@ -78,7 +78,7 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
   }
 
   const handleAddCookbook = () => {
-    navigation.navigate("AddCookbook",)
+    navigation.navigate("AddCookbook")
   }
 
   const toggleDrawer = () => {

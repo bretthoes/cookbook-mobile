@@ -32,6 +32,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const navigation = useNavigation()
+  
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
     ;(async function load() {
@@ -233,10 +234,10 @@ const RecipeListItem = observer(function RecipeListItem({
   index: number
   lastIndex: number
 }) {
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
 
   const handlePressItem = () => {
-    //navigation.navigate("RecipeDetails", { recipeId: recipe.id })
+    navigation.navigate("RecipeDetails")
   }
 
   return (
