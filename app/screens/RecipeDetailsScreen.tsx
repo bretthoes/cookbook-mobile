@@ -12,7 +12,6 @@ import { RecipeDirection } from "app/models/RecipeDirection"
 import { CustomListItem } from "./RecipeDetailsScreen/CustomListItem"
 import { RecipeDrawer } from "./RecipeDetailsScreen/RecipeDrawer"
 import { RecipeSummary } from "./RecipeDetailsScreen/RecipeSummary"
- import { useNavigation } from "@react-navigation/native"
  import { useStores } from "app/models"
 
 interface RecipeDetailsScreenProps extends AppStackScreenProps<"RecipeDetails"> {}
@@ -43,8 +42,6 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(functi
     setRefreshing(false)
   }
 
-  // Pull in navigation via hook
-   const navigation = useNavigation()
    return (
     <Drawer
       open={open}
