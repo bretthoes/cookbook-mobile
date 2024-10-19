@@ -31,7 +31,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const navigation = useNavigation()
+  const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
   
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -65,7 +65,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const $drawerInsets = useSafeAreaInsetsStyle(["top"])
 
   const handleAddRecipe = () => {
-    //navigation.navigate("AddRecipe", { cookbookId: _props.route.params.cookbook.id })
+    navigation.navigate("AddRecipe")
   }
 
   const handleInvite = () => { }
@@ -76,7 +76,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     if (recipeStore.recipes?.hasNextPage) {
       setIsLoading(true)
       await recipeStore.fetchRecipes(
-        1,//_props.route.params.cookbook.id,
+        cookbookStore.currentCookbook?.id ?? 0,
         recipeStore.recipes.pageNumber + 1,
       )
       setIsLoading(false)

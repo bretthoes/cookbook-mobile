@@ -89,10 +89,10 @@ export const AddCookbookScreen: FC<AddCookbookScreenProps> = observer(function A
     }
     try {
       await cookbookStore.createCookbook(newCookbook)
-      // TODO navigate to newly created cookbook.need to do this with
-      // a navigator that watches a property in cookbook store that
-      // this will update. Going back from that screen should return
+      // TODO Going back from this screen should return
       // to cookbook list screen, not to here (add cookbook screen).
+      // Need to relace this screen on the stack, not just place the next one
+      // on top.
       navigation.navigate("CookbookDetails")
     }
     catch (e) {
