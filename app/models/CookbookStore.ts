@@ -9,7 +9,7 @@ export const CookbookStoreModel = types
   .props({
     cookbooks: types.maybeNull(CookbookListModel),
     currentCookbook: types.maybeNull(types.reference(CookbookModel)),
-    favorites: types.maybeNull(CookbookListModel),
+    favorites: types.array(types.reference(CookbookModel)),
     favoritesOnly: false,
   })
   .actions(withSetPropAction)
@@ -48,19 +48,19 @@ export const CookbookStoreModel = types
       store.currentCookbook = null
     },
     addFavorite(cookbook: Cookbook) {
-      store.favorites?.items.push(cookbook)
+      store.favorites.push(cookbook)
     },
     removeFavorite(cookbook: Cookbook) {
-      store.favorites?.items.remove(cookbook)
+      store.favorites.remove(cookbook)
     },
   }))
   .views((store) => ({
     get cookbooksForList() {
-      return store.favoritesOnly ? store.favorites : store.cookbooks
+      return store.favoritesOnly ? store.favorites : store.cookbooks?.items ?? []
     },
 
     hasFavorite(cookbook: Cookbook) {
-      return store.favorites?.items.includes(cookbook) ?? false
+      return store.favorites.includes(cookbook) ?? false
     },
   }))
   .actions((store) => ({
