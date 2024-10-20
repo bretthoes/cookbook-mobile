@@ -114,8 +114,8 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
       >
         <ListView<Cookbook>
           contentContainerStyle={$listContentContainer}
-          data={cookbookStore.cookbooksForList.slice()}
-          extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
+          data={cookbookStore.cookbooksForList?.items.slice()}
+          extraData={cookbookStore.favorites?.items.length ?? 0 + cookbookStore.cookbooks?.items?.length! ?? 0}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}
@@ -149,7 +149,7 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
                 <Text preset="heading" tx="cookbookListScreen.title" />
                 <DrawerIconButton onPress={toggleDrawer} />
               </View>
-              {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
+              {(cookbookStore.favoritesOnly || (cookbookStore.cookbooksForList?.items?.length ?? 0) > 0) && (
                 <View style={$toggle}>
                   <Toggle
                     value={cookbookStore.favoritesOnly}
