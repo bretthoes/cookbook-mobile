@@ -87,7 +87,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     if (recipeStore.recipes?.hasPreviousPage) {
       setIsLoading(true)
       await recipeStore.fetchRecipes(
-        1,
+        cookbookStore.currentCookbook?.id ?? 0,
         recipeStore.recipes.pageNumber - 1,
       )
       setIsLoading(false)
@@ -235,8 +235,10 @@ const RecipeListItem = observer(function RecipeListItem({
   lastIndex: number
 }) {
   const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
+  const { recipeStore } = useStores()
 
-  const handlePressItem = () => {
+  const handlePressItem = async () => {
+    await recipeStore.fetchRecipe(recipe.id)
     navigation.navigate("RecipeDetails")
   }
 

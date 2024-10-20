@@ -1,10 +1,9 @@
 import { AppStackScreenProps } from "app/navigators"
-import React, { FC, useEffect, useState } from "react"
+import React, { FC, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { ActivityIndicator, View, ViewStyle } from "react-native"
+import { View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
 import { Drawer } from "react-native-drawer-layout"
-import { delay } from "app/utils/delay"
 import { ListView, Screen, Text } from "../components"
 import { RecipeImages } from "app/screens/RecipeDetailsScreen/RecipeImages"
 import { RecipeIngredient } from "app/models/RecipeIngredient"
@@ -20,26 +19,8 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(functi
   // Pull in one of our MST stores
   const { recipeStore } = useStores()
   const [open, setOpen] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const toggleDrawer = () => {
     setOpen(!open)
-  }
-
-  // initially, kick off a background refresh without the refreshing UI
-  useEffect(() => {
-    ;(async function load() {
-      setIsLoading(true)
-      await recipeStore.fetchRecipe(1)
-      setIsLoading(false)
-    })()
-  }, [recipeStore])
-
-  // simulate a longer refresh, if the refresh is too fast for UX
-  async function manualRefresh() {
-    setRefreshing(true)
-    await Promise.all([recipeStore.fetchRecipe(1), delay(750)])
-    setRefreshing(false)
   }
 
    return (
@@ -63,8 +44,6 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(functi
         {recipeStore.currentRecipe && (
           <View style={{ minHeight: spacing.xxs }}>
             <ListView<RecipeIngredient>
-              onRefresh={manualRefresh}
-              refreshing={refreshing}
               ListHeaderComponent={
                 <Text
                   weight="light"
@@ -94,7 +73,7 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(functi
               data={recipeStore.currentRecipe?.ingredients}
               estimatedItemSize={59}
               contentContainerStyle={$ingredientsContainer}
-              ListEmptyComponent={isLoading ? <ActivityIndicator /> : <View />}
+              ListEmptyComponent={<View />}
             ></ListView>
           </View>
         )}
@@ -102,8 +81,6 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(functi
         {recipeStore.currentRecipe && (
           <View style={{ minHeight: spacing.xxs }}>
             <ListView<RecipeDirection>
-              onRefresh={manualRefresh}
-              refreshing={refreshing}
               ListHeaderComponent={
                 <Text
                   weight="light"
@@ -132,7 +109,7 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(functi
               data={recipeStore.currentRecipe?.directions}
               estimatedItemSize={59}
               contentContainerStyle={$directionsContainer}
-              ListEmptyComponent={isLoading ? <ActivityIndicator /> : <View />}
+              ListEmptyComponent={<View />}
             ></ListView>
           </View>
         )}
