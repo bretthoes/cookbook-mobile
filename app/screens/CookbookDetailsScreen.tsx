@@ -66,11 +66,12 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
 
   const handleAddRecipe = () => {
     navigation.navigate("AddRecipe")
+    toggleDrawer()
   }
 
-  const handleInvite = () => { }
+  const handleInvite = () => { toggleDrawer() }
 
-  const handleLeave = () => { }
+  const handleLeave = () => { toggleDrawer() }
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {
