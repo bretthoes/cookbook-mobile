@@ -1,6 +1,6 @@
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import { RecipeModel, RecipeToAddSnapshotIn } from "./Recipe"
+import { Recipe, RecipeBriefModel, RecipeModel, RecipeToAddSnapshotIn } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { RecipeListModel } from "./RecipeList"
 
@@ -32,13 +32,39 @@ export const RecipeStoreModel = types
       try {
         const response = await api.createRecipe(newRecipe)
         if (response.kind === "ok") {
-          // TODO either return a model that can be assigned to currentRecipe or redirect page
+          const addedRecipe = RecipeModel.create({
+            id: response.recipeId,
+            title: newRecipe.title,
+            summary: newRecipe.summary,
+            thumbnail: newRecipe.thumbnail,
+            videoPath: newRecipe.videoPath,
+            preparationTimeInMinutes: newRecipe.preparationTimeInMinutes,
+            cookingTimeInMinutes: newRecipe.cookingTimeInMinutes,
+            bakingTimeInMinutes: newRecipe.bakingTimeInMinutes,
+            servings: newRecipe.servings,
+            directions: newRecipe.directions,
+            ingredients: newRecipe.ingredients,
+            images: newRecipe.images,
+          })
+          this.setCurrentRecipe(addedRecipe)
+
+          store.recipes?.items.push(
+            RecipeBriefModel.create({
+            id: response.recipeId,
+            title: newRecipe.title
+          }))
         } else {
           console.error(`Error creating recipe: ${JSON.stringify(response)}`)
         }
       } catch (error) {
         console.error(`Error creating recipe: ${error}`)
       }
+    },
+    setCurrentRecipe(recipe: Recipe) {
+      store.currentRecipe = recipe
+    },
+    clearCurrentRecipe() {
+      store.currentRecipe = null
     },
   }))
 

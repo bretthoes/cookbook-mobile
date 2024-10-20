@@ -2,11 +2,12 @@ import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { Cookbook, CookbookModel, CookbookToAddSnapshotIn } from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
+import { CookbookListModel } from "./CookbookList"
 
 export const CookbookStoreModel = types
   .model("CookbookStore")
   .props({
-    cookbooks: types.array(CookbookModel),
+    cookbooks: types.maybeNull(CookbookListModel),
     currentCookbook: types.maybeNull(types.reference(CookbookModel)),
     favorites: types.array(types.reference(CookbookModel)),
     favoritesOnly: false,
@@ -31,11 +32,8 @@ export const CookbookStoreModel = types
             image: cookbookToAdd.image,
             membersCount: 1,
           })
-          store.setProp("cookbooks", [
-            ...store.cookbooks,
-            addedCookbook
-          ])
           this.setCurrentCookbook(addedCookbook)
+          store.cookbooks?.items.push(addedCookbook)
         } else {
           console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
         }
