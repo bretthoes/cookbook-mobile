@@ -226,7 +226,8 @@ export class Api {
   /**
    * Saves a new recipe to the database.
    */
-  async createRecipe(recipe: RecipeToAddSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async createRecipe(recipe: RecipeToAddSnapshotIn)
+  : Promise<{ kind: "ok"; recipeId: number} | GeneralApiProblem> {
     // make the API call to get the recipe by id
     const response: ApiResponse<number> = await this.authorizedRequest('Recipes', "POST", {
       recipe,
@@ -241,7 +242,7 @@ export class Api {
     try {
       const recipeId = response.data
 
-      if (recipeId) return { kind: "ok" }
+      if (recipeId) return { kind: "ok", recipeId }
       else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
