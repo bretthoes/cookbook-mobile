@@ -8,14 +8,15 @@
 import { ApiResponse, ApisauceInstance, create } from "apisauce"
 import Config from "../../config"
 import { GeneralApiProblem, getGeneralApiProblem } from "./apiProblem"
-import type { ApiConfig, ApiCookbooksResponse, ApiFeedResponse } from "./api.types"
+import type { ApiConfig, ApiFeedResponse } from "./api.types"
 import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from "expo-secure-store"
-import { CookbookSnapshotOut, CookbookToAddSnapshotIn } from "app/models/Cookbook"
+import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
+import { CookbookListSnapshotIn } from "app/models/CookbookList"
 
 /**
  * Configuring the apisauce instance.
@@ -94,12 +95,12 @@ export class Api {
   async getCookbooks(
     pageNumber = 1,
     pageSize = 10,
-  ): Promise<{ kind: "ok"; cookbooks: CookbookSnapshotOut[] } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; cookbooks: CookbookListSnapshotIn } | GeneralApiProblem> {
     // prepare query parameters
     const params = { PageNumber: pageNumber, PageSize: pageSize }
 
     // use the authorizedRequest method to make the API call with query parameters
-    const response: ApiResponse<ApiCookbooksResponse> = await this.authorizedRequest(
+    const response: ApiResponse<CookbookListSnapshotIn> = await this.authorizedRequest(
       "Cookbooks",
       "GET",
       params,
@@ -113,15 +114,10 @@ export class Api {
 
     // transform the data into the format we are expecting
     try {
-      const rawData = response.data
+      const cookbooks = response.data
 
-      // this is where we transform the data into the shape we expect for our MST model.
-      const cookbooks: CookbookSnapshotOut[] =
-        rawData?.items.map((raw: CookbookSnapshotOut) => ({
-          ...raw,
-        })) ?? []
-
-      return { kind: "ok", cookbooks }
+      if (cookbooks) return { kind: "ok", cookbooks }
+      else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
