@@ -6,7 +6,7 @@ export * from "./DemoShowroomScreen/DemoShowroomScreen"
 export * from "./ErrorScreen/ErrorBoundary"
 // export other screens here
 export * from "./CookbookListScreen"
-export * from "./RecipeDetailsScreen"
+export * from "./RecipeDetailsScreen/RecipeDetailsScreen"
 export * from "./CookbookDetailsScreen"
 export * from "./AddCookbookScreen"
 export * from "./AddRecipeScreen"
