@@ -70,9 +70,8 @@ export const AddCookbookScreen: FC<AddCookbookScreenProps> = observer(function A
       aspect: [1, 1],
     })
     
-
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      setImageLocal(result.assets?.pop()?.uri ?? "")
+      setImageLocal(result.assets[0]?.uri ?? "")
       const uploadResponse = await api.uploadImage(result.assets);
       if (uploadResponse.kind === "ok") {
         setValue("image", uploadResponse?.keys?.pop() ?? "");
