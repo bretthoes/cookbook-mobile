@@ -23,6 +23,7 @@ export const CookbookStoreModel = types
       this.clearCurrentCookbook()
       const response = await api.getCookbooks()
       if (response.kind === "ok") {
+        // TODO resolve image not showing on correct tile in UI after adding cookbook
         console.debug(JSON.stringify(response.cookbooks, null, 2))
         self.setProp("cookbooks", response.cookbooks)
       } else {
@@ -33,17 +34,14 @@ export const CookbookStoreModel = types
       try {
         const response = yield api.createCookbook(cookbookToAdd)
         if (response.kind === "ok") {
-          const existingCookbook = self.cookbooks.items.find(ep => ep.id === response.cookbookId)
-          if (!existingCookbook) {
-            const newCookbook = CookbookModel.create({
-              id: response.cookbookId,
-              title: cookbookToAdd.title,
-              image: cookbookToAdd.image,
-              membersCount: 1,
-            })
-            self.cookbooks.items.push(newCookbook)
-            self.currentCookbook = newCookbook
-          }
+          const newCookbook = CookbookModel.create({
+            id: response.cookbookId,
+            title: cookbookToAdd.title,
+            image: cookbookToAdd.image,
+            membersCount: 1,
+          })
+          self.cookbooks.items.push(newCookbook)
+          self.currentCookbook = newCookbook
         }
       } catch (error){
         console.error(`Error creating cookbook: ${error}`)

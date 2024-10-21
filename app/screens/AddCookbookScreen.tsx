@@ -89,11 +89,7 @@ export const AddCookbookScreen: FC<AddCookbookScreenProps> = observer(function A
     }
     try {
       await cookbookStore.createCookbook(newCookbook)
-      // TODO Going back from this screen should return
-      // to cookbook list screen, not to here (add cookbook screen).
-      // Need to relace this screen on the stack, not just place the next one
-      // on top.
-      navigation.navigate("CookbookDetails")
+      navigation.replace("CookbookDetails")
     }
     catch (e) {
       alert("Add cookbook failed");
