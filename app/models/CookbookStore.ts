@@ -1,4 +1,4 @@
-import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { Cookbook, CookbookModel, CookbookToAddSnapshotIn } from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
@@ -7,51 +7,59 @@ import { CookbookListModel } from "./CookbookList"
 export const CookbookStoreModel = types
   .model("CookbookStore")
   .props({
-    cookbooks: types.maybeNull(CookbookListModel),
+    cookbooks: types.optional(CookbookListModel, {
+      items: [],
+      pageNumber: 1,
+      totalPages: 1,
+      totalCount: 0,
+    }),
     currentCookbook: types.maybeNull(types.reference(CookbookModel)),
     favorites: types.array(types.reference(CookbookModel)),
     favoritesOnly: false,
   })
   .actions(withSetPropAction)
-  .actions((store) => ({
+  .actions((self) => ({
     async fetchCookbooks() {
+      this.clearCurrentCookbook()
       const response = await api.getCookbooks()
       if (response.kind === "ok") {
-        store.setProp("cookbooks", response.cookbooks)
+        console.debug(JSON.stringify(response.cookbooks, null, 2))
+        self.setProp("cookbooks", response.cookbooks)
       } else {
         console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
       }
     },
-    async createCookbook(cookbookToAdd: CookbookToAddSnapshotIn) {
+    createCookbook: flow(function* (cookbookToAdd: CookbookToAddSnapshotIn) {
       try {
-        const response = await api.createCookbook(cookbookToAdd)
+        const response = yield api.createCookbook(cookbookToAdd)
         if (response.kind === "ok") {
-          const addedCookbook = CookbookModel.create({
-            id: response.cookbookId,
-            title: cookbookToAdd.title,
-            image: cookbookToAdd.image,
-            membersCount: 1,
-          })
-          this.setCurrentCookbook(addedCookbook)
-          store.cookbooks?.items.push(addedCookbook)
-        } else {
-          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
+          const existingCookbook = self.cookbooks.items.find(ep => ep.id === response.cookbookId)
+          if (!existingCookbook) {
+            const newCookbook = CookbookModel.create({
+              id: response.cookbookId,
+              title: cookbookToAdd.title,
+              image: cookbookToAdd.image,
+              membersCount: 1,
+            })
+            self.cookbooks.items.push(newCookbook)
+            self.currentCookbook = newCookbook
+          }
         }
-      } catch (error) {
+      } catch (error){
         console.error(`Error creating cookbook: ${error}`)
       }
-    },
+    }),
     setCurrentCookbook(cookbook: Cookbook) {
-      store.currentCookbook = cookbook
+      self.currentCookbook = cookbook
     },
     clearCurrentCookbook() {
-      store.currentCookbook = null
+      self.currentCookbook = null
     },
     addFavorite(cookbook: Cookbook) {
-      store.favorites.push(cookbook)
+      self.favorites.push(cookbook)
     },
     removeFavorite(cookbook: Cookbook) {
-      store.favorites.remove(cookbook)
+      self.favorites.remove(cookbook)
     },
   }))
   .views((store) => ({
