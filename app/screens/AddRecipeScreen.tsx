@@ -36,7 +36,7 @@ interface RecipeFormInputs {
 
 export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
-  const { recipeStore } = useStores()
+  const { recipeStore, cookbookStore } = useStores()
 
   const schema = yup.object().shape({
     title: yup
@@ -175,7 +175,7 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
   const onPressSend = (formData: RecipeFormInputs) => {
     const newRecipe: RecipeToAddSnapshotIn = {
       title: formData.title.trim(),
-      cookbookId: 0,//_props.route.params.cookbookId,
+      cookbookId: cookbookStore.currentCookbook?.id ?? 0,
       summary: formData.summary?.trim() || null,
       thumbnail: null, // TODO handle thumbnail logic
       videoPath: null, // TODO handle videoPath logic
