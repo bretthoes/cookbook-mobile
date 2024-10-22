@@ -162,9 +162,14 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
       allowsMultipleSelection: true, // NOTE: This can not be used with option that allows cropping (allowsEditing)
       aspect: [1, 1],
     })
-    setImagesLocal(result.assets?.map(x => x.uri) ?? [])
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
+      if (result.assets.length > 6) {
+        alert('You can only select up to 6 images.')
+        return
+      }
+      setImagesLocal(result.assets?.map(x => x.uri) ?? [])
+
       const uploadResponse = await api.uploadImage(result.assets);
       if (uploadResponse.kind === "ok") {
         setValue("images", uploadResponse.keys);
