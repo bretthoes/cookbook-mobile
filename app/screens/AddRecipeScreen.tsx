@@ -13,6 +13,7 @@ import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
 import { api } from "app/services/api"
+import { useNavigation } from "@react-navigation/native"
 
 interface AddRecipeScreenProps extends AppStackScreenProps<"AddRecipe"> {}
 
@@ -37,6 +38,7 @@ interface RecipeFormInputs {
 export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
   const { recipeStore, cookbookStore } = useStores()
+  const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
 
   const schema = yup.object().shape({
     title: yup
@@ -172,7 +174,7 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
     }
   }
 
-  const onPressSend = (formData: RecipeFormInputs) => {
+  const onPressSend = async (formData: RecipeFormInputs) => {
     const newRecipe: RecipeToAddSnapshotIn = {
       title: formData.title.trim(),
       cookbookId: cookbookStore.currentCookbook?.id ?? 0,
@@ -202,7 +204,13 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
       })),
     }
     
-    recipeStore.createRecipe(newRecipe)
+    try {
+      await recipeStore.createRecipe(newRecipe)
+      navigation.replace("RecipeDetails")
+    }
+    catch (e) {
+      alert("Add recipe failed");
+    }
   }
 
   const onError = (errors: any) => {

@@ -1,4 +1,4 @@
-import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { Recipe, RecipeBriefModel, RecipeModel, RecipeToAddSnapshotIn } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
@@ -13,6 +13,7 @@ export const RecipeStoreModel = types
   .actions(withSetPropAction)
   .actions((store) => ({
     async fetchRecipes(cookbookId: number, pageNumber = 1, pageSize = 10) {
+      this.clearCurrentRecipe()
       const response = await api.getRecipes(cookbookId, pageNumber, pageSize)
       if (response.kind === "ok") {
         store.setProp("recipes", response.recipes)
@@ -28,38 +29,38 @@ export const RecipeStoreModel = types
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
     },
-    async createRecipe(newRecipe: RecipeToAddSnapshotIn) {
+    createRecipe: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
       try {
-        const response = await api.createRecipe(newRecipe)
+        const response = yield api.createRecipe(recipeToAdd)
         if (response.kind === "ok") {
-          const addedRecipe = RecipeModel.create({
+          const newRecipe = RecipeModel.create({
             id: response.recipeId,
-            title: newRecipe.title,
-            summary: newRecipe.summary,
-            thumbnail: newRecipe.thumbnail,
-            videoPath: newRecipe.videoPath,
-            preparationTimeInMinutes: newRecipe.preparationTimeInMinutes,
-            cookingTimeInMinutes: newRecipe.cookingTimeInMinutes,
-            bakingTimeInMinutes: newRecipe.bakingTimeInMinutes,
-            servings: newRecipe.servings,
-            directions: newRecipe.directions,
-            ingredients: newRecipe.ingredients,
-            images: newRecipe.images,
+            title: recipeToAdd.title,
+            summary: recipeToAdd.summary,
+            thumbnail: recipeToAdd.thumbnail,
+            videoPath: recipeToAdd.videoPath,
+            preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes,
+            cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes,
+            bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
+            servings: recipeToAdd.servings,
+            directions: recipeToAdd.directions,
+            ingredients: recipeToAdd.ingredients,
+            images: recipeToAdd.images,
           })
-          this.setCurrentRecipe(addedRecipe)
-
-          store.recipes?.items.push(
-            RecipeBriefModel.create({
+          const newRecipeBrief = RecipeBriefModel.create({
             id: response.recipeId,
-            title: newRecipe.title
-          }))
+            title: recipeToAdd.title
+          })
+
+          store.currentRecipe = newRecipe
+          store.recipes?.items.push(newRecipeBrief)
         } else {
           console.error(`Error creating recipe: ${JSON.stringify(response)}`)
         }
       } catch (error) {
         console.error(`Error creating recipe: ${error}`)
       }
-    },
+    }),
     setCurrentRecipe(recipe: Recipe) {
       store.currentRecipe = recipe
     },
