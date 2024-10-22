@@ -223,7 +223,7 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
     <Screen
       preset="scroll"
       safeAreaEdges={["top"]}
-      contentContainerStyle={$screenContentContainer}
+      contentContainerStyle={$root}
     >
       <View style={$titleContainer}>
         <Text preset="heading" weight="normal" text="Add new recipe" />
@@ -456,10 +456,6 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
 })
 
 const $root: ViewStyle = {
-  flex: 1,
-}
-
-const $screenContentContainer: ViewStyle = {
   marginHorizontal: spacing.md,
   marginTop: spacing.xl,
 }
