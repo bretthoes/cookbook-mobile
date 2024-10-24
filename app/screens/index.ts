@@ -7,7 +7,7 @@ export * from "./ErrorScreen/ErrorBoundary"
 // export other screens here
 export * from "./CookbookListScreen"
 export * from "./RecipeDetailsScreen/RecipeDetailsScreen"
-export * from "./CookbookDetailsScreen"
+export * from "./CookbookDetailsScreen/CookbookDetailsScreen"
 export * from "./AddCookbookScreen"
 export * from "./AddRecipeScreen"
 export * from "./CookbookInviteScreen"

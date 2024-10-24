@@ -1,9 +1,9 @@
 import { useStores } from "app/models"
 import React, { FC, useEffect, useState } from "react"
-import { isRTL, translate } from "../i18n"
-import { delay } from "../utils/delay"
+import { isRTL, translate } from "../../i18n"
+import { delay } from "../../utils/delay"
 import { observer } from "mobx-react-lite"
-import { EmptyState, Icon, ListItem, ListView, Screen, Button, Text } from "../components"
+import { EmptyState, Icon, ListItem, ListView, Screen, Button, Text } from "../../components"
 import {
   ActivityIndicator,
   ImageStyle,
@@ -13,15 +13,16 @@ import {
   ViewStyle,
   Image,
 } from "react-native"
-import { colors, spacing, typography } from "app/theme"
+import { colors, spacing } from "app/theme"
 import { RecipeBrief } from "app/models/Recipe"
-import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
+import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
 import { Drawer } from "react-native-drawer-layout"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { useNavigation } from "@react-navigation/native"
 import { AppStackScreenProps } from "app/navigators"
+import { RecipeListItem } from "./RecipeListItem"
 
-const logo = require("../../assets/images/logo.png")
+const logo = require("../../../assets/images/logo.png")
 
 interface CookbookDetailsScreenProps extends AppStackScreenProps<"CookbookDetails"> {}
 
@@ -69,7 +70,10 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     toggleDrawer()
   }
 
-  const handleInvite = () => { toggleDrawer() }
+  const handleInvite = () => { 
+    navigation.navigate("CookbookInvite")
+    toggleDrawer() 
+  }
 
   const handleLeave = () => { toggleDrawer() }
 
@@ -226,38 +230,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   )
 })
 
-const RecipeListItem = observer(function RecipeListItem({
-  recipe,
-  index,
-  lastIndex,
-}: {
-  recipe: RecipeBrief
-  index: number
-  lastIndex: number
-}) {
-  const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
-  const { recipeStore } = useStores()
-
-  const handlePressItem = async () => {
-    await recipeStore.fetchRecipe(recipe.id)
-    navigation.navigate("RecipeDetails")
-  }
-
-  return (
-    <ListItem
-      onPress={handlePressItem}
-      text={recipe.title}
-      rightIcon="caretRight"
-      textStyle={$customFont}
-      TextProps={{ numberOfLines: 1, size: "xs" }}
-      topSeparator
-      bottomSeparator={index === lastIndex}
-    />
-  )
-})
-
 // #region Styles
-
 const $paginationContainer: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
@@ -295,10 +268,6 @@ const $headerContainer: ViewStyle = {
 
 const $right: TextStyle = {
   textAlign: "right",
-}
-
-const $customFont: TextStyle = {
-  fontFamily: typography.code?.normal,
 }
 
 const $listItemStyle: ViewStyle = {
