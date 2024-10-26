@@ -9,6 +9,7 @@ import { spacing } from "app/theme"
 
 interface CookbookInviteScreenProps extends AppStackScreenProps<"CookbookInvite"> {}
 
+// TODO rename AddInviteScreen
 export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(function CookbookInviteScreen() {
   // Pull in one of our MST stores
   const { 
