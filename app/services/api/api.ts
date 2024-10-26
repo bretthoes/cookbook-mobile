@@ -228,7 +228,6 @@ export class Api {
    */
   async createRecipe(recipe: RecipeToAddSnapshotIn)
   : Promise<{ kind: "ok"; recipeId: number} | GeneralApiProblem> {
-    // make the API call to get the recipe by id
     const response: ApiResponse<number> = await this.authorizedRequest('Recipes', "POST", {
       recipe,
     })
@@ -252,8 +251,34 @@ export class Api {
     }
   }
 
+  async createInvite(email: string) // TODO need cookbookId; group into inviteToAdd dto
+  : Promise<{ kind: "ok"; invitationId: number} | GeneralApiProblem> {
+    // make the API call to get the recipe by id
+    const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
+      email,
+    })
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const invitationId = response.data
+
+      if (invitationId) return { kind: "ok", invitationId }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
   /**
-   * Uploads an image to the server.
+   * Uploads a collection of images to the server. TODO update method name to plural
    */
   async uploadImage(images: ImagePickerAsset[]): Promise<{ kind: "ok"; keys: string[] } | GeneralApiProblem> {
     const formData = new FormData();
