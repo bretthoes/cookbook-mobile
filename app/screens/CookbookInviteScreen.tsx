@@ -1,26 +1,73 @@
-import React, { FC } from "react"
+import React, { FC, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
+import { Button, Screen, Text, TextField } from "app/components"
+import { useStores } from "app/models"
+import { spacing } from "app/theme"
 // import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
 
 interface CookbookInviteScreenProps extends AppStackScreenProps<"CookbookInvite"> {}
 
 export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(function CookbookInviteScreen() {
   // Pull in one of our MST stores
-  // const { someStore, anotherStore } = useStores()
+  const { 
+    cookbookStore, 
+    invitationStore: { 
+      invite, inviteEmail, setInviteEmail, validationError 
+    }
+  } = useStores()
+  const [isSubmitted, setIsSubmitted] = useState(false)
+  const error = isSubmitted ? validationError : ""
 
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
+  async function send() {
+    setIsSubmitted(true)
+    if (validationError) return
+
+    await invite()
+    setIsSubmitted(false)
+    setInviteEmail("")
+    // TODO toast indicating success
+    // OR 
+  }
+
   return (
-    <Screen style={$root} preset="scroll">
-      <Text text="cookbookInvite" />
+    <Screen style={$root} preset="auto" safeAreaEdges={["top"]}>
+      <Text text={`Invite someone to ${cookbookStore.currentCookbook?.title}:`} preset="subheading" />
+      <TextField
+        value={inviteEmail}
+        onChangeText={setInviteEmail}
+        containerStyle={$textField}
+        autoCapitalize="none"
+        autoComplete="email"
+        autoCorrect={false}
+        keyboardType="email-address"
+        labelTx="loginScreen.emailFieldLabel"
+        placeholderTx="loginScreen.emailFieldPlaceholder"
+        helper={error}
+        status={error ? "error" : undefined}
+      />
+      <Button
+        testID="login-button"
+        text="loginScreen.tapToLogIn"
+        style={$tapButton}
+        preset="reversed"
+        onPress={send}
+      />
     </Screen>
   )
 })
 
 const $root: ViewStyle = {
   flex: 1,
+  paddingHorizontal: spacing.sm,
+  paddingTop: spacing.lg,
+}
+
+const $textField: ViewStyle = {
+  marginBottom: spacing.lg,
+}
+
+const $tapButton: ViewStyle = {
+  marginTop: spacing.xs,
 }
