@@ -239,10 +239,8 @@ export class Api {
     }
 
     try {
-      const recipeId = response.data
-
-      if (recipeId) return { kind: "ok", recipeId }
-      else return { kind: "not-found" }
+      const recipeId = response.data!
+      return { kind: "ok", recipeId }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
@@ -252,30 +250,27 @@ export class Api {
   }
 
   async createInvite(cookbookId: number, email: string)
-  : Promise<{ kind: "ok"; invitationId: number} | GeneralApiProblem> {
-    const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
-      email,
-      cookbookId,
-    })
+  : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+  const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
+    email,
+    cookbookId,
+  })
 
-    // handle any errors
-    if (!response.ok) {
-      const problem = getGeneralApiProblem(response)
-      if (problem) return problem
-    }
-
-    try {
-      const invitationId = response.data
-
-      if (invitationId) return { kind: "ok", invitationId }
-      else return { kind: "not-found" }
-    } catch (e) {
-      if (__DEV__ && e instanceof Error) {
-        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
-      }
-      return { kind: "bad-data" }
-    }
+  if (!response.ok) {
+    const problem = getGeneralApiProblem(response)
+    if (problem) return problem
   }
+
+  try {
+    const invitationId = response.data!
+    return { kind: "ok", invitationId }
+  } catch (e) {
+    if (__DEV__ && e instanceof Error) {
+      console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+    }
+    return { kind: "bad-data" }
+  }
+}
 
   /**
    * Uploads a collection of images to the server. TODO update method name to plural

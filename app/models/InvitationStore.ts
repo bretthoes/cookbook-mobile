@@ -7,7 +7,8 @@ import { Instance, SnapshotOut, types } from "mobx-state-tree"
 export const InvitationStoreModel = types
   .model("InvitationStore")
   .props({
-    inviteEmail: ""
+    inviteEmail: "",
+    result: ""
   })
   .views((self) => ({
     get validationError() {
@@ -22,14 +23,22 @@ export const InvitationStoreModel = types
     setInviteEmail(value: string) {
       self.inviteEmail = value
     },
+    setResult(value: string) {
+      self.inviteEmail = value
+    },
     async invite(cookbookId: number) {
+      this.setResult("")
       const response = await api.createInvite(cookbookId, self.inviteEmail)
       console.debug(JSON.stringify(response, null, 2))
-      if (response.kind === "ok") {
-        // TODO set success message
-      }
-      else {
-        // set error message from problem details
+      switch (response.kind) {
+        case "ok":
+          this.setResult("Your invite has been sent!")
+          break
+        case "conflict":
+          this.setResult(response.detail ?? "They've already been invited.")
+          break
+        default:
+          this.setResult("Something went wrong, please try again later.")
       }
     }
   }))
