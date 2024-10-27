@@ -24,7 +24,6 @@ export const CookbookStoreModel = types
       const response = await api.getCookbooks()
       if (response.kind === "ok") {
         // TODO resolve image not showing on correct tile in UI after adding cookbook
-        console.debug(JSON.stringify(response.cookbooks, null, 2))
         self.setProp("cookbooks", response.cookbooks)
       } else {
         console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)

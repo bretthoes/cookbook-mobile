@@ -24,7 +24,7 @@ export const InvitationStoreModel = types
       self.inviteEmail = value
     },
     setResult(value: string) {
-      self.inviteEmail = value
+      self.result = value
     },
     async invite(cookbookId: number) {
       this.setResult("")

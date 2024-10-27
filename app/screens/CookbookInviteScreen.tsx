@@ -5,17 +5,15 @@ import { AppStackScreenProps } from "app/navigators"
 import { Button, Screen, Text, TextField } from "app/components"
 import { useStores } from "app/models"
 import { spacing } from "app/theme"
-// import { useNavigation } from "@react-navigation/native"
 
 interface CookbookInviteScreenProps extends AppStackScreenProps<"CookbookInvite"> {}
 
 // TODO rename AddInviteScreen
 export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(function CookbookInviteScreen() {
-  // Pull in one of our MST stores
   const { 
     cookbookStore: { currentCookbook },
     invitationStore: { 
-      invite, inviteEmail, setInviteEmail, validationError 
+      invite, inviteEmail, setInviteEmail, validationError, result
     }
   } = useStores()
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -24,19 +22,14 @@ export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(func
   async function send() {
     setIsSubmitted(true)
     if (validationError) return
-
-    // TODO make this a view in cookbook store?
     const cookbookId = currentCookbook?.id ?? 0;
     await invite(cookbookId)
     setIsSubmitted(false)
     setInviteEmail("")
-    // TODO toast indicating success
-    // OR 
   }
 
   return (
     <Screen style={$root} preset="auto" safeAreaEdges={["top"]}>
-      <Text text={`Invite someone to ${currentCookbook?.title}:`} preset="subheading" />
       <TextField
         value={inviteEmail}
         onChangeText={setInviteEmail}
@@ -45,11 +38,12 @@ export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(func
         autoComplete="email"
         autoCorrect={false}
         keyboardType="email-address"
-        labelTx="loginScreen.emailFieldLabel"
-        placeholderTx="loginScreen.emailFieldPlaceholder"
+        label={`Invite someone to ${currentCookbook?.title}:`}
+        placeholder="Enter an email address"
         helper={error}
         status={error ? "error" : undefined}
       />
+      <Text text={`${result}`} preset="formHelper" />
       <Button
         text="Send"
         style={$tapButton}
