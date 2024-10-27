@@ -13,7 +13,7 @@ interface CookbookInviteScreenProps extends AppStackScreenProps<"CookbookInvite"
 export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(function CookbookInviteScreen() {
   // Pull in one of our MST stores
   const { 
-    cookbookStore,
+    cookbookStore: { currentCookbook },
     invitationStore: { 
       invite, inviteEmail, setInviteEmail, validationError 
     }
@@ -25,8 +25,8 @@ export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(func
     setIsSubmitted(true)
     if (validationError) return
 
-    // TODO make this a view in cookbook store
-    const cookbookId = cookbookStore.currentCookbook?.id ?? 0;
+    // TODO make this a view in cookbook store?
+    const cookbookId = currentCookbook?.id ?? 0;
     await invite(cookbookId)
     setIsSubmitted(false)
     setInviteEmail("")
@@ -36,7 +36,7 @@ export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(func
 
   return (
     <Screen style={$root} preset="auto" safeAreaEdges={["top"]}>
-      <Text text={`Invite someone to ${cookbookStore.currentCookbook?.title}:`} preset="subheading" />
+      <Text text={`Invite someone to ${currentCookbook?.title}:`} preset="subheading" />
       <TextField
         value={inviteEmail}
         onChangeText={setInviteEmail}
