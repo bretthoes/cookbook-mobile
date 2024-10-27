@@ -71,7 +71,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   }
 
   const handleInvite = () => { 
-    navigation.navigate("CookbookInvite")
+    navigation.navigate("AddInvite")
     toggleDrawer() 
   }
 

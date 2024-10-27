@@ -6,10 +6,10 @@ import { Button, Screen, Text, TextField } from "app/components"
 import { useStores } from "app/models"
 import { spacing } from "app/theme"
 
-interface CookbookInviteScreenProps extends AppStackScreenProps<"CookbookInvite"> {}
+interface AddInviteScreenProps extends AppStackScreenProps<"AddInvite"> {}
 
 // TODO rename AddInviteScreen
-export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(function CookbookInviteScreen() {
+export const AddInviteScreen: FC<AddInviteScreenProps> = observer(function AddInviteScreen() {
   const { 
     cookbookStore: { currentCookbook },
     invitationStore: { 
