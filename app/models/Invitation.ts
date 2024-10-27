@@ -39,19 +39,3 @@ export enum CookbookInvitationStatus {
   Accepted = 2,
   Rejected = 3
 }
-
-/**
- * This represents a recipe to be added.
- */
-export const InvitationToAddModel = types
-  .model("InvitationToAdd")
-  .props({
-    cookbookId: types.number,
-    recipientEmail: types.string,
-  })
-  .actions(withSetPropAction)
-
-export interface InvitationToAdd extends Instance<typeof InvitationToAddModel> {}
-export interface InvitationToAddSnapshotOut extends SnapshotOut<typeof InvitationToAddModel> {}
-export interface InvitationToAddSnapshotIn extends SnapshotIn<typeof InvitationToAddModel> {}
-

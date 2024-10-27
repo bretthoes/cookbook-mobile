@@ -251,11 +251,11 @@ export class Api {
     }
   }
 
-  async createInvite(email: string) // TODO need cookbookId; group into inviteToAdd dto
+  async createInvite(cookbookId: number, email: string)
   : Promise<{ kind: "ok"; invitationId: number} | GeneralApiProblem> {
-    // make the API call to get the recipe by id
     const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
       email,
+      cookbookId,
     })
 
     // handle any errors

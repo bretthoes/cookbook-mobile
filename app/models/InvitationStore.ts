@@ -22,10 +22,10 @@ export const InvitationStoreModel = types
     setInviteEmail(value: string) {
       self.inviteEmail = value
     },
-    async invite() {
-      const response = await api.createInvite(self.inviteEmail)
-      if (response.kind === "ok"){
-        // set success message
+    async invite(cookbookId: number) {
+      const response = await api.createInvite(cookbookId, self.inviteEmail)
+      if (response.kind === "ok") {
+        // TODO set success message
       }
       else {
         // set error message from problem details

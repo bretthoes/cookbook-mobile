@@ -13,7 +13,7 @@ interface CookbookInviteScreenProps extends AppStackScreenProps<"CookbookInvite"
 export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(function CookbookInviteScreen() {
   // Pull in one of our MST stores
   const { 
-    cookbookStore, 
+    cookbookStore,
     invitationStore: { 
       invite, inviteEmail, setInviteEmail, validationError 
     }
@@ -25,7 +25,9 @@ export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(func
     setIsSubmitted(true)
     if (validationError) return
 
-    await invite()
+    // TODO make this a view in cookbook store
+    const cookbookId = cookbookStore.currentCookbook?.id ?? 0;
+    await invite(cookbookId)
     setIsSubmitted(false)
     setInviteEmail("")
     // TODO toast indicating success
@@ -49,8 +51,7 @@ export const CookbookInviteScreen: FC<CookbookInviteScreenProps> = observer(func
         status={error ? "error" : undefined}
       />
       <Button
-        testID="login-button"
-        text="loginScreen.tapToLogIn"
+        text="Send"
         style={$tapButton}
         preset="reversed"
         onPress={send}
