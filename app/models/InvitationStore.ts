@@ -24,6 +24,7 @@ export const InvitationStoreModel = types
     },
     async invite(cookbookId: number) {
       const response = await api.createInvite(cookbookId, self.inviteEmail)
+      console.debug(JSON.stringify(response, null, 2))
       if (response.kind === "ok") {
         // TODO set success message
       }
