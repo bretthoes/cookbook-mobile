@@ -34,6 +34,9 @@ export const InvitationStoreModel = types
         case "ok":
           this.setResult("Your invite has been sent!")
           break
+        case "not-found":
+          this.setResult("No account exists with this email.")
+          break
         case "conflict":
           this.setResult(response.detail ?? "They've already been invited.")
           break
