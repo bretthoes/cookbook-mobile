@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react"
+import React, { FC, useState, useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
@@ -8,16 +8,26 @@ import { spacing } from "app/theme"
 
 interface AddInviteScreenProps extends AppStackScreenProps<"AddInvite"> {}
 
-// TODO rename AddInviteScreen
 export const AddInviteScreen: FC<AddInviteScreenProps> = observer(function AddInviteScreen() {
   const { 
     cookbookStore: { currentCookbook },
     invitationStore: { 
-      invite, inviteEmail, setInviteEmail, validationError, result
+      invite,
+      inviteEmail,
+      setInviteEmail, 
+      validationError,
+      result,
+      setResult
     }
   } = useStores()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const error = isSubmitted ? validationError : ""
+
+  useEffect(() => {
+    ;(async function load() {
+      setResult("")
+    })()
+  })
 
   async function send() {
     setIsSubmitted(true)
