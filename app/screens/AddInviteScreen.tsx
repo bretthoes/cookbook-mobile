@@ -24,10 +24,9 @@ export const AddInviteScreen: FC<AddInviteScreenProps> = observer(function AddIn
   const error = isSubmitted ? validationError : ""
 
   useEffect(() => {
-    ;(async function load() {
-      setResult("")
-    })()
-  })
+    setResult("")
+    setInviteEmail("")
+  }, [])
 
   async function send() {
     setIsSubmitted(true)
@@ -35,7 +34,6 @@ export const AddInviteScreen: FC<AddInviteScreenProps> = observer(function AddIn
     const cookbookId = currentCookbook?.id ?? 0;
     await invite(cookbookId)
     setIsSubmitted(false)
-    setInviteEmail("")
   }
 
   return (
