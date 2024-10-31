@@ -17,6 +17,7 @@ import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn } from "app/models/CookbookList"
+import { MembershipListSnapshotIn } from "app/models"
 
 /**
  * Configuring the apisauce instance.
@@ -145,6 +146,44 @@ export class Api {
       const cookbookId = response.data
 
       if (cookbookId) return { kind: "ok", cookbookId }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Gets a list of memberships matching a cookbookId with pagination.
+   */
+  async GetMemberships(
+    cookbookId: number,
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ kind: "ok"; memberships: MembershipListSnapshotIn } | GeneralApiProblem> {
+    // prepare query parameters
+    const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
+
+    // use the authorizedRequest method to make the API call with query parameters
+    const response: ApiResponse<MembershipListSnapshotIn> = await this.authorizedRequest(
+      "Memberships",
+      "GET",
+      params,
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const memberships = response.data
+
+      if (memberships) return { kind: "ok", memberships }
       else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
