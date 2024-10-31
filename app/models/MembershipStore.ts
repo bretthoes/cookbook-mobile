@@ -33,4 +33,3 @@ export const MembershipStoreModel = types
 export interface MembershipStore extends Instance<typeof MembershipStoreModel> {}
 export interface MembershipStoreSnapshotOut extends SnapshotOut<typeof MembershipStoreModel> {}
 export interface MembershipStoreSnapshotIn extends SnapshotIn<typeof MembershipStoreModel> {}
-export const createMembershipStoreDefaultModel = () => types.optional(MembershipStoreModel, {})

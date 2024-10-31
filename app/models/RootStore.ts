@@ -4,6 +4,7 @@ import { EpisodeStoreModel } from "./EpisodeStore"
 import { CookbookStoreModel } from "./CookbookStore"
 import { RecipeStoreModel } from "./RecipeStore"
 import { InvitationStoreModel } from "./InvitationStore"
+import { MembershipStoreModel } from "./MembershipStore"
 
 /**
  * A RootStore model.
@@ -13,7 +14,8 @@ export const RootStoreModel = types.model("RootStore").props({
   episodeStore: types.optional(EpisodeStoreModel, {}),
   cookbookStore: types.optional(CookbookStoreModel, {}),
   recipeStore: types.optional(RecipeStoreModel, {}),
-  invitationStore: types.optional(InvitationStoreModel, {})
+  invitationStore: types.optional(InvitationStoreModel, {}),
+  MembershipStore: types.optional(MembershipStoreModel, {})
 })
 
 /**
