@@ -262,6 +262,11 @@ const CookbookCard = observer(function CookbookCard({
     liked.value = withSpring(liked.value ? 0 : 1)
   }
 
+  const handlePressMembers = () => {
+    cookbookStore.setCurrentCookbook(cookbook)
+    navigation.navigate("MembersList")
+  }
+
   const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>()
   const handlePressCard = () => {
     cookbookStore.setCurrentCookbook(cookbook)
@@ -352,7 +357,7 @@ const CookbookCard = observer(function CookbookCard({
               }
             />
           </Button>
-          <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory}>
+          <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory} onPress={handlePressMembers}>
             <Text size="xxs" weight="medium" text={"  " + cookbook.membersCount.toString()} />
           </Button>
         </View>

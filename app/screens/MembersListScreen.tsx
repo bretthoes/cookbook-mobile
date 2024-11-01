@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { Screen, Text } from "app/components"
+import { EmptyState, ListItem, ListView, PaginationControls, Screen, SearchBar, Text } from "app/components"
 import { useStores } from "app/models"
 import { delay } from "app/utils/delay"
-// import { useNavigation } from "@react-navigation/native"
+import { Membership } from "app/models/Membership"
+import { colors, spacing } from "app/theme"
+import { isRTL } from "app/i18n"
 
 interface MembersListScreenProps extends AppStackScreenProps<"MembersList"> {}
 
@@ -13,6 +15,11 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
   const { membershipStore, cookbookStore } = useStores()
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+  const filteredMemberships =
+    membershipStore.memberships?.items
+      .slice()
+      .filter((membership) => membership.name.toLowerCase().includes(searchQuery.toLowerCase())) ?? []
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -55,16 +62,113 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
     }
   }
 
+  const handlePressItem = async () => {
+    // TODO set current membership, navigate to membership details screen
+    //navigation.navigate("MembershipDetails")
+  }
+
   // TODO navigate to invite screen OR membership details screen
   // Pull in navigation via hook
   // const navigation = useNavigation()
   return (
-    <Screen style={$root} preset="scroll">
+    <Screen style={$root} safeAreaEdges={["top"]} preset="scroll">
       <Text text="membersList" />
+      <ListView<Membership>
+        data={filteredMemberships}        
+        estimatedItemSize={59}
+        ListEmptyComponent={
+          isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <EmptyState
+              preset="generic"
+              style={$emptyState}
+              buttonOnPress={manualRefresh}
+              imageStyle={$emptyStateImage}
+              ImageProps={{ resizeMode: "contain" }}
+            />
+          )
+        }
+        ListHeaderComponent={
+          <View>
+            <View style={$headerContainer}>
+              <Text preset="heading" text={cookbookStore.currentCookbook?.title} />
+            </View>
+            <SearchBar
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {membershipStore.memberships?.hasMultiplePages && (
+              <PaginationControls
+                currentPage={membershipStore.memberships?.pageNumber}
+                totalPages={membershipStore.memberships?.totalPages}
+                totalCount={membershipStore.memberships?.totalCount}
+                hasNextPage={membershipStore.memberships?.hasNextPage}
+                hasPreviousPage={membershipStore.memberships?.hasPreviousPage}
+                onNextPage={handleNextPage}
+                onPreviousPage={handlePreviousPage}
+              />
+            )}
+          </View>
+        }
+        onRefresh={manualRefresh}
+        refreshing={refreshing}
+        renderItem={({item, index}) => (
+          <View
+              style={[
+                $listItemStyle,
+                index === 0 && $borderTop,
+                index === filteredMemberships.length - 1 && $borderBottom,
+              ]}
+            >
+              <ListItem
+                onPress={handlePressItem}
+                text={item.name}
+                rightIcon="caretRight"
+                TextProps={{ numberOfLines: 1, size: "xs" }}
+                topSeparator
+              />
+            </View>
+        )}
+      />
     </Screen>
   )
 })
 
 const $root: ViewStyle = {
   flex: 1,
+}
+
+const $listItemStyle: ViewStyle = {
+  backgroundColor: colors.palette.neutral100,
+  paddingHorizontal: spacing.md,
+  marginHorizontal: spacing.lg,
+}
+
+const $borderTop: ViewStyle = {
+  borderTopLeftRadius: spacing.xs,
+  borderTopRightRadius: spacing.xs,
+  paddingTop: spacing.lg,
+}
+
+const $borderBottom: ViewStyle = {
+  borderBottomLeftRadius: spacing.xs,
+  borderBottomRightRadius: spacing.xs,
+  paddingBottom: spacing.lg,
+}
+
+const $emptyState: ViewStyle = {
+  marginTop: spacing.xxl,
+}
+
+const $emptyStateImage: ImageStyle = {
+  transform: [{ scaleX: isRTL ? -1 : 1 }],
+}
+
+const $headerContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingTop: spacing.xl,
+  paddingHorizontal: spacing.md,
 }
