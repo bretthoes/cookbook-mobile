@@ -15,7 +15,7 @@ export const CookbookListModel = types
   })
   .actions(withSetPropAction)
   .views((self) => ({
-    get hasMorePages() {
+    get hasMultiplePages() {
       return self.totalPages > 1
     },
     get hasNextPage() {
