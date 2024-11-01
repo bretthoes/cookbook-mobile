@@ -3,7 +3,7 @@ import React, { FC, useEffect, useState } from "react"
 import { isRTL, translate } from "../../i18n"
 import { delay } from "../../utils/delay"
 import { observer } from "mobx-react-lite"
-import { EmptyState, Icon, ListItem, ListView, Screen, Button, Text } from "../../components"
+import { EmptyState, Icon, ListItem, ListView, Screen, Text, PaginationControls } from "../../components"
 import {
   ActivityIndicator,
   ImageStyle,
@@ -135,7 +135,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
       <Screen
         preset="scroll"
         safeAreaEdges={["top"]}
-        contentContainerStyle={$screenContentContainer}
+        contentContainerStyle={$root}
       >
         <ListView<RecipeBrief>
           data={filteredRecipes}
@@ -169,41 +169,16 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
                 />
                 <Icon icon="debug" size={20} color={colors.palette.neutral600} />
               </View>
-              {recipeStore.recipes?.hasMorePages && (
-                <View style={$paginationContainer}>
-                  <Button
-                    onPress={handlePreviousPage}
-                    disabled={!recipeStore.recipes?.hasPreviousPage}
-                    RightAccessory={() => (
-                      <Icon
-                        icon="caretLeft"
-                        color={
-                          recipeStore.recipes?.hasPreviousPage
-                            ? colors.palette.neutral900
-                            : colors.palette.neutral300
-                        }
-                      />
-                    )}
-                  ></Button>
-                  <Text>
-                    Page {recipeStore.recipes?.pageNumber} of {recipeStore.recipes?.totalPages} (
-                    {recipeStore.recipes?.totalCount} items)
-                  </Text>
-                  <Button
-                    onPress={handleNextPage}
-                    disabled={!recipeStore.recipes?.hasNextPage}
-                    RightAccessory={() => (
-                      <Icon
-                        icon="caretRight"
-                        color={
-                          recipeStore.recipes?.hasNextPage
-                            ? colors.palette.neutral900
-                            : colors.palette.neutral300
-                        }
-                      />
-                    )}
-                  />
-                </View>
+              {recipeStore.recipes?.hasMultiplePages && (
+                <PaginationControls
+                  currentPage={recipeStore.recipes?.pageNumber}
+                  totalPages={recipeStore.recipes?.totalPages}
+                  totalCount={recipeStore.recipes?.totalCount}
+                  hasNextPage={recipeStore.recipes?.hasNextPage}
+                  hasPreviousPage={recipeStore.recipes?.hasPreviousPage}
+                  onNextPage={handleNextPage}
+                  onPreviousPage={handlePreviousPage}
+                />
               )}
             </View>
           }
@@ -231,13 +206,6 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
 })
 
 // #region Styles
-const $paginationContainer: ViewStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  padding: spacing.md,
-  alignItems: "center",
-}
-
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,
 }
@@ -276,7 +244,7 @@ const $listItemStyle: ViewStyle = {
   marginHorizontal: spacing.lg,
 }
 
-const $screenContentContainer: ViewStyle = {
+const $root: ViewStyle = {
   flex: 1,
 }
 
