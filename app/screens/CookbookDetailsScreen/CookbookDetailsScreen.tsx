@@ -3,11 +3,10 @@ import React, { FC, useEffect, useState } from "react"
 import { isRTL, translate } from "../../i18n"
 import { delay } from "../../utils/delay"
 import { observer } from "mobx-react-lite"
-import { EmptyState, Icon, ListItem, ListView, Screen, Text, PaginationControls } from "../../components"
+import { EmptyState, ListItem, ListView, Screen, Text, PaginationControls, SearchBar } from "../../components"
 import {
   ActivityIndicator,
   ImageStyle,
-  TextInput,
   TextStyle,
   View,
   ViewStyle,
@@ -159,16 +158,11 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
                 <Text preset="heading" text={cookbookStore.currentCookbook?.title} />
                 <DrawerIconButton onPress={toggleDrawer} />
               </View>
-              <View style={$searchContainer}>
-                <TextInput
-                  style={$searchBar}
-                  placeholder={translate("recipeListScreen.searchPlaceholder")}
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholderTextColor={colors.palette.neutral400}
-                />
-                <Icon icon="debug" size={20} color={colors.palette.neutral600} />
-              </View>
+              <SearchBar
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder={translate("recipeListScreen.searchPlaceholder")}
+              />
               {recipeStore.recipes?.hasMultiplePages && (
                 <PaginationControls
                   currentPage={recipeStore.recipes?.pageNumber}
@@ -245,22 +239,6 @@ const $listItemStyle: ViewStyle = {
 }
 
 const $root: ViewStyle = {
-  flex: 1,
-}
-
-const $searchContainer: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  paddingHorizontal: spacing.md,
-  paddingVertical: spacing.sm,
-  marginHorizontal: spacing.xs,
-  borderColor: colors.palette.neutral500,
-  borderWidth: 1,
-  borderRadius: spacing.xs,
-  backgroundColor: colors.palette.neutral100,
-}
-
-const $searchBar: TextStyle = {
   flex: 1,
 }
 
