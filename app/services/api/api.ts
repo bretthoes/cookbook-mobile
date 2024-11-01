@@ -17,7 +17,7 @@ import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn } from "app/models/CookbookList"
-import { MembershipListSnapshotIn } from "app/models"
+import { MembershipListSnapshotIn } from "app/models/MembershipList"
 
 /**
  * Configuring the apisauce instance.
