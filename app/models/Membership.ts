@@ -8,7 +8,7 @@ import { withSetPropAction } from "./helpers/withSetPropAction"
 export const MembershipModel = types
   .model("Membership")
   .props({
-    id: types.identifier,
+    id: types.identifierNumber,
     personId: types.number,
     name: types.string,
     isCreator: types.boolean,

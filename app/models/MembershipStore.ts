@@ -19,7 +19,7 @@ export const MembershipStoreModel = types
       if (response.kind == "ok") {
         self.setProp("memberships", response.memberships)
       } else {
-        console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
+        console.error(`Error fetching memberships: ${JSON.stringify(response)}`)
       }
     },
     setCurrentMembership(membership: Membership) {

@@ -72,7 +72,6 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
   // const navigation = useNavigation()
   return (
     <Screen style={$root} safeAreaEdges={["top"]} preset="scroll">
-      <Text text="membersList" />
       <ListView<Membership>
         data={filteredMemberships}        
         estimatedItemSize={59}
@@ -92,7 +91,7 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
         ListHeaderComponent={
           <View>
             <View style={$headerContainer}>
-              <Text preset="heading" text={cookbookStore.currentCookbook?.title} />
+              <Text preset="heading" text={`Members of ${cookbookStore.currentCookbook?.title ?? "the cookbook"}`} />
             </View>
             <SearchBar
               value={searchQuery}
