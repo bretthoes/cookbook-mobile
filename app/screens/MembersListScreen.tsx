@@ -2,12 +2,14 @@ import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { EmptyState, ListItem, ListView, PaginationControls, Screen, SearchBar, Text } from "app/components"
+import { Button, EmptyState, ListItem, ListView, PaginationControls, Screen, SearchBar, Text } from "app/components"
 import { useStores } from "app/models"
 import { delay } from "app/utils/delay"
 import { Membership } from "app/models/Membership"
 import { colors, spacing } from "app/theme"
 import { isRTL } from "app/i18n"
+import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
+import { useNavigation } from "@react-navigation/native"
 
 interface MembersListScreenProps extends AppStackScreenProps<"MembersList"> {}
 
@@ -66,10 +68,12 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
     // TODO set current membership, navigate to membership details screen
     //navigation.navigate("MembershipDetails")
   }
+  
+  const navigation = useNavigation<AppStackScreenProps<"MembersList">["navigation"]>()
+  const handleInvite = () => {
+    navigation.navigate("AddInvite")
+  }
 
-  // TODO navigate to invite screen OR membership details screen
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
   return (
     <Screen style={$root} safeAreaEdges={["top"]} preset="scroll">
       <ListView<Membership>
@@ -97,7 +101,7 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
-            {membershipStore.memberships?.hasMultiplePages && (
+            {membershipStore.memberships?.hasMultiplePages ? (
               <PaginationControls
                 currentPage={membershipStore.memberships?.pageNumber}
                 totalPages={membershipStore.memberships?.totalPages}
@@ -107,6 +111,8 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
                 onNextPage={handleNextPage}
                 onPreviousPage={handlePreviousPage}
               />
+            ) : (
+              <DemoDivider size={spacing.sm} />
             )}
           </View>
         }
@@ -130,6 +136,8 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
             </View>
         )}
       />
+      <DemoDivider size={spacing.sm} />
+      <Button text="Add new member" onPress={handleInvite} />
     </Screen>
   )
 })

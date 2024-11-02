@@ -20,7 +20,7 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
     <View style={$root}>
       <TextInput
         style={$searchBar}
-        placeholder={placeholder ?? ""}
+        placeholder={placeholder ?? "Search"} // TODO i8n
         value={value}
         onChangeText={onChangeText}
         placeholderTextColor={colors.palette.neutral400}
