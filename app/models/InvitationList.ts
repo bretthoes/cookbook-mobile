@@ -1,14 +1,14 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { MembershipModel } from "./Membership"
+import { InvitationModel } from "./Invitation"
 
 /**
- * This represents a list of memberships in a cookbook, along with pagination details.
+ * This represents a list of invitations to a cookbook, along with pagination details.
  */
-export const MembershipListModel = types
-  .model("MembershipList")
+export const InvitationListModel = types
+  .model("InvitationList")
   .props({
-    items: types.array(MembershipModel),
+    items: types.array(InvitationModel),
     pageNumber: types.integer,
     totalPages: types.integer,
     totalCount: types.integer,
@@ -26,6 +26,6 @@ export const MembershipListModel = types
     },
   }))
 
-export interface MembershipList extends Instance<typeof MembershipListModel> {}
-export interface MembershipListSnapshotOut extends SnapshotOut<typeof MembershipListModel> {}
-export interface MembershipListSnapshotIn extends SnapshotIn<typeof MembershipListModel> {}
+export interface InvitationList extends Instance<typeof InvitationListModel> {}
+export interface InvitationListSnapshotOut extends SnapshotOut<typeof InvitationListModel> {}
+export interface InvitationListSnapshotIn extends SnapshotIn<typeof InvitationListModel> {}

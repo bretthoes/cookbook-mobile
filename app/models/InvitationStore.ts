@@ -1,12 +1,12 @@
 import { api } from "app/services/api"
+import { withSetPropAction } from "./helpers/withSetPropAction"
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { InvitationListModel } from "./InvitationList"
 
-/**
- * Model description here for TypeScript hints.
- */
 export const InvitationStoreModel = types
   .model("InvitationStore")
   .props({
+    invitations: types.maybeNull(InvitationListModel),
     inviteEmail: "",
     result: ""
   })
@@ -19,12 +19,25 @@ export const InvitationStoreModel = types
       return ""
     },
   }))
+  .actions(withSetPropAction)
   .actions((self) => ({
     setInviteEmail(value: string) {
       self.inviteEmail = value
     },
     setResult(value: string) {
       self.result = value
+    },
+    async fetchInvitations(pageNumber = 1, pageSize = 10){
+      const response = await api.GetInvitations(pageNumber, pageSize)
+      if (response.kind == "ok") {
+        self.setProp("invitations", response.invitations)
+      } else {
+        console.error(`Error fetching invitations: ${JSON.stringify(response)}`)
+      }
+    },
+    async respond(invitationId: number, accepted: boolean) {
+      // TODO add api call to patch an invitation with response.
+      // If response is 200 (or 204, etc.), show toast message
     },
     async invite(cookbookId: number) {
       this.setResult("")

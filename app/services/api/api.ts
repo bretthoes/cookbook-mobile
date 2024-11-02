@@ -18,6 +18,7 @@ import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn } from "app/models/CookbookList"
 import { MembershipListSnapshotIn } from "app/models/MembershipList"
+import { InvitationListSnapshotIn } from "app/models"
 
 /**
  * Configuring the apisauce instance.
@@ -184,6 +185,43 @@ export class Api {
       const memberships = response.data
 
       if (memberships) return { kind: "ok", memberships }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Gets a list of invitations.
+   */
+  async GetInvitations(
+    pageNumber: number,
+    pageSize: number,
+  ): Promise<{ kind: "ok"; invitations: InvitationListSnapshotIn } | GeneralApiProblem> {
+    // prepare query parameters
+    const params = { PageNumber: pageNumber, PageSize: pageSize }
+
+    // use the authorizedRequest method to make the API call with query parameters
+    const response: ApiResponse<InvitationListSnapshotIn> = await this.authorizedRequest(
+      "Invitations",
+      "GET",
+      params,
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const invitations = response.data
+
+      if (invitations) return { kind: "ok", invitations }
       else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {

@@ -11,7 +11,6 @@ export const MembershipStoreModel = types
     currentMembership: types.maybeNull(types.reference(MembershipModel))
   })
   .actions(withSetPropAction)
-  .views((self) => ({}))
   .actions((self) => ({
     async fetchMemberships(cookbookId: number, pageNumber = 1, pageSize = 10) {
       this.clearCurrentMembership()

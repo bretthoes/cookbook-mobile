@@ -76,16 +76,8 @@ const $title: TextStyle = {
   marginBottom: spacing.sm,
 }
 
-const $tagline: TextStyle = {
-  marginBottom: spacing.xxl,
-}
-
 const $description: TextStyle = {
   marginBottom: spacing.lg,
-}
-
-const $sectionTitle: TextStyle = {
-  marginTop: spacing.xxl,
 }
 
 const $logoContainer: ViewStyle = {
