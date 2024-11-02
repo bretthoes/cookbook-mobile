@@ -63,13 +63,13 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
       setIsLoading(false)
     }
   }
-
-  const handlePressItem = async () => {
-    // TODO set current membership, navigate to membership details screen
-    //navigation.navigate("MembershipDetails")
+  const navigation = useNavigation<AppStackScreenProps<"MembersList">["navigation"]>()
+  
+  const handlePressItem = async (membership: Membership) => {
+    membershipStore.setCurrentMembership(membership)
+    navigation.navigate("MembershipDetails")
   }
   
-  const navigation = useNavigation<AppStackScreenProps<"MembersList">["navigation"]>()
   const handleInvite = () => {
     navigation.navigate("AddInvite")
   }
@@ -127,7 +127,7 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
               ]}
             >
               <ListItem
-                onPress={handlePressItem}
+                onPress={() => handlePressItem(item)}
                 text={item.name}
                 rightIcon="caretRight"
                 TextProps={{ numberOfLines: 1, size: "xs" }}
