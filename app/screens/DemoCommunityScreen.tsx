@@ -3,8 +3,8 @@ import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { ListItem, Screen, Text } from "../components"
 import { DemoTabScreenProps } from "../navigators/DemoNavigator"
 import { spacing } from "../theme"
-import { openLinkInBrowser } from "../utils/openLinkInBrowser"
 import { isRTL } from "../i18n"
+import { useNavigation } from "@react-navigation/native"
 
 const chainReactLogo = require("../../assets/images/demo/cr-logo.png")
 const reactNativeLiveLogo = require("../../assets/images/demo/rnl-logo.png")
@@ -13,40 +13,19 @@ const reactNativeNewsletterLogo = require("../../assets/images/demo/rnn-logo.png
 
 export const DemoCommunityScreen: FC<DemoTabScreenProps<"DemoCommunity">> =
   function DemoCommunityScreen(_props) {
+    const navigation = useNavigation<DemoTabScreenProps<"DemoCommunity">["navigation"]>()
+    const handleInviteNavigation = () => {
+      navigation.navigate("InvitationsList")
+    }
+
     return (
       <Screen preset="scroll" contentContainerStyle={$container} safeAreaEdges={["top"]}>
-        <Text preset="heading" tx="demoCommunityScreen.title" style={$title} />
-        <Text tx="demoCommunityScreen.tagLine" style={$tagline} />
+        <Text preset="heading" text="All things social on the app" style={$title} />
 
-        <Text preset="subheading" tx="demoCommunityScreen.joinUsOnSlackTitle" />
-        <Text tx="demoCommunityScreen.joinUsOnSlack" style={$description} />
+        <Text text="Check out invites, notifications, and more." style={$description} />
         <ListItem
-          tx="demoCommunityScreen.joinSlackLink"
-          leftIcon="slack"
-          rightIcon={isRTL ? "caretLeft" : "caretRight"}
-          onPress={() => openLinkInBrowser("https://community.infinite.red/")}
-        />
-        <Text
-          preset="subheading"
-          tx="demoCommunityScreen.makeIgniteEvenBetterTitle"
-          style={$sectionTitle}
-        />
-        <Text tx="demoCommunityScreen.makeIgniteEvenBetter" style={$description} />
-        <ListItem
-          tx="demoCommunityScreen.contributeToIgniteLink"
-          leftIcon="github"
-          rightIcon={isRTL ? "caretLeft" : "caretRight"}
-          onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite")}
-        />
-
-        <Text
-          preset="subheading"
-          tx="demoCommunityScreen.theLatestInReactNativeTitle"
-          style={$sectionTitle}
-        />
-        <Text tx="demoCommunityScreen.theLatestInReactNative" style={$description} />
-        <ListItem
-          tx="demoCommunityScreen.reactNativeRadioLink"
+          text="View your pending invites"
+          onPress={handleInviteNavigation}
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
@@ -54,10 +33,9 @@ export const DemoCommunityScreen: FC<DemoTabScreenProps<"DemoCommunity">> =
               <Image source={reactNativeRadioLogo} style={$logo} />
             </View>
           }
-          onPress={() => openLinkInBrowser("https://reactnativeradio.com/")}
         />
         <ListItem
-          tx="demoCommunityScreen.reactNativeNewsletterLink"
+          text="See new additions in your cookbooks"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
@@ -65,10 +43,9 @@ export const DemoCommunityScreen: FC<DemoTabScreenProps<"DemoCommunity">> =
               <Image source={reactNativeNewsletterLogo} style={$logo} />
             </View>
           }
-          onPress={() => openLinkInBrowser("https://reactnativenewsletter.com/")}
         />
         <ListItem
-          tx="demoCommunityScreen.reactNativeLiveLink"
+          text="Check out what's popular"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
@@ -76,25 +53,15 @@ export const DemoCommunityScreen: FC<DemoTabScreenProps<"DemoCommunity">> =
               <Image source={reactNativeLiveLogo} style={$logo} />
             </View>
           }
-          onPress={() => openLinkInBrowser("https://rn.live/")}
         />
         <ListItem
-          tx="demoCommunityScreen.chainReactConferenceLink"
+          text="Share feedback about the app"
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
             <View style={$logoContainer}>
               <Image source={chainReactLogo} style={$logo} />
             </View>
           }
-          onPress={() => openLinkInBrowser("https://cr.infinite.red/")}
-        />
-        <Text preset="subheading" tx="demoCommunityScreen.hireUsTitle" style={$sectionTitle} />
-        <Text tx="demoCommunityScreen.hireUs" style={$description} />
-        <ListItem
-          tx="demoCommunityScreen.hireUsLink"
-          leftIcon="clap"
-          rightIcon={isRTL ? "caretLeft" : "caretRight"}
-          onPress={() => openLinkInBrowser("https://infinite.red/contact")}
         />
       </Screen>
     )

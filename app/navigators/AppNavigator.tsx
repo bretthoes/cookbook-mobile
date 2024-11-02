@@ -45,6 +45,7 @@ export type AppStackParamList = {
 	AddInvite: undefined
 	MembersList: undefined
 	MembershipDetails: undefined
+	InvitationsList: undefined
 	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -94,6 +95,7 @@ const AppStack = observer(function AppStack() {
 			<Stack.Screen name="AddInvite" component={Screens.AddInviteScreen} />
 			<Stack.Screen name="MembersList" component={Screens.MembersListScreen} />
 			<Stack.Screen name="MembershipDetails" component={Screens.MembershipDetailsScreen} />
+			<Stack.Screen name="InvitationsList" component={Screens.InvitationsListScreen} />
 			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
