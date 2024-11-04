@@ -8,25 +8,14 @@ export const InvitationModel = types
   .model("Invitation")
   .props({
     id: types.identifierNumber,
-    cookbookId: types.number,
-    senderPersonId: types.maybeNull(types.number),
-    recipientPersonId: types.maybeNull(types.number),
-    invitationStatus: types.number,
+    senderName: types.maybeNull(types.string),
+    senderEmail: types.maybeNull(types.string),
+    cookbookTitle: types.string,
+    cookbookImage: types.maybeNull(types.string),
+    created: types.Date,
     responseDate: types.maybeNull(types.Date)
   })
   .actions(withSetPropAction)
-  .views((self) => ({
-    get statusText(): string {
-      const statusMap: { [key: number]: string } = {
-        [CookbookInvitationStatus.Unknown]: "Unknown",
-        [CookbookInvitationStatus.Sent]: "Sent",
-        [CookbookInvitationStatus.Accepted]: "Accepted",
-        [CookbookInvitationStatus.Rejected]: "Rejected",
-      }
-      return statusMap[self.invitationStatus] || "Unknown"
-    }
-  }))
-  .actions((self) => ({}))
 
 export interface Invitation extends Instance<typeof InvitationModel> {}
 export interface InvitationSnapshotOut extends SnapshotOut<typeof InvitationModel> {}
