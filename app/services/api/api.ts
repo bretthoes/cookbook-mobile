@@ -14,11 +14,8 @@ import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from "expo-secure-store"
 import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
-import { RecipeListSnapshotIn } from "app/models/RecipeList"
 import { ImagePickerAsset } from "expo-image-picker"
-import { CookbookListSnapshotIn } from "app/models/CookbookList"
-import { MembershipListSnapshotIn } from "app/models/MembershipList"
-import { InvitationListSnapshotIn } from "app/models"
+import { CookbookListSnapshotIn, MembershipListSnapshotIn, InvitationListSnapshotIn, RecipeListSnapshotIn } from "app/models/generics/PaginatedList"
 
 /**
  * Configuring the apisauce instance.

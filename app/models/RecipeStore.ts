@@ -2,7 +2,7 @@ import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { Recipe, RecipeBriefModel, RecipeModel, RecipeToAddSnapshotIn } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { RecipeListModel } from "./RecipeList"
+import { RecipeListModel } from "./generics/PaginatedList"
 
 export const RecipeStoreModel = types
   .model("RecipeStore")

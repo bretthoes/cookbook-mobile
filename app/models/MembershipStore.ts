@@ -1,8 +1,8 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { MembershipListModel } from "./MembershipList"
 import { Membership, MembershipModel } from "./Membership"
 import { api } from "app/services/api"
+import { MembershipListModel } from "./generics/PaginatedList"
 
 export const MembershipStoreModel = types
   .model("MembershipStore")

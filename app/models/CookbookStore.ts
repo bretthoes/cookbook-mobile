@@ -2,7 +2,7 @@ import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { Cookbook, CookbookModel, CookbookToAddSnapshotIn } from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { CookbookListModel } from "./CookbookList"
+import { CookbookListModel } from "./generics/PaginatedList"
 
 export const CookbookStoreModel = types
   .model("CookbookStore")

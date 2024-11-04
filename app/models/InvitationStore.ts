@@ -1,7 +1,7 @@
 import { api } from "app/services/api"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
-import { InvitationListModel } from "./InvitationList"
+import { InvitationListModel } from "./generics/PaginatedList"
 
 export const InvitationStoreModel = types
   .model("InvitationStore")
