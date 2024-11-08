@@ -13,7 +13,6 @@ export const InvitationModel = types
     cookbookTitle: types.string,
     cookbookImage: types.maybeNull(types.string),
     created: types.Date,
-    responseDate: types.maybeNull(types.Date)
   })
   .actions(withSetPropAction)
 
