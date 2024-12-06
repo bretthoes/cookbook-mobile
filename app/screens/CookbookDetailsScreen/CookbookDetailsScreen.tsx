@@ -20,6 +20,7 @@ import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { useNavigation } from "@react-navigation/native"
 import { AppStackScreenProps } from "app/navigators"
 import { RecipeListItem } from "./RecipeListItem"
+import { DemoDivider } from "../DemoShowroomScreen/DemoDivider"
 
 const logo = require("../../../assets/images/logo.png")
 
@@ -163,17 +164,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
                 onChangeText={setSearchQuery}
                 placeholder={translate("recipeListScreen.searchPlaceholder")}
               />
-              {recipeStore.recipes?.hasMultiplePages && (
-                <PaginationControls
-                  currentPage={recipeStore.recipes?.pageNumber}
-                  totalPages={recipeStore.recipes?.totalPages}
-                  totalCount={recipeStore.recipes?.totalCount}
-                  hasNextPage={recipeStore.recipes?.hasNextPage}
-                  hasPreviousPage={recipeStore.recipes?.hasPreviousPage}
-                  onNextPage={handleNextPage}
-                  onPreviousPage={handlePreviousPage}
-                />
-              )}
+              <DemoDivider size={spacing.sm} />
             </View>
           }
           onRefresh={manualRefresh}
@@ -194,6 +185,17 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
             </View>
           )}
         />
+        {recipeStore.recipes?.hasMultiplePages && (
+          <PaginationControls
+            currentPage={recipeStore.recipes?.pageNumber}
+            totalPages={recipeStore.recipes?.totalPages}
+            totalCount={recipeStore.recipes?.totalCount}
+            hasNextPage={recipeStore.recipes?.hasNextPage}
+            hasPreviousPage={recipeStore.recipes?.hasPreviousPage}
+            onNextPage={handleNextPage}
+            onPreviousPage={handlePreviousPage}
+          />
+        )}
       </Screen>
     </Drawer>
   )
