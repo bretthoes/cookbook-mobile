@@ -5,13 +5,13 @@ import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Icon } from "../components"
 import { translate } from "../i18n"
-import { DemoCommunityScreen, DemoShowroomScreen, DemoDebugScreen } from "../screens"
+import { DemoShowroomScreen, DemoDebugScreen, InvitationsListScreen } from "../screens"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-import { CookbookListScreen } from "app/screens/CookbookListScreen"
+import { CookbookListScreen } from "app/screens/CookbookListScreen/CookbookListScreen"
 
 export type DemoTabParamList = {
-  DemoCommunity: undefined
+  InvitationsList: undefined
   DemoShowroom: { queryIndex?: string; itemIndex?: string }
   DemoDebug: undefined
   CookbookList: undefined
@@ -63,8 +63,8 @@ export function DemoNavigator() {
       />
 
       <Tab.Screen
-        name="DemoCommunity"
-        component={DemoCommunityScreen}
+        name="InvitationsList"
+        component={InvitationsListScreen}
         options={{
           tabBarLabel: translate("demoNavigator.communityTab"),
           tabBarIcon: ({ focused }) => (

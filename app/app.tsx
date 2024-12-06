@@ -49,7 +49,7 @@ const config = {
         DemoDebug: "debug",
         DemoPodcastList: "podcast",
         CookbookList: "cookbook", // TODO update with nested screens
-        DemoCommunity: "community",
+        DemoCommunity: "invites",
       },
     },
   },

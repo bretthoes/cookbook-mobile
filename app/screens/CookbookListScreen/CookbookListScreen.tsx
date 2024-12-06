@@ -1,56 +1,41 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, FC, useEffect, useMemo, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 import {
-  AccessibilityProps,
   ActivityIndicator,
-  ImageSourcePropType,
   ImageStyle,
-  Platform,
-  StyleSheet,
   TextStyle,
   View,
   ViewStyle,
   Image,
 } from "react-native"
 import { type ContentStyle } from "@shopify/flash-list"
-import Animated, {
-  Extrapolate,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated"
 import {
-  AutoImage,
-  Button,
-  ButtonAccessoryProps,
-  Card,
   EmptyState,
-  Icon,
   ListItem,
   ListView,
   Screen,
   Text,
   Toggle,
-} from "../components"
-import { isRTL, translate } from "../i18n"
-import { useStores } from "../models"
-import { colors, spacing } from "../theme"
-import { delay } from "../utils/delay"
+} from "../../components"
+import { isRTL, translate } from "../../i18n"
+import { useStores } from "../../models"
+import { colors, spacing } from "../../theme"
+import { delay } from "../../utils/delay"
 import { Cookbook } from "app/models/Cookbook"
 import { useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { Drawer } from "react-native-drawer-layout"
-import { DrawerIconButton } from "./DemoShowroomScreen/DrawerIconButton"
+import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
+import { CookbookCard } from "./CookbookCard"
 
-const logo = require("../../assets/images/logo.png")
-const ICON_SIZE = 14
+const logo = require("../../../assets/images/logo.png")
+export const ICON_SIZE = 14
 
-const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
+const rnrImage1 = require("../../../assets/images/demo/rnr-image-1.png")
+const rnrImage2 = require("../../../assets/images/demo/rnr-image-2.png")
+const rnrImage3 = require("../../../assets/images/demo/rnr-image-3.png")
+export const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
 interface CookbookListScreenProps extends DemoTabScreenProps<"CookbookList"> {}
 
@@ -181,191 +166,6 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
 },
 )
 
-const CookbookCard = observer(function CookbookCard({
-  cookbook,
-  isFavorite,
-  onPressFavorite,
-}: {
-  cookbook: Cookbook
-  onPressFavorite: () => void
-  isFavorite: boolean
-}) {
-
-  const { cookbookStore } = useStores()
-  const liked = useSharedValue(isFavorite ? 1 : 0)
-
-  const imageUri = useMemo<ImageSourcePropType>(() => {
-    if (cookbook.image) {
-      return { uri: `${cookbook.getImage}` }
-    } else {
-      return rnrImages[Math.floor(Math.random() * rnrImages.length)]
-    }
-  }, [])
-
-  // Grey heart
-  const animatedLikeButtonStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.EXTEND),
-        },
-      ],
-      opacity: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.CLAMP),
-    }
-  })
-
-  // Pink heart
-  const animatedUnlikeButtonStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: liked.value,
-        },
-      ],
-      opacity: liked.value,
-    }
-  })
-
-  /**
-   * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.
-   * @see https://reactnative.dev/docs/accessibility#accessibilityactions
-   */
-  const accessibilityHintProps = useMemo(
-    () =>
-      Platform.select<AccessibilityProps>({
-        ios: {
-          accessibilityLabel: cookbook.title,
-          accessibilityHint: translate("cookbookListScreen.accessibility.cardHint", {
-            action: isFavorite ? "unfavorite" : "favorite",
-          }),
-        },
-        android: {
-          accessibilityLabel: cookbook.title,
-          accessibilityActions: [
-            {
-              name: "longpress",
-              label: translate("cookbookListScreen.accessibility.favoriteAction"),
-            },
-          ],
-          onAccessibilityAction: ({ nativeEvent }) => {
-            if (nativeEvent.actionName === "longpress") {
-              handlePressFavorite()
-            }
-          },
-        },
-      }),
-    [cookbook, isFavorite],
-  )
-
-  const handlePressFavorite = () => {
-    onPressFavorite()
-    liked.value = withSpring(liked.value ? 0 : 1)
-  }
-
-  const handlePressMembers = () => {
-    cookbookStore.setCurrentCookbook(cookbook)
-    navigation.navigate("MembersList")
-  }
-
-  const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>()
-  const handlePressCard = () => {
-    cookbookStore.setCurrentCookbook(cookbook)
-    navigation.navigate("CookbookDetails")
-  }
-
-  const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
-    () =>
-      function ButtonLeftAccessory() {
-        return (
-          <View>
-            <Animated.View
-              style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
-            >
-              <Icon
-                icon="heart"
-                size={ICON_SIZE}
-                color={colors.palette.neutral800} // dark grey
-              />
-            </Animated.View>
-            <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
-              <Icon
-                icon="heart"
-                size={ICON_SIZE}
-                color={colors.palette.primary400} // pink
-              />
-            </Animated.View>
-          </View>
-        )
-      },
-    [],
-  )
-
-  const MemberButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
-    () =>
-      function MemberButtonLeftAccessory() {
-        return (
-          <Icon
-            icon="community"
-            size={ICON_SIZE}
-            color={colors.palette.neutral800} // black
-          />
-        )
-      },
-    [],
-  )
-
-  return (
-    <Card
-      style={$item}
-      verticalAlignment="force-footer-bottom"
-      onPress={handlePressCard}
-      onLongPress={handlePressFavorite}
-      HeadingComponent={
-        <View style={$metadata}>
-          <Text style={$metadataText} size="xxs" accessibilityLabel={""}>
-            {""}
-          </Text>
-          <Text style={$metadataText} size="xxs" accessibilityLabel={""}>
-            {""}
-          </Text>
-        </View>
-      }
-      content={`${cookbook.parsedTitleAndSubtitle.title}`}
-      {...accessibilityHintProps}
-      RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
-      FooterComponent={
-        <View style={$buttonRow}>
-          <Button
-            onPress={handlePressFavorite}
-            onLongPress={handlePressFavorite}
-            style={[$favoriteButton, isFavorite && $unFavoriteButton]}
-            accessibilityLabel={
-              isFavorite
-                ? translate("cookbookListScreen.accessibility.unfavoriteIcon")
-                : translate("cookbookListScreen.accessibility.favoriteIcon")
-            }
-            LeftAccessory={ButtonLeftAccessory}
-          >
-            <Text
-              size="xxs"
-              accessibilityLabel={"accessibilityLabel"}
-              weight="medium"
-              text={
-                isFavorite
-                  ? translate("cookbookListScreen.unfavoriteButton")
-                  : translate("cookbookListScreen.favoriteButton")
-              }
-            />
-          </Button>
-          <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory} onPress={handlePressMembers}>
-            <Text size="xxs" weight="medium" text={"  " + cookbook.membersCount.toString()} />
-          </Button>
-        </View>
-      }
-    />
-  )
-})
-
 // #region Styles
 const $root: ViewStyle = {
   flex: 1,
@@ -377,13 +177,13 @@ const $listContentContainer: ContentStyle = {
   paddingBottom: spacing.lg,
 }
 
-const $item: ViewStyle = {
+export const $item: ViewStyle = {
   padding: spacing.md,
   marginTop: spacing.md,
   minHeight: 120,
 }
 
-const $itemThumbnail: ImageStyle = {
+export const $itemThumbnail: ImageStyle = {
   marginTop: spacing.sm,
   height: 90,
   width: 90,
@@ -399,31 +199,31 @@ const $labelStyle: TextStyle = {
   textAlign: "left",
 }
 
-const $iconContainer: ViewStyle = {
+export const $iconContainer: ViewStyle = {
   height: ICON_SIZE,
   width: ICON_SIZE,
   flexDirection: "row",
   marginEnd: spacing.sm,
 }
 
-const $buttonRow: ViewStyle = {
+export const $buttonRow: ViewStyle = {
   flexDirection: "row",
   gap: 4,
 }
 
-const $metadata: TextStyle = {
+export const $metadata: TextStyle = {
   color: colors.textDim,
   marginTop: spacing.xs,
   flexDirection: "row",
 }
 
-const $metadataText: TextStyle = {
+export const $metadataText: TextStyle = {
   color: colors.textDim,
   marginEnd: spacing.md,
   marginBottom: spacing.xs,
 }
 
-const $favoriteButton: ViewStyle = {
+export const $favoriteButton: ViewStyle = {
   borderRadius: 17,
   marginTop: spacing.md,
   justifyContent: "flex-start",
@@ -436,7 +236,7 @@ const $favoriteButton: ViewStyle = {
   alignSelf: "flex-start",
 }
 
-const $unFavoriteButton: ViewStyle = {
+export const $unFavoriteButton: ViewStyle = {
   borderColor: colors.palette.primary100,
   backgroundColor: colors.palette.primary100,
 }
