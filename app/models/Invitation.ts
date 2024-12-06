@@ -12,7 +12,7 @@ export const InvitationModel = types
     senderEmail: types.maybeNull(types.string),
     cookbookTitle: types.string,
     cookbookImage: types.maybeNull(types.string),
-    created: types.Date,
+    created: types.string, // TODO parse to date time
   })
   .actions(withSetPropAction)
 

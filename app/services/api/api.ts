@@ -197,9 +197,10 @@ export class Api {
   async GetInvitations(
     pageNumber: number,
     pageSize: number,
+    status: string = "Sent"
   ): Promise<{ kind: "ok"; invitations: InvitationListSnapshotIn } | GeneralApiProblem> {
     // prepare query parameters
-    const params = { PageNumber: pageNumber, PageSize: pageSize }
+    const params = { PageNumber: pageNumber, PageSize: pageSize, Status: status }
 
     // use the authorizedRequest method to make the API call with query parameters
     const response: ApiResponse<InvitationListSnapshotIn> = await this.authorizedRequest(
