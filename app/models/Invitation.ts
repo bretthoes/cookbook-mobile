@@ -21,7 +21,7 @@ export const InvitationModel = types
       const senderInfo = invitation.senderName || invitation.senderEmail || "Someone";
       const title = invitation.cookbookTitle || "a cookbook";
       const date = new Date(invitation.created)?.toLocaleDateString() || "";
-
+      // TODO i8n below string
       return `${senderInfo} invited you to join "${title}" on ${date}.`;
     },
     get getImage() {

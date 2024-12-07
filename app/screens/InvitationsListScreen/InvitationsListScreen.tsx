@@ -67,7 +67,7 @@ export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(fu
           ListHeaderComponent={
             <View>
               <View style={$headerContainer}>
-                <Text preset="heading" tx="cookbookListScreen.title" />
+                <Text preset="heading" tx="invitationListScreen.title" />
               </View>
             </View>
           }
