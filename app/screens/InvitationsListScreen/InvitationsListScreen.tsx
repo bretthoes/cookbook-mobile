@@ -73,7 +73,7 @@ export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(fu
           }
           renderItem={({ item }) => (
             <InvitationCard
-              cookbook={item}
+              invitation={item}
               isFavorite={false}
               onPressFavorite={() => {}}
             />

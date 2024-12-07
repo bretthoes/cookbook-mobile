@@ -25,9 +25,9 @@ const rnrImage3 = require("../../../assets/images/demo/rnr-image-3.png")
 export const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
 export const InvitationCard = observer(function InvitationCard({
-  cookbook, isFavorite, onPressFavorite,
+  invitation, isFavorite, onPressFavorite,
 }: {
-  cookbook: Invitation;
+  invitation: Invitation;
   onPressFavorite: () => void;
   isFavorite: boolean;
 }) {
@@ -36,8 +36,8 @@ export const InvitationCard = observer(function InvitationCard({
   const liked = useSharedValue(isFavorite ? 1 : 0);
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
-    if (cookbook.cookbookImage) {
-      return { uri: `${cookbook.cookbookImage}` };
+    if (invitation.cookbookImage) {
+      return { uri: `${invitation.getImage}` };
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)];
     }
@@ -74,13 +74,13 @@ export const InvitationCard = observer(function InvitationCard({
   const accessibilityHintProps = useMemo(
     () => Platform.select<AccessibilityProps>({
       ios: {
-        accessibilityLabel: cookbook.cookbookTitle,
+        accessibilityLabel: invitation.cookbookTitle,
         accessibilityHint: translate("cookbookListScreen.accessibility.cardHint", {
           action: isFavorite ? "unfavorite" : "favorite",
         }),
       },
       android: {
-        accessibilityLabel: cookbook.cookbookTitle,
+        accessibilityLabel: invitation.cookbookTitle,
         accessibilityActions: [
           {
             name: "longpress",
@@ -94,7 +94,7 @@ export const InvitationCard = observer(function InvitationCard({
         },
       },
     }),
-    [cookbook, isFavorite]
+    [invitation, isFavorite]
   )
 
   const handlePressFavorite = () => {
@@ -166,7 +166,7 @@ export const InvitationCard = observer(function InvitationCard({
           {""}
         </Text>
       </View>}
-      content={`${cookbook.cookbookTitle}`}
+      content={`${invitation.cookbookTitle}`}
       {...accessibilityHintProps}
       RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
       FooterComponent={<View style={$buttonRow}>
@@ -188,7 +188,7 @@ export const InvitationCard = observer(function InvitationCard({
               : translate("cookbookListScreen.favoriteButton")} />
         </Button>
         <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory} onPress={handlePressMembers}>
-          <Text size="xxs" weight="medium" text={"  " + cookbook.cookbookTitle} />
+          <Text size="xxs" weight="medium" text={"  " + invitation.cookbookTitle} />
         </Button>
       </View>} />
   );
