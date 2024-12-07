@@ -30,12 +30,6 @@ import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
 import { CookbookCard } from "./CookbookCard"
 
 const logo = require("../../../assets/images/logo.png")
-export const ICON_SIZE = 14
-
-const rnrImage1 = require("../../../assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("../../../assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("../../../assets/images/demo/rnr-image-3.png")
-export const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
 interface CookbookListScreenProps extends DemoTabScreenProps<"CookbookList"> {}
 
@@ -177,68 +171,12 @@ const $listContentContainer: ContentStyle = {
   paddingBottom: spacing.lg,
 }
 
-export const $item: ViewStyle = {
-  padding: spacing.md,
-  marginTop: spacing.md,
-  minHeight: 120,
-}
-
-export const $itemThumbnail: ImageStyle = {
-  marginTop: spacing.sm,
-  height: 90,
-  width: 90,
-  borderRadius: 5,
-  alignSelf: "flex-start",
-}
-
 const $toggle: ViewStyle = {
   marginTop: spacing.md,
 }
 
 const $labelStyle: TextStyle = {
   textAlign: "left",
-}
-
-export const $iconContainer: ViewStyle = {
-  height: ICON_SIZE,
-  width: ICON_SIZE,
-  flexDirection: "row",
-  marginEnd: spacing.sm,
-}
-
-export const $buttonRow: ViewStyle = {
-  flexDirection: "row",
-  gap: 4,
-}
-
-export const $metadata: TextStyle = {
-  color: colors.textDim,
-  marginTop: spacing.xs,
-  flexDirection: "row",
-}
-
-export const $metadataText: TextStyle = {
-  color: colors.textDim,
-  marginEnd: spacing.md,
-  marginBottom: spacing.xs,
-}
-
-export const $favoriteButton: ViewStyle = {
-  borderRadius: 17,
-  marginTop: spacing.md,
-  justifyContent: "flex-start",
-  backgroundColor: colors.palette.neutral300,
-  borderColor: colors.palette.neutral300,
-  paddingHorizontal: spacing.md,
-  paddingTop: spacing.xxxs,
-  paddingBottom: 0,
-  minHeight: 32,
-  alignSelf: "flex-start",
-}
-
-export const $unFavoriteButton: ViewStyle = {
-  borderColor: colors.palette.primary100,
-  backgroundColor: colors.palette.primary100,
 }
 
 const $emptyState: ViewStyle = {

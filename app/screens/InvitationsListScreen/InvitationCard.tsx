@@ -1,7 +1,6 @@
 import { ButtonAccessoryProps, Icon, Card, AutoImage, Button } from "app/components";
 import { translate } from "app/i18n";
-import { useStores } from "app/models";
-import { Cookbook } from "app/models/Cookbook";
+import { Invitation, useStores } from "app/models";
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator";
 import { colors, spacing } from "app/theme";
 import { observer } from "mobx-react-lite";
@@ -25,20 +24,20 @@ const rnrImage2 = require("../../../assets/images/demo/rnr-image-2.png")
 const rnrImage3 = require("../../../assets/images/demo/rnr-image-3.png")
 export const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
-export const CookbookCard = observer(function CookbookCard({
+export const InvitationCard = observer(function InvitationCard({
   cookbook, isFavorite, onPressFavorite,
 }: {
-  cookbook: Cookbook;
+  cookbook: Invitation;
   onPressFavorite: () => void;
   isFavorite: boolean;
 }) {
 
-  const { cookbookStore } = useStores();
+  const { invitationStore } = useStores();
   const liked = useSharedValue(isFavorite ? 1 : 0);
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
-    if (cookbook.image) {
-      return { uri: `${cookbook.getImage}` };
+    if (cookbook.cookbookImage) {
+      return { uri: `${cookbook.cookbookImage}` };
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)];
     }
@@ -75,13 +74,13 @@ export const CookbookCard = observer(function CookbookCard({
   const accessibilityHintProps = useMemo(
     () => Platform.select<AccessibilityProps>({
       ios: {
-        accessibilityLabel: cookbook.title,
+        accessibilityLabel: cookbook.cookbookTitle,
         accessibilityHint: translate("cookbookListScreen.accessibility.cardHint", {
           action: isFavorite ? "unfavorite" : "favorite",
         }),
       },
       android: {
-        accessibilityLabel: cookbook.title,
+        accessibilityLabel: cookbook.cookbookTitle,
         accessibilityActions: [
           {
             name: "longpress",
@@ -104,13 +103,13 @@ export const CookbookCard = observer(function CookbookCard({
   }
 
   const handlePressMembers = () => {
-    cookbookStore.setCurrentCookbook(cookbook);
+    //InvitationStore.set(cookbook);
     navigation.navigate("MembersList");
   }
 
   const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>();
   const handlePressCard = () => {
-    cookbookStore.setCurrentCookbook(cookbook);
+    //InvitationStore.setCurrentCookbook(cookbook);
     navigation.navigate("CookbookDetails");
   }
 
@@ -167,7 +166,7 @@ export const CookbookCard = observer(function CookbookCard({
           {""}
         </Text>
       </View>}
-      content={`${cookbook.parsedTitleAndSubtitle.title}`}
+      content={`${cookbook.cookbookTitle}`}
       {...accessibilityHintProps}
       RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
       FooterComponent={<View style={$buttonRow}>
@@ -189,7 +188,7 @@ export const CookbookCard = observer(function CookbookCard({
               : translate("cookbookListScreen.favoriteButton")} />
         </Button>
         <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory} onPress={handlePressMembers}>
-          <Text size="xxs" weight="medium" text={"  " + cookbook.membersCount.toString()} />
+          <Text size="xxs" weight="medium" text={"  " + cookbook.cookbookTitle} />
         </Button>
       </View>} />
   );
