@@ -70,11 +70,11 @@ export const InvitationCard = observer(function InvitationCard({
   )
 
   const handlePressAccept = () => {
-    onPressAccept
+    onPressAccept()
   }
 
   const handlePressReject = () => {
-    onPressReject
+    onPressReject()
   }
 
   const AcceptButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
@@ -98,7 +98,7 @@ export const InvitationCard = observer(function InvitationCard({
             />
           </Animated.View>
         </View>
-      );
+      )
     },
     []
   )
@@ -124,7 +124,7 @@ export const InvitationCard = observer(function InvitationCard({
             />
           </Animated.View>
         </View>
-      );
+      )
     },
     []
   )
@@ -165,8 +165,8 @@ export const InvitationCard = observer(function InvitationCard({
           <Text size="xs" weight="medium" text="Reject" />
         </Button>
       </View>} />
-  );
-});
+  )
+})
 
 // #region Styles
 const $metadataText: TextStyle = {

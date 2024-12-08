@@ -135,7 +135,7 @@ export const CookbookCard = observer(function CookbookCard({
             />
           </Animated.View>
         </View>
-      );
+      )
     },
     []
   )
@@ -148,7 +148,7 @@ export const CookbookCard = observer(function CookbookCard({
           size={ICON_SIZE}
           color={colors.palette.neutral800} // black
         />
-      );
+      )
     },
     []
   )
@@ -192,8 +192,8 @@ export const CookbookCard = observer(function CookbookCard({
           <Text size="xxs" weight="medium" text={"  " + cookbook.membersCount.toString()} />
         </Button>
       </View>} />
-  );
-});
+  )
+})
 
 // #region Styles
 const $metadataText: TextStyle = {
