@@ -25,15 +25,13 @@ const rnrImage3 = require("../../../assets/images/demo/rnr-image-3.png")
 export const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
 export const InvitationCard = observer(function InvitationCard({
-  invitation, isFavorite, onPressFavorite,
+  invitation, onPressAccept, onPressReject,
 }: {
   invitation: Invitation;
-  onPressFavorite: () => void;
-  isFavorite: boolean;
+  onPressAccept: () => void
+  onPressReject: () => void
 }) {
 
-  const { invitationStore } = useStores();
-  const liked = useSharedValue(isFavorite ? 1 : 0);
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (invitation.cookbookImage) {
@@ -42,30 +40,6 @@ export const InvitationCard = observer(function InvitationCard({
       return rnrImages[Math.floor(Math.random() * rnrImages.length)];
     }
   }, [])
-
-  // Grey heart
-  const animatedLikeButtonStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.EXTEND),
-        },
-      ],
-      opacity: interpolate(liked.value, [0, 1], [1, 0], Extrapolate.CLAMP),
-    }
-  })
-
-  // Pink heart
-  const animatedUnlikeButtonStyles = useAnimatedStyle(() => {
-    return {
-      transform: [
-        {
-          scale: liked.value,
-        },
-      ],
-      opacity: liked.value,
-    }
-  })
 
   /**
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.
@@ -76,7 +50,7 @@ export const InvitationCard = observer(function InvitationCard({
       ios: {
         accessibilityLabel: invitation.cookbookTitle,
         accessibilityHint: translate("cookbookListScreen.accessibility.cardHint", {
-          action: isFavorite ? "unfavorite" : "favorite",
+          action: "favorite",
         }),
       },
       android: {
@@ -94,16 +68,17 @@ export const InvitationCard = observer(function InvitationCard({
         },
       },
     }),
-    [invitation, isFavorite]
+    [invitation]
   )
 
   const handlePressFavorite = () => {
-    onPressFavorite();
-    liked.value = withSpring(liked.value ? 0 : 1);
+    onPressAccept
+    //liked.value = withSpring(liked.value ? 0 : 1);
   }
 
   const handlePressMembers = () => {
     //InvitationStore.set(cookbook);
+    onPressReject
     navigation.navigate("MembersList");
   }
 
@@ -118,7 +93,7 @@ export const InvitationCard = observer(function InvitationCard({
       return (
         <View>
           <Animated.View
-            style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
+            style={[$iconContainer, StyleSheet.absoluteFill]}
           >
             <Icon
               icon="heart"
@@ -126,7 +101,7 @@ export const InvitationCard = observer(function InvitationCard({
               color={colors.palette.neutral800} // dark grey
             />
           </Animated.View>
-          <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
+          <Animated.View style={[$iconContainer]}>
             <Icon
               icon="heart"
               size={ICON_SIZE}
@@ -134,19 +109,6 @@ export const InvitationCard = observer(function InvitationCard({
             />
           </Animated.View>
         </View>
-      );
-    },
-    []
-  )
-
-  const MemberButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
-    () => function MemberButtonLeftAccessory() {
-      return (
-        <Icon
-          icon="community"
-          size={ICON_SIZE}
-          color={colors.palette.neutral800} // black
-        />
       );
     },
     []
@@ -166,29 +128,24 @@ export const InvitationCard = observer(function InvitationCard({
           {""}
         </Text>
       </View>}
-      content={`${invitation.cookbookTitle}`}
+      content={`${invitation.getParsedInvitationMessage}`}
       {...accessibilityHintProps}
       RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
       FooterComponent={<View style={$buttonRow}>
         <Button
           onPress={handlePressFavorite}
           onLongPress={handlePressFavorite}
-          style={[$favoriteButton, isFavorite && $unFavoriteButton]}
-          accessibilityLabel={isFavorite
-            ? translate("cookbookListScreen.accessibility.unfavoriteIcon")
-            : translate("cookbookListScreen.accessibility.favoriteIcon")}
+          style={$favoriteButton}
           LeftAccessory={ButtonLeftAccessory}
         >
           <Text
-            size="xxs"
+            size="xs"
             accessibilityLabel={"accessibilityLabel"}
             weight="medium"
-            text={isFavorite
-              ? translate("cookbookListScreen.unfavoriteButton")
-              : translate("cookbookListScreen.favoriteButton")} />
+            text="Accept" />
         </Button>
-        <Button style={$favoriteButton} LeftAccessory={MemberButtonLeftAccessory} onPress={handlePressMembers}>
-          <Text size="xxs" weight="medium" text={"  " + invitation.cookbookTitle} />
+        <Button style={$favoriteButton} LeftAccessory={ButtonLeftAccessory} onPress={handlePressMembers}>
+          <Text size="xs" weight="medium" text="Reject" />
         </Button>
       </View>} />
   );
@@ -217,11 +174,6 @@ const $favoriteButton: ViewStyle = {
 const $buttonRow: ViewStyle = {
   flexDirection: "row",
   gap: 4,
-}
-
-const $unFavoriteButton: ViewStyle = {
-  borderColor: colors.palette.primary100,
-  backgroundColor: colors.palette.primary100,
 }
 
 const $iconContainer: ViewStyle = {

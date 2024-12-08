@@ -74,8 +74,8 @@ export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(fu
           renderItem={({ item }) => (
             <InvitationCard
               invitation={item}
-              isFavorite={false}
-              onPressFavorite={() => {}}
+              onPressAccept={() => invitationStore.respond(item.id, true)}
+              onPressReject={() => invitationStore.respond(item.id, true)}
             />
           )}
         />
