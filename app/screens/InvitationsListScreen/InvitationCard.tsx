@@ -88,22 +88,48 @@ export const InvitationCard = observer(function InvitationCard({
     navigation.navigate("CookbookDetails");
   }
 
-  const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
-    () => function ButtonLeftAccessory() {
+  const AcceptButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
+    () => function AcceptButtonLeftAccessory() {
       return (
         <View>
           <Animated.View
             style={[$iconContainer, StyleSheet.absoluteFill]}
           >
             <Icon
-              icon="heart"
+              icon="check"
+              size={ICON_SIZE}
+              color={colors.palette.neutral800}
+            />
+          </Animated.View>
+          <Animated.View style={[$iconContainer]}>
+            <Icon
+              icon="check"
+              size={ICON_SIZE}
+              color={colors.palette.primary400}
+            />
+          </Animated.View>
+        </View>
+      );
+    },
+    []
+  )
+
+  const RejectButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
+    () => function RejectButtonLeftAccessory() {
+      return (
+        <View>
+          <Animated.View
+            style={[$iconContainer, StyleSheet.absoluteFill]}
+          >
+            <Icon
+              icon="x"
               size={ICON_SIZE}
               color={colors.palette.neutral800} // dark grey
             />
           </Animated.View>
           <Animated.View style={[$iconContainer]}>
             <Icon
-              icon="heart"
+              icon="x"
               size={ICON_SIZE}
               color={colors.palette.primary400} // pink
             />
@@ -135,8 +161,8 @@ export const InvitationCard = observer(function InvitationCard({
         <Button
           onPress={handlePressFavorite}
           onLongPress={handlePressFavorite}
-          style={$favoriteButton}
-          LeftAccessory={ButtonLeftAccessory}
+          style={$acceptButton}
+          LeftAccessory={AcceptButtonLeftAccessory}
         >
           <Text
             size="xs"
@@ -144,7 +170,7 @@ export const InvitationCard = observer(function InvitationCard({
             weight="medium"
             text="Accept" />
         </Button>
-        <Button style={$favoriteButton} LeftAccessory={ButtonLeftAccessory} onPress={handlePressMembers}>
+        <Button style={$rejectButton} LeftAccessory={RejectButtonLeftAccessory} onPress={handlePressMembers}>
           <Text size="xs" weight="medium" text="Reject" />
         </Button>
       </View>} />
@@ -158,11 +184,24 @@ const $metadataText: TextStyle = {
   marginBottom: spacing.xs,
 }
 
-const $favoriteButton: ViewStyle = {
+const $acceptButton: ViewStyle = {
   borderRadius: 17,
   marginTop: spacing.md,
   justifyContent: "flex-start",
-  backgroundColor: colors.palette.neutral300,
+  backgroundColor: colors.palette.secondary100,
+  borderColor: colors.palette.neutral300,
+  paddingHorizontal: spacing.md,
+  paddingTop: spacing.xxxs,
+  paddingBottom: 0,
+  minHeight: 32,
+  alignSelf: "flex-start",
+}
+
+const $rejectButton: ViewStyle = {
+  borderRadius: 17,
+  marginTop: spacing.md,
+  justifyContent: "flex-start",
+  backgroundColor: colors.palette.angry100,
   borderColor: colors.palette.neutral300,
   paddingHorizontal: spacing.md,
   paddingTop: spacing.xxxs,
