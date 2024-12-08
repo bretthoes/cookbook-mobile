@@ -36,8 +36,10 @@ export const InvitationStoreModel = types
       }
     },
     async respond(invitationId: number, accepted: boolean) {
+      console.debug(`invitation responded: accepted=${accepted} invitationId=${invitationId}`)
       // TODO add api call to patch an invitation with response.
       // If response is 200 (or 204, etc.), show toast message
+      // and remove invitation from list
     },
     async invite(cookbookId: number) {
       this.setResult("")

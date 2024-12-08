@@ -1,12 +1,10 @@
 import { ButtonAccessoryProps, Icon, Card, AutoImage, Button } from "app/components";
 import { translate } from "app/i18n";
-import { Invitation, useStores } from "app/models";
-import { DemoTabScreenProps } from "app/navigators/DemoNavigator";
+import { Invitation } from "app/models";
 import { colors, spacing } from "app/theme";
 import { observer } from "mobx-react-lite";
 import React, { useMemo, ComponentType } from "react";
 import { ImageSourcePropType, Platform, AccessibilityProps, View, TextStyle, ViewStyle, ImageStyle } from "react-native";
-import { useNavigation } from "@react-navigation/native"
 import { StyleSheet } from "react-native"
 import { Text } from "../../components"
 import Animated, {
@@ -63,7 +61,7 @@ export const InvitationCard = observer(function InvitationCard({
         ],
         onAccessibilityAction: ({ nativeEvent }) => {
           if (nativeEvent.actionName === "longpress") {
-            handlePressFavorite();
+            handlePressAccept
           }
         },
       },
@@ -71,21 +69,12 @@ export const InvitationCard = observer(function InvitationCard({
     [invitation]
   )
 
-  const handlePressFavorite = () => {
+  const handlePressAccept = () => {
     onPressAccept
-    //liked.value = withSpring(liked.value ? 0 : 1);
   }
 
-  const handlePressMembers = () => {
-    //InvitationStore.set(cookbook);
+  const handlePressReject = () => {
     onPressReject
-    navigation.navigate("MembersList");
-  }
-
-  const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>();
-  const handlePressCard = () => {
-    //InvitationStore.setCurrentCookbook(cookbook);
-    navigation.navigate("CookbookDetails");
   }
 
   const AcceptButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
@@ -144,8 +133,6 @@ export const InvitationCard = observer(function InvitationCard({
     <Card
       style={$item}
       verticalAlignment="force-footer-bottom"
-      onPress={handlePressCard}
-      onLongPress={handlePressFavorite}
       HeadingComponent={<View style={$metadata}>
         <Text style={$metadataText} size="xxs" accessibilityLabel={""}>
           {""}
@@ -159,8 +146,8 @@ export const InvitationCard = observer(function InvitationCard({
       RightComponent={<AutoImage source={imageUri} style={$itemThumbnail} />}
       FooterComponent={<View style={$buttonRow}>
         <Button
-          onPress={handlePressFavorite}
-          onLongPress={handlePressFavorite}
+          onPress={handlePressAccept}
+          onLongPress={handlePressAccept}
           style={$acceptButton}
           LeftAccessory={AcceptButtonLeftAccessory}
         >
@@ -170,7 +157,11 @@ export const InvitationCard = observer(function InvitationCard({
             weight="medium"
             text="Accept" />
         </Button>
-        <Button style={$rejectButton} LeftAccessory={RejectButtonLeftAccessory} onPress={handlePressMembers}>
+        <Button
+          style={$rejectButton}
+          LeftAccessory={RejectButtonLeftAccessory}
+          onPress={handlePressReject}
+          onLongPress={handlePressReject}>
           <Text size="xs" weight="medium" text="Reject" />
         </Button>
       </View>} />
