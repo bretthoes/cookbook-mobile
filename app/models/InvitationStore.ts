@@ -1,6 +1,6 @@
 import { api } from "app/services/api"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { InvitationListModel } from "./generics/PaginatedList"
 
 export const InvitationStoreModel = types
@@ -28,6 +28,7 @@ export const InvitationStoreModel = types
       self.result = value
     },
     async fetchInvitations(pageNumber = 1, pageSize = 10){
+      console.debug('fetching invitations...')
       const response = await api.GetInvitations(pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("invitations", response.invitations)
@@ -37,12 +38,22 @@ export const InvitationStoreModel = types
     },
     async respond(invitationId: number, accepted: boolean) {
       const response = await api.updateInvite(invitationId, accepted)
+      console.debug(JSON.stringify(response, null, 2))
       if (response.kind === "ok"){
         await this.fetchInvitations()
       } else {
         console.error(`Error updating invitations: ${JSON.stringify(response)}`)
       }
     },
+    // respond: flow(function* (id: number, accepted: boolean){
+    //   const response = yield api.updateInvite(id, accepted)
+    //   console.debug(JSON.stringify(response, null, 2))
+    //   if (response.kind === "ok"){
+    //     self.invitations.items = self.invitations?.items.filter(i => i.id !== id)
+    //   } else {
+    //     console.error(`Error updating invitations: ${JSON.stringify(response)}`)
+    //   }
+    // }),
     async invite(cookbookId: number) {
       this.setResult("")
       const response = await api.createInvite(cookbookId, self.inviteEmail)
