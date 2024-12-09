@@ -29,17 +29,19 @@ export const InvitationStoreModel = types
     },
     async fetchInvitations(pageNumber = 1, pageSize = 10){
       const response = await api.GetInvitations(pageNumber, pageSize)
-      if (response.kind == "ok") {
+      if (response.kind === "ok") {
         self.setProp("invitations", response.invitations)
       } else {
         console.error(`Error fetching invitations: ${JSON.stringify(response)}`)
       }
     },
     async respond(invitationId: number, accepted: boolean) {
-      console.debug(`invitation responded: accepted=${accepted} invitationId=${invitationId}`)
-      // TODO add api call to patch an invitation with response.
-      // If response is 200 (or 204, etc.), show toast message
-      // and remove invitation from list
+      const response = await api.updateInvite(invitationId, accepted)
+      if (response.kind === "ok"){
+        await this.fetchInvitations()
+      } else {
+        console.error(`Error updating invitations: ${JSON.stringify(response)}`)
+      }
     },
     async invite(cookbookId: number) {
       this.setResult("")

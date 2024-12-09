@@ -30,35 +30,31 @@ export const RecipeStoreModel = types
       }
     },
     createRecipe: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
-      try {
-        const response = yield api.createRecipe(recipeToAdd)
-        if (response.kind === "ok") {
-          const newRecipe = RecipeModel.create({
-            id: response.recipeId,
-            title: recipeToAdd.title,
-            summary: recipeToAdd.summary,
-            thumbnail: recipeToAdd.thumbnail,
-            videoPath: recipeToAdd.videoPath,
-            preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes,
-            cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes,
-            bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
-            servings: recipeToAdd.servings,
-            directions: recipeToAdd.directions,
-            ingredients: recipeToAdd.ingredients,
-            images: recipeToAdd.images,
-          })
-          const newRecipeBrief = RecipeBriefModel.create({
-            id: response.recipeId,
-            title: recipeToAdd.title
-          })
+      const response = yield api.createRecipe(recipeToAdd)
+      if (response.kind === "ok") {
+        const newRecipe = RecipeModel.create({
+          id: response.recipeId,
+          title: recipeToAdd.title,
+          summary: recipeToAdd.summary,
+          thumbnail: recipeToAdd.thumbnail,
+          videoPath: recipeToAdd.videoPath,
+          preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes,
+          cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes,
+          bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
+          servings: recipeToAdd.servings,
+          directions: recipeToAdd.directions,
+          ingredients: recipeToAdd.ingredients,
+          images: recipeToAdd.images,
+        })
+        const newRecipeBrief = RecipeBriefModel.create({
+          id: response.recipeId,
+          title: recipeToAdd.title
+        })
 
-          store.currentRecipe = newRecipe
-          store.recipes?.items.push(newRecipeBrief)
-        } else {
-          console.error(`Error creating recipe: ${JSON.stringify(response)}`)
-        }
-      } catch (error) {
-        console.error(`Error creating recipe: ${error}`)
+        store.currentRecipe = newRecipe
+        store.recipes?.items.push(newRecipeBrief)
+      } else {
+        console.error(`Error creating recipe: ${JSON.stringify(response)}`)
       }
     }),
     setCurrentRecipe(recipe: Recipe) {

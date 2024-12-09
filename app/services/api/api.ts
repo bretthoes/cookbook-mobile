@@ -16,6 +16,7 @@ import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn, MembershipListSnapshotIn, InvitationListSnapshotIn, RecipeListSnapshotIn } from "app/models/generics/PaginatedList"
+import { CookbookInvitationStatus } from "app/models"
 
 /**
  * Configuring the apisauce instance.
@@ -325,27 +326,54 @@ export class Api {
   }
 
   async createInvite(cookbookId: number, email: string)
-  : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
-  const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
-    email,
-    cookbookId,
-  })
+    : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+    const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
+      email,
+      cookbookId,
+    })
 
-  if (!response.ok) {
-    const problem = getGeneralApiProblem(response)
-    if (problem) return problem
-  }
-
-  try {
-    const invitationId = response.data!
-    return { kind: "ok", invitationId }
-  } catch (e) {
-    if (__DEV__ && e instanceof Error) {
-      console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
     }
-    return { kind: "bad-data" }
+
+    try {
+      const invitationId = response.data!
+      return { kind: "ok", invitationId }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
   }
-}
+
+  async updateInvite(id: number, accepted: boolean)
+    : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+    var newStatus = accepted 
+      ? CookbookInvitationStatus.Accepted
+      : CookbookInvitationStatus.Rejected
+
+      const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "PUT", {
+        id,
+        newStatus
+      })
+
+      if (!response.ok){
+        const problem = getGeneralApiProblem(response)
+        if (problem) return problem
+      }
+
+      try {
+        const invitationId = response.data!
+        return { kind: "ok", invitationId }
+      } catch (e){
+        if (__DEV__ && e instanceof Error) {
+          console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+        }
+        return { kind: "bad-data" }
+      }
+  }
 
   /**
    * Uploads a collection of images to the server. TODO update method name to plural
