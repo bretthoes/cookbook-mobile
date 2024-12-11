@@ -47,7 +47,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   async function manualRefresh() {
     setRefreshing(true)
     await Promise.all([
-      recipeStore.fetchRecipes(cookbookStore.currentCookbook?.id ?? 0, recipeStore.recipes?.pageNumber),
+      recipeStore.fetchRecipes(cookbookStore.currentCookbook?.id ?? 0, recipeStore.recipes.pageNumber),
       delay(750),
     ])
     setRefreshing(false)
@@ -55,7 +55,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
 
   // Filter the recipes based on the search query
   const filteredRecipes =
-    recipeStore.recipes?.items
+    recipeStore.recipes.items
       .slice()
       .filter((recipe) => recipe.title.toLowerCase().includes(searchQuery.toLowerCase())) ?? []
 
@@ -78,7 +78,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const handleLeave = () => { toggleDrawer() }
 
   const handleNextPage = async () => {
-    if (recipeStore.recipes?.hasNextPage) {
+    if (recipeStore.recipes.hasNextPage) {
       setIsLoading(true)
       await recipeStore.fetchRecipes(
         cookbookStore.currentCookbook?.id ?? 0,
@@ -89,7 +89,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   }
 
   const handlePreviousPage = async () => {
-    if (recipeStore.recipes?.hasPreviousPage) {
+    if (recipeStore.recipes.hasPreviousPage) {
       setIsLoading(true)
       await recipeStore.fetchRecipes(
         cookbookStore.currentCookbook?.id ?? 0,
@@ -185,13 +185,13 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
             </View>
           )}
         />
-        {recipeStore.recipes?.hasMultiplePages && (
+        {recipeStore.recipes.hasMultiplePages && (
           <PaginationControls
-            currentPage={recipeStore.recipes?.pageNumber}
-            totalPages={recipeStore.recipes?.totalPages}
-            totalCount={recipeStore.recipes?.totalCount}
-            hasNextPage={recipeStore.recipes?.hasNextPage}
-            hasPreviousPage={recipeStore.recipes?.hasPreviousPage}
+            currentPage={recipeStore.recipes.pageNumber}
+            totalPages={recipeStore.recipes.totalPages}
+            totalCount={recipeStore.recipes.totalCount}
+            hasNextPage={recipeStore.recipes.hasNextPage}
+            hasPreviousPage={recipeStore.recipes.hasPreviousPage}
             onNextPage={handleNextPage}
             onPreviousPage={handlePreviousPage}
           />

@@ -7,7 +7,12 @@ import { RecipeListModel } from "./generics/PaginatedList"
 export const RecipeStoreModel = types
   .model("RecipeStore")
   .props({
-    recipes: types.maybeNull(RecipeListModel),
+    recipes: types.optional(RecipeListModel, {
+      items: [],
+      pageNumber: 1,
+      totalPages: 1,
+      totalCount: 0,
+    }),
     currentRecipe: types.maybeNull(RecipeModel),
   })
   .actions(withSetPropAction)
@@ -52,7 +57,7 @@ export const RecipeStoreModel = types
         })
 
         store.currentRecipe = newRecipe
-        store.recipes?.items.push(newRecipeBrief)
+        store.recipes.items.push(newRecipeBrief)
       } else {
         console.error(`Error creating recipe: ${JSON.stringify(response)}`)
       }
