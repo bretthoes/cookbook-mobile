@@ -6,7 +6,12 @@ import { InvitationListModel } from "./generics/PaginatedList"
 export const InvitationStoreModel = types
   .model("InvitationStore")
   .props({
-    invitations: types.maybeNull(InvitationListModel),
+    invitations: types.optional(InvitationListModel, {
+      items: [],
+      pageNumber: 1,
+      totalPages: 1,
+      totalCount: 0,
+    }),
     inviteEmail: "",
     result: ""
   })
@@ -27,7 +32,7 @@ export const InvitationStoreModel = types
     setResult(value: string) {
       self.result = value
     },
-    async fetchInvitations(pageNumber = 1, pageSize = 10){
+    async fetchInvitations(pageNumber = 1, pageSize = 10) {
       console.debug('fetching invitations...')
       const response = await api.GetInvitations(pageNumber, pageSize)
       if (response.kind === "ok") {
@@ -36,28 +41,18 @@ export const InvitationStoreModel = types
         console.error(`Error fetching invitations: ${JSON.stringify(response)}`)
       }
     },
-    async respond(invitationId: number, accepted: boolean) {
-      const response = await api.updateInvite(invitationId, accepted)
-      console.debug(JSON.stringify(response, null, 2))
-      if (response.kind === "ok"){
-        await this.fetchInvitations()
+    respond: flow(function* (id: number, accepted: boolean) {
+      const response = yield api.updateInvite(id, accepted)
+      if (response.kind === "ok") {
+        const updatedItems = self.invitations.items.filter((invitation) => invitation.id !== id)
+        self.invitations.items.replace(updatedItems) 
       } else {
         console.error(`Error updating invitations: ${JSON.stringify(response)}`)
       }
-    },
-    // respond: flow(function* (id: number, accepted: boolean){
-    //   const response = yield api.updateInvite(id, accepted)
-    //   console.debug(JSON.stringify(response, null, 2))
-    //   if (response.kind === "ok"){
-    //     self.invitations.items = self.invitations?.items.filter(i => i.id !== id)
-    //   } else {
-    //     console.error(`Error updating invitations: ${JSON.stringify(response)}`)
-    //   }
-    // }),
+    }),
     async invite(cookbookId: number) {
       this.setResult("")
       const response = await api.createInvite(cookbookId, self.inviteEmail)
-      console.debug(JSON.stringify(response, null, 2))
       switch (response.kind) {
         case "ok":
           this.setResult("Your invite has been sent!")
@@ -75,5 +70,5 @@ export const InvitationStoreModel = types
     }
   }))
 
-export interface InvitationStore extends Instance<typeof InvitationStoreModel> {}
-export interface InvitationStoreSnapshotOut extends SnapshotOut<typeof InvitationStoreModel> {}
+export interface InvitationStore extends Instance<typeof InvitationStoreModel> { }
+export interface InvitationStoreSnapshotOut extends SnapshotOut<typeof InvitationStoreModel> { }

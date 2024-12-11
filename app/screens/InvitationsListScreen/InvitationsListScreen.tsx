@@ -44,7 +44,7 @@ export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(fu
       safeAreaEdges={["top"]}>
       <ListView<Invitation>
           contentContainerStyle={$listContentContainer}
-          data={invitationStore.invitations?.items}
+          data={invitationStore.invitations.items.slice()}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}
