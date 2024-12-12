@@ -2,7 +2,7 @@ import React, { FC, useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { EmptyState, ListView, Screen, Text } from "app/components"
+import { EmptyState, ListView, PaginationControls, Screen, Text } from "app/components"
 import { Invitation, useStores } from "app/models"
 import { delay } from "app/utils/delay"
 import { spacing } from "app/theme"
@@ -13,30 +13,42 @@ import { InvitationCard } from "./InvitationCard"
 interface InvitationsListScreenProps extends AppStackScreenProps<"InvitationsList"> {}
 
 export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(function InvitationsListScreen() {
-  // TODO add invitations store
-  // TODO add cards with cookbook image of pending invite,
-  // the user who invited you, and an option to accept or reject.
-  // On action, card disappears from list and toast is shown with confirmation.
-   const { invitationStore } = useStores()
+   const {
+    invitationStore: { respond, fetch, invitations },
+  } = useStores()
    const [refreshing, setRefreshing] = React.useState(false)
     const [isLoading, setIsLoading] = React.useState(false)
 
    useEffect(() => {
     ;(async function load() {
       setIsLoading(true)
-      await invitationStore.fetchInvitations()
+      await fetch(invitations.pageNumber)
       setIsLoading(false)
     })()
-  }, [invitationStore])
+  }, [])
 
   async function manualRefresh() {
     setRefreshing(true)
-    await Promise.all([invitationStore.fetchInvitations(), delay(750)])
+    await Promise.all([fetch(invitations.pageNumber), delay(750)])
     setRefreshing(false)
   }
 
-  // Pull in navigation via hook
-  // const navigation = useNavigation()
+  const handleNextPage = async () => {
+    if (invitations.hasNextPage) {
+      setIsLoading(true)
+      await fetch(invitations.pageNumber + 1)
+      setIsLoading(false)
+    }
+  }
+
+  const handlePreviousPage = async () => {
+    if (invitations.hasPreviousPage) {
+      setIsLoading(true)
+      await fetch(invitations.pageNumber - 1)
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Screen
       style={$root}
@@ -44,7 +56,7 @@ export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(fu
       safeAreaEdges={["top"]}>
       <ListView<Invitation>
           contentContainerStyle={$listContentContainer}
-          data={invitationStore.invitations.items.slice()}
+          data={invitations.items.slice()}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}
@@ -74,11 +86,22 @@ export const InvitationsListScreen: FC<InvitationsListScreenProps> = observer(fu
           renderItem={({ item }) => (
             <InvitationCard
               invitation={item}
-              onPressAccept={() => invitationStore.respond(item.id, true)}
-              onPressReject={() => invitationStore.respond(item.id, false)}
+              onPressAccept={() => respond(item.id, true)}
+              onPressReject={() => respond(item.id, false)}
             />
           )}
         />
+        {invitations.hasMultiplePages && (
+          <PaginationControls
+            currentPage={invitations.pageNumber}
+            totalPages={invitations.totalPages}
+            totalCount={invitations.totalCount}
+            hasNextPage={invitations.hasNextPage}
+            hasPreviousPage={invitations.hasPreviousPage}
+            onNextPage={handleNextPage}
+            onPreviousPage={handlePreviousPage}
+          />
+        )}
     </Screen>
   )
 })

@@ -32,8 +32,7 @@ export const InvitationStoreModel = types
     setResult(value: string) {
       self.result = value
     },
-    async fetchInvitations(pageNumber = 1, pageSize = 10) {
-      console.debug('fetching invitations...')
+    async fetch(pageNumber = 1, pageSize = 10) {
       const response = await api.GetInvitations(pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("invitations", response.invitations)
