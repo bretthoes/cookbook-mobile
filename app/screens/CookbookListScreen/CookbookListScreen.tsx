@@ -13,6 +13,7 @@ import {
   EmptyState,
   ListItem,
   ListView,
+  PaginationControls,
   Screen,
   Text,
   Toggle,
@@ -35,24 +36,25 @@ interface CookbookListScreenProps extends DemoTabScreenProps<"CookbookList"> {}
 
 export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function CookbookListScreen() {
   // Pull in one of our MST stores
-  const { cookbookStore } = useStores()
+  const {
+    cookbookStore: { fetch, cookbooks, favorites, favoritesOnly, toggleFavorite, hasFavorite, setProp },
+  } = useStores()
   const [open, setOpen] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false)
   const [isLoading, setIsLoading] = React.useState(false)
   const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>()
-  // initially, kick off a background refresh without the refreshing UI
+
   useEffect(() => {
     ;(async function load() {
       setIsLoading(true)
-      await cookbookStore.fetchCookbooks()
+      await fetch(cookbooks.pageNumber)
       setIsLoading(false)
     })()
-  }, [cookbookStore])
+  }, [])
 
-  // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
     setRefreshing(true)
-    await Promise.all([cookbookStore.fetchCookbooks(), delay(750)])
+    await Promise.all([fetch(), delay(750)])
     setRefreshing(false)
   }
 
@@ -63,6 +65,22 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
 
   const toggleDrawer = () => {
     setOpen(!open)
+  }
+
+  const handleNextPage = async () => {
+    if (cookbooks.hasNextPage) {
+      setIsLoading(true)
+      await fetch(cookbooks.pageNumber + 1)
+      setIsLoading(false)
+    }
+  }
+
+  const handlePreviousPage = async () => {
+    if (cookbooks.hasPreviousPage) {
+      setIsLoading(true)
+      await fetch(cookbooks.pageNumber - 1)
+      setIsLoading(false)
+    }
   }
 
   const $drawerInsets = useSafeAreaInsetsStyle(["top"])
@@ -94,8 +112,8 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
       >
         <ListView<Cookbook>
           contentContainerStyle={$listContentContainer}
-          data={cookbookStore.cookbooksForList.slice()}
-          extraData={cookbookStore.favorites.length ?? 0 + cookbookStore.cookbooks.items.length ?? 0}
+          data={cookbooks.items.slice()}
+          extraData={favorites.length ?? 0 + cookbooks.items.length ?? 0}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}
@@ -107,16 +125,16 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
                 preset="generic"
                 style={$emptyState}
                 headingTx={
-                  cookbookStore.favoritesOnly
+                  favoritesOnly
                     ? "cookbookListScreen.noFavoritesEmptyState.heading"
                     : undefined
                 }
                 contentTx={
-                  cookbookStore.favoritesOnly
+                  favoritesOnly
                     ? "cookbookListScreen.noFavoritesEmptyState.content"
                     : undefined
                 }
-                button={cookbookStore.favoritesOnly ? "" : undefined}
+                button={favoritesOnly ? "" : undefined}
                 buttonOnPress={manualRefresh}
                 imageStyle={$emptyStateImage}
                 ImageProps={{ resizeMode: "contain" }}
@@ -129,12 +147,12 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
                 <Text preset="heading" tx="cookbookListScreen.title" />
                 <DrawerIconButton onPress={toggleDrawer} />
               </View>
-              {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
+              {(favoritesOnly || cookbooks.items.length > 0) && (
                 <View style={$toggle}>
                   <Toggle
-                    value={cookbookStore.favoritesOnly}
+                    value={favoritesOnly}
                     onValueChange={() =>
-                      cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
+                      setProp("favoritesOnly", !favoritesOnly)
                     }
                     variant="switch"
                     labelTx="cookbookListScreen.onlyFavorites"
@@ -149,11 +167,22 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
           renderItem={({ item }) => (
             <CookbookCard
               cookbook={item}
-              isFavorite={cookbookStore.hasFavorite(item)}
-              onPressFavorite={() => cookbookStore.toggleFavorite(item)}
+              isFavorite={hasFavorite(item)}
+              onPressFavorite={() => toggleFavorite(item)}
             />
           )}
         />
+        {cookbooks.hasMultiplePages && (
+          <PaginationControls
+            currentPage={cookbooks.pageNumber}
+            totalPages={cookbooks.totalPages}
+            totalCount={cookbooks.totalCount}
+            hasNextPage={cookbooks.hasNextPage}
+            hasPreviousPage={cookbooks.hasPreviousPage}
+            onNextPage={handleNextPage}
+            onPreviousPage={handlePreviousPage}
+          />
+        )}
       </Screen>
     </Drawer>
   )

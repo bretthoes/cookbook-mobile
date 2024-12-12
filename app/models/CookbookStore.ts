@@ -19,9 +19,9 @@ export const CookbookStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((self) => ({
-    async fetchCookbooks() {
+    async fetch(pageNumber = 1, pageSize = 10) {
       this.clearCurrentCookbook()
-      const response = await api.getCookbooks()
+      const response = await api.getCookbooks(pageNumber, pageSize)
       if (response.kind === "ok") {
         // TODO resolve image not showing on correct tile in UI after adding cookbook
         self.setProp("cookbooks", response.cookbooks)
@@ -29,7 +29,7 @@ export const CookbookStoreModel = types
         console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
       }
     },
-    createCookbook: flow(function* (cookbookToAdd: CookbookToAddSnapshotIn) {
+    create: flow(function* (cookbookToAdd: CookbookToAddSnapshotIn) {
       try {
         const response = yield api.createCookbook(cookbookToAdd)
         if (response.kind === "ok") {
@@ -61,7 +61,7 @@ export const CookbookStoreModel = types
   }))
   .views((store) => ({
     get cookbooksForList() {
-      return store.favoritesOnly ? store.favorites : store.cookbooks?.items ?? []
+      return store.favoritesOnly ? store.favorites : store.cookbooks.items ?? []
     },
 
     hasFavorite(cookbook: Cookbook) {
