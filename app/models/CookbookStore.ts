@@ -7,7 +7,12 @@ import { CookbookListModel } from "./generics/PaginatedList"
 export const CookbookStoreModel = types
   .model("CookbookStore")
   .props({
-    cookbooks: types.maybeNull(CookbookListModel),
+    cookbooks: types.optional(CookbookListModel, {
+      items: [],
+      pageNumber: 1,
+      totalPages: 1,
+      totalCount: 0,
+    }),
     currentCookbook: types.maybeNull(types.reference(CookbookModel)),
     favorites: types.array(types.reference(CookbookModel)),
     favoritesOnly: false,
@@ -34,7 +39,7 @@ export const CookbookStoreModel = types
             image: cookbookToAdd.image,
             membersCount: 1,
           })
-          self.cookbooks?.items.push(newCookbook)
+          self.cookbooks.items.push(newCookbook)
           self.currentCookbook = newCookbook
         }
       } catch (error){

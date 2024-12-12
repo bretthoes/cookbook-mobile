@@ -95,7 +95,7 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
         <ListView<Cookbook>
           contentContainerStyle={$listContentContainer}
           data={cookbookStore.cookbooksForList.slice()}
-          extraData={cookbookStore.favorites.length ?? 0 + cookbookStore.cookbooks?.items?.length! ?? 0}
+          extraData={cookbookStore.favorites.length ?? 0 + cookbookStore.cookbooks.items.length ?? 0}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}
