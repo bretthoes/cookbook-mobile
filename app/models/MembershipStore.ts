@@ -7,7 +7,12 @@ import { MembershipListModel } from "./generics/PaginatedList"
 export const MembershipStoreModel = types
   .model("MembershipStore")
   .props({
-    memberships: types.maybeNull(MembershipListModel),
+    memberships: types.optional(MembershipListModel, {
+      items: [],
+      pageNumber: 1,
+      totalPages: 1,
+      totalCount: 0,
+    }),
     currentMembership: types.maybeNull(types.reference(MembershipModel))
   })
   .actions(withSetPropAction)

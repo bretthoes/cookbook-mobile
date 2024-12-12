@@ -19,7 +19,7 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const filteredMemberships =
-    membershipStore.memberships?.items
+    membershipStore.memberships.items
       .slice()
       .filter((membership) => membership.name.toLowerCase().includes(searchQuery.toLowerCase())) ?? []
 
@@ -36,14 +36,14 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
   async function manualRefresh() {
     setRefreshing(true)
     await Promise.all([
-      await membershipStore.fetchMemberships(cookbookStore.currentCookbook?.id ?? 0, membershipStore.memberships?.pageNumber),
+      await membershipStore.fetchMemberships(cookbookStore.currentCookbook?.id ?? 0, membershipStore.memberships.pageNumber),
       delay(750),
     ])
     setRefreshing(false)
   }
 
   const handleNextPage = async () => {
-    if (membershipStore.memberships?.hasNextPage) {
+    if (membershipStore.memberships.hasNextPage) {
       setIsLoading(true)
       await membershipStore.fetchMemberships(
         cookbookStore.currentCookbook?.id ?? 0,
@@ -54,7 +54,7 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
   }
 
   const handlePreviousPage = async () => {
-    if (membershipStore.memberships?.hasPreviousPage) {
+    if (membershipStore.memberships.hasPreviousPage) {
       setIsLoading(true)
       await membershipStore.fetchMemberships(
         cookbookStore.currentCookbook?.id ?? 0,
@@ -101,13 +101,13 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
-            {membershipStore.memberships?.hasMultiplePages ? (
+            {membershipStore.memberships.hasMultiplePages ? (
               <PaginationControls
-                currentPage={membershipStore.memberships?.pageNumber}
-                totalPages={membershipStore.memberships?.totalPages}
-                totalCount={membershipStore.memberships?.totalCount}
-                hasNextPage={membershipStore.memberships?.hasNextPage}
-                hasPreviousPage={membershipStore.memberships?.hasPreviousPage}
+                currentPage={membershipStore.memberships.pageNumber}
+                totalPages={membershipStore.memberships.totalPages}
+                totalCount={membershipStore.memberships.totalCount}
+                hasNextPage={membershipStore.memberships.hasNextPage}
+                hasPreviousPage={membershipStore.memberships.hasPreviousPage}
                 onNextPage={handleNextPage}
                 onPreviousPage={handlePreviousPage}
               />
