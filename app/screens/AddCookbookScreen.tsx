@@ -24,7 +24,8 @@ interface CookbookFormInputs {
 }
 
 export const AddCookbookScreen: FC<AddCookbookScreenProps> = observer(function AddCookbookScreen() {
-  const { cookbookStore } = useStores()
+  const { cookbookStore: { create } } = useStores()
+
   const navigation = useNavigation<DemoTabScreenProps<"CookbookList">["navigation"]>()
 
   const schema = yup.object().shape({
@@ -87,7 +88,7 @@ export const AddCookbookScreen: FC<AddCookbookScreenProps> = observer(function A
       image: formData.image
     }
     try {
-      await cookbookStore.createCookbook(newCookbook)
+      await create(newCookbook)
       navigation.replace("CookbookDetails")
     }
     catch (e) {
