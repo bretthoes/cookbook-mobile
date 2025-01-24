@@ -112,6 +112,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         preset="reversed"
         onPress={authenticate}
       />
+
+      <Text text="No account? Register" />
     </Screen>
   )
 })
