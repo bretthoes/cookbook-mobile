@@ -12,7 +12,7 @@ export const RecipeModel = types
   .props({
     id: types.identifierNumber,
     title: types.string,
-    authorId: types.maybeNull(types.integer),
+    authorId: types.maybeNull(types.string),
     author: types.maybeNull(types.string),
     summary: types.maybeNull(types.string),
     thumbnail: types.maybeNull(types.string),

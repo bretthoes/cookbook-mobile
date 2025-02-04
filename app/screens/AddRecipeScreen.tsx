@@ -231,7 +231,7 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
       contentContainerStyle={$root}
     >
       <View style={$titleContainer}>
-        <Text preset="heading" weight="normal" text="Add new recipe" />
+        <Text preset="heading" weight="normal" tx="recipeListScreen.add" />
         <Button
           text="Save"
           style={$buttonHeightOverride}
