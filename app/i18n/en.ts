@@ -44,7 +44,7 @@ const en = {
   demoNavigator: {
     componentsTab: "Components",
     debugTab: "Debug",
-    communityTab: "Community",
+    communityTab: "Invites",
     podcastListTab: "Podcast",
     cookbookListTab: "Cookbooks",
   },
@@ -169,6 +169,7 @@ const en = {
     prep: "Prep Time",
     bake: "Bake Time",
     summary: "Summary",
+    edit: "Edit",
   },
   recipeListScreen: {
     title: "Recipes",
