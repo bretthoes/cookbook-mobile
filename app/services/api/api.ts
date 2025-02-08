@@ -13,7 +13,7 @@ import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from "expo-secure-store"
 import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
-import { RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
+import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn, MembershipListSnapshotIn, InvitationListSnapshotIn, RecipeListSnapshotIn } from "app/models/generics/PaginatedList"
 import { CookbookInvitationStatus } from "app/models"
@@ -325,8 +325,27 @@ export class Api {
     }
   }
 
+  async updateRecipe(id: number, recipe: RecipeSnapshotIn)
+  : Promise<{ kind: "ok"; recipeId: number } | GeneralApiProblem> {
+    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes/${id}`, "PUT", { Id: id, recipe })
+
+    if (!response.ok){
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const recipeId = response.data!
+      return { kind: "ok", recipeId }
+    } catch (e){
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
   async createInvite(cookbookId: number, email: string)
-    : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+  : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
     const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
       email,
       cookbookId,
@@ -349,12 +368,12 @@ export class Api {
   }
 
   async updateInvite(id: number, accepted: boolean)
-    : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+  : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
     var newStatus = accepted 
       ? CookbookInvitationStatus.Accepted
       : CookbookInvitationStatus.Rejected
 
-      const response: ApiResponse<number> = await this.authorizedRequest(`Invitations/${id}`, "PUT", { Id: id, NewStatus: newStatus })
+    const response: ApiResponse<number> = await this.authorizedRequest(`Invitations/${id}`, "PUT", { Id: id, NewStatus: newStatus })
 
       if (!response.ok){
         const problem = getGeneralApiProblem(response)
