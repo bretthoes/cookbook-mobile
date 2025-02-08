@@ -2,22 +2,45 @@ import React, { FC } from "react"
 import { observer } from "mobx-react-lite"
 import { ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
-import { RecipeForm, RecipeFormInputs, Screen, Text } from "app/components"
+import { RecipeForm, RecipeFormInputs, Screen } from "app/components"
 import { RecipeSnapshotIn } from "app/models/Recipe"
 import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
-// import { useNavigation } from "@react-navigation/native"
-// import { useStores } from "app/models"
 
 interface EditRecipeScreenProps extends AppStackScreenProps<"EditRecipe"> {}
 
 export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function EditRecipeScreen() {
-  // Pull in one of our MST stores
-  const { recipeStore } = useStores()
+  const {
+    recipeStore: { currentRecipe, updateRecipe },
+  } = useStores()
   const navigation = useNavigation<AppStackScreenProps<"RecipeDetails">["navigation"]>()
+
+  const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
+    if (!currentRecipe) return null
+    return {
+      title: currentRecipe.title,
+      summary: currentRecipe.summary,
+      preparationTimeInMinutes: currentRecipe.preparationTimeInMinutes,
+      cookingTimeInMinutes: currentRecipe.cookingTimeInMinutes,
+      bakingTimeInMinutes: currentRecipe.bakingTimeInMinutes,
+      servings: currentRecipe.servings,
+      ingredients:
+        currentRecipe.ingredients?.map((ingredient) => ({
+          name: ingredient.name,
+          optional: ingredient.optional,
+        })) ?? [],
+      directions:
+        currentRecipe.directions?.map((direction) => ({
+          text: direction.text,
+          image: direction.image,
+        })) ?? [],
+      images: currentRecipe.images?.map((image) => image.name) ?? [],
+    }
+  }
+
   const onPressSend = async (formData: RecipeFormInputs) => {
-    const newRecipe: RecipeSnapshotIn = {
-      id: recipeStore.currentRecipe?.id ?? 0,
+    const updatedRecipe: RecipeSnapshotIn = {
+      id: currentRecipe?.id ?? 0,
       title: formData.title.trim(),
       summary: formData.summary?.trim() || null,
       thumbnail: null, // TODO handle thumbnail logic
@@ -46,9 +69,8 @@ export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function Edi
     }
 
     try {
-      await recipeStore.createRecipe(newRecipe)
-
-      navigation.replace("RecipeDetails")
+      await updateRecipe(updatedRecipe)
+      //navigation.replace("RecipeDetails")
     } catch (e) {
       console.error("Add recipe failed:", e)
 
@@ -67,9 +89,12 @@ export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function Edi
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
   return (
-    <Screen style={$root} preset="scroll">
-      <Text text="editRecipe" />
-      <RecipeForm onSubmit={onPressSend} onError={onError} />
+    <Screen style={$root} preset="scroll" safeAreaEdges={["top"]}>
+      <RecipeForm
+        onSubmit={onPressSend}
+        onError={onError}
+        defaultValues={mapRecipeToFormInputs() ?? undefined}
+      />
     </Screen>
   )
 })
