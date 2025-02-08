@@ -42,8 +42,8 @@ const defaultForm: RecipeFormInputs = {
   cookingTimeInMinutes: null,
   bakingTimeInMinutes: null,
   servings: null,
-  ingredients: [{ name: "", optional: null }], // Ensure `optional` is nullable or boolean
-  directions: [{ text: "", image: null }], // Ensure `image` is null initially
+  ingredients: [{ name: "", optional: null }],
+  directions: [{ text: "", image: null }],
   images: [],
 }
 
