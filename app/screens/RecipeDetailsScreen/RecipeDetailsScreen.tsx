@@ -27,7 +27,7 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
     const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
 
     const handleEditRecipe = () => {
-      navigation.navigate("AddRecipe")
+      navigation.navigate("EditRecipe")
       toggleDrawer()
     }
 
