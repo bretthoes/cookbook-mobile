@@ -325,9 +325,9 @@ export class Api {
     }
   }
 
-  async updateRecipe(id: number, recipe: RecipeSnapshotIn)
+  async updateRecipe(recipe: RecipeSnapshotIn)
   : Promise<{ kind: "ok"; recipeId: number } | GeneralApiProblem> {
-    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes/${id}`, "PUT", { Id: id, recipe })
+    const response: ApiResponse<number> = await this.authorizedRequest(`Recipes/${recipe.id}`, "PUT", { Id: recipe.id, Recipe: recipe })
 
     if (!response.ok){
       const problem = getGeneralApiProblem(response)
@@ -344,6 +344,7 @@ export class Api {
       return { kind: "bad-data" }
     }
   }
+
   async createInvite(cookbookId: number, email: string)
   : Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
     const response: ApiResponse<number> = await this.authorizedRequest('Invitations', "POST", {
