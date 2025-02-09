@@ -70,9 +70,9 @@ export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function Edi
 
     try {
       await updateRecipe(updatedRecipe)
-      //navigation.replace("RecipeDetails")
+      navigation.goBack()
     } catch (e) {
-      console.error("Add recipe failed:", e)
+      console.error("Update recipe failed:", e)
 
       if (e instanceof Error) {
         console.error("Error message:", e.message)
@@ -81,7 +81,7 @@ export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function Edi
         console.error("Non-standard error:", JSON.stringify(e, null, 2))
       }
 
-      alert("Add recipe failed")
+      alert("Update recipe failed")
     }
   }
 

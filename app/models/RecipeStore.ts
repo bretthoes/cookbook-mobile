@@ -1,6 +1,12 @@
-import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import { detach, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import { Recipe, RecipeBriefModel, RecipeModel, RecipeToAddSnapshotIn } from "./Recipe"
+import {
+  Recipe,
+  RecipeBriefModel,
+  RecipeModel,
+  RecipeSnapshotIn,
+  RecipeToAddSnapshotIn,
+} from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { RecipeListModel } from "./generics/PaginatedList"
 
@@ -53,13 +59,41 @@ export const RecipeStoreModel = types
         })
         const newRecipeBrief = RecipeBriefModel.create({
           id: response.recipeId,
-          title: recipeToAdd.title
+          title: recipeToAdd.title,
         })
 
         store.currentRecipe = newRecipe
         store.recipes.items.push(newRecipeBrief)
       } else {
         console.error(`Error creating recipe: ${JSON.stringify(response)}`)
+      }
+    }),
+    updateRecipe: flow(function* (updatedRecipe: RecipeSnapshotIn) {
+      const response = yield api.updateRecipe(updatedRecipe)
+      if (response.kind === "ok") {
+        if (store.currentRecipe) {
+          detach(store.currentRecipe.ingredients) // Detach before replacing
+          detach(store.currentRecipe.directions)
+          // applySnapshot(store.currentRecipe, updatedRecipe)
+          const newRecipe = RecipeModel.create({
+            id: updatedRecipe.id,
+            title: updatedRecipe.title,
+            summary: updatedRecipe.summary,
+            thumbnail: updatedRecipe.thumbnail,
+            videoPath: updatedRecipe.videoPath,
+            preparationTimeInMinutes: updatedRecipe.preparationTimeInMinutes,
+            cookingTimeInMinutes: updatedRecipe.cookingTimeInMinutes,
+            bakingTimeInMinutes: updatedRecipe.bakingTimeInMinutes,
+            servings: updatedRecipe.servings,
+            directions: updatedRecipe.directions,
+            ingredients: updatedRecipe.ingredients,
+            images: updatedRecipe.images,
+          })
+
+          store.currentRecipe = newRecipe
+        }
+      } else {
+        console.error(`Error updating recipe: ${JSON.stringify(response)}`)
       }
     }),
     setCurrentRecipe(recipe: Recipe) {
