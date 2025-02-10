@@ -5,6 +5,7 @@ import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
 import { colors, spacing } from "../theme"
+import { useNavigation } from "@react-navigation/native"
 
 interface LoginScreenProps extends AppStackScreenProps<"Login"> {}
 
@@ -18,7 +19,11 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const {
     authenticationStore: { login, authEmail, setAuthEmail, validationError },
   } = useStores()
+  const navigation = useNavigation<AppStackScreenProps<"Register">["navigation"]>()
 
+  const handlePressRegister = () => {
+    navigation.replace("Register")
+  }
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
@@ -113,7 +118,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         onPress={authenticate}
       />
 
-      <Text text="No account? Register" />
+      <Text text="No account? Register" style={$register} onPress={handlePressRegister} />
     </Screen>
   )
 })
@@ -143,3 +148,5 @@ const $textField: ViewStyle = {
 const $tapButton: ViewStyle = {
   marginTop: spacing.xs,
 }
+
+const $register: TextStyle = {}
