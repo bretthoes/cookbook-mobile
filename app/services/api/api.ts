@@ -463,6 +463,70 @@ export class Api {
     }
   }
 
+  async register(
+    email: string,
+    password: string,
+  ): Promise<{kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.apisauce.post("/Users/register", {
+      email,
+      password,
+    })
+
+    if (!response.ok){
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    return {kind: "ok" }
+  }
+
+  async resendConfirmationEmail(
+    email: string,
+  ): Promise<{kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.apisauce.post("/Users/resendConfirmationEmail", {
+      email,
+    })
+
+    if (!response.ok){
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    return {kind: "ok" }
+  }
+
+  async forgotPassword(
+    email: string,
+  ): Promise<{kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.apisauce.post("/Users/forgotPassword", {
+      email,
+    })
+
+    if (!response.ok){
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    return {kind: "ok" }
+  }
+
+  async resetPassword(
+    email: string,
+    resetCode: string,
+    newPassword: string,
+  ): Promise<{kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.apisauce.post("/Users/resetPassword", {
+      email,
+    })
+
+    if (!response.ok){
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    return {kind: "ok" }
+  }
+
   async refreshAuthToken() {
     const refreshToken = await SecureStore.getItemAsync("refreshToken")
     if (!refreshToken) throw new Error("No refresh token available")
