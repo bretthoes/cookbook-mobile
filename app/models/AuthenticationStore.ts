@@ -53,6 +53,38 @@ export const AuthenticationStoreModel = types
         this.setAuthToken(accessToken)
       }
     },
+    async register(password: string) {
+      const response = await api.register(store.authEmail, password)
+      if (response.kind === "ok") {
+        // TODO redirect to email confirmation page
+      } else {
+        console.error(`Error registering: ${JSON.stringify(response)}`)
+      }
+    },
+    async resendConfirmationEmail() {
+      const response = await api.resendConfirmationEmail(store.authEmail)
+      if (response.kind === "ok") {
+        // TODO tell user email is sent
+      } else {
+        console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
+      }
+    },
+    async forgotPassword() {
+      const response = await api.forgotPassword(store.authEmail)
+      if (response.kind === "ok") {
+        // TODO tell user email is sent
+      } else {
+        console.error(`Error in forgotPassword: ${JSON.stringify(response)}`)
+      }
+    },
+    async resetPassword(resetCode: string, password: string) {
+      const response = await api.resetPassword(store.authEmail, resetCode, password)
+      if (response.kind === "ok") {
+        // TODO redirect to login page
+      } else {
+        console.error(`Error registering: ${JSON.stringify(response)}`)
+      }
+    },
   }))
 
 export interface AuthenticationStore extends Instance<typeof AuthenticationStoreModel> {}
