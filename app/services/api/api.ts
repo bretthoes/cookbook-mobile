@@ -517,6 +517,8 @@ export class Api {
   ): Promise<{kind: "ok" } | GeneralApiProblem> {
     const response: ApiResponse<any> = await this.apisauce.post("/Users/resetPassword", {
       email,
+      resetCode,
+      newPassword,
     })
 
     if (!response.ok){
