@@ -15,14 +15,14 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
 
   // Password validation (handled locally)
   const passwordValidationError = useMemo(() => {
-    if (authPassword.length === 0) return "can't be blank";
-    if (authPassword.length < 6) return "must be at least 6 characters";
-    if (!/[A-Z]/.test(authPassword)) return "must contain at least one uppercase letter";
-    if (!/[a-z]/.test(authPassword)) return "must contain at least one lowercase letter";
-    if (!/\d/.test(authPassword)) return "must contain at least one digit";
-    if (!/[^A-Za-z0-9]/.test(authPassword)) return "must contain at least one special character";
-    return "";
-}, [authPassword]);
+    if (authPassword.length === 0) return "can't be blank"
+    if (authPassword.length < 6) return "must be at least 6 characters"
+    if (!/[A-Z]/.test(authPassword)) return "must contain at least one uppercase letter"
+    if (!/[a-z]/.test(authPassword)) return "must contain at least one lowercase letter"
+    if (!/\d/.test(authPassword)) return "must contain at least one digit"
+    if (!/[^A-Za-z0-9]/.test(authPassword)) return "must contain at least one special character"
+    return ""
+}, [authPassword])
   
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -35,7 +35,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       result,
       setResult,
     },
-  } = useStores();
+  } = useStores()
   const navigation = useNavigation<AppStackScreenProps<"Register">["navigation"]>()
 
   const handlePressLogin = () => {
@@ -66,6 +66,9 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       setIsSubmitted(false)
       setAuthPassword("")
       setAuthEmail("")
+
+      // navigate to email verification screen
+      navigation.replace("EmailVerification")
     }
 
     const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
