@@ -11,20 +11,20 @@ interface RegisterScreenProps extends AppStackScreenProps<"Register"> {}
 
 export const RegisterScreen: FC<RegisterScreenProps> = observer(function RegisterScreen() {
   const authPasswordInput = useRef<TextInput>(null)
-  const [authPassword, setAuthPassword] = useState("")
+  const [password, setPassword] = useState("")
 
   // Password validation (handled locally)
   const passwordValidationError = useMemo(() => {
-    if (authPassword.length === 0) return "can't be blank"
-    if (authPassword.length < 6) return "must be at least 6 characters"
-    if (!/[A-Z]/.test(authPassword)) return "must contain at least one uppercase letter"
-    if (!/[a-z]/.test(authPassword)) return "must contain at least one lowercase letter"
-    if (!/\d/.test(authPassword)) return "must contain at least one digit"
-    if (!/[^A-Za-z0-9]/.test(authPassword)) return "must contain at least one special character"
+    if (password.length === 0) return "can't be blank"
+    if (password.length < 6) return "must be at least 6 characters"
+    if (!/[A-Z]/.test(password)) return "must contain at least one uppercase letter"
+    if (!/[a-z]/.test(password)) return "must contain at least one lowercase letter"
+    if (!/\d/.test(password)) return "must contain at least one digit"
+    if (!/[^A-Za-z0-9]/.test(password)) return "must contain at least one special character"
     return ""
-}, [authPassword])
+}, [password])
   
-  const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
+  const [isPasswordHidden, setIsPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const {
     authenticationStore: {
@@ -46,7 +46,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       // Return a "cleanup" function that React will run when the component unmounts
       return () => {
         setResult("")
-        setAuthPassword("")
+        setPassword("")
         setAuthEmail("")
       }
     }, [setAuthEmail])
@@ -60,11 +60,11 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
   
       if (validationError || passwordValidationError) return
   
-      await register(authPassword)
+      await register(password)
   
       // If successful, reset the fields
       setIsSubmitted(false)
-      setAuthPassword("")
+      setPassword("")
       setAuthEmail("")
 
       // navigate to email verification screen
@@ -76,15 +76,15 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
           function PasswordRightAccessory(props: TextFieldAccessoryProps) {
             return (
               <Icon
-                icon={isAuthPasswordHidden ? "view" : "hidden"}
+                icon={isPasswordHidden ? "view" : "hidden"}
                 color={colors.palette.neutral800}
                 containerStyle={props.style}
                 size={20}
-                onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
+                onPress={() => setIsPasswordHidden(!isPasswordHidden)}
               />
             )
           },
-        [isAuthPasswordHidden],
+        [isPasswordHidden],
       )
 
   return (
@@ -114,13 +114,13 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
     
           <TextField
             ref={authPasswordInput}
-            value={authPassword}
-            onChangeText={setAuthPassword}
+            value={password}
+            onChangeText={setPassword}
             containerStyle={$textField}
             autoCapitalize="none"
             autoComplete="password"
             autoCorrect={false}
-            secureTextEntry={isAuthPasswordHidden}
+            secureTextEntry={isPasswordHidden}
             labelTx="loginScreen.passwordFieldLabel"
             placeholderTx="loginScreen.passwordFieldPlaceholder"
             onSubmitEditing={authenticate}
