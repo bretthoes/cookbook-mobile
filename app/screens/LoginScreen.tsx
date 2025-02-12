@@ -147,6 +147,7 @@ const $textField: ViewStyle = {
 
 const $tapButton: ViewStyle = {
   marginTop: spacing.xs,
+  marginBottom: spacing.xs
 }
 
 const $register: TextStyle = {}
