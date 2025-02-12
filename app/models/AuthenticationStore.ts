@@ -8,18 +8,19 @@ export const AuthenticationStoreModel = types
   .props({
     authToken: types.maybe(types.string),
     authEmail: "",
+    result: "",
   })
-  .views((store) => ({
+  .views((self) => ({
     get isAuthenticated() {
-      return !!store.authToken
+      return !!self.authToken
     },
     get validationError() {
-      if (store.authEmail.length === 0) return "can't be blank"
-      if (store.authEmail.length < 6) return "must be at least 6 characters"
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(store.authEmail))
+      if (self.authEmail.length === 0) return "can't be blank"
+      if (self.authEmail.length < 6) return "must be at least 6 characters"
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(self.authEmail))
         return "must be a valid email address"
       return ""
-    },
+    }
   }))
   .actions((store) => ({
     setAuthToken(value?: string) {
@@ -27,6 +28,9 @@ export const AuthenticationStoreModel = types
     },
     setAuthEmail(value: string) {
       store.authEmail = value.replace(/ /g, "")
+    },
+    setResult(value: string) {
+      store.result = value
     },
     async login(password: string) {
       const response = await api.login(store.authEmail, password)
@@ -54,11 +58,18 @@ export const AuthenticationStoreModel = types
       }
     },
     async register(password: string) {
+      this.setResult("")
       const response = await api.register(store.authEmail, password)
-      if (response.kind === "ok") {
-        // TODO redirect to email confirmation page
-      } else {
-        console.error(`Error registering: ${JSON.stringify(response)}`)
+      switch(response.kind) {
+        case "ok":
+          // TODO redirect to email confirmation page
+          break
+        case "rejected":
+          this.setResult("This email is already taken.")
+          break
+        default:
+          console.error(`Error registering: ${JSON.stringify(response)}`)
+          this.setResult("Something went wrong, please try again later.")
       }
     },
     async resendConfirmationEmail() {
