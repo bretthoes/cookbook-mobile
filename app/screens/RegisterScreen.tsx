@@ -11,13 +11,31 @@ interface RegisterScreenProps extends AppStackScreenProps<"Register"> {}
 
 export const RegisterScreen: FC<RegisterScreenProps> = observer(function RegisterScreen() {
   const authPasswordInput = useRef<TextInput>(null)
-  
   const [authPassword, setAuthPassword] = useState("")
+
+  // Password validation (handled locally)
+  const passwordValidationError = useMemo(() => {
+    if (authPassword.length === 0) return "can't be blank";
+    if (authPassword.length < 6) return "must be at least 6 characters";
+    if (!/[A-Z]/.test(authPassword)) return "must contain at least one uppercase letter";
+    if (!/[a-z]/.test(authPassword)) return "must contain at least one lowercase letter";
+    if (!/\d/.test(authPassword)) return "must contain at least one digit";
+    if (!/[^A-Za-z0-9]/.test(authPassword)) return "must contain at least one special character";
+    return "";
+}, [authPassword]);
+  
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const {
-      authenticationStore: { register, authEmail, setAuthEmail, validationError },
-    } = useStores()
+    authenticationStore: {
+      register,
+      authEmail,
+      setAuthEmail,
+      validationError,
+      result,
+      setResult,
+    },
+  } = useStores();
   const navigation = useNavigation<AppStackScreenProps<"Register">["navigation"]>()
 
   const handlePressLogin = () => {
@@ -27,19 +45,21 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
   useEffect(() => {
       // Return a "cleanup" function that React will run when the component unmounts
       return () => {
+        setResult("")
         setAuthPassword("")
         setAuthEmail("")
       }
     }, [setAuthEmail])
 
     const error = isSubmitted ? validationError : ""
+    const passwordError = isSubmitted ? passwordValidationError : "";
+
 
     async function authenticate() {
       setIsSubmitted(true)
   
-      if (validationError) return
+      if (validationError || passwordValidationError) return
   
-      // Make a request to your server to get an authentication token.
       await register(authPassword)
   
       // If successful, reset the fields
@@ -102,8 +122,12 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
             placeholderTx="loginScreen.passwordFieldPlaceholder"
             onSubmitEditing={authenticate}
             RightAccessory={PasswordRightAccessory}
+            helper={passwordError}
+            status={passwordError ? "error" : undefined}
           />
     
+          <Text text={`${result}`} preset="formHelper" />
+
           <Button
             testID="login-button"
             text="Start cookin'"
