@@ -87,6 +87,8 @@ const AppStack = observer(function AppStack() {
       ) : (
         <>
           <Stack.Screen name="Login" component={Screens.LoginScreen} />
+			    <Stack.Screen name="Register" component={Screens.RegisterScreen} />
+          <Stack.Screen name="EmailVerification" component={Screens.EmailVerificationScreen} />
         </>
       )}
 
@@ -99,9 +101,7 @@ const AppStack = observer(function AppStack() {
 			<Stack.Screen name="MembersList" component={Screens.MembersListScreen} />
 			<Stack.Screen name="MembershipDetails" component={Screens.MembershipDetailsScreen} />
 			<Stack.Screen name="InvitationsList" component={Screens.InvitationsListScreen} />
-			<Stack.Screen name="Register" component={Screens.RegisterScreen} />
 			<Stack.Screen name="EditRecipe" component={Screens.EditRecipeScreen} />
-			<Stack.Screen name="EmailVerification" component={Screens.EmailVerificationScreen} />
 			{/* IGNITE_GENERATOR_ANCHOR_APP_STACK_SCREENS */}
     </Stack.Navigator>
   )
