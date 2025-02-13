@@ -16,7 +16,7 @@ import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
 import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn, MembershipListSnapshotIn, InvitationListSnapshotIn, RecipeListSnapshotIn } from "app/models/generics/PaginatedList"
-import { CookbookInvitationStatus } from "app/models"
+import { CookbookInvitationStatus, useStores } from "app/models"
 
 /**
  * Configuring the apisauce instance.
@@ -291,6 +291,34 @@ export class Api {
 
       if (recipe) return { kind: "ok", recipe }
       else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Deletes a single recipe by its id.
+   */
+  async deleteRecipe(
+    recipeId: number,
+  ): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    // make the API call to get the recipe by id
+    const response: ApiResponse<RecipeSnapshotOut> = await this.authorizedRequest(
+      `Recipes/${recipeId}`,
+      "DELETE",
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      return { kind: "ok" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
@@ -579,6 +607,10 @@ export class Api {
 
         if (!newAccessToken) {
           // TODO Log out the user
+          const {
+              authenticationStore: { logout },
+            } = useStores()
+            logout()
           throw new Error("Session expired. Please log in again.")
         }
 

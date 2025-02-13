@@ -19,7 +19,7 @@ interface RecipeDetailsScreenProps extends AppStackScreenProps<"RecipeDetails"> 
 export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
   function RecipeDetailsScreen() {
     // Pull in one of our MST stores
-    const { recipeStore } = useStores()
+    const { recipeStore: { currentRecipe, deleteRecipe } } = useStores()
     const [open, setOpen] = useState(false)
     const toggleDrawer = () => {
       setOpen(!open)
@@ -31,6 +31,12 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
       toggleDrawer()
     }
 
+    const handleDeleteRecipe = () => {
+      deleteRecipe()
+      navigation.replace("CookbookDetails")
+      toggleDrawer()
+    }
+
     return (
       <Drawer
         open={open}
@@ -38,18 +44,23 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
         onClose={() => setOpen(false)}
         drawerType="back"
         drawerPosition={"right"}
-        renderDrawerContent={() => <RecipeDrawer handleEditRecipe={handleEditRecipe} />}
+        renderDrawerContent={
+          () => <RecipeDrawer 
+                  handleEditRecipe={handleEditRecipe} 
+                  handleDeleteRecipe={handleDeleteRecipe} 
+                />
+        }
       >
-        <Screen safeAreaEdges={recipeStore.currentRecipe?.images[0] ? [] : ["top"]} preset="scroll">
-          {recipeStore.currentRecipe?.images && (
-            <RecipeImages data={recipeStore.currentRecipe?.images} />
+        <Screen safeAreaEdges={currentRecipe?.images[0] ? [] : ["top"]} preset="scroll">
+          {currentRecipe?.images && (
+            <RecipeImages data={currentRecipe?.images} />
           )}
 
-          {recipeStore.currentRecipe && (
-            <RecipeSummary recipe={recipeStore.currentRecipe} toggleDrawer={toggleDrawer} />
+          {currentRecipe && (
+            <RecipeSummary recipe={currentRecipe} toggleDrawer={toggleDrawer} />
           )}
 
-          {recipeStore.currentRecipe && (
+          {currentRecipe && (
             <View style={{ minHeight: spacing.xxs }}>
               <ListView<RecipeIngredient>
                 ListHeaderComponent={
@@ -65,20 +76,20 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
                       style={[
                         $ingredientItemStyle,
                         index === 0 && $borderTop,
-                        index === recipeStore.currentRecipe!.ingredients.length - 1 &&
+                        index === currentRecipe!.ingredients.length - 1 &&
                           $borderBottom,
                       ]}
                     >
                       <CustomListItem
                         text={` - ${item?.name}`}
                         index={index}
-                        lastIndex={recipeStore.currentRecipe!.ingredients.length - 1}
+                        lastIndex={currentRecipe!.ingredients.length - 1}
                         height={spacing.xl}
                       />
                     </View>
                   )
                 }
-                data={recipeStore.currentRecipe?.ingredients}
+                data={currentRecipe?.ingredients}
                 estimatedItemSize={59}
                 contentContainerStyle={$ingredientsContainer}
                 ListEmptyComponent={<View />}
@@ -86,7 +97,7 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
             </View>
           )}
 
-          {recipeStore.currentRecipe && (
+          {currentRecipe && (
             <View style={{ minHeight: spacing.xxs }}>
               <ListView<RecipeDirection>
                 ListHeaderComponent={
@@ -102,19 +113,19 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
                       style={[
                         $listItemStyle,
                         index === 0 && $borderTop,
-                        index === recipeStore.currentRecipe!.directions.length - 1 && $borderBottom,
+                        index === currentRecipe!.directions.length - 1 && $borderBottom,
                       ]}
                     >
                       <CustomListItem
                         text={`${item?.ordinal}. ${item?.text}`}
                         index={index}
-                        lastIndex={recipeStore.currentRecipe!.directions.length - 1}
+                        lastIndex={currentRecipe!.directions.length - 1}
                         height={spacing.xl}
                       />
                     </View>
                   )
                 }
-                data={recipeStore.currentRecipe?.directions}
+                data={currentRecipe?.directions}
                 estimatedItemSize={59}
                 contentContainerStyle={$directionsContainer}
                 ListEmptyComponent={<View />}

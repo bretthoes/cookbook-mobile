@@ -96,6 +96,14 @@ export const RecipeStoreModel = types
         console.error(`Error updating recipe: ${JSON.stringify(response)}`)
       }
     }),
+    async deleteRecipe() {
+      const response = await api.deleteRecipe(store.currentRecipe?.id ?? -1)
+      if (response.kind === "ok") {
+        this.clearCurrentRecipe()
+      } else {
+        console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
+      }
+    },
     setCurrentRecipe(recipe: Recipe) {
       store.currentRecipe = recipe
     },

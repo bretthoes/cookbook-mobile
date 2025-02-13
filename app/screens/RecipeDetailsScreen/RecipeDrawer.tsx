@@ -6,11 +6,12 @@ import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 
 interface RecipeDrawerProps {
   handleEditRecipe: () => void
+  handleDeleteRecipe: () => void
 }
 
 const logo = require("../../../assets/images/logo.png")
 
-export const RecipeDrawer: FC<RecipeDrawerProps> = ({ handleEditRecipe }) => {
+export const RecipeDrawer: FC<RecipeDrawerProps> = ({ handleEditRecipe, handleDeleteRecipe }) => {
   const $drawerInsets = useSafeAreaInsetsStyle(["top"])
   return (
     <View style={[$drawer, $drawerInsets]}>
@@ -22,6 +23,12 @@ export const RecipeDrawer: FC<RecipeDrawerProps> = ({ handleEditRecipe }) => {
         textStyle={$right}
         rightIcon="caretRight"
         onPress={handleEditRecipe}
+      />
+      <ListItem
+        text="Delete"
+        textStyle={$right}
+        rightIcon="caretRight"
+        onPress={handleDeleteRecipe}
       />
     </View>
   )
