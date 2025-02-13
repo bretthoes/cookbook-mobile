@@ -17,7 +17,14 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
   const {
-    authenticationStore: { login, authEmail, setAuthEmail, validationError },
+    authenticationStore: {
+      login,
+      authEmail,
+      setAuthEmail,
+      validationError,
+      result,
+      setResult
+    },
   } = useStores()
   const navigation = useNavigation<AppStackScreenProps<"Register">["navigation"]>()
 
@@ -27,11 +34,13 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
   useEffect(() => {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
+    setResult("")
     setAuthEmail("bretthoes@gmail.com")
     setAuthPassword("Admin123!!")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
+      setResult("")
       setAuthPassword("")
       setAuthEmail("")
     }
@@ -50,8 +59,6 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
 
     // If successful, reset the fields
     setIsSubmitted(false)
-    setAuthPassword("")
-    setAuthEmail("")
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -109,6 +116,8 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         onSubmitEditing={authenticate}
         RightAccessory={PasswordRightAccessory}
       />
+
+      <Text text={`${result}`} preset="formHelper" />
 
       <Button
         testID="login-button"

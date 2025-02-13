@@ -18,6 +18,12 @@ export type GeneralApiProblem =
    */
   | { kind: "unauthorized" }
   /**
+   * This is a custom case for when an user account is created but unable to login because the
+   * account has yet to be confirmed. This will still be sent as a 401 and so needs a distinct
+   * kind, as this represents two separate paths in the login flow.
+   */
+  | { kind: "notallowed" }
+  /**
    * We don't have access to perform that request. This is 403.
    */
   | { kind: "forbidden" }
@@ -62,6 +68,8 @@ export function getGeneralApiProblem(response: ApiResponse<any>): GeneralApiProb
     case "CLIENT_ERROR":
       switch (response.status) {
         case 401:
+          if ((response.data?.detail ?? "").toLowerCase() === "notallowed") 
+            return { kind: "notallowed" }
           return { kind: "unauthorized" }
         case 403:
           return { kind: "forbidden" }

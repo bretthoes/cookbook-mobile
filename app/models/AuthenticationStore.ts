@@ -34,10 +34,18 @@ export const AuthenticationStoreModel = types
     },
     async login(password: string) {
       const response = await api.login(store.authEmail, password)
-      if (response.kind === "ok") {
-        await this.saveTokens(response.authResult)
-      } else {
-        console.error(`Error logging in: ${JSON.stringify(response)}`)
+      switch(response.kind) {
+        case "ok":
+          await this.saveTokens(response.authResult)
+          break
+        case "unauthorized":
+          this.setResult("Email or password is incorrect.")
+          break
+        case "notallowed":
+          this.resendConfirmationEmail()
+          break
+        default:
+          console.error(`Error logging in: ${JSON.stringify(response)}`)
       }
     },
     async saveTokens(authResult: AuthResultSnapshotIn) {
@@ -75,7 +83,7 @@ export const AuthenticationStoreModel = types
     async resendConfirmationEmail() {
       const response = await api.resendConfirmationEmail(store.authEmail)
       if (response.kind === "ok") {
-        this.setResult("Confirmation email has been resent.")
+        this.setResult("A confirmation email has been resent.")
       } else {
         console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
       }

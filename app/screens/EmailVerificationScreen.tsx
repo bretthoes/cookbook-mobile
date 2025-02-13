@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react"
+import React, { FC, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { ActivityIndicator, ViewStyle } from "react-native"
 import { AppStackScreenProps } from "app/navigators"
