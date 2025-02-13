@@ -92,7 +92,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
           safeAreaEdges={["top", "bottom"]}
         >
           <Text testID="login-heading" text="Register" preset="heading" style={$logIn} />
-          <Text text="Enter your details below to get started." preset="subheading" style={$enterDetails} />
+          <Text text="Enter your details below to create a new account." preset="subheading" style={$enterDetails} />
           {<Text tx="loginScreen.hint" size="sm" weight="light" style={$hint} />}
     
           <TextField
@@ -169,5 +169,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       marginBottom: spacing.xs
     }
     
-    const $register: TextStyle = {}
+    const $register: TextStyle = {
+      textDecorationLine: "underline"
+    }
     
