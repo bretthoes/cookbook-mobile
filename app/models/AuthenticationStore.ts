@@ -62,7 +62,7 @@ export const AuthenticationStoreModel = types
       const response = await api.register(store.authEmail, password)
       switch(response.kind) {
         case "ok":
-          // TODO redirect to email confirmation page
+          await SecureStore.setItemAsync("password", password)
           break
         case "rejected":
           this.setResult("This email is already taken.")
@@ -75,7 +75,7 @@ export const AuthenticationStoreModel = types
     async resendConfirmationEmail() {
       const response = await api.resendConfirmationEmail(store.authEmail)
       if (response.kind === "ok") {
-        // TODO tell user email is sent
+        this.setResult("Confirmation email has been resent.")
       } else {
         console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
       }
