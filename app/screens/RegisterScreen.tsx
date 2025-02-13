@@ -47,7 +47,6 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       return () => {
         setResult("")
         setPassword("")
-        setAuthEmail("")
       }
     }, [setAuthEmail])
 
@@ -65,7 +64,6 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       // If successful, reset the fields
       setIsSubmitted(false)
       setPassword("")
-      setAuthEmail("")
 
       // navigate to email verification screen
       navigation.replace("EmailVerification")
