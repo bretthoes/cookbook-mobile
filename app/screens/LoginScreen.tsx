@@ -159,4 +159,6 @@ const $tapButton: ViewStyle = {
   marginBottom: spacing.xs
 }
 
-const $register: TextStyle = {}
+const $register: TextStyle = {
+  textDecorationLine: "underline"
+}
