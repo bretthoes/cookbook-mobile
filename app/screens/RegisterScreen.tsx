@@ -66,7 +66,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       setPassword("")
 
       // navigate to email verification screen
-      navigation.replace("EmailVerification")
+      navigation.push("EmailVerification")
     }
 
     const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
