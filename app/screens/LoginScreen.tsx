@@ -28,7 +28,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
     setAuthEmail("bretthoes@gmail.com")
-    setAuthPassword("Admin123!")
+    setAuthPassword("Admin123!!")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
