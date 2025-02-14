@@ -43,7 +43,7 @@ const en = {
   },
   demoNavigator: {
     componentsTab: "Components",
-    debugTab: "Debug",
+    debugTab: "Settings",
     communityTab: "Invites",
     podcastListTab: "Podcast",
     cookbookListTab: "Cookbooks",
