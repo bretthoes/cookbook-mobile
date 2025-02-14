@@ -235,12 +235,17 @@ export class Api {
    */
   async getRecipes(
     cookbookId: number,
+    search: string,
     pageNumber: number,
     pageSize: number,
   ): Promise<{ kind: "ok"; recipes: RecipeListSnapshotIn } | GeneralApiProblem> {
     // prepare query parameters
-    const params = { CookbookId: cookbookId, PageNumber: pageNumber, PageSize: pageSize }
-
+    const params = {
+      CookbookId: cookbookId,
+      Search: search,
+      PageNumber: pageNumber,
+      PageSize: pageSize
+    }
     // use the authorizedRequest method to make the API call with query parameters
     const response: ApiResponse<RecipeListSnapshotIn> = await this.authorizedRequest(
       "Recipes",

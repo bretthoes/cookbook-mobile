@@ -21,43 +21,57 @@ import { useNavigation } from "@react-navigation/native"
 import { AppStackScreenProps } from "app/navigators"
 import { RecipeListItem } from "./RecipeListItem"
 import { DemoDivider } from "../DemoShowroomScreen/DemoDivider"
+import { useDebounce } from "app/models/generics/UseDebounce"
 
 const logo = require("../../../assets/images/logo.png")
 
 interface CookbookDetailsScreenProps extends AppStackScreenProps<"CookbookDetails"> {}
 
 export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(function CookbookDetailsScreen() {
-  const { recipeStore, cookbookStore } = useStores()
+  const {
+    recipeStore: {
+      fetchRecipes,
+      recipes
+    },
+    cookbookStore:
+    {
+      currentCookbook
+    }
+  } = useStores()
   const [open, setOpen] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
+  const debouncedSearchQuery = useDebounce(searchQuery)
+  const cookbookId = currentCookbook?.id ?? 0
   
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
     ;(async function load() {
       setIsLoading(true)
-      await recipeStore.fetchRecipes(cookbookStore.currentCookbook?.id ?? 0)
+      await fetchRecipes(cookbookId)
       setIsLoading(false)
     })()
-  }, [recipeStore])
+  }, [fetchRecipes])
+
+  // Fetch recipes when debounced search query changes
+  useEffect(() => {
+    console.log("debounce")
+    fetchRecipes(cookbookId, debouncedSearchQuery)
+  }, [debouncedSearchQuery, fetchRecipes, cookbookId])
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
     setRefreshing(true)
     await Promise.all([
-      recipeStore.fetchRecipes(cookbookStore.currentCookbook?.id ?? 0, recipeStore.recipes.pageNumber),
+      fetchRecipes(cookbookId,
+        searchQuery,
+        recipes.pageNumber),
       delay(750),
     ])
     setRefreshing(false)
   }
-
-  // Filter the recipes based on the search query
-  const filteredRecipes =
-    recipeStore.recipes.items
-      .slice()
-      .filter((recipe) => recipe.title.toLowerCase().includes(searchQuery.toLowerCase())) ?? []
 
   const toggleDrawer = () => {
     setOpen(!open)
@@ -78,22 +92,24 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const handleLeave = () => { toggleDrawer() }
 
   const handleNextPage = async () => {
-    if (recipeStore.recipes.hasNextPage) {
+    if (recipes.hasNextPage) {
       setIsLoading(true)
-      await recipeStore.fetchRecipes(
-        cookbookStore.currentCookbook?.id ?? 0,
-        recipeStore.recipes.pageNumber + 1,
+      await fetchRecipes(
+        cookbookId,
+        searchQuery,
+        recipes.pageNumber + 1,
       )
       setIsLoading(false)
     }
   }
 
   const handlePreviousPage = async () => {
-    if (recipeStore.recipes.hasPreviousPage) {
+    if (recipes.hasPreviousPage) {
       setIsLoading(true)
-      await recipeStore.fetchRecipes(
-        cookbookStore.currentCookbook?.id ?? 0,
-        recipeStore.recipes.pageNumber - 1,
+      await fetchRecipes(
+        cookbookId,
+        searchQuery,
+        recipes.pageNumber - 1,
       )
       setIsLoading(false)
     }
@@ -138,7 +154,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
         contentContainerStyle={$root}
       >
         <ListView<RecipeBrief>
-          data={filteredRecipes}
+          data={recipes?.items?.slice() ?? []}
           estimatedItemSize={59}
           ListEmptyComponent={
             isLoading ? (
@@ -156,7 +172,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
           ListHeaderComponent={
             <View>
               <View style={$headerContainer}>
-                <Text preset="heading" text={cookbookStore.currentCookbook?.title} />
+                <Text preset="heading" text={currentCookbook?.title} />
                 <DrawerIconButton onPress={toggleDrawer} />
               </View>
               <SearchBar
@@ -174,24 +190,24 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
               style={[
                 $listItemStyle,
                 index === 0 && $borderTop,
-                index === filteredRecipes.length - 1 && $borderBottom,
+                index === recipes.items.length - 1 && $borderBottom,
               ]}
             >
               <RecipeListItem
                 recipe={item}
                 index={index}
-                lastIndex={filteredRecipes.length - 1}
+                lastIndex={recipes.items.length - 1}
               />
             </View>
           )}
         />
-        {recipeStore.recipes.hasMultiplePages && (
+        {recipes.hasMultiplePages && (
           <PaginationControls
-            currentPage={recipeStore.recipes.pageNumber}
-            totalPages={recipeStore.recipes.totalPages}
-            totalCount={recipeStore.recipes.totalCount}
-            hasNextPage={recipeStore.recipes.hasNextPage}
-            hasPreviousPage={recipeStore.recipes.hasPreviousPage}
+            currentPage={recipes.pageNumber}
+            totalPages={recipes.totalPages}
+            totalCount={recipes.totalCount}
+            hasNextPage={recipes.hasNextPage}
+            hasPreviousPage={recipes.hasPreviousPage}
             onNextPage={handleNextPage}
             onPreviousPage={handlePreviousPage}
           />

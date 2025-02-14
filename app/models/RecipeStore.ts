@@ -23,9 +23,9 @@ export const RecipeStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((store) => ({
-    async fetchRecipes(cookbookId: number, pageNumber = 1, pageSize = 10) {
+    async fetchRecipes(cookbookId: number, search = "", pageNumber = 1, pageSize = 10) {
       this.clearCurrentRecipe()
-      const response = await api.getRecipes(cookbookId, pageNumber, pageSize)
+      const response = await api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
         store.setProp("recipes", response.recipes)
       } else {
@@ -74,7 +74,6 @@ export const RecipeStoreModel = types
         if (store.currentRecipe) {
           detach(store.currentRecipe.ingredients) // Detach before replacing
           detach(store.currentRecipe.directions)
-          // applySnapshot(store.currentRecipe, updatedRecipe)
           const newRecipe = RecipeModel.create({
             id: updatedRecipe.id,
             title: updatedRecipe.title,
