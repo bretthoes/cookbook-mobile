@@ -8139,7 +8139,7 @@ reactotron-react-js@^3.3.11:
     reactotron-core-client "2.9.7"
     stacktrace-js "2.0.1"
 
-reactotron-react-native@^5.0.5:
+reactotron-react-native@^5.1.12:
   version "5.1.12"
   resolved "https://registry.yarnpkg.com/reactotron-react-native/-/reactotron-react-native-5.1.12.tgz#fd4d6af812f8af02087ac74c3495688e7f0a8ac8"
   integrity sha512-3MNdoqoOP0xc1e0jjoKWdKonI0ucgPSj36ETDxj9zFMC+CSFLybvABzHz3K5Mr1KbKln/Csh4mEqCq2XPIpqrg==
