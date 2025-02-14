@@ -106,9 +106,9 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
       )}
     >
       <Screen
-        preset="fixed"
+        preset="scroll"
         safeAreaEdges={["top"]}
-        contentContainerStyle={$root}
+        style={$root}
       >
         <ListView<Cookbook>
           contentContainerStyle={$listContentContainer}
