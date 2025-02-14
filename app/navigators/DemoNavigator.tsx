@@ -80,7 +80,7 @@ export function DemoNavigator() {
           tabBarAccessibilityLabel: translate("demoNavigator.cookbookListTab"),
           tabBarLabel: translate("demoNavigator.cookbookListTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="podcast" color={focused ? colors.tint : undefined} size={30} />
+            <Icon icon="components" color={focused ? colors.tint : undefined} size={30} />
           ),
         }}
       />
