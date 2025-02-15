@@ -7,10 +7,6 @@ import { colors, spacing } from "../theme"
 import { isRTL } from "../i18n"
 import { useStores } from "../models"
 
-/**
- * @param {string} url - The URL to open in the browser.
- * @returns {void} - No return value.
- */
 function openLinkInBrowser(url: string) {
   Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
 }
@@ -56,64 +52,37 @@ export const DemoDebugScreen: FC<DemoTabScreenProps<"DemoDebug">> = function Dem
         tx="demoDebugScreen.reportBugs"
         onPress={() => openLinkInBrowser("https://github.com/infinitered/ignite/issues")}
       />
-      <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
-      <View style={$itemsContainer}>
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Id</Text>
-              <Text>{Application.applicationId}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Name</Text>
-              <Text>{Application.applicationName}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Version</Text>
-              <Text>{Application.nativeApplicationVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Build Version</Text>
-              <Text>{Application.nativeBuildVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Hermes Enabled</Text>
-              <Text>{String(usingHermes)}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Fabric Enabled</Text>
-              <Text>{String(usingFabric)}</Text>
-            </View>
-          }
-        />
-      </View>
-      <View style={$buttonContainer}>
-        <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
-        <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
-      </View>
+      
+      {__DEV__ && (
+        <>
+          <Text style={$title} preset="heading" tx="demoDebugScreen.title" />
+          <View style={$itemsContainer}>
+            <ListItem LeftComponent={<View style={$item}><Text preset="bold">App Id</Text><Text>{Application.applicationId}</Text></View>} />
+            <ListItem LeftComponent={<View style={$item}><Text preset="bold">App Name</Text><Text>{Application.applicationName}</Text></View>} />
+            <ListItem LeftComponent={<View style={$item}><Text preset="bold">App Version</Text><Text>{Application.nativeApplicationVersion}</Text></View>} />
+            <ListItem LeftComponent={<View style={$item}><Text preset="bold">App Build Version</Text><Text>{Application.nativeBuildVersion}</Text></View>} />
+            <ListItem LeftComponent={<View style={$item}><Text preset="bold">Hermes Enabled</Text><Text>{String(usingHermes)}</Text></View>} />
+            <ListItem LeftComponent={<View style={$item}><Text preset="bold">Fabric Enabled</Text><Text>{String(usingFabric)}</Text></View>} />
+          </View>
+          <View style={$buttonContainer}>
+            <Button style={$button} tx="demoDebugScreen.reactotron" onPress={demoReactotron} />
+            <Text style={$hint} tx={`demoDebugScreen.${Platform.OS}ReactotronHint` as const} />
+          </View>
+        </>
+      )}
+      
+      <Text style={$title} preset="heading" text="Profile" />
       <View style={$buttonContainer}>
         <Button style={$button} tx="common.logOut" onPress={handleLogout} />
       </View>
+      {/* TODO add dark mode option here <Toggle
+        label="Dark Mode"
+        variant="switch"
+        value={themeContext === "dark"}
+        onValueChange={(value: boolean) => {
+          setThemeContextOverride(value ? "dark" : "light")
+        }}
+      /> */}
     </Screen>
   )
 }
@@ -125,7 +94,7 @@ const $container: ViewStyle = {
 }
 
 const $title: TextStyle = {
-  marginBottom: spacing.xxl,
+  marginBottom: spacing.lg,
 }
 
 const $reportBugsLink: TextStyle = {
