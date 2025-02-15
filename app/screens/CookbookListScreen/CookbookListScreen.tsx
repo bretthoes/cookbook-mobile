@@ -37,7 +37,7 @@ interface CookbookListScreenProps extends DemoTabScreenProps<"CookbookList"> {}
 export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function CookbookListScreen() {
   // Pull in one of our MST stores
   const {
-    cookbookStore: { fetch, cookbooks, favorites, favoritesOnly, toggleFavorite, hasFavorite, setProp },
+    cookbookStore: { fetch, cookbooks, favoritesOnly, toggleFavorite, hasFavorite, setProp },
   } = useStores()
   const [open, setOpen] = useState(false)
   const [refreshing, setRefreshing] = React.useState(false)
@@ -113,7 +113,7 @@ export const CookbookListScreen: FC<CookbookListScreenProps> = observer(function
         <ListView<Cookbook>
           contentContainerStyle={$listContentContainer}
           data={cookbooks.items.slice()}
-          extraData={favorites.length ?? 0 + cookbooks.items.length ?? 0}
+          extraData={cookbooks.items.length ?? 0}
           refreshing={refreshing}
           estimatedItemSize={177}
           onRefresh={manualRefresh}

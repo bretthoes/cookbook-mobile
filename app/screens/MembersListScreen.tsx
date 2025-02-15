@@ -137,7 +137,7 @@ export const MembersListScreen: FC<MembersListScreenProps> = observer(function M
         )}
       />
       <DemoDivider size={spacing.sm} />
-      <Button text="Add new member" onPress={handleInvite} />
+      <Button text="Invite new member" onPress={handleInvite} />
     </Screen>
   )
 })

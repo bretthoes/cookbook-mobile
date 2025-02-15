@@ -14,7 +14,6 @@ export const CookbookStoreModel = types
       totalCount: 0,
     }),
     currentCookbook: types.maybeNull(types.reference(CookbookModel)),
-    favorites: types.array(types.reference(CookbookModel)),
     favoritesOnly: false,
   })
   .actions(withSetPropAction)
@@ -53,28 +52,27 @@ export const CookbookStoreModel = types
       self.currentCookbook = null
     },
     addFavorite(cookbook: Cookbook) {
-      self.favorites.push(cookbook)
+      // TODO api call
+      // self.favorites.push(cookbook)
     },
     removeFavorite(cookbook: Cookbook) {
-      self.favorites.remove(cookbook)
+      // TODO api call
+      // self.favorites.remove(cookbook)
+    },
+    toggleFavorite(cookbook: Cookbook) {
+
+      // if (store.hasFavorite(cookbook)) {
+      //   store.removeFavorite(cookbook)
+      // } else {
+      //   store.addFavorite(cookbook)
+      // }
     },
   }))
   .views((store) => ({
-    get cookbooksForList() {
-      return store.favoritesOnly ? store.favorites : store.cookbooks.items ?? []
-    },
-
     hasFavorite(cookbook: Cookbook) {
-      return store.favorites.includes(cookbook) ?? false
-    },
-  }))
-  .actions((store) => ({
-    toggleFavorite(cookbook: Cookbook) {
-      if (store.hasFavorite(cookbook)) {
-        store.removeFavorite(cookbook)
-      } else {
-        store.addFavorite(cookbook)
-      }
+      // TODO return whether this cookbook is favorite or not
+      return false
+      // return store.favorites.includes(cookbook) ?? false
     },
   })
 )
