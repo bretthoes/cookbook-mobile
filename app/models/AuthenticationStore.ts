@@ -17,6 +17,7 @@ export const AuthenticationStoreModel = types
     get validationError() {
       if (self.authEmail.length === 0) return "can't be blank"
       if (self.authEmail.length < 6) return "must be at least 6 characters"
+      if (self.authEmail.length > 99) return "must be less than 100 characters"
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(self.authEmail))
         return "must be a valid email address"
       return ""

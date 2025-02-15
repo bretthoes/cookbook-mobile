@@ -17,6 +17,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
   const passwordValidationError = useMemo(() => {
     if (password.length === 0) return "can't be blank"
     if (password.length < 6) return "must be at least 6 characters"
+    if (password.length > 30) return "cannot exceed 30 characters"
     if (!/[A-Z]/.test(password)) return "must contain at least one uppercase letter"
     if (!/[a-z]/.test(password)) return "must contain at least one lowercase letter"
     if (!/\d/.test(password)) return "must contain at least one digit"
