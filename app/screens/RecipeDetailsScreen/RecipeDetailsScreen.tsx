@@ -39,6 +39,7 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
 
     const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
 
+    // TODO make sure this doesn't hit api every time a recipe is opened
     useEffect(() => {
       fetchEmail()
     }, [])
