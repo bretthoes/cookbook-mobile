@@ -494,6 +494,32 @@ export class Api {
   }
 
   /**
+   * Updates the current user.
+   */
+  async updateUser(displayName: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.authorizedRequest(
+      "Users/self",
+      "PUT",
+      { DisplayName: displayName }
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      return { kind: "ok" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
    * Logs in the user with the provided email and password.
    */
   async login(

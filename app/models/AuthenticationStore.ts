@@ -105,6 +105,11 @@ export const AuthenticationStoreModel = types
         console.error(`Error registering: ${JSON.stringify(response)}`)
       }
     },
+    async update(displayName: string) {
+      const response = await api.updateUser(displayName)
+      if (response.kind !== "ok")
+        console.error(`Error updating user: ${JSON.stringify(response)}`)
+    }
   }))
 
 export interface AuthenticationStore extends Instance<typeof AuthenticationStoreModel> {}

@@ -36,12 +36,10 @@ export const MembershipStoreModel = types
     async fetchEmail() {
       if (self.email) return
       const response = await api.getEmail()
-      if (response.kind === "ok"){
+      if (response.kind === "ok") 
         self.setProp("email", response.email)
-      }
-      else {
+      else 
         console.error(`Error fetching email: ${JSON.stringify(response)}`)
-      }
     }
   }))
 
