@@ -109,8 +109,8 @@ export const AuthenticationStoreModel = types
         console.error(`Error registering: ${JSON.stringify(response)}`)
       }
     },
-    async update(displayName: string) {
-      const response = await api.updateUser(displayName)
+    async update() {
+      const response = await api.updateUser(store.displayName)
       if (response.kind !== "ok")
         console.error(`Error updating user: ${JSON.stringify(response)}`)
     }
