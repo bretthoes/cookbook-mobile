@@ -1,5 +1,5 @@
 import { AppStackScreenProps } from "app/navigators"
-import React, { FC, useState } from "react"
+import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle } from "react-native"
 import { colors, spacing } from "app/theme"
@@ -19,12 +19,31 @@ interface RecipeDetailsScreenProps extends AppStackScreenProps<"RecipeDetails"> 
 export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
   function RecipeDetailsScreen() {
     // Pull in one of our MST stores
-    const { recipeStore: { currentRecipe, deleteRecipe } } = useStores()
+    const { 
+      recipeStore: {
+        currentRecipe,
+        deleteRecipe
+      },
+      membershipStore: {
+        email,
+        fetchEmail 
+      }
+    }
+      = useStores()
+
     const [open, setOpen] = useState(false)
+
     const toggleDrawer = () => {
       setOpen(!open)
     }
+
     const navigation = useNavigation<AppStackScreenProps<"CookbookDetails">["navigation"]>()
+
+    useEffect(() => {
+      fetchEmail()
+    }, [])
+
+    const isAuthor = currentRecipe?.author?.toLowerCase === (email && email?.toLowerCase)
 
     const handleEditRecipe = () => {
       navigation.navigate("EditRecipe")
@@ -37,6 +56,8 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
       toggleDrawer()
     }
 
+    const recipeHasImages = currentRecipe?.images[0]
+
     return (
       <Drawer
         open={open}
@@ -44,14 +65,16 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
         onClose={() => setOpen(false)}
         drawerType="back"
         drawerPosition={"right"}
-        renderDrawerContent={
-          () => <RecipeDrawer 
-                  handleEditRecipe={handleEditRecipe} 
-                  handleDeleteRecipe={handleDeleteRecipe} 
-                />
-        }
+        renderDrawerContent={() => (
+          isAuthor ? (
+            <RecipeDrawer 
+              handleEditRecipe={handleEditRecipe} 
+              handleDeleteRecipe={handleDeleteRecipe} 
+            />
+          ) : null
+        )}
       >
-        <Screen safeAreaEdges={currentRecipe?.images[0] ? [] : ["top"]} preset="scroll">
+        <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
           {currentRecipe?.images && (
             <RecipeImages data={currentRecipe?.images} />
           )}
