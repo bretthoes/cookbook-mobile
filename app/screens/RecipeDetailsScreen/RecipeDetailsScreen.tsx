@@ -67,12 +67,11 @@ export const RecipeDetailsScreen: FC<RecipeDetailsScreenProps> = observer(
         drawerType="back"
         drawerPosition={"right"}
         renderDrawerContent={() => (
-          isAuthor ? (
             <RecipeDrawer 
               handleEditRecipe={handleEditRecipe} 
               handleDeleteRecipe={handleDeleteRecipe} 
+              isAuthor={isAuthor}
             />
-          ) : null
         )}
       >
         <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
