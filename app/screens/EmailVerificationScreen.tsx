@@ -14,6 +14,7 @@ export const EmailVerificationScreen: FC<EmailVerificationScreenProps> = observe
     authenticationStore: {
       authEmail,
       login,
+      isAuthenticated,
       resendConfirmationEmail,
       result
     }
@@ -31,8 +32,9 @@ export const EmailVerificationScreen: FC<EmailVerificationScreenProps> = observe
     // if the email has been verified, use password set in
     // secure storage to log in the user to the main app
     await login((await SecureStore.getItemAsync("password")) ?? "")
+    // delete password from secure storage after verification
+    if (isAuthenticated) await SecureStore.deleteItemAsync("password")
     setErrorMessage("Your email is not yet verified. Please check your inbox.")
-
     setIsVerifying(false)
   }
 
@@ -41,7 +43,7 @@ export const EmailVerificationScreen: FC<EmailVerificationScreenProps> = observe
 
     resendConfirmationEmail()
     setIsCooldown(true)
-    setCooldownTime(60) // Set cooldown time to 60 seconds
+    setCooldownTime(60) // 60 seconds
 
     const timer = setInterval(() => {
       setCooldownTime(prev => {
