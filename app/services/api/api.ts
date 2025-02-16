@@ -466,6 +466,34 @@ export class Api {
   }
 
   /**
+   * Gets the current user's email.
+   */
+  async getEmail(): Promise<{ kind: "ok"; email: string } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.authorizedRequest(
+      "Users/manage/info",
+      "GET",
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const email = response.data.email
+
+      if (email) return { kind: "ok", email }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
    * Logs in the user with the provided email and password.
    */
   async login(

@@ -13,7 +13,8 @@ export const MembershipStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    currentMembership: types.maybeNull(types.reference(MembershipModel))
+    currentMembership: types.maybeNull(types.reference(MembershipModel)),
+    email: types.maybeNull(types.string)
   })
   .actions(withSetPropAction)
   .actions((self) => ({
@@ -32,6 +33,16 @@ export const MembershipStoreModel = types
     clearCurrentMembership() {
       self.currentMembership = null
     },
+    async fetchEmail() {
+      if (self.email) return
+      const response = await api.getEmail()
+      if (response.kind === "ok"){
+        self.setProp("email", response.email)
+      }
+      else {
+        console.error(`Error fetching email: ${JSON.stringify(response)}`)
+      }
+    }
   }))
 
 export interface MembershipStore extends Instance<typeof MembershipStoreModel> {}
