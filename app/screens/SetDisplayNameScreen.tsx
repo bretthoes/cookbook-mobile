@@ -10,21 +10,20 @@ import { colors, spacing } from "app/theme"
 interface SetDisplayNameScreenProps extends AppStackScreenProps<"SetDisplayName"> {}
 
 export const SetDisplayNameScreen: FC<SetDisplayNameScreenProps> = observer(function SetDisplayNameScreen() {
-    const [displayName, setDisplayName] = useState("")
-  
+    const [isSubmitted, setIsSubmitted] = useState(false)
+    const navigation = useNavigation<AppStackScreenProps<"SetDisplayName">["navigation"]>()
+    const {
+      authenticationStore: {
+        displayName,
+        setDisplayName,
+      },
+    } = useStores()
     const displayNameValidator = useMemo(() => {
       if (displayName.length < 3) return "must be at least 2 characters"
       if (displayName.length > 30) return "cannot exceed 30 characters"
       return ""
-  }, [displayName])
-    
-    const [isSubmitted, setIsSubmitted] = useState(false)
-    const {
-      authenticationStore: {
-        update
-      },
-    } = useStores()
-    const navigation = useNavigation<AppStackScreenProps<"SetDisplayName">["navigation"]>()
+  }, [setDisplayName])
+
     const error = isSubmitted ? displayNameValidator : ""
 
     async function forward() {
@@ -32,19 +31,18 @@ export const SetDisplayNameScreen: FC<SetDisplayNameScreenProps> = observer(func
   
       if (displayNameValidator) return
       
-      
-      if (displayName) await update(displayName)
-  
       // If successful, reset the fields
       setIsSubmitted(false)
 
-      // navigate to email verification screen
-      //navigation.push("")
+      // navigate to email verification
+      navigation.push("EmailVerification")
     }
 
     
   return (
     <Screen style={$root} preset="scroll">
+      <Text testID="login-heading" text="Set a display name" preset="heading" style={$logIn} />
+      <Text text="This is optional, but you can set a display name. This is how others will see you, instead of your email. You can change this any time in the app." preset="subheading" style={$enterDetails} />
       {<Text text="No special characters!" size="sm" weight="light" style={$hint} />}
       <TextField
         value={displayName}
@@ -56,12 +54,11 @@ export const SetDisplayNameScreen: FC<SetDisplayNameScreenProps> = observer(func
         autoComplete="name"
         autoCorrect={false}
         label="Display name (optional)"
-        placeholder="This is how others will see you"
+        placeholder="Bob"
         onSubmitEditing={() => forward}
       />
 
       <Button
-        testID="login-button"
         text="Continue to app"
         style={$tapButton}
         preset="reversed"
@@ -89,4 +86,12 @@ const $textField: ViewStyle = {
 const $tapButton: ViewStyle = {
   marginTop: spacing.xs,
   marginBottom: spacing.xs
+}
+
+const $logIn: TextStyle = {
+  marginBottom: spacing.sm,
+}
+
+const $enterDetails: TextStyle = {
+  marginBottom: spacing.lg,
 }

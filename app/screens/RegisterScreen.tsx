@@ -34,7 +34,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       setAuthEmail,
       validationError,
       result,
-      setResult,
+      setResult
     },
   } = useStores()
   const navigation = useNavigation<AppStackScreenProps<"Register">["navigation"]>()
@@ -66,8 +66,7 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
       setIsSubmitted(false)
       setPassword("")
 
-      // navigate to email verification screen
-      navigation.push("EmailVerification")
+      navigation.push("SetDisplayName")
     }
 
     const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(

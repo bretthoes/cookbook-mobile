@@ -9,6 +9,7 @@ export const AuthenticationStoreModel = types
     authToken: types.maybe(types.string),
     authEmail: "",
     result: "",
+    displayName: ""
   })
   .views((self) => ({
     get isAuthenticated() {
@@ -32,6 +33,9 @@ export const AuthenticationStoreModel = types
     },
     setResult(value: string) {
       store.result = value
+    },
+    setDisplayName(value: string) {
+      store.displayName = value
     },
     async login(password: string) {
       const response = await api.login(store.authEmail, password)
