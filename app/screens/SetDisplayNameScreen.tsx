@@ -22,7 +22,7 @@ export const SetDisplayNameScreen: FC<SetDisplayNameScreenProps> = observer(func
       if (displayName.length < 3) return "must be at least 2 characters"
       if (displayName.length > 30) return "cannot exceed 30 characters"
       return ""
-  }, [setDisplayName])
+  }, [displayName])
 
     const error = isSubmitted ? displayNameValidator : ""
 
@@ -55,11 +55,11 @@ export const SetDisplayNameScreen: FC<SetDisplayNameScreenProps> = observer(func
         autoCorrect={false}
         label="Display name (optional)"
         placeholder="Bob"
-        onSubmitEditing={() => forward}
+        onSubmitEditing={forward}
       />
 
       <Button
-        text="Continue to app"
+        text="Continue"
         style={$tapButton}
         preset="reversed"
         onPress={forward}

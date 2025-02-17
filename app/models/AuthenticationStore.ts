@@ -37,11 +37,17 @@ export const AuthenticationStoreModel = types
     setDisplayName(value: string) {
       store.displayName = value
     },
-    async login(password: string) {
+    async login(password: string, isFirstLogin = false) {
       const response = await api.login(store.authEmail, password)
       switch(response.kind) {
         case "ok":
           await this.saveTokens(response.authResult)
+          if (isFirstLogin) {
+            await SecureStore.deleteItemAsync("password")
+            if (store.displayName) {
+              await this.update()
+            }
+          }
           break
         case "unauthorized":
           this.setResult("Email or password is incorrect.")

@@ -498,8 +498,8 @@ export class Api {
    */
   async updateUser(displayName: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
     const response: ApiResponse<any> = await this.authorizedRequest(
-      "Users/self",
-      "PUT",
+      "/Users/update",
+      "POST",
       { DisplayName: displayName }
     )
 

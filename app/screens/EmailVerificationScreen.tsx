@@ -33,12 +33,7 @@ export const EmailVerificationScreen: FC<EmailVerificationScreenProps> = observe
 
     // if the email has been verified, use password set in
     // secure storage to log in the user to the main app
-    await login((await SecureStore.getItemAsync("password")) ?? "")
-    // delete password from secure storage after verification
-    if (isAuthenticated) {
-      await SecureStore.deleteItemAsync("password")
-      if (displayName) await update()
-    }
+    await login((await SecureStore.getItemAsync("password")) ?? "", true)
     setErrorMessage("Your email is not yet verified. Please check your inbox.")
     setIsVerifying(false)
   }
