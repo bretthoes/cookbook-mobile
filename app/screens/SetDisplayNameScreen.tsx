@@ -19,7 +19,7 @@ export const SetDisplayNameScreen: FC<SetDisplayNameScreenProps> = observer(func
       },
     } = useStores()
     const displayNameValidator = useMemo(() => {
-      if (displayName.length < 3) return "must be at least 2 characters"
+      if (displayName.length < 2) return "must be at least 1 character"
       if (displayName.length > 30) return "cannot exceed 30 characters"
       return ""
   }, [displayName])
