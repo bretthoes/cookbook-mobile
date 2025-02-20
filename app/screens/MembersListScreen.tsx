@@ -8,7 +8,7 @@ import { delay } from "app/utils/delay"
 import { Membership } from "app/models/Membership"
 import { colors, spacing } from "app/theme"
 import { isRTL } from "app/i18n"
-import { DemoDivider } from "./DemoShowroomScreen/DemoDivider"
+import { DemoDivider } from "../components/DemoDivider"
 import { useNavigation } from "@react-navigation/native"
 
 interface MembersListScreenProps extends AppStackScreenProps<"MembersList"> {}

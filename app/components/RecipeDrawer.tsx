@@ -10,7 +10,7 @@ interface RecipeDrawerProps {
   isAuthor: boolean
 }
 
-const logo = require("../../../assets/images/logo.png")
+const logo = require("../../assets/images/logo.png")
 
 export const RecipeDrawer: FC<RecipeDrawerProps> = ({ handleEditRecipe, handleDeleteRecipe, isAuthor }) => {
   const $drawerInsets = useSafeAreaInsetsStyle(["top"])

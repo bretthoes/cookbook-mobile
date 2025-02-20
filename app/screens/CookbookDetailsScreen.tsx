@@ -1,9 +1,9 @@
 import { useStores } from "app/models"
 import React, { FC, useEffect, useState } from "react"
-import { isRTL, translate } from "../../i18n"
-import { delay } from "../../utils/delay"
+import { isRTL, translate } from "../i18n"
+import { delay } from "../utils/delay"
 import { observer } from "mobx-react-lite"
-import { EmptyState, ListItem, ListView, Screen, Text, PaginationControls, SearchBar } from "../../components"
+import { EmptyState, ListItem, ListView, Screen, Text, PaginationControls, SearchBar } from "../components"
 import {
   ActivityIndicator,
   ImageStyle,
@@ -14,16 +14,16 @@ import {
 } from "react-native"
 import { colors, spacing } from "app/theme"
 import { RecipeBrief } from "app/models/Recipe"
-import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
+import { DrawerIconButton } from "../components/DrawerIconButton"
 import { Drawer } from "react-native-drawer-layout"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { useNavigation } from "@react-navigation/native"
 import { AppStackScreenProps } from "app/navigators"
-import { RecipeListItem } from "./RecipeListItem"
-import { DemoDivider } from "../DemoShowroomScreen/DemoDivider"
+import { RecipeListItem } from "../components/RecipeListItem"
+import { DemoDivider } from "../components/DemoDivider"
 import { useDebounce } from "app/models/generics/UseDebounce"
 
-const logo = require("../../../assets/images/logo.png")
+const logo = require("../../assets/images/logo.png")
 
 interface CookbookDetailsScreenProps extends AppStackScreenProps<"CookbookDetails"> {}
 

@@ -1,9 +1,9 @@
 import React from "react"
 import { View, ViewStyle } from "react-native"
-import { Text } from "../../components"
+import { Text } from "."
 import { spacing, colors } from "app/theme"
 import { Recipe } from "app/models/Recipe"
-import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
+import { DrawerIconButton } from "./DrawerIconButton"
 
 export interface RecipeSummaryProps {
   recipe: Recipe

@@ -2,8 +2,8 @@ import React from "react"
 import { Pressable, PressableProps, ViewStyle, Platform } from "react-native"
 import Animated, { interpolate, interpolateColor, useAnimatedStyle } from "react-native-reanimated"
 import { useDrawerProgress } from "react-native-drawer-layout"
-import { isRTL } from "../../i18n"
-import { colors, spacing } from "../../theme"
+import { isRTL } from "../i18n"
+import { colors, spacing } from "../theme"
 
 interface DrawerIconButtonProps extends PressableProps {}
 

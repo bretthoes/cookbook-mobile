@@ -1,7 +1,7 @@
 import { useStores } from "app/models"
 import React from "react"
 import { observer } from "mobx-react-lite"
-import { ListItem } from "../../components"
+import { ListItem } from "."
 import { RecipeBrief } from "app/models/Recipe"
 import { useNavigation } from "@react-navigation/native"
 import { AppStackScreenProps } from "app/navigators"

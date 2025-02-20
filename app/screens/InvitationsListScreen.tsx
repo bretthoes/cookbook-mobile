@@ -8,7 +8,7 @@ import { delay } from "app/utils/delay"
 import { spacing } from "app/theme"
 import { ContentStyle } from "@shopify/flash-list"
 import { isRTL } from "app/i18n"
-import { InvitationCard } from "./InvitationCard"
+import { InvitationCard } from "../components/InvitationCard"
 
 interface InvitationsListScreenProps extends AppStackScreenProps<"InvitationsList"> {}
 

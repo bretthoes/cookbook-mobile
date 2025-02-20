@@ -9,7 +9,7 @@ import React, { useMemo, ComponentType } from "react";
 import { ImageSourcePropType, Platform, AccessibilityProps, View, TextStyle, ViewStyle, ImageStyle } from "react-native";
 import { useNavigation } from "@react-navigation/native"
 import { StyleSheet } from "react-native"
-import { Text } from "../../components"
+import { Text } from "."
 import Animated, {
   Extrapolate,
   interpolate,
@@ -20,9 +20,9 @@ import Animated, {
 
 export const ICON_SIZE = 14
 
-const rnrImage1 = require("../../../assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("../../../assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("../../../assets/images/demo/rnr-image-3.png")
+const rnrImage1 = require("../../assets/images/demo/rnr-image-1.png")
+const rnrImage2 = require("../../assets/images/demo/rnr-image-2.png")
+const rnrImage3 = require("../../assets/images/demo/rnr-image-3.png")
 export const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
 
 export const CookbookCard = observer(function CookbookCard({

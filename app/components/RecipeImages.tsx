@@ -8,7 +8,7 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from "react-native"
-import { AutoImage } from "../../components/AutoImage"
+import { AutoImage } from "./AutoImage"
 import { RecipeImage } from "app/models/RecipeImage"
 
 const { width: viewportWidth } = Dimensions.get("window")

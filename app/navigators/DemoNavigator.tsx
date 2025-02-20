@@ -8,7 +8,7 @@ import { translate } from "../i18n"
 import { DemoDebugScreen, InvitationsListScreen } from "../screens"
 import { colors, spacing, typography } from "../theme"
 import { AppStackParamList, AppStackScreenProps } from "./AppNavigator"
-import { CookbookListScreen } from "app/screens/CookbookListScreen/CookbookListScreen"
+import { CookbookListScreen } from "app/screens/CookbookListScreen"
 
 export type DemoTabParamList = {
   InvitationsList: undefined

@@ -17,20 +17,20 @@ import {
   Screen,
   Text,
   Toggle,
-} from "../../components"
-import { isRTL, translate } from "../../i18n"
-import { useStores } from "../../models"
-import { colors, spacing } from "../../theme"
-import { delay } from "../../utils/delay"
+} from "../components"
+import { isRTL, translate } from "../i18n"
+import { useStores } from "../models"
+import { colors, spacing } from "../theme"
+import { delay } from "../utils/delay"
 import { Cookbook } from "app/models/Cookbook"
 import { useNavigation } from "@react-navigation/native"
 import { useSafeAreaInsetsStyle } from "app/utils/useSafeAreaInsetsStyle"
 import { Drawer } from "react-native-drawer-layout"
-import { DrawerIconButton } from "../DemoShowroomScreen/DrawerIconButton"
+import { DrawerIconButton } from "../components/DrawerIconButton"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
-import { CookbookCard } from "./CookbookCard"
+import { CookbookCard } from "../components/CookbookCard"
 
-const logo = require("../../../assets/images/logo.png")
+const logo = require("../../assets/images/logo.png")
 
 interface CookbookListScreenProps extends DemoTabScreenProps<"CookbookList"> {}
 
