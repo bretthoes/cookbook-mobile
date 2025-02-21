@@ -8,7 +8,7 @@ import { Text } from "app/components/Text"
 import { TextField } from "app/components/TextField"
 import { Button } from "app/components/Button"
 import * as ImagePicker from "expo-image-picker"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { api } from "app/services/api"
 import { AutoImage } from "./AutoImage"
 import { DemoDivider } from "app/components/DemoDivider"
@@ -16,6 +16,7 @@ import { spacing } from "app/theme"
 import { Icon } from "./Icon"
 import { ListView } from "./ListView"
 import { DemoUseCase } from "./DemoUseCase"
+import Config from "app/config"
 
 export interface RecipeFormInputs {
   title: string
@@ -79,7 +80,19 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     remove: removeDirection,
   } = useFieldArray({ control, name: "directions" })
 
-  const [imagesLocal, setImagesLocal] = useState([] as string[])
+  // Ugly way around conditionally displaying remote or local images
+  const [imagesLocal, setImagesLocal] = useState(
+    defaultValues.images?.map((img) => (img.startsWith("http")
+    ? img
+    : `${Config.S3_URL}/${img}`)) || []
+  )
+  useEffect(() => {
+    setImagesLocal(
+      defaultValues.images?.map((img) => (img.startsWith("http")
+      ? img
+      : `${Config.S3_URL}/${img}`)) || []
+    );
+  }, [defaultValues.images])
 
   // Image picker function
   const pickImage = async () => {
@@ -96,18 +109,16 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     })
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      if (result.assets.length > 6) {
-        alert("You can only select up to 6 images.")
-        return
-      }
-      const newImages = result.assets.map((x) => x.uri)
-      setImagesLocal(newImages)
-
-      const uploadResponse = await api.uploadImage(result.assets)
+      const newImages = result.assets.map((x) => x.uri);
+      const combinedImages = [...newImages].slice(0, 6); // Replace existing with new images (up to 6)
+  
+      setImagesLocal(combinedImages); // Update local state for display
+  
+      const uploadResponse = await api.uploadImage(result.assets);
       if (uploadResponse.kind === "ok") {
-        setValue("images", uploadResponse.keys)
+        setValue("images", uploadResponse.keys.slice(0, 6)); // Only set new images, discarding old ones
       } else {
-        alert("Image selection failed")
+        alert("Image upload failed");
       }
     }
   }
@@ -123,17 +134,17 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         />
       </View>
       <DemoUseCase name="" description="Fill out the details for your new recipe.">
-        {imagesLocal.length > 0 && (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
-            {imagesLocal.map((imageUri, index) => (
-              <AutoImage
-                key={index}
-                source={{ uri: imageUri }} // Display each image using AutoImage
-                style={{ width: 100, height: 100, margin: 5 }} // Set the image size and spacing
-              />
-            ))}
-          </View>
-        )}
+      {imagesLocal.length > 0 && (
+        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
+          {imagesLocal.map((imageUri, index) => (
+            <AutoImage
+              key={index}
+              source={{ uri: imageUri }}
+              style={{ width: 100, height: 100, margin: 5 }}
+            />
+          ))}
+        </View>
+      )}
 
         <Button text="Add photos (max of 6)" onPress={pickImage} />
 
