@@ -52,10 +52,15 @@ export interface RecipeFormProps {
   defaultValues?: RecipeFormInputs
   onSubmit: (formData: RecipeFormInputs) => void
   onError: (errors: any) => void
+  isEdit?: boolean
 }
 
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
-  const { onSubmit, onError, defaultValues = defaultForm } = props
+  const {
+    onSubmit,
+    onError,
+    defaultValues = defaultForm,
+    isEdit = false } = props
 
   const {
     control,
@@ -126,14 +131,14 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   return (
     <>
       <View style={$titleContainer}>
-        <Text preset="heading" weight="normal" tx="recipeListScreen.add" />
+        <Text preset="heading" weight="normal" tx={isEdit ? "recipeListScreen.edit" : "recipeListScreen.add"} />
         <Button
           text="Save"
           style={$buttonHeightOverride}
           onPress={handleSubmit(onSubmit, onError)}
         />
       </View>
-      <DemoUseCase name="" description="Fill out the details for your new recipe.">
+      <DemoUseCase name="" description={isEdit ? "Swipe back to exit without saving." : "Fill out the details for your new recipe."}>
       {imagesLocal.length > 0 && (
         <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
           {imagesLocal.map((imageUri, index) => (
@@ -146,7 +151,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         </View>
       )}
 
-        <Button text="Add photos (max of 6)" onPress={pickImage} />
+        <Button text={isEdit ? "Replace existing photos (max of 6)" : "Add photos (max of 6)"} onPress={pickImage} />
 
         <DemoDivider size={spacing.lg} />
 

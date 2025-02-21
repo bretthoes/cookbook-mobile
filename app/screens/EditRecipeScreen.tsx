@@ -6,6 +6,7 @@ import { RecipeForm, RecipeFormInputs, Screen } from "app/components"
 import { RecipeSnapshotIn } from "app/models/Recipe"
 import { useStores } from "app/models"
 import { useNavigation } from "@react-navigation/native"
+import { spacing } from "app/theme"
 
 interface EditRecipeScreenProps extends AppStackScreenProps<"EditRecipe"> {}
 
@@ -89,16 +90,18 @@ export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function Edi
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
   return (
-    <Screen style={$root} preset="scroll" safeAreaEdges={["top"]}>
+    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$root}>
       <RecipeForm
         onSubmit={onPressSend}
         onError={onError}
         defaultValues={mapRecipeToFormInputs() ?? undefined}
+        isEdit={true}
       />
     </Screen>
   )
 })
 
 const $root: ViewStyle = {
-  flex: 1,
+  marginHorizontal: spacing.md,
+  marginTop: spacing.xl,
 }

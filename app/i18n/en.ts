@@ -175,6 +175,7 @@ const en = {
     title: "Recipes",
     searchPlaceholder: "Search",
     add: "Create new recipe",
+    edit: "Update this recipe",
     invite: "Invite someone else",
     leave: "Leave cookbook",
   },
