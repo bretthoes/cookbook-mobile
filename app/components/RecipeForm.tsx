@@ -11,11 +11,11 @@ import * as ImagePicker from "expo-image-picker"
 import { useState } from "react"
 import { api } from "app/services/api"
 import { AutoImage } from "./AutoImage"
-import { DemoUseCase } from "app/screens/DemoShowroomScreen/DemoUseCase"
 import { DemoDivider } from "app/components/DemoDivider"
 import { spacing } from "app/theme"
 import { Icon } from "./Icon"
 import { ListView } from "./ListView"
+import { DemoUseCase } from "./DemoUseCase"
 
 export interface RecipeFormInputs {
   title: string
