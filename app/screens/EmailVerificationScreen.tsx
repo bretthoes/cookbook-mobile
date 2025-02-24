@@ -14,11 +14,8 @@ export const EmailVerificationScreen: FC<EmailVerificationScreenProps> = observe
     authenticationStore: {
       authEmail,
       login,
-      isAuthenticated,
       resendConfirmationEmail,
       result,
-      displayName,
-      update
     }
   } = useStores()
 
@@ -27,7 +24,7 @@ export const EmailVerificationScreen: FC<EmailVerificationScreenProps> = observe
   const [isCooldown, setIsCooldown] = useState(false)
   const [cooldownTime, setCooldownTime] = useState(0)
 
-  async function checkEmailVerified()  {
+  async function checkEmailVerified() {
     setIsVerifying(true)
     setErrorMessage("")
 
