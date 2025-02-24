@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, ViewStyle } from "react-native"
+import { TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
 import { useStores } from "../models"
 import { AppStackScreenProps } from "../navigators"
@@ -45,6 +45,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
       setAuthEmail("")
     }
   }, [setAuthEmail])
+
+  const handlePressForgotPassword = () => {
+    navigation.navigate("ForgotPassword")
+  }
 
   const error = isSubmitted ? validationError : ""
 
@@ -102,6 +106,10 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         onSubmitEditing={() => authPasswordInput.current?.focus()}
       />
 
+      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <Text text="Password" preset="formLabel" style={$logIn} />
+        <Text text="Forgot Password?" style={$forgotPasswordInline} onPress={handlePressForgotPassword} />
+      </View>
       <TextField
         ref={authPasswordInput}
         value={authPassword}
@@ -111,7 +119,7 @@ export const LoginScreen: FC<LoginScreenProps> = observer(function LoginScreen(_
         autoComplete="password"
         autoCorrect={false}
         secureTextEntry={isAuthPasswordHidden}
-        labelTx="loginScreen.passwordFieldLabel"
+        // labelTx="loginScreen.passwordFieldLabel"
         placeholderTx="loginScreen.passwordFieldPlaceholder"
         onSubmitEditing={authenticate}
         RightAccessory={PasswordRightAccessory}
@@ -160,5 +168,10 @@ const $tapButton: ViewStyle = {
 }
 
 const $register: TextStyle = {
+  fontSize: spacing.md,
   textDecorationLine: "underline"
+}
+const $forgotPasswordInline: TextStyle = {
+  fontSize: spacing.sm,
+  textDecorationLine: "underline",
 }
