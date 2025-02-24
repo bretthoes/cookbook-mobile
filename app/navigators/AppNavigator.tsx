@@ -51,6 +51,7 @@ export type AppStackParamList = {
 	EmailVerification: undefined
 	SetDisplayName: undefined
 	ForgotPassword: undefined
+	ResetPassword: undefined
 	// IGNITE_GENERATOR_ANCHOR_APP_STACK_PARAM_LIST
 }
 
@@ -93,6 +94,7 @@ const AppStack = observer(function AppStack() {
           <Stack.Screen name="EmailVerification" component={Screens.EmailVerificationScreen} />
           <Stack.Screen name="SetDisplayName" component={Screens.SetDisplayNameScreen} />
 			    <Stack.Screen name="ForgotPassword" component={Screens.ForgotPasswordScreen} />
+          <Stack.Screen name="ResetPassword" component={Screens.ResetPasswordScreen} />
         </>
       )}
 
