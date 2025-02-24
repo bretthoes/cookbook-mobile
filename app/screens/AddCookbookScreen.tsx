@@ -2,7 +2,6 @@ import { Button, TextField, Text, Screen, AutoImage } from "app/components"
 import { spacing } from "app/theme"
 import React, { FC, useState } from "react"
 import { View, ViewStyle } from "react-native"
-import { DemoUseCase } from "./DemoShowroomScreen/DemoUseCase"
 import { DemoDivider } from "../components/DemoDivider"
 import { useStores } from "app/models"
 import { DemoTabScreenProps } from "app/navigators/DemoNavigator"
@@ -15,6 +14,7 @@ import { api } from "app/services/api"
 import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
 import { AppStackScreenProps } from "app/navigators"
 import { useNavigation } from "@react-navigation/native"
+import { DemoUseCase } from "app/components/DemoUseCase"
 
 interface AddCookbookScreenProps extends AppStackScreenProps<"AddCookbook"> {}
 
