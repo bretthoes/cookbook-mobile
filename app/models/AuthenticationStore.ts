@@ -87,8 +87,8 @@ export const AuthenticationStoreModel = types
           this.setResult("This email is already taken.")
           break
         default:
-          console.error(`Error registering: ${JSON.stringify(response)}`)
           this.setResult("Something went wrong, please try again later.")
+          console.error(`Error registering: ${JSON.stringify(response)}`)
       }
     },
     async resendConfirmationEmail() {
@@ -96,6 +96,7 @@ export const AuthenticationStoreModel = types
       if (response.kind === "ok") {
         this.setResult("A confirmation email has been resent.")
       } else {
+        this.setResult("An error occurred sending email. Please try again.")
         console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
       }
     },
@@ -110,8 +111,9 @@ export const AuthenticationStoreModel = types
     async resetPassword(resetCode: string, password: string) {
       const response = await api.resetPassword(store.authEmail, resetCode, password)
       if (response.kind === "ok") {
-        // TODO redirect to login page
+        this.setResult("Password reset successfully.")
       } else {
+        this.setResult("An error occurred. Please Try again.")
         console.error(`Error registering: ${JSON.stringify(response)}`)
       }
     },
@@ -119,9 +121,9 @@ export const AuthenticationStoreModel = types
       const response = await api.updateUser(store.displayName)
       if (response.kind !== "ok"){
         console.error(`Error updating user: ${JSON.stringify(response)}`)
-        this.setResult('Something went wrong.')
+        this.setResult("An error occurred. Please Try again.")
       }
-      else this.setResult("Successfully updated!")
+      else this.setResult("Successfully updated.")
     }
   }))
 

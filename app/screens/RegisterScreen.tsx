@@ -70,20 +70,20 @@ export const RegisterScreen: FC<RegisterScreenProps> = observer(function Registe
     }
 
     const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
-        () =>
-          function PasswordRightAccessory(props: TextFieldAccessoryProps) {
-            return (
-              <Icon
-                icon={isPasswordHidden ? "view" : "hidden"}
-                color={colors.palette.neutral800}
-                containerStyle={props.style}
-                size={20}
-                onPress={() => setIsPasswordHidden(!isPasswordHidden)}
-              />
-            )
-          },
-        [isPasswordHidden],
-      )
+      () =>
+        function PasswordRightAccessory(props: TextFieldAccessoryProps) {
+          return (
+            <Icon
+              icon={isPasswordHidden ? "view" : "hidden"}
+              color={colors.palette.neutral800}
+              containerStyle={props.style}
+              size={20}
+              onPress={() => setIsPasswordHidden(!isPasswordHidden)}
+            />
+          )
+        },
+      [isPasswordHidden],
+    )
 
   return (
     <Screen
