@@ -224,4 +224,5 @@ const $iconContainerLeft: ViewStyle = {
 
 const $iconContainerRight: ViewStyle = {
   marginStart: spacing.md,
+  marginEnd: spacing.md,
 }

@@ -127,12 +127,26 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
           <View style={$logoContainer}>
             <Image source={logo} style={$logoImage} />
           </View>
+          <Text preset="subheading" text="Add new recipe" style={$sectionHeader} />
           <ListItem
-            text={translate("recipeListScreen.add")}
+            text="Add recipe manually"
             textStyle={$right}
             rightIcon="caretRight"
             onPress={handleAddRecipe}
           />
+          <ListItem
+            text="Add recipe from camera"
+            textStyle={$right}
+            rightIcon="caretRight"
+            onPress={handleAddRecipe}
+          />
+          <ListItem
+            text="Add recipe from website"
+            textStyle={$right}
+            rightIcon="caretRight"
+            onPress={handleAddRecipe}
+          />
+          <Text preset="subheading" text="Other options" style={$sectionHeader} />
           <ListItem
             text={translate("recipeListScreen.invite")}
             textStyle={$right}
@@ -275,5 +289,11 @@ const $logoContainer: ViewStyle = {
   justifyContent: "center",
   height: 56,
   paddingHorizontal: spacing.lg,
+}
+
+const $sectionHeader: TextStyle = {
+  paddingHorizontal: spacing.lg,
+  textAlign: "right",
+  paddingVertical: spacing.sm,
 }
 // #endregion
