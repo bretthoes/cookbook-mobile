@@ -89,6 +89,7 @@ const handleAddRecipeFromCamera = async () => {
       return
     }
 
+    // TODO instead of image picker, just launch camera
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: false,
@@ -101,7 +102,9 @@ const handleAddRecipeFromCamera = async () => {
 
 
       if (uploadResponse.kind === "ok") {
+        // TODO need to navigate to add recipe screen with below recipe object
         uploadResponse.recipe
+
       } else {
         alert("Image parsing failed");
       }

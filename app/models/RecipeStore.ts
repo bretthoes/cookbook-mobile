@@ -5,6 +5,8 @@ import {
   RecipeBriefModel,
   RecipeModel,
   RecipeSnapshotIn,
+  RecipeToAdd,
+  RecipeToAddModel,
   RecipeToAddSnapshotIn,
 } from "./Recipe"
 import { withSetPropAction } from "./helpers/withSetPropAction"
@@ -20,6 +22,7 @@ export const RecipeStoreModel = types
       totalCount: 0,
     }),
     currentRecipe: types.maybeNull(RecipeModel),
+    recipeToAdd: types.maybeNull(RecipeToAddModel),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
@@ -38,6 +41,35 @@ export const RecipeStoreModel = types
         store.setProp("currentRecipe", response.recipe)
       } else {
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
+      }
+    },
+    async create() {
+      if (!store.recipeToAdd) return
+      const response = await api.createRecipe(store.recipeToAdd)
+      if (response.kind === "ok") {
+        const newRecipe = RecipeModel.create({
+          id: response.recipeId,
+          title: store.recipeToAdd.title,
+          summary: store.recipeToAdd.summary,
+          thumbnail: store.recipeToAdd.thumbnail,
+          videoPath: store.recipeToAdd.videoPath,
+          preparationTimeInMinutes: store.recipeToAdd.preparationTimeInMinutes,
+          cookingTimeInMinutes: store.recipeToAdd.cookingTimeInMinutes,
+          bakingTimeInMinutes: store.recipeToAdd.bakingTimeInMinutes,
+          servings: store.recipeToAdd.servings,
+          directions: store.recipeToAdd.directions,
+          ingredients: store.recipeToAdd.ingredients,
+          images: store.recipeToAdd.images,
+        })
+        const newRecipeBrief = RecipeBriefModel.create({
+          id: response.recipeId,
+          title: store.recipeToAdd.title,
+        })
+
+        store.currentRecipe = newRecipe
+        store.recipes.items.push(newRecipeBrief)
+      } else {
+        console.error(`Error creating recipe: ${JSON.stringify(response)}`)
       }
     },
     // TODO move this recipeToAdd into store; can test removing flow
@@ -103,6 +135,12 @@ export const RecipeStoreModel = types
       } else {
         console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
       }
+    },
+    setRecipeToAdd(recipeToAdd: RecipeToAdd) {
+      store.recipeToAdd = recipeToAdd
+    },
+    cearRecipeToAdd() {
+      store.recipeToAdd = null
     },
     setCurrentRecipe(recipe: Recipe) {
       store.currentRecipe = recipe
