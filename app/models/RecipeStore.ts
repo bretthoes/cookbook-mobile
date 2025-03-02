@@ -40,6 +40,7 @@ export const RecipeStoreModel = types
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
     },
+    // TODO move this recipeToAdd into store; can test removing flow
     createRecipe: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
       const response = yield api.createRecipe(recipeToAdd)
       if (response.kind === "ok") {

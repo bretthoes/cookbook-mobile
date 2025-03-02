@@ -1,4 +1,5 @@
 import { useStores } from "app/models"
+import * as ImagePicker from "expo-image-picker"
 import React, { FC, useEffect, useState } from "react"
 import { isRTL, translate } from "../i18n"
 import { delay } from "../utils/delay"
@@ -22,6 +23,7 @@ import { AppStackScreenProps } from "app/navigators"
 import { RecipeListItem } from "../components/RecipeListItem"
 import { DemoDivider } from "../components/DemoDivider"
 import { useDebounce } from "app/models/generics/UseDebounce"
+import { api } from "app/services/api"
 
 const logo = require("../../assets/images/logo.png")
 
@@ -73,6 +75,38 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     setRefreshing(false)
   }
 
+const handleAddRecipeFromCamera = async () => {
+
+    // TODO take a photo, send to api,
+    // validate recipe is parsed correctly,
+    // and pass it to the AddRecipe screen.
+    // Look at RecipeForm.tsx for how to pass the recipe data.
+    // May need to create a new screen or modify the existing one.
+
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (status !== "granted") {
+      alert("Please allow camera roll access in settings.")
+      return
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsMultipleSelection: false,
+      allowsEditing: true
+    })
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+
+      const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
+
+
+      if (uploadResponse.kind === "ok") {
+        uploadResponse.recipe
+      } else {
+        alert("Image parsing failed");
+      }
+    }
+
   const toggleDrawer = () => {
     setOpen(!open)
   }
@@ -80,16 +114,6 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const $drawerInsets = useSafeAreaInsetsStyle(["top"])
 
   const handleAddRecipe = () => {
-    navigation.navigate("AddRecipe")
-    toggleDrawer()
-  }
-
-  const handleAddRecipeFromCamera = () => {
-    // TODO take a photo, send to api,
-    // validate recipe is parsed correctly,
-    // and pass it to the AddRecipe screen.
-    // Look at RecipeForm.tsx for how to pass the recipe data.
-    // May need to create a new screen or modify the existing one.
     navigation.navigate("AddRecipe")
     toggleDrawer()
   }
