@@ -84,6 +84,24 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     toggleDrawer()
   }
 
+  const handleAddRecipeFromCamera = () => {
+    // TODO take a photo, send to api,
+    // validate recipe is parsed correctly,
+    // and pass it to the AddRecipe screen.
+    // Look at RecipeForm.tsx for how to pass the recipe data.
+    // May need to create a new screen or modify the existing one.
+    navigation.navigate("AddRecipe")
+    toggleDrawer()
+  }
+
+  const handleAddRecipeFromWebsite = () => {
+    // TODO get URL, send to api, 
+    // validate recipe is parsed correctly,
+    // and pass it to the AddRecipe screen.
+    navigation.navigate("AddRecipe")
+    toggleDrawer()
+  }
+
   const handleInvite = () => { 
     navigation.navigate("AddInvite")
     toggleDrawer() 
@@ -138,13 +156,13 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
             text="Add recipe from camera"
             textStyle={$right}
             rightIcon="caretRight"
-            onPress={handleAddRecipe}
+            onPress={handleAddRecipeFromCamera}
           />
           <ListItem
             text="Add recipe from website"
             textStyle={$right}
             rightIcon="caretRight"
-            onPress={handleAddRecipe}
+            onPress={handleAddRecipeFromWebsite}
           />
           <Text preset="subheading" text="Other options" style={$sectionHeader} />
           <ListItem
