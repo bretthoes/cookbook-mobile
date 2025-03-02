@@ -13,10 +13,11 @@ import type { EpisodeSnapshotIn } from "../../models/Episode"
 import { AuthResultModel, AuthResultSnapshotIn } from "../../models/AuthResult"
 import * as SecureStore from "expo-secure-store"
 import { CookbookToAddSnapshotIn } from "app/models/Cookbook"
-import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "app/models/Recipe"
+import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn, RecipeToAddSnapshotOut } from "app/models/Recipe"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookListSnapshotIn, MembershipListSnapshotIn, InvitationListSnapshotIn, RecipeListSnapshotIn } from "app/models/generics/PaginatedList"
 import { CookbookInvitationStatus, useStores } from "app/models"
+import { RecipeFormInputs } from "app/components"
 
 /**
  * Configuring the apisauce instance.
@@ -457,6 +458,42 @@ export class Api {
     try {
       const keys = response.data;
       return { kind: "ok", keys };
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack);
+      }
+      return { kind: "bad-data" };
+    }
+  }
+
+  async extractRecipeFromImage(image: ImagePickerAsset): Promise<{ kind: "ok"; recipe: RecipeFormInputs } | GeneralApiProblem> {
+    const formData = new FormData();
+    const imageData = {
+      uri: image.uri,
+      name: image.fileName,
+      type: image.mimeType,
+    } as any
+    formData.append("file", imageData);
+
+    const accessToken = await SecureStore.getItemAsync("accessToken")
+
+    const response: ApiResponse<any> = await this.apisauce.post("Images", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        "Authorization": `Bearer ${accessToken}`
+      },
+    });
+
+    // Handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response);
+      if (problem) return problem;
+    }
+
+    // Process the response and return the uploaded file key
+    try {
+      const recipe = response.data;
+      return { kind: "ok", recipe };
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack);
