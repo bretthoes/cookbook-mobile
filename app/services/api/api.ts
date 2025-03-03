@@ -429,7 +429,8 @@ export class Api {
   /**
    * Uploads a collection of images to the server. TODO update method name to plural
    */
-  async uploadImage(images: ImagePickerAsset[]): Promise<{ kind: "ok"; keys: string[] } | GeneralApiProblem> {
+  async uploadImage(images: ImagePickerAsset[])
+  : Promise<{ kind: "ok"; keys: string[] } | GeneralApiProblem> {
     const formData = new FormData();
     images.forEach(image => {
       const imageData = {
@@ -466,7 +467,8 @@ export class Api {
     }
   }
 
-  async extractRecipeFromImage(image: ImagePickerAsset): Promise<{ kind: "ok"; recipe: RecipeFormInputs } | GeneralApiProblem> {
+  async extractRecipeFromImage(image: ImagePickerAsset)
+  : Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
     const formData = new FormData();
     const imageData = {
       uri: image.uri,
@@ -477,7 +479,7 @@ export class Api {
 
     const accessToken = await SecureStore.getItemAsync("accessToken")
 
-    const response: ApiResponse<any> = await this.apisauce.post("Images", formData, {
+    const response: ApiResponse<any> = await this.apisauce.post("Images/parse-recipe", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${accessToken}`

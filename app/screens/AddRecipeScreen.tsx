@@ -13,13 +13,44 @@ interface AddRecipeScreenProps extends AppStackScreenProps<"AddRecipe"> {}
 
 export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
-  const { recipeStore, cookbookStore } = useStores()
+  const {
+    recipeStore: { 
+      recipeToAdd,
+      createRecipe
+    },
+    cookbookStore: {
+      currentCookbook
+    }
+  } = useStores()
   const navigation = useNavigation<AppStackScreenProps<"RecipeDetails">["navigation"]>()
+
+  const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
+      if (!recipeToAdd) return null
+      return {
+        title: recipeToAdd.title,
+        summary: recipeToAdd.summary,
+        preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes,
+        cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes,
+        bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
+        servings: recipeToAdd.servings,
+        ingredients:
+        recipeToAdd.ingredients?.map((ingredient) => ({
+            name: ingredient.name,
+            optional: ingredient.optional,
+          })) ?? [],
+        directions:
+        recipeToAdd.directions?.map((direction) => ({
+            text: direction.text,
+            image: direction.image,
+          })) ?? [],
+        images: recipeToAdd.images?.map((image) => image.name) ?? [],
+      }
+    }
 
   const onPressSend = async (formData: RecipeFormInputs) => {
     const newRecipe: RecipeToAddSnapshotIn = {
       title: formData.title.trim(),
-      cookbookId: cookbookStore.currentCookbook?.id ?? 0,
+      cookbookId: currentCookbook?.id ?? 0,
       summary: formData.summary?.trim() || null,
       thumbnail: null, // TODO handle thumbnail logic
       videoPath: null, // TODO handle videoPath logic
@@ -47,7 +78,7 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
     }
 
     try {
-      await recipeStore.createRecipe(newRecipe)
+      await createRecipe(newRecipe)
 
       navigation.replace("RecipeDetails")
     } catch (e) {
@@ -70,7 +101,9 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
 
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$root}>
-      <RecipeForm onSubmit={onPressSend} onError={onError} />
+      <RecipeForm onSubmit={onPressSend}
+        formValues={mapRecipeToFormInputs() ?? undefined}
+        onError={onError} />
     </Screen>
   )
 })

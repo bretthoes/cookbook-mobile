@@ -33,7 +33,8 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
   const {
     recipeStore: {
       fetchRecipes,
-      recipes
+      recipes,
+      setRecipeToAdd
     },
     cookbookStore:
     {
@@ -98,17 +99,21 @@ const handleAddRecipeFromCamera = async () => {
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
 
+      // TODO move to store
       const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
 
 
       if (uploadResponse.kind === "ok") {
         // TODO need to navigate to add recipe screen with below recipe object
-        uploadResponse.recipe
+        setRecipeToAdd(uploadResponse.recipe)
+        navigation.navigate("AddRecipe")
+        toggleDrawer()
 
       } else {
         alert("Image parsing failed");
       }
     }
+  }
 
   const toggleDrawer = () => {
     setOpen(!open)

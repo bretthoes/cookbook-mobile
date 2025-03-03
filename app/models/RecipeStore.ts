@@ -136,8 +136,9 @@ export const RecipeStoreModel = types
         console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
       }
     },
-    setRecipeToAdd(recipeToAdd: RecipeToAdd) {
-      store.recipeToAdd = recipeToAdd
+    setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
+      const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot);
+      store.setProp("recipeToAdd", recipeToAddInstance);
     },
     cearRecipeToAdd() {
       store.recipeToAdd = null
