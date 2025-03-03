@@ -49,7 +49,7 @@ const defaultForm: RecipeFormInputs = {
 }
 
 export interface RecipeFormProps {
-  defaultValues?: RecipeFormInputs
+  formValues?: RecipeFormInputs
   onSubmit: (formData: RecipeFormInputs) => void
   onError: (errors: any) => void
   isEdit?: boolean
@@ -59,7 +59,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const {
     onSubmit,
     onError,
-    defaultValues = defaultForm,
+    formValues = defaultForm,
     isEdit = false } = props
 
   const {
@@ -70,7 +70,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   } = useForm<RecipeFormInputs>({
     resolver: yupResolver(recipeSchema),
     mode: "onChange",
-    defaultValues,
+    defaultValues: formValues,
   })
 
   const {
@@ -87,17 +87,17 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
   // Ugly way around conditionally displaying remote or local images
   const [imagesLocal, setImagesLocal] = useState(
-    defaultValues.images?.map((img) => (img.startsWith("http")
+    formValues.images?.map((img) => (img.startsWith("http")
     ? img
     : `${Config.S3_URL}/${img}`)) || []
   )
   useEffect(() => {
     setImagesLocal(
-      defaultValues.images?.map((img) => (img.startsWith("http")
+      formValues.images?.map((img) => (img.startsWith("http")
       ? img
       : `${Config.S3_URL}/${img}`)) || []
-    );
-  }, [defaultValues.images])
+    )
+  }, [formValues.images])
 
   // Image picker function
   const pickImage = async () => {

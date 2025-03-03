@@ -94,7 +94,7 @@ export const EditRecipeScreen: FC<EditRecipeScreenProps> = observer(function Edi
       <RecipeForm
         onSubmit={onPressSend}
         onError={onError}
-        defaultValues={mapRecipeToFormInputs() ?? undefined}
+        formValues={mapRecipeToFormInputs() ?? undefined}
         isEdit={true}
       />
     </Screen>
