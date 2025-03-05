@@ -408,7 +408,9 @@ export class Api {
       ? CookbookInvitationStatus.Accepted
       : CookbookInvitationStatus.Rejected
 
-    const response: ApiResponse<number> = await this.authorizedRequest(`Invitations/${id}`, "PUT", { Id: id, NewStatus: newStatus })
+    const response: ApiResponse<number> = await this.authorizedRequest(`Invitations/${id}`,
+      "PUT",
+      { Id: id, NewStatus: newStatus })
 
       if (!response.ok){
         const problem = getGeneralApiProblem(response)

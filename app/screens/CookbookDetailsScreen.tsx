@@ -215,7 +215,7 @@ const handleAddRecipeFromCamera = async () => {
       <Screen
         preset="scroll"
         safeAreaEdges={["top"]}
-        contentContainerStyle={$root}
+        style={$root}
       >
         <ListView<RecipeBrief>
           data={recipes?.items?.slice() ?? []}
@@ -284,6 +284,7 @@ const handleAddRecipeFromCamera = async () => {
 // #region Styles
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,
+  paddingHorizontal: spacing.md
 }
 
 const $emptyStateImage: ImageStyle = {
