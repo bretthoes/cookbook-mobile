@@ -24,6 +24,7 @@ import { RecipeListItem } from "../components/RecipeListItem"
 import { DemoDivider } from "../components/DemoDivider"
 import { useDebounce } from "app/models/generics/UseDebounce"
 import { api } from "app/services/api"
+import { useActionSheet } from "@expo/react-native-action-sheet"
 
 const logo = require("../../assets/images/logo.png")
 
@@ -76,43 +77,67 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     setRefreshing(false)
   }
 
-const handleAddRecipeFromCamera = async () => {
+  const { showActionSheetWithOptions } = useActionSheet()
 
-    // TODO take a photo, send to api,
-    // validate recipe is parsed correctly,
-    // and pass it to the AddRecipe screen.
-    // Look at RecipeForm.tsx for how to pass the recipe data.
-    // May need to create a new screen or modify the existing one.
-
+  const handleAddRecipeFromCamera = async () => {
+    // Request permission for accessing the media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
       alert("Please allow camera roll access in settings.")
       return
     }
-
-    // TODO instead of image picker, just launch camera
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: false,
-      allowsEditing: true
-    })
-
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-
-      // TODO move to store
-      const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-
-
-      if (uploadResponse.kind === "ok") {
-        // TODO need to navigate to add recipe screen with below recipe object
-        setRecipeToAdd(uploadResponse.recipe)
-        navigation.navigate("AddRecipe")
-        toggleDrawer()
-
-      } else {
-        alert("Image parsing failed");
+  
+  
+    const options = ["Take a Photo", "Select from Camera Roll", "Cancel"]
+    const cancelButtonIndex = 2
+  
+    // Display the action sheet and get the user's choice
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      async (buttonIndex) => {
+        if (buttonIndex === 0) {
+          // "Take a Photo" option was selected
+          const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          })
+  
+          if (!result.canceled && result.assets && result.assets.length > 0) {
+            const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
+  
+            if (uploadResponse.kind === "ok") {
+              setRecipeToAdd(uploadResponse.recipe)
+              navigation.navigate("AddRecipe")
+              toggleDrawer()
+            } else {
+              alert("Image parsing failed")
+            }
+          }
+        } else if (buttonIndex === 1) {
+          // "Select from Camera Roll" option was selected
+          const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsMultipleSelection: false,
+            allowsEditing: true,
+          })
+  
+          if (!result.canceled && result.assets && result.assets.length > 0) {
+            const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
+  
+            if (uploadResponse.kind === "ok") {
+              setRecipeToAdd(uploadResponse.recipe)
+              navigation.navigate("AddRecipe")
+              toggleDrawer()
+            } else {
+              alert("Image parsing failed")
+            }
+          }
+        }
       }
-    }
+    )
   }
 
   const toggleDrawer = () => {
