@@ -468,6 +468,34 @@ export class Api {
     }
   }
 
+  async extractRecipeFromUrl(url: string)
+  : Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
+
+    const response: ApiResponse<any> = await this.authorizedRequest(
+      "Recipes/parse-recipe-url",
+      "POST", {
+        Url: url
+      }
+    )
+
+    // Handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response);
+      if (problem) return problem;
+    }
+
+    // Process the response and return the uploaded file key
+    try {
+      const recipe = response.data;
+      return { kind: "ok", recipe }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack);
+      }
+      return { kind: "bad-data" };
+    }
+  }
+
   async extractRecipeFromImage(image: ImagePickerAsset)
   : Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
     const formData = new FormData();
@@ -480,7 +508,7 @@ export class Api {
 
     const accessToken = await SecureStore.getItemAsync("accessToken")
 
-    const response: ApiResponse<any> = await this.apisauce.post("Images/parse-recipe", formData, {
+    const response: ApiResponse<any> = await this.apisauce.post("Recipes/parse-recipe-img", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         "Authorization": `Bearer ${accessToken}`
