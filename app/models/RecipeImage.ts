@@ -8,7 +8,7 @@ import Config from "app/config"
 export const RecipeImageModel = types
   .model("RecipeImage")
   .props({
-    id: types.integer,
+    id: 0,
     name: types.string,
     ordinal: types.integer,
   })
