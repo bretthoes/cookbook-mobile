@@ -5,7 +5,7 @@ import { RecipeToAddSnapshotIn } from "app/models/Recipe"
 import { useStores } from "app/models"
 import { observer } from "mobx-react-lite"
 import { useNavigation } from "@react-navigation/native"
-import { FC } from "react"
+import { FC, useEffect } from "react"
 import { Screen } from "app/components"
 import { RecipeForm, RecipeFormInputs } from "app/components/RecipeForm"
 
@@ -16,6 +16,7 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
   const {
     recipeStore: { 
       recipeToAdd,
+      clearRecipeToAdd,
       createRecipe
     },
     cookbookStore: {
@@ -23,6 +24,13 @@ export const AddRecipeScreen: FC<AddRecipeScreenProps> = observer(function AddRe
     }
   } = useStores()
   const navigation = useNavigation<AppStackScreenProps<"RecipeDetails">["navigation"]>()
+
+  useEffect(() => {
+        // Return a "cleanup" function that React will run when the component unmounts
+        return () => {
+          clearRecipeToAdd()
+        }
+      }, [clearRecipeToAdd])
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
       if (!recipeToAdd) return null

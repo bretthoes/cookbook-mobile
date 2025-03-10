@@ -155,7 +155,7 @@ export const CookbookDetailsScreen: FC<CookbookDetailsScreenProps> = observer(fu
     // TODO get URL, send to api, 
     // validate recipe is parsed correctly,
     // and pass it to the AddRecipe screen.
-    navigation.navigate("AddRecipe")
+    navigation.navigate("RecipeUrl")
     toggleDrawer()
   }
 

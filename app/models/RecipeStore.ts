@@ -139,7 +139,7 @@ export const RecipeStoreModel = types
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot);
       store.setProp("recipeToAdd", recipeToAddInstance);
     },
-    cearRecipeToAdd() {
+    clearRecipeToAdd() {
       store.recipeToAdd = null
     },
     setCurrentRecipe(recipe: Recipe) {

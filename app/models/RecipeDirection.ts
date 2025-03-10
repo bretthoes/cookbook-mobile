@@ -7,7 +7,7 @@ import { withSetPropAction } from "./helpers/withSetPropAction"
 export const RecipeDirectionModel = types
   .model("RecipeDirection")
   .props({
-    id: types.integer,
+    id: 0,
     text: types.string,
     ordinal: types.integer,
     image: types.maybeNull(types.string),

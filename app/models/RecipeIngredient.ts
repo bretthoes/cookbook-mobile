@@ -7,7 +7,7 @@ import { withSetPropAction } from "./helpers/withSetPropAction"
 export const RecipeIngredientModel = types
   .model("RecipeIngredient")
   .props({
-    id: types.integer,
+    id: 0,
     name: types.string,
     optional: types.boolean,
     ordinal: types.integer,
