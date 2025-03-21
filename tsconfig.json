@@ -10,7 +10,6 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
-    "noUnusedLocals": true,
     "sourceMap": true,
     "target": "esnext",
     "lib": [
@@ -21,30 +20,32 @@
     "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
-      "app/*": [
-        "./app/*"
+      "src/*": [
+        "./src/*"
       ],
       "assets/*": [
         "./assets/*"
       ]
-    }
+    },
+    "typeRoots": [
+      "./node_modules/@types",
+      "./types"
+    ]
   },
+  "extends": "expo/tsconfig.base",
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
     }
   },
   "include": [
-    "index.js",
-    "App.tsx",
-    "app",
-    "types",
-    "plugins",
-    "app.config.ts"
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
   ],
   "exclude": [
     "node_modules",
     "test/**/*"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }

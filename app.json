@@ -1,12 +1,13 @@
 {
-  "name": "CookbookMobile",
-  "displayName": "CookbookMobile",
+  "name": "cookbook-app",
+  "displayName": "cookbook-app",
   "expo": {
-    "name": "CookbookMobile",
-    "slug": "CookbookMobile",
-    "scheme": "cookbookmobile",
+    "name": "cookbook-app",
+    "slug": "cookbook-app",
+    "scheme": "cookbook-app",
     "version": "1.0.0",
     "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
     "icon": "./assets/images/app-icon-all.png",
     "splash": {
       "image": "./assets/images/splash-logo-all.png",
@@ -22,7 +23,7 @@
     ],
     "android": {
       "icon": "./assets/images/app-icon-android-legacy.png",
-      "package": "com.cookbookmobile",
+      "package": "com.cookbookapp",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
         "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
@@ -34,12 +35,9 @@
       }
     },
     "ios": {
-      "config": {
-        "usesNonExemptEncryption": false
-      },
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
-      "bundleIdentifier": "com.cookbookmobile",
+      "bundleIdentifier": "com.cookbookapp",
       "splash": {
         "image": "./assets/images/splash-logo-ios-mobile.png",
         "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
@@ -57,12 +55,6 @@
       "bundler": "metro"
     },
     "plugins": [
-      [
-        "expo-secure-store", 
-        {
-          "faceIDPermission": "Allow $(PRODUCT_NAME) to access your Face ID biometric data."
-        }
-      ],
       "expo-localization",
       [
         "expo-build-properties",
@@ -75,13 +67,17 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      "expo-router",
+      "expo-secure-store"
+
     ],
     "experiments": {
-      "tsconfigPaths": true
+      "tsconfigPaths": true,
+      "typedRoutes": true
     }
   },
   "ignite": {
-    "version": "9.8.0"
+    "version": "10.0.0-beta.4"
   }
 }
