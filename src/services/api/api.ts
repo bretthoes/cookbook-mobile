@@ -596,6 +596,29 @@ export class Api {
   }
 
   /**
+   * Updates the current user.
+   */
+  async getDisplayName(): Promise<{ kind: "ok"; displayName: string } | GeneralApiProblem> {
+    const response: ApiResponse<any> = await this.authorizedRequest("/Users/displayName", "GET")
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const displayName = response.data.displayName
+      return { kind: "ok", displayName }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
    * Logs in the user with the provided email and password.
    */
   async login(
