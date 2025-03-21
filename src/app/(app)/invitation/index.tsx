@@ -115,20 +115,28 @@ const InvitationCard = observer(function CookbookCard({
   isFavorite: boolean
   isDark: boolean
 }) {
+  const { invitationStore } = useStores()
   const acceptPressed = useSharedValue(0)
   const rejectPressed = useSharedValue(0)
+  const cardOpacity = useSharedValue(1)
 
-  const handleAccept = () => {
-    // TODO: Implement accept invitation
-    console.log("Accept invitation:", invitation.id)
-    acceptPressed.value = withSpring(1)
+  const handleRespond = (accepted: boolean) => {
+    if (accepted) {
+      acceptPressed.value = withSpring(1)
+    } else {
+      rejectPressed.value = withSpring(1)
+    }
+    cardOpacity.value = withSpring(0, { duration: 1000 })
+    setTimeout(() => {
+      invitationStore.respond(invitation.id, accepted)
+    }, 1000)
   }
 
-  const handleReject = () => {
-    // TODO: Implement reject invitation
-    console.log("Reject invitation:", invitation.id)
-    rejectPressed.value = withSpring(1)
-  }
+  const animatedCardStyle = useAnimatedStyle(() => {
+    return {
+      opacity: cardOpacity.value,
+    }
+  })
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (invitation.cookbookImage) {
@@ -272,68 +280,70 @@ const InvitationCard = observer(function CookbookCard({
   )
 
   return (
-    <Card
-      style={[
-        $item,
-        isDark && $itemDark,
-        isDark && {
-          shadowOpacity: 0,
-          elevation: 0,
-        },
-      ]}
-      verticalAlignment="force-footer-bottom"
-      onPress={handlePressCard}
-      preset={isDark ? "reversed" : "default"}
-      HeadingComponent={
-        <View style={$metadata}>
-          <Text
-            style={$metadataText}
-            size="xxs"
-            accessibilityLabel={invitation.getSenderInfo}
-          >
-            {invitation.getSenderInfo}
-          </Text>
-          <Text
-            style={$metadataText}
-            size="xxs"
-            accessibilityLabel={invitation.getTimeAgo}
-          >
-            {invitation.getTimeAgo}
-          </Text>
-        </View>
-      }
-      content={invitation.getParsedInvitationMessage}
-      {...accessibilityHintProps}
-      RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
-      FooterComponent={
-        <View style={$buttonContainer}>
-          <Button
-            onPress={handleAccept}
-            style={[$actionButton, $acceptButton]}
-            accessibilityLabel={translate("pendingInvitationScreen:accept")}
-            LeftAccessory={AcceptButtonLeftAccessory}
-          >
+    <Animated.View style={animatedCardStyle}>
+      <Card
+        style={[
+          $item,
+          isDark && $itemDark,
+          isDark && {
+            shadowOpacity: 0,
+            elevation: 0,
+          },
+        ]}
+        verticalAlignment="force-footer-bottom"
+        onPress={handlePressCard}
+        preset={isDark ? "reversed" : "default"}
+        HeadingComponent={
+          <View style={$metadata}>
             <Text
+              style={$metadataText}
               size="xxs"
-              weight="medium"
-              text={translate("pendingInvitationScreen:accept")}
-            />
-          </Button>
-          <Button
-            onPress={handleReject}
-            style={[$actionButton, $rejectButton]}
-            accessibilityLabel={translate("pendingInvitationScreen:reject")}
-            LeftAccessory={RejectButtonLeftAccessory}
-          >
+              accessibilityLabel={invitation.getSenderInfo}
+            >
+              {invitation.getSenderInfo}
+            </Text>
             <Text
+              style={$metadataText}
               size="xxs"
-              weight="medium"
-              text={translate("pendingInvitationScreen:reject")}
-            />
-          </Button>
-        </View>
-      }
-    />
+              accessibilityLabel={invitation.getTimeAgo}
+            >
+              {invitation.getTimeAgo}
+            </Text>
+          </View>
+        }
+        content={invitation.getParsedInvitationMessage}
+        {...accessibilityHintProps}
+        RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
+        FooterComponent={
+          <View style={$buttonContainer}>
+            <Button
+              onPress={() => handleRespond(true)}
+              style={[$actionButton, $acceptButton]}
+              accessibilityLabel={translate("pendingInvitationScreen:accept")}
+              LeftAccessory={AcceptButtonLeftAccessory}
+            >
+              <Text
+                size="xxs"
+                weight="medium"
+                text={translate("pendingInvitationScreen:accept")}
+              />
+            </Button>
+            <Button
+              onPress={() => handleRespond(false)}
+              style={[$actionButton, $rejectButton]}
+              accessibilityLabel={translate("pendingInvitationScreen:reject")}
+              LeftAccessory={RejectButtonLeftAccessory}
+            >
+              <Text
+                size="xxs"
+                weight="medium"
+                text={translate("pendingInvitationScreen:reject")}
+              />
+            </Button>
+          </View>
+        }
+      />
+    </Animated.View>
   )
 })
 
