@@ -28,7 +28,6 @@ const en = {
       button: "Let's try this again",
     },
   },
-
   errors: {
     invalidEmail: "Invalid email address.",
   },
@@ -84,6 +83,12 @@ const en = {
     demoHeaderTxExample: "Yay",
     demoViaTxProp: "Via `tx` Prop",
     demoViaSpecifiedTxProp: "Via `{{prop}}Tx` Prop",
+  },
+  pendingInvitationScreen: {
+    title: "Your invitations",
+    subtitle: "These invitations are pending approval.",
+    accept: "Accept",
+    reject: "Reject",
   },
   demoDebugScreen: {
     howTo: "HOW TO",
