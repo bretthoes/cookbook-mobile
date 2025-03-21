@@ -1,43 +1,38 @@
 const palette = {
-  // Neutral colors - warm paper-like tones
   neutral100: "#FFFFFF",
-  neutral200: "#FAF6F0", // Warm off-white, paper-like
-  neutral300: "#EFE6D9", // Warm cream
-  neutral400: "#D4C5B3", // Warm taupe
-  neutral500: "#9E8F7F", // Warm gray
-  neutral600: "#6B5E50", // Deep warm brown
-  neutral700: "#4A413A", // Rich brown
-  neutral800: "#2D2925", // Deep brown-black
-  neutral900: "#1A1715", // Soft black
+  neutral200: "#FAF6F0",
+  neutral300: "#EFE6D9",
+  neutral400: "#D4C5B3",
+  neutral500: "#9E8F7F",
+  neutral600: "#6B5E50",
+  neutral700: "#4A413A",
+  neutral800: "#2D2925",
+  neutral900: "#1A1715",
 
-  // Primary colors - warm terracotta/clay tones
-  primary100: "#FFF1EC",
-  primary200: "#FFD6C7",
-  primary300: "#FBA78D",
-  primary400: "#F87F5F",
-  primary500: "#E85D3A", // Main brand color - warm terracotta
-  primary600: "#C13D1E",
+  primary100: "#F4E0D9",
+  primary200: "#E8C1B4",
+  primary300: "#DDA28E",
+  primary400: "#D28468",
+  primary500: "#C76542",
+  primary600: "#A54F31",
 
-  // Secondary colors - sage/herb tones
-  secondary100: "#F0F4E8",
-  secondary200: "#D8E0CB",
-  secondary300: "#B3BFA3",
-  secondary400: "#8B9A78",
-  secondary500: "#5F6B4F",
+  secondary100: "#DCDDE9",
+  secondary200: "#BCC0D6",
+  secondary300: "#9196B9",
+  secondary400: "#626894",
+  secondary500: "#41476E",
 
-  // Accent colors - butter/honey tones
-  accent100: "#FFF8E7",
-  accent200: "#FFE9B2",
-  accent300: "#FFD87F",
-  accent400: "#FFC847",
-  accent500: "#FFB819",
+  accent100: "#FFEED4",
+  accent200: "#FFE1B2",
+  accent300: "#FDD495",
+  accent400: "#FBC878",
+  accent500: "#FFBB50",
 
-  // Error states
-  angry100: "#FFF0F0",
-  angry500: "#D13F3F",
+  angry100: "#F2D6CD",
+  angry500: "#C03403",
 
-  overlay20: "rgba(45, 41, 37, 0.2)",
-  overlay50: "rgba(45, 41, 37, 0.5)",
+  overlay20: "rgba(25, 16, 21, 0.2)",
+  overlay50: "rgba(25, 16, 21, 0.5)",
 } as const
 
 export const colors = {
@@ -66,7 +61,7 @@ export const colors = {
   /**
    * The default border color.
    */
-  border: palette.neutral300,
+  border: palette.neutral400,
   /**
    * The main tinting color.
    */
