@@ -159,7 +159,7 @@ export default function Profile() {
             <Image source={reactNativeNewsletterLogo} style={$logo} />
           </View>
         }
-        onPress={() => openLinkInBrowser("https://reactnativenewsletter.com/")}
+        onPress={() => router.push("/(app)/set-display-name")}
       />
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />

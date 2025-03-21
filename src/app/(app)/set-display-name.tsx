@@ -3,7 +3,6 @@ import { observer } from "mobx-react-lite"
 import { TextStyle, ViewStyle } from "react-native"
 import { Button, Screen, Text, TextField } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
-import { useNavigation } from "@react-navigation/native"
 import { colors, spacing } from "src/theme"
 import { router } from "expo-router"
 
@@ -28,15 +27,14 @@ export default observer(function SetDisplayName() {
     // If successful, reset the fields
     setIsSubmitted(false)
 
-    // navigate to email verification
-    router.push("/email-verification")
+    router.back()
   }
 
   return (
     <Screen style={$root} preset="scroll">
       <Text testID="login-heading" text="Set a display name" preset="heading" style={$logIn} />
       <Text
-        text="This is optional, but you can set a display name. This is how others will see you, instead of your email. You can change this any time in the app."
+        text="This is how others will see you in the app, instead of your email."
         preset="subheading"
         style={$enterDetails}
       />
@@ -50,12 +48,12 @@ export default observer(function SetDisplayName() {
         autoCapitalize="none"
         autoComplete="name"
         autoCorrect={false}
-        label="Display name (optional)"
-        placeholder="Bob"
+        label="Display name"
+        placeholder=""
         onSubmitEditing={forward}
       />
 
-      <Button text="Continue" style={$tapButton} preset="reversed" onPress={forward} />
+      <Button text="Save" style={$tapButton} preset="reversed" onPress={forward} />
     </Screen>
   )
 })
@@ -82,6 +80,7 @@ const $tapButton: ViewStyle = {
 
 const $logIn: TextStyle = {
   marginBottom: spacing.sm,
+  marginTop: spacing.xxl,
 }
 
 const $enterDetails: TextStyle = {
