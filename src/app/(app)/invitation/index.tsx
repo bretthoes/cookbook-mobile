@@ -236,11 +236,11 @@ const InvitationCard = observer(function CookbookCard({
               <Icon
                 icon="check"
                 size={ICON_SIZE}
-                color={isDark ? colors.palette.neutral400 : colors.palette.neutral800}
+                color={isDark ? colors.textDim : colors.text}
               />
             </Animated.View>
             <Animated.View style={[$iconContainer, animatedAcceptPressedStyles]}>
-              <Icon icon="check" size={ICON_SIZE} color={colors.palette.primary400} />
+              <Icon icon="check" size={ICON_SIZE} color={colors.tint} />
             </Animated.View>
           </View>
         )
@@ -259,11 +259,11 @@ const InvitationCard = observer(function CookbookCard({
               <Icon
                 icon="x"
                 size={ICON_SIZE}
-                color={isDark ? colors.palette.neutral400 : colors.palette.neutral800}
+                color={isDark ? colors.textDim : colors.text}
               />
             </Animated.View>
             <Animated.View style={[$iconContainer, animatedRejectPressedStyles]}>
-              <Icon icon="x" size={ICON_SIZE} color={colors.palette.angry500} />
+              <Icon icon="x" size={ICON_SIZE} color={colors.error} />
             </Animated.View>
           </View>
         )
@@ -287,14 +287,14 @@ const InvitationCard = observer(function CookbookCard({
       HeadingComponent={
         <View style={$metadata}>
           <Text
-            style={[$metadataText, isDark && $metadataTextDark]}
+            style={$metadataText}
             size="xxs"
             accessibilityLabel={invitation.getSenderInfo}
           >
             {invitation.getSenderInfo}
           </Text>
           <Text
-            style={[$metadataText, isDark && $metadataTextDark]}
+            style={$metadataText}
             size="xxs"
             accessibilityLabel={invitation.getTimeAgo}
           >
@@ -309,11 +309,7 @@ const InvitationCard = observer(function CookbookCard({
         <View style={$buttonContainer}>
           <Button
             onPress={handleAccept}
-            style={[
-              $actionButton,
-              $acceptButton,
-              isDark && $acceptButtonDark,
-            ]}
+            style={[$actionButton, $acceptButton]}
             accessibilityLabel={translate("pendingInvitationScreen:accept")}
             LeftAccessory={AcceptButtonLeftAccessory}
           >
@@ -321,16 +317,11 @@ const InvitationCard = observer(function CookbookCard({
               size="xxs"
               weight="medium"
               text={translate("pendingInvitationScreen:accept")}
-              style={[isDark && $actionButtonTextDark]}
             />
           </Button>
           <Button
             onPress={handleReject}
-            style={[
-              $actionButton,
-              $rejectButton,
-              isDark && $rejectButtonDark,
-            ]}
+            style={[$actionButton, $rejectButton]}
             accessibilityLabel={translate("pendingInvitationScreen:reject")}
             LeftAccessory={RejectButtonLeftAccessory}
           >
@@ -338,7 +329,6 @@ const InvitationCard = observer(function CookbookCard({
               size="xxs"
               weight="medium"
               text={translate("pendingInvitationScreen:reject")}
-              style={[isDark && $actionButtonTextDark]}
             />
           </Button>
         </View>
@@ -365,11 +355,12 @@ const $item: ViewStyle = {
   padding: spacing.md,
   marginTop: spacing.md,
   minHeight: 120,
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.background,
 }
 
 const $itemDark: ViewStyle = {
-  backgroundColor: colors.palette.neutral800,
+  shadowOpacity: 0,
+  elevation: 0,
 }
 
 const $itemThumbnail: ImageStyle = {
@@ -405,10 +396,6 @@ const $metadataText: TextStyle = {
   marginBottom: spacing.xs,
 }
 
-const $metadataTextDark: TextStyle = {
-  color: colors.palette.neutral400,
-}
-
 const $buttonContainer: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-between",
@@ -427,27 +414,13 @@ const $actionButton: ViewStyle = {
 }
 
 const $acceptButton: ViewStyle = {
-  backgroundColor: colors.palette.primary200,
-  borderColor: colors.palette.primary300,
-}
-
-const $acceptButtonDark: ViewStyle = {
-  backgroundColor: colors.palette.secondary300,
-  borderColor: colors.palette.secondary300,
+  backgroundColor: colors.tint,
+  borderColor: colors.tint,
 }
 
 const $rejectButton: ViewStyle = {
-  backgroundColor: colors.palette.primary200,
-  borderColor: colors.palette.primary300,
-}
-
-const $rejectButtonDark: ViewStyle = {
-  backgroundColor: colors.palette.primary200,
-  borderColor: colors.palette.primary200,
-}
-
-const $actionButtonTextDark: TextStyle = {
-  color: colors.palette.neutral100,
+  backgroundColor: colors.errorBackground,
+  borderColor: colors.error,
 }
 
 const $emptyState: ViewStyle = {
