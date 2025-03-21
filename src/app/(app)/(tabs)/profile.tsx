@@ -113,7 +113,7 @@ export default function Profile() {
             <Image source={reactNativeNewsletterLogo} style={$logo} />
           </View>
         }
-        onPress={() => openLinkInBrowser("https://reactnativenewsletter.com/")}
+        onPress={() => router.push("/(app)/invitation")}
       />
       <ListItem
         text="Manage your cookbooks"
