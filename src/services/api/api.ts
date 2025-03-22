@@ -599,7 +599,7 @@ export class Api {
    * Updates the current user.
    */
   async getDisplayName(): Promise<{ kind: "ok"; displayName: string } | GeneralApiProblem> {
-    const response: ApiResponse<any> = await this.authorizedRequest("/Users/displayName", "GET")
+    const response: ApiResponse<any> = await this.authorizedRequest("/Users/display-name", "GET")
 
     // handle any errors
     if (!response.ok) {
