@@ -66,7 +66,7 @@ export default observer(function Recipe() {
     })
   }
 
-  // TODO make sure this doesn't hit api every time a recipe is opened
+  // TODO instead of fetching this here, fetch it when we login and store email in secure storage
   useEffect(() => {
     fetchEmail()
   }, [])

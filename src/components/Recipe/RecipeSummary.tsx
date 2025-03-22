@@ -46,7 +46,7 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
       <View style={$titleContainer}>
         <Text 
           preset="heading" 
-          weight="normal" 
+        weight="normal" 
           text={recipe.title} 
           style={{ marginTop: hasImages ? 0 : spacing.xl }} 
         />
@@ -59,28 +59,28 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
       <View style={$detailsContainer}>
         {!!recipe.servings && (
           <View>
-            <Text weight="light" tx={"recipe.servings" as TxKeyPath} />
+            <Text weight="light" tx={"recipeDetailsScreen:servings"} />
             <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
           </View>
         )}
 
         {!!recipe.bakingTimeInMinutes && (
           <View>
-            <Text weight="light" tx={"recipe.bake" as TxKeyPath} />
+            <Text weight="light" tx={"recipeDetailsScreen:bake"} />
             <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
           </View>
         )}
 
         {!!recipe.preparationTimeInMinutes && (
           <View>
-            <Text weight="light" tx={"recipe.prep" as TxKeyPath} />
+            <Text weight="light" tx={"recipeDetailsScreen:prep"} />
             <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
           </View>
         )}
 
         {!!recipe.cookingTimeInMinutes && (
           <View>
-            <Text weight="light" tx={"recipe.cook" as TxKeyPath} />
+            <Text weight="light" tx={"recipeDetailsScreen:cook"} />
             <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
           </View>
         )}
@@ -88,7 +88,7 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
 
       {!!recipe.summary && (
         <View style={$descriptionContainer}>
-          <Text weight="light" tx={"recipe.summary" as TxKeyPath} />
+          <Text weight="light" tx={"recipeDetailsScreen:summary"} />
           <Text weight="light" text={recipe.summary ?? ""} />
         </View>
       )}
