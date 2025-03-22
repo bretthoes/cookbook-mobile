@@ -1,17 +1,14 @@
 import React from "react"
 import { observer } from "mobx-react-lite"
-import { RecipeBrief } from "src/models/Recipe"
-import { TextStyle } from "react-native"
-import { typography } from "src/theme"
 import { ListItem } from "../ListItem"
 
 export const RecipeListItem = observer(function RecipeListItem({
-  recipe,
+  text,
   index,
   lastIndex,
   onPress,
 }: {
-  recipe: RecipeBrief
+  text: string
   index: number
   lastIndex: number
   onPress: () => void
@@ -19,7 +16,7 @@ export const RecipeListItem = observer(function RecipeListItem({
   return (
     <ListItem
       onPress={onPress}
-      text={recipe.title}
+      text={text}
       rightIcon="caretRight"
       TextProps={{ numberOfLines: 3, size: "md" }} // TODO customizable font size
       topSeparator

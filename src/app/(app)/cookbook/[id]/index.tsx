@@ -156,7 +156,7 @@ export default observer(function Cookbook() {
             ]}
           >
             <RecipeListItem
-              recipe={item}
+              text={item.title}
               index={index}
               lastIndex={recipeStore.recipes?.items?.length - 1}
               onPress={async () => {

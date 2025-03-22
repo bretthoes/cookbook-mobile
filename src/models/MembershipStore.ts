@@ -13,18 +13,26 @@ export const MembershipStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    currentMembership: types.maybeNull(types.reference(MembershipModel)),
+    currentMembership: types.maybeNull(MembershipModel),
     email: types.maybeNull(types.string),
   })
   .actions(withSetPropAction)
   .actions((self) => ({
-    async fetchMemberships(cookbookId: number, pageNumber = 1, pageSize = 10) {
+    async fetch(cookbookId: number, pageNumber = 1, pageSize = 10) {
       this.clearCurrentMembership()
       const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
       if (response.kind == "ok") {
         self.setProp("memberships", response.memberships)
       } else {
         console.error(`Error fetching memberships: ${JSON.stringify(response)}`)
+      }
+    },
+    async single(id: number) {
+      const response = await api.getMembership(id)
+      if (response.kind == "ok") {
+        self.setProp("currentMembership", response.membership)
+      } else {
+        console.error(`Error fetching membership: ${JSON.stringify(response)}`)
       }
     },
     setCurrentMembership(membership: Membership) {

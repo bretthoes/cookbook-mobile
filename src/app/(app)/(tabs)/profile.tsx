@@ -124,7 +124,13 @@ export default function Profile() {
             <Image source={reactNativeNewsletterLogo} style={$logo} />
           </View>
         }
-        onPress={() => openLinkInBrowser("https://reactnativenewsletter.com/")}
+        onPress={() => router.push({
+          pathname: "/(app)/select-cookbook",
+          params: {
+            nextRoute: "/(app)/membership/list",
+            action: "Manage Cookbooks",
+          },
+        })}
       />
 
       <Text preset="subheading" text="Preferences" style={$sectionTitle} />

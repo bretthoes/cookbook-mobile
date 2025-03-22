@@ -22,6 +22,7 @@ import {
   RecipeListSnapshotIn,
 } from "src/models/generics"
 import { useStores } from "src/models/helpers/useStores"
+import { MembershipSnapshotOut } from "src/models/Membership"
 
 /**
  * Configuring the apisauce instance.
@@ -182,6 +183,37 @@ export class Api {
       const memberships = response.data
 
       if (memberships) return { kind: "ok", memberships }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Gets a single recipe by its id.
+   */
+  async getMembership(
+    membershipId: number,
+  ): Promise<{ kind: "ok"; membership: MembershipSnapshotOut } | GeneralApiProblem> {
+    // make the API call to get the recipe by id
+    const response: ApiResponse<MembershipSnapshotOut> = await this.authorizedRequest(
+      `Memberships/${membershipId}`,
+      "GET",
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const membership = response.data
+
+      if (membership) return { kind: "ok", membership }
       else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
