@@ -31,17 +31,15 @@ export default observer(function MembershipScreen() {
   ]
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} style={$root}>
+    <Screen preset="scroll" style={$root}>
       <ListView
         data={permissions}
         estimatedItemSize={50}
         ListHeaderComponent={
           <View>
             <View style={$headerContainer}>
-              <Divider size={spacing.sm} />
               <Text preset="subheading" text={"Membership Details"} />
               <Text text={"Details and permissions for this membership."} />
-              <Divider size={spacing.sm} />
             </View>
           </View>
         }
@@ -70,9 +68,9 @@ const $root: ViewStyle = {
 }
 
 const $headerContainer: ViewStyle = {
-  paddingTop: spacing.lg,
   paddingHorizontal: spacing.lg,
-  paddingBottom: spacing.md,
+  paddingBottom: spacing.lg,
+  paddingTop: spacing.md,
 }
 
 const $listItemStyle: ViewStyle = {
