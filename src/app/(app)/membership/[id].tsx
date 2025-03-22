@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React from "react"
 import { ViewStyle, TextStyle, View } from "react-native"
-import { Screen, Text, ListView, Divider } from "src/components"
+import { Screen, Text, ListView, SubPageTitleAndSubtitle } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { useLocalSearchParams, router } from "expo-router"
@@ -37,10 +37,10 @@ export default observer(function MembershipScreen() {
         estimatedItemSize={50}
         ListHeaderComponent={
           <View>
-            <View style={$headerContainer}>
-              <Text preset="subheading" text={"Membership Details"} />
-              <Text text={"Details and permissions for this membership."} />
-            </View>
+            <SubPageTitleAndSubtitle 
+              title="Membership Details"
+              subtitle="Details and permissions for this membership."
+            />
           </View>
         }
         renderItem={({ item }) => (
@@ -65,12 +65,6 @@ export default observer(function MembershipScreen() {
 
 const $root: ViewStyle = {
   flex: 1,
-}
-
-const $headerContainer: ViewStyle = {
-  paddingHorizontal: spacing.lg,
-  paddingBottom: spacing.lg,
-  paddingTop: spacing.md,
 }
 
 const $listItemStyle: ViewStyle = {
