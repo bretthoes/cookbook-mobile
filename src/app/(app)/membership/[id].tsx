@@ -12,7 +12,6 @@ export default observer(function MembershipScreen() {
   const membership = membershipStore.currentMembership
 
   useHeader({
-    title: membership?.name || "Member Details",
     leftIcon: "back",
     onLeftPress: () => router.back(),
   })
@@ -20,6 +19,8 @@ export default observer(function MembershipScreen() {
   if (!membership) return null
 
   const permissions = [
+    { label: "Email", value: membership.email },
+    { label: "Name", value: membership.name ?? "" },
     { label: "Creator", value: membership.isCreator },
     { label: "Can Add Recipe", value: membership.canAddRecipe },
     { label: "Can Update Recipe", value: membership.canUpdateRecipe },
@@ -37,9 +38,11 @@ export default observer(function MembershipScreen() {
         ListHeaderComponent={
           <View>
             <View style={$headerContainer}>
-              <Text preset="subheading" text={membership.email} style={$email} />
+              <Divider size={spacing.sm} />
+              <Text preset="subheading" text={"Membership Details"} />
+              <Text text={"Details and permissions for this membership."} />
+              <Divider size={spacing.sm} />
             </View>
-            <Divider size={spacing.sm} />
           </View>
         }
         renderItem={({ item }) => (
@@ -47,8 +50,12 @@ export default observer(function MembershipScreen() {
             <View style={$permissionRow}>
               <Text text={item.label} />
               <Text 
-                text={item.value ? "Yes" : "No"} 
-                style={[item.value ? $permissionYes : $permissionNo]} 
+                text={typeof item.value === 'boolean' 
+                  ? (item.value ? "Yes" : "No")
+                  : item.value || "-"} 
+                style={typeof item.value === 'boolean' 
+                  ? (item.value ? $permissionYes : $permissionNo)
+                  : $textValue} 
               />
             </View>
           </View>
@@ -66,10 +73,6 @@ const $headerContainer: ViewStyle = {
   paddingTop: spacing.lg,
   paddingHorizontal: spacing.lg,
   paddingBottom: spacing.md,
-}
-
-const $email: TextStyle = {
-  color: colors.textDim,
 }
 
 const $listItemStyle: ViewStyle = {
@@ -91,4 +94,8 @@ const $permissionYes: TextStyle = {
 
 const $permissionNo: TextStyle = {
   color: colors.palette.angry500,
+}
+
+const $textValue: TextStyle = {
+  color: colors.text,
 } 

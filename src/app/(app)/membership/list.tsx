@@ -98,7 +98,7 @@ export default observer(function Cookbook() {
             <RecipeListItem
               index={index}
               lastIndex={membershipStore.memberships?.items?.length - 1}
-              text={`${item.name} ${item.email}`}
+              text={`${item.name ?? item.email}`}
               onPress={async () => {
                 await membershipStore.single(item.id)
                 router.push(`(app)/membership/${item.id}` as Href<`(app)/membership/${number}`>)

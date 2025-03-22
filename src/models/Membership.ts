@@ -9,8 +9,8 @@ export const MembershipModel = types
   .model("Membership")
   .props({
     id: types.identifierNumber,
-    name: types.optional(types.string, ""),
-    email: types.optional(types.string, ""),
+    name: types.maybeNull(types.string),
+    email: types.maybeNull(types.string),
     isCreator: types.boolean,
     canAddRecipe: types.boolean,
     canUpdateRecipe: types.boolean,
