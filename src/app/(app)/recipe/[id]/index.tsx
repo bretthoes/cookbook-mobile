@@ -21,7 +21,7 @@ export default observer(function Recipe() {
     membershipStore: { email, fetchEmail },
   } = useStores()
   const { showActionSheetWithOptions } = useActionSheet()
-  const isAuthor = currentRecipe?.author?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  const isAuthor = currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
 
   const recipeHasImages = currentRecipe?.images[0]
 

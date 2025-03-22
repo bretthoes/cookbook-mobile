@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from "react"
+import React, { FC, useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextStyle, ViewStyle } from "react-native"
 import { Button, Screen, Text, TextField } from "src/components"
@@ -9,7 +9,16 @@ import { router } from "expo-router"
 export default observer(function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const {
-    authenticationStore: { displayName, setDisplayName },
+    authenticationStore: {
+      displayName,
+      setDisplayName,
+      updateDisplayName,
+      fetchDisplayName,
+      result,
+      setResult,
+      submittedSuccessfully,
+      setSubmittedSuccessfully,
+    },
   } = useStores()
   const displayNameValidator = useMemo(() => {
     if (displayName.length < 1) return "must be at least 1 character"
@@ -18,6 +27,24 @@ export default observer(function SetDisplayName() {
   }, [displayName])
 
   const error = isSubmitted ? displayNameValidator : ""
+  
+  useEffect(() => {
+    setResult("")
+    setSubmittedSuccessfully(false)
+    ;(async function load() {
+      await fetchDisplayName()
+    })()
+    return () => {
+      setResult("")
+    }
+  }, [fetchDisplayName])
+
+  useEffect(() => {
+    if (submittedSuccessfully) {
+      setIsSubmitted(false)
+      router.back()
+    }
+  }, [submittedSuccessfully])
 
   async function forward() {
     setIsSubmitted(true)
@@ -25,9 +52,7 @@ export default observer(function SetDisplayName() {
     if (displayNameValidator) return
 
     // If successful, reset the fields
-    setIsSubmitted(false)
-
-    router.back()
+    await updateDisplayName()
   }
 
   return (
@@ -38,7 +63,6 @@ export default observer(function SetDisplayName() {
         preset="subheading"
         style={$enterDetails}
       />
-      {<Text text="No special characters!" size="sm" weight="light" style={$hint} />}
       <TextField
         value={displayName}
         onChangeText={setDisplayName}
@@ -53,6 +77,8 @@ export default observer(function SetDisplayName() {
         onSubmitEditing={forward}
       />
 
+      <Text text={`${result}`} preset="formHelper" style={$result} />
+
       <Button text="Save" style={$tapButton} preset="reversed" onPress={forward} />
     </Screen>
   )
@@ -64,9 +90,8 @@ const $root: ViewStyle = {
   paddingHorizontal: spacing.lg,
 }
 
-const $hint: TextStyle = {
-  color: colors.tint,
-  marginBottom: spacing.md,
+const $result: TextStyle = {
+  color: colors.palette.angry500,
 }
 
 const $textField: ViewStyle = {

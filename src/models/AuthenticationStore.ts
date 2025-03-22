@@ -2,6 +2,7 @@ import { api } from "../services/api"
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 import * as SecureStore from "expo-secure-store"
 import { AuthResultModel, AuthResultSnapshotIn } from "./AuthResult"
+import { withSetPropAction } from "./helpers/withSetPropAction"
 
 export const AuthenticationStoreModel = types
   .model("AuthenticationStore")
@@ -11,7 +12,9 @@ export const AuthenticationStoreModel = types
     result: "",
     displayName: "",
     authResult: types.maybe(AuthResultModel),
+    submittedSuccessfully: false,
   })
+  .actions(withSetPropAction)
   .views((self) => ({
     get isAuthenticated() {
       return !!self.authToken
@@ -28,6 +31,9 @@ export const AuthenticationStoreModel = types
     setAuthToken(value?: string) {
       store.authToken = value
     },
+    setSubmittedSuccessfully(value: boolean) {
+      store.submittedSuccessfully = value
+    },
     setAuthEmail(value: string) {
       store.authEmail = value.replace(/ /g, "")
     },
@@ -36,6 +42,19 @@ export const AuthenticationStoreModel = types
     },
     setDisplayName(value: string) {
       store.displayName = value
+    },
+    async fetchDisplayName() {
+      if (store.displayName) return
+      const response = await api.getDisplayName()
+      if (response.kind === "ok") this.setDisplayName(response.displayName)
+      else console.error(`Error fetching display name: ${JSON.stringify(response)}`)
+    },
+    async updateDisplayName() {
+      const response = await api.updateUser(store.displayName)
+      if (response.kind !== "ok") {
+        console.error(`Error updating user: ${JSON.stringify(response)}`)
+        this.setResult("An error occurred. Please Try again.")
+      } else this.setSubmittedSuccessfully(true)
     },
     setAuthResult(value: AuthResultSnapshotIn) {
       store.authResult = AuthResultModel.create(value)
