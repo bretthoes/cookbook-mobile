@@ -68,7 +68,7 @@ export default observer(function EditRecipe() {
 
     try {
       await updateRecipe(updatedRecipe)
-      router.push(`/recipe/${currentRecipe?.id}`)
+      router.back()
     } catch (e) {
       console.error("Update recipe failed:", e)
 

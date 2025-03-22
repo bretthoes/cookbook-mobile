@@ -102,8 +102,7 @@ export const RecipeStoreModel = types
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
         if (store.currentRecipe) {
-          detach(store.currentRecipe.ingredients) // Detach before replacing
-          detach(store.currentRecipe.directions)
+          detach(store.currentRecipe)
           const newRecipe = RecipeModel.create({
             id: updatedRecipe.id,
             title: updatedRecipe.title,
@@ -119,7 +118,7 @@ export const RecipeStoreModel = types
             images: updatedRecipe.images,
           })
 
-          store.currentRecipe = newRecipe
+          store.setProp("currentRecipe", newRecipe)
         }
       } else {
         console.error(`Error updating recipe: ${JSON.stringify(response)}`)
