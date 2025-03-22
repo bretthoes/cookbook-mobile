@@ -129,7 +129,7 @@ export default observer(function CreateScreen() {
           onPress={() => router.push({
             pathname: "/(app)/select-cookbook",
             params: {
-              nextRoute: "/(app)/add-friend",
+              nextRoute: "/(app)/invitation/add",
               action: "Create Recipe",
             },
           } as any)}
