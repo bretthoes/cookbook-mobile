@@ -47,6 +47,8 @@ export default observer(function EditRecipe() {
       cookingTimeInMinutes: formData.cookingTimeInMinutes,
       bakingTimeInMinutes: formData.bakingTimeInMinutes,
       servings: formData.servings,
+      authorEmail: currentRecipe?.authorEmail,
+      author: currentRecipe?.author,
       directions: formData.directions.map((direction, index) => ({
         id: 0,
         text: direction.text.trim(),

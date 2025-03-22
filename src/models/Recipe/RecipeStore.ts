@@ -102,13 +102,14 @@ export const RecipeStoreModel = types
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
         if (store.currentRecipe) {
-          detach(store.currentRecipe)
           const newRecipe = RecipeModel.create({
-            id: updatedRecipe.id,
+            id: store.currentRecipe.id,
             title: updatedRecipe.title,
             summary: updatedRecipe.summary,
             thumbnail: updatedRecipe.thumbnail,
             videoPath: updatedRecipe.videoPath,
+            authorEmail: store.currentRecipe.authorEmail,
+            author: store.currentRecipe.author,
             preparationTimeInMinutes: updatedRecipe.preparationTimeInMinutes,
             cookingTimeInMinutes: updatedRecipe.cookingTimeInMinutes,
             bakingTimeInMinutes: updatedRecipe.bakingTimeInMinutes,
@@ -117,7 +118,7 @@ export const RecipeStoreModel = types
             ingredients: updatedRecipe.ingredients,
             images: updatedRecipe.images,
           })
-
+          detach(store.currentRecipe)
           store.setProp("currentRecipe", newRecipe)
         }
       } else {
