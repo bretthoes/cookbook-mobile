@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
-import { TextStyle, ViewStyle } from "react-native"
+import { TextStyle, ViewStyle, View } from "react-native"
 import { Screen, Text, Button, TextField } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { spacing } from "src/theme"
@@ -34,7 +34,7 @@ export default observer(function Invitations() {
   }
 
   return (
-    <Screen style={$root} preset="scroll" safeAreaEdges={["top"]}>
+    <Screen style={$root} preset="fixed" safeAreaEdges={["top"]}>
       <Text testID="login-heading" text="Invite a Friend" preset="heading" style={$logIn} />
       <Text
         text={`Invite a friend to join "${currentCookbook?.title}". Your friend needs to have an account to join you.`}
