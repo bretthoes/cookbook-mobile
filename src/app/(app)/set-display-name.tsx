@@ -93,5 +93,5 @@ const $root: ViewStyle = {
 }
 
 const $result: TextStyle = {
-  color: colors.palette.angry500,
+  color: colors.error,
 }
