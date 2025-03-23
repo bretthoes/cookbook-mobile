@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import { ViewStyle } from "react-native"
-import { Screen, ListItem, Text } from "src/components"
+import { Screen, ListItem, Text, UseCase } from "src/components"
 import { spacing } from "src/theme"
 import { router } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -35,33 +35,31 @@ export default function LanguageScreen() {
     await i18n.changeLanguage(languageCode)
     await AsyncStorage.setItem("language", languageCode)
     setCurrentLanguage(languageCode)
-    router.back()
   }
 
   return (
     <Screen preset="scroll" style={$root}>
       <Text
-        text={"If you would like to request support for a language that is not listed, please make contact."}
+        text={"If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab."}
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
+      <UseCase name="Languages">
       {languages.map((language) => (
         <ListItem
           key={language.code}
           text={language.name}
           bottomSeparator
+          topSeparator
           onPress={() => handleLanguageSelect(language.code)}
-          style={$item}
           rightIcon={currentLanguage === language.code ? "check" : undefined}
         />
       ))}
+      </UseCase>
+      
     </Screen>
   )
 }
 
 const $root: ViewStyle = {
   flex: 1,
-}
-
-const $item: ViewStyle = {
-  paddingHorizontal: spacing.lg,
 }
