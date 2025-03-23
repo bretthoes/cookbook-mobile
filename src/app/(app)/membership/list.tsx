@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
-import { Divider, EmptyState, ListView, Screen, Text } from "src/components"
+import { Divider, EmptyState, ListView, Screen, SubPageTitleAndSubtitle, Text } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { Href, router } from "expo-router"
@@ -10,6 +10,7 @@ import { isRTL } from "src/i18n"
 import { PaginationControls } from "src/components/PaginationControls"
 import { Membership } from "src/models"
 import { RecipeListItem } from "src/components/Recipe/RecipeListItem"
+import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Cookbook() {
   const { cookbookStore, recipeStore, membershipStore } = useStores()
@@ -18,6 +19,11 @@ export default observer(function Cookbook() {
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  useHeader({
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+  })
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -60,7 +66,8 @@ export default observer(function Cookbook() {
   if (!id) return null
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} style={$root}>
+    <Screen preset="scroll" style={$root}>
+      
       <ListView<Membership>
         data={membershipStore.memberships?.items?.slice() ?? []}
         estimatedItemSize={59}
@@ -78,12 +85,10 @@ export default observer(function Cookbook() {
           )
         }
         ListHeaderComponent={
-          <View>
-            <View style={$headerContainer}>
-              <Text preset="heading" text={"Members"} />
-            </View>
-            <Divider size={spacing.sm} />
-          </View>
+          <SubPageTitleAndSubtitle 
+            title="Members"
+            subtitle="Manage your cookbook members."
+          />
         }
         onRefresh={manualRefresh}
         refreshing={refreshing}
@@ -125,15 +130,6 @@ export default observer(function Cookbook() {
     </Screen>
   )
 })
-
-const $container: ViewStyle = {
-  paddingHorizontal: spacing.lg,
-  paddingTop: spacing.xl,
-}
-
-const $title: ViewStyle = {
-  marginBottom: spacing.md,
-}
 
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,

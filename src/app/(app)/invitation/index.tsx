@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useState } from "react"
 import { ImageStyle, TextStyle, ViewStyle, View, ActivityIndicator, ImageSourcePropType, Platform, Image, StyleSheet, Switch, AccessibilityProps } from "react-native"
-import { Screen, Text, Button, ListItem, Card, ButtonAccessoryProps, Icon, ListView } from "src/components"
+import { Screen, Text, Button, ListItem, Card, ButtonAccessoryProps, Icon, ListView, SubPageTitleAndSubtitle } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { delay } from "src/utils/delay"
@@ -12,6 +12,7 @@ import { Extrapolate, interpolate, useSharedValue, withSpring, useAnimatedStyle 
 import Animated from "react-native-reanimated"
 import { ContentStyle } from "@shopify/flash-list"
 import { router } from "expo-router"
+import { useHeader } from "src/utils/useHeader"
 
 const rnrImage1 = require("assets/images/demo/rnr-image-1.png")
 const rnrImage2 = require("assets/images/demo/rnr-image-2.png")
@@ -25,6 +26,11 @@ export default observer(function Invitations() {
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  useHeader({
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+  })
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -50,11 +56,13 @@ export default observer(function Invitations() {
 
   return (
     <Screen
-      preset="fixed"
-      safeAreaEdges={["top"]}
-      style={$screenContentContainer}
-      contentContainerStyle={$screenContentContainer}
+      preset="scroll"
+      style={$root}
     >
+      <SubPageTitleAndSubtitle 
+        title="Invitations"
+        subtitle="Manage your cookbook invitations."
+      />
       <ListView<Invitation>
         contentContainerStyle={$listContentContainer}
         data={invitationStore.invitations.items.slice()}
@@ -85,11 +93,6 @@ export default observer(function Invitations() {
               ImageProps={{ resizeMode: "contain" }}
             />
           )
-        }
-        ListHeaderComponent={
-          <View style={$heading}>
-            <Text preset="heading" tx="pendingInvitationScreen:title" />
-          </View>
         }
         renderItem={({ item }) => (
           <InvitationCard
@@ -347,14 +350,13 @@ const InvitationCard = observer(function CookbookCard({
   )
 })
 
-const $screenContentContainer: ViewStyle = {
+const $root: ViewStyle = {
   flex: 1,
 }
 
 const $listContentContainer: ContentStyle = {
   paddingHorizontal: spacing.lg,
-  paddingTop: spacing.lg + spacing.xl,
-  paddingBottom: spacing.xxxl + spacing.xxl,
+  paddingBottom: spacing.xxl,
 }
 
 const $heading: ViewStyle = {

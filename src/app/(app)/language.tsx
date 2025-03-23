@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react"
 import { ViewStyle, TextStyle } from "react-native"
-import { Screen, ListItem, Text } from "src/components"
+import { Screen, ListItem, Text, SubPageTitleAndSubtitle } from "src/components"
 import { colors, spacing } from "src/theme"
 import { useAppTheme } from "src/utils/useAppTheme"
 import { router } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import i18n from "i18next"
+import { useHeader } from "src/utils/useHeader"
 
 const languages = [
   { code: "en", name: "English" },
@@ -14,9 +15,12 @@ const languages = [
 ]
 
 export default function LanguageScreen() {
-  const { themeContext } = useAppTheme()
-  const isDark = themeContext === "dark"
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language)
+
+  useHeader({
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+  })
 
   useEffect(() => {
     AsyncStorage.getItem("language").then((value) => {
@@ -34,15 +38,18 @@ export default function LanguageScreen() {
   }
 
   return (
-    <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
-      <Text preset="heading" text="Select Language" style={$title} />
+    <Screen preset="scroll" style={$root}>
+      <SubPageTitleAndSubtitle 
+        title="Select Language"
+        subtitle="If you would like to request support for a language that is not listed, please make contact."
+      />
       {languages.map((language) => (
         <ListItem
           key={language.code}
           text={language.name}
           bottomSeparator
           onPress={() => handleLanguageSelect(language.code)}
-          style={isDark && $itemDark}
+          style={$item}
           rightIcon={currentLanguage === language.code ? "check" : undefined}
         />
       ))}
@@ -50,15 +57,10 @@ export default function LanguageScreen() {
   )
 }
 
-const $screenContentContainer: ViewStyle = {
+const $root: ViewStyle = {
+  flex: 1,
+}
+
+const $item: ViewStyle = {
   paddingHorizontal: spacing.lg,
-  paddingTop: spacing.lg + spacing.xl,
-}
-
-const $title: TextStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $itemDark: ViewStyle = {
-  backgroundColor: colors.palette.neutral800,
 }

@@ -30,7 +30,6 @@ export function SubPageTitleAndSubtitle({
       <Text preset="subheading" text={title} tx={titleTx} txOptions={titleTxOptions} />
       {(subtitle || subtitleTx) && (
         <>
-          <Divider size={spacing.xs} />
           <Text text={subtitle} tx={subtitleTx} txOptions={subtitleTxOptions} />
         </>
       )}
@@ -41,5 +40,4 @@ export function SubPageTitleAndSubtitle({
 const $headerContainer: ViewStyle = {
   paddingHorizontal: spacing.lg,
   paddingBottom: spacing.lg,
-  paddingTop: spacing.md,
 } 

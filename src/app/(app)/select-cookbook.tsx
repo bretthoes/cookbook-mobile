@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
 import { ViewStyle, TouchableOpacity, View, TextStyle, Image, ImageStyle } from "react-native"
-import { Screen, Text } from "src/components"
+import { Screen, Text, SubPageTitleAndSubtitle } from "src/components"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
 import { useStores } from "src/models/helpers/useStores"
@@ -10,12 +10,18 @@ import Ionicons from "@expo/vector-icons/Ionicons"
 import * as ImagePicker from "expo-image-picker"
 import { api } from "src/services/api"
 import { useActionSheet } from "@expo/react-native-action-sheet"
+import { useHeader } from "src/utils/useHeader"
 
 // TODO i18n
 export default observer(function SelectCookbookScreen() {
   const { cookbookStore, recipeStore: { setRecipeToAdd } } = useStores()
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
+
+  useHeader({
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+  })
 
   useEffect(() => {
     cookbookStore.fetch() // Ensure we have latest cookbooks
@@ -106,8 +112,11 @@ export default observer(function SelectCookbookScreen() {
   }
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
-      <Text preset="heading" text={`Select a Cookbook for ${params.action}`} style={$title} />
+    <Screen preset="scroll" style={$root}>
+      <SubPageTitleAndSubtitle 
+        title={`Select a Cookbook`}
+        subtitle={`${params.action}`}
+      />
 
       <View style={$listContainer}>
         {cookbookStore.cookbooks.map((cookbook, index) => (
@@ -137,8 +146,8 @@ export default observer(function SelectCookbookScreen() {
   )
 })
 
-const $container: ViewStyle = {
-  paddingTop: spacing.xl,
+const $root: ViewStyle = {
+  flex: 1,
 }
 
 const $title: ViewStyle = {
