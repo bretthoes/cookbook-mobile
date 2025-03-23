@@ -289,7 +289,6 @@ const InvitationCard = observer(function CookbookCard({
       <Card
         style={[
           $item,
-          isDark && $itemDark,
           isDark && {
             shadowOpacity: 0,
             elevation: 0,
@@ -297,7 +296,6 @@ const InvitationCard = observer(function CookbookCard({
         ]}
         verticalAlignment="force-footer-bottom"
         onPress={handlePressCard}
-        preset={isDark ? "reversed" : "default"}
         HeadingComponent={
           <View style={$metadata}>
             <Text
@@ -372,24 +370,11 @@ const $item: ViewStyle = {
   backgroundColor: colors.background,
 }
 
-const $itemDark: ViewStyle = {
-  shadowOpacity: 0,
-  elevation: 0,
-}
-
 const $itemThumbnail: ImageStyle = {
   marginTop: spacing.sm,
   height: 90,
   width: 90,
   alignSelf: "flex-start",
-}
-
-const $toggle: ViewStyle = {
-  marginTop: spacing.md,
-}
-
-const $labelStyle: TextStyle = {
-  textAlign: "left",
 }
 
 const $iconContainer: ViewStyle = {

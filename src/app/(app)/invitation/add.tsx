@@ -2,7 +2,7 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { TextStyle, ViewStyle, View } from "react-native"
-import { Screen, Text, Button, TextField } from "src/components"
+import { Screen, Text, Button, TextField, UseCase, Divider } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { spacing } from "src/theme"
 import { useHeader } from "src/utils/useHeader"
@@ -26,6 +26,8 @@ export default observer(function Invitations() {
     title: "Invite a Friend",
     leftIcon: "back",
     onLeftPress: () => router.back(),
+    rightText: "Send",
+    onRightPress: () => send(),
   })
 
   useEffect(() => {
@@ -43,52 +45,29 @@ export default observer(function Invitations() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text
-        text={`Invite a friend to join "${currentCookbook?.title}". Your friend needs to have an account to join you.`}
-        preset="default"
-        style={$enterDetails}
+      <Text text={`Invite a friend to join "${currentCookbook?.title}". Your friend needs to have an account to join you.`}
+        style={{ paddingHorizontal: spacing.md }}
       />
-      <TextField
-        value={inviteEmail}
-        onChangeText={setInviteEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        placeholder="Enter an email address"
-        helper={error}
-        status={error ? "error" : undefined}
-      />
-      <Text text={`${result}`} preset="formHelper" />
-      <Button
-        text="Send"
-        style={$tapButton}
-        preset="reversed"
-        onPress={send}
-      />
+      <UseCase>
+        <Divider />
+        <TextField
+          value={inviteEmail}
+          onChangeText={setInviteEmail}
+          autoCapitalize="none"
+          label="Email Address"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          placeholder="Enter an email address"
+          helper={error}
+          status={error ? "error" : undefined}
+        />
+        <Text text={`${result}`} preset="formHelper" />
+      </UseCase>
     </Screen>
   )
 })
 
 const $root: ViewStyle = {
   flex: 1,
-  paddingHorizontal: spacing.sm,
-}
-
-const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
-}
-
-const $logIn: TextStyle = {
-  marginBottom: spacing.sm,
-  marginTop: spacing.xxl,
-}
-
-const $enterDetails: TextStyle = {
-  marginBottom: spacing.lg,
 }
