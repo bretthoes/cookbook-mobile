@@ -365,7 +365,6 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 })
 
 const $root: ViewStyle = {
-  marginHorizontal: spacing.md,
 }
 
 const $buttonHeightOverride: ViewStyle = {

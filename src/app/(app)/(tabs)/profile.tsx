@@ -10,7 +10,7 @@ import {
   Image,
   ImageStyle,
 } from "react-native"
-import { Button, ListItem, Screen, Switch, Text } from "src/components"
+import { Button, ListItem, Screen, Switch, Text, UseCase } from "src/components"
 import { colors, spacing } from "src/theme"
 import { isRTL } from "src/i18n"
 import { useStores } from "src/models/helpers/useStores"
@@ -91,7 +91,8 @@ export default function Profile() {
   )
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$container}>
+    <Screen preset="scroll" safeAreaEdges={["top"]}>
+      <View style={$titleContainer}>
       <Text
         style={$reportBugsLink}
         tx="profileScreen:reportBugs"
@@ -99,10 +100,10 @@ export default function Profile() {
           openLinkInBrowser(`mailto:${config.SUPPORT_EMAIL}?subject=Language%20Support%20Request`)
         }
       />
-      <Text style={$title} preset="heading" tx="profileScreen:title" />
-      {email && <Text style={$title} preset="subheading" text={email} />}
-
-      <Text preset="subheading" text="Actions" style={$sectionTitle} />
+      <Text preset="heading" tx="profileScreen:title" />
+      {email && <Text preset="default" text={email} />}
+      </View>
+      <UseCase name="Actions">
       <Text text="Manage your info in the app." style={$description} />
       <ListItem
         text="View your pending invitations"
@@ -132,10 +133,10 @@ export default function Profile() {
           },
         })}
       />
-
-      <Text preset="subheading" text="Preferences" style={$sectionTitle} />
+      </UseCase>
+      <UseCase name="Preferences" >
       <Text
-        text="Use the 'Report Bugs' button to request support for more languages."
+        text="Customize your experience in the app."
         style={$description}
       />
       <View style={$themeRow}>
@@ -152,7 +153,7 @@ export default function Profile() {
       <ListItem
         text="Choose your preferred language"
         leftIcon="components"
-        onPress={() => router.push("/(app)/language" as any)}
+        onPress={() => router.push("/(app)/language")}
         rightIcon={isRTL ? "caretLeft" : "caretRight"}
         bottomSeparator
       />
@@ -167,11 +168,12 @@ export default function Profile() {
         }
         onPress={() => router.push("/(app)/set-display-name")}
       />
+      </UseCase>
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />
       </View>
       <View style={$itemsContainer}>
-        <Text preset="subheading" tx="demoDebugScreen:title" />
+      <UseCase name="Debug">
         <ListItem
           LeftComponent={
             <View style={$item}>
@@ -220,6 +222,7 @@ export default function Profile() {
             </View>
           }
         />
+      </UseCase>
       </View>
       <View style={$buttonContainer}>
         <Button style={$button} tx="demoDebugScreen:reactotron" onPress={demoReactotron} />
@@ -229,10 +232,9 @@ export default function Profile() {
   )
 }
 
-const $container: ViewStyle = {
-  paddingTop: spacing.lg + spacing.xl,
-  paddingBottom: spacing.xxl,
-  paddingHorizontal: spacing.lg,
+const $titleContainer: ViewStyle = {
+  paddingHorizontal: spacing.md,
+  paddingBottom: spacing.lg,
 }
 
 const $themeRow: ViewStyle = {
@@ -243,10 +245,6 @@ const $themeRow: ViewStyle = {
   paddingVertical: spacing.xs,
   borderBottomWidth: 1,
   borderBottomColor: colors.separator,
-}
-
-const $title: TextStyle = {
-  marginBottom: spacing.md,
 }
 
 const $reportBugsLink: TextStyle = {
@@ -264,12 +262,13 @@ const $itemsContainer: ViewStyle = {
 }
 
 const $button: ViewStyle = {
-  marginTop: spacing.xxl,
+  marginTop: spacing.lg,
   marginBottom: spacing.xs,
 }
 
 const $buttonContainer: ViewStyle = {
   marginBottom: spacing.md,
+  paddingHorizontal: spacing.xl,
 }
 
 const $sectionTitle: TextStyle = {

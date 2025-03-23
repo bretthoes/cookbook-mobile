@@ -19,7 +19,7 @@ export function UseCase(props: UseCaseProps) {
 
   return (
     <View style={$container}>
-      <Text style={$name}>{name}</Text>
+      <Text preset="subheading" style={$name}>{name}</Text>
 
       {description && <Text style={$description}>{description}</Text>}
 
@@ -44,7 +44,6 @@ const $item: ViewStyle = {
 }
 
 const $name: TextStyle = {
-  fontFamily: typography.primary.bold,
 }
 
 const $rowLayout: ViewStyle = {
