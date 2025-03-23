@@ -5,6 +5,7 @@ import { Button, Screen, Text, TextField } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { router } from "expo-router"
+import { useHeader } from "src/utils/useHeader"
 
 export default observer(function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -27,6 +28,14 @@ export default observer(function SetDisplayName() {
   }, [displayName])
 
   const error = isSubmitted ? displayNameValidator : ""
+
+  useHeader({
+    title: "Set a display name",
+    leftIcon: "back",
+    rightText: "Save",
+    onLeftPress: () => router.back(),
+    onRightPress: () => forward(),
+  })
   
   useEffect(() => {
     setResult("")
@@ -57,16 +66,13 @@ export default observer(function SetDisplayName() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text testID="login-heading" text="Set a display name" preset="heading" style={$logIn} />
       <Text
         text="This is how others will see you in the app, instead of your email."
-        preset="subheading"
-        style={$enterDetails}
+        style={{ marginBottom: spacing.lg }}
       />
       <TextField
         value={displayName}
         onChangeText={setDisplayName}
-        containerStyle={$textField}
         helper={error}
         status={error ? "error" : undefined}
         autoCapitalize="none"
@@ -78,8 +84,6 @@ export default observer(function SetDisplayName() {
       />
 
       <Text text={`${result}`} preset="formHelper" style={$result} />
-
-      <Button text="Save" style={$tapButton} preset="reversed" onPress={forward} />
     </Screen>
   )
 })
@@ -92,22 +96,4 @@ const $root: ViewStyle = {
 
 const $result: TextStyle = {
   color: colors.palette.angry500,
-}
-
-const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
-  marginBottom: spacing.xs,
-}
-
-const $logIn: TextStyle = {
-  marginBottom: spacing.sm,
-  marginTop: spacing.xxl,
-}
-
-const $enterDetails: TextStyle = {
-  marginBottom: spacing.lg,
 }

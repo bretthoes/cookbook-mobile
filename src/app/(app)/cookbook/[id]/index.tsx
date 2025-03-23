@@ -12,7 +12,7 @@ import { useDebounce } from "src/models/helpers/useDebounce"
 import { RecipeListItem } from "src/components/Recipe/RecipeListItem"
 import { PaginationControls } from "src/components/PaginationControls"
 import { useActionSheet } from "@expo/react-native-action-sheet"
-import { MoreButton } from "src/components/MoreButton"
+import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Cookbook() {
   const { cookbookStore, recipeStore, membershipStore: { email, fetchEmail } } = useStores()
@@ -42,6 +42,14 @@ export default observer(function Cookbook() {
       await recipeStore.fetch(Number(id), searchQuery)
     })()
   }, [debouncedSearchQuery, recipeStore.fetch])
+
+  useHeader({
+    title: cookbook?.title ?? "",
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+    rightIcon: "more",
+    onRightPress: () => handlePressMore(),
+  })
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
@@ -104,18 +112,15 @@ export default observer(function Cookbook() {
       } else if (buttonIndex === 1) {
         handlePressDelete()
       }
+      // TODO: add a new option to add a recipe to the cookbook,
+      // and add a new option to leave the cookbook.
     })
   }
 
   if (!cookbook) return null
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} style={$root}>
-      {isAuthor && (
-        <MoreButton 
-          onPress={handlePressMore}
-        />
-      )}
+    <Screen preset="scroll" style={$root}>
       <ListView<RecipeBrief>
         data={recipeStore.recipes?.items?.slice() ?? []}
         estimatedItemSize={59}
@@ -134,9 +139,6 @@ export default observer(function Cookbook() {
         }
         ListHeaderComponent={
           <View>
-            <View style={$headerContainer}>
-              <Text preset="heading" text={cookbook.title} />
-            </View>
             <SearchBar
               value={searchQuery}
               onChangeText={setSearchQuery}

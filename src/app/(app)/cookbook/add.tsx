@@ -14,6 +14,7 @@ import { CookbookToAddSnapshotIn } from "src/models/Cookbook"
 import { UseCase } from "src/components/UseCase"
 import { router } from "expo-router"
 import { cookbookSchema } from "src/validators/cookbookSchema"
+import { useHeader } from "src/utils/useHeader"
 
 interface CookbookFormInputs {
   title: string
@@ -88,18 +89,18 @@ export default observer(function AddCookbookScreen() {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
 
-  return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$root}>
-      <View style={$titleContainer}>
-        <Text preset="heading" weight="normal" text="Add new cookbook" />
-        <Button
-          text="Save"
-          style={$buttonHeightOverride}
-          onPress={handleSubmit(onPressSend, onError)}
-        />
-      </View>
+  useHeader({
+    title: "Add new cookbook",
+    leftIcon: "back",
+    rightText: "Save",
+    onRightPress: () => handleSubmit(onPressSend, onError)(),
+    onLeftPress: () => router.back(),
+  })
 
-      <UseCase name="" description="Fill out the details for your new cookbook.">
+  return (
+    <Screen preset="scroll" contentContainerStyle={$root}>
+      <Text text="Fill out the details for your new cookbook." />
+      <UseCase name="">
         {imageLocal.length > 0 && (
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
             <AutoImage
@@ -119,6 +120,7 @@ export default observer(function AddCookbookScreen() {
           render={({ field: { onChange, value } }) => (
             <TextField
               value={value}
+              label="Title"
               onChangeText={onChange}
               placeholder="Enter cookbook title"
               status="error"
@@ -134,15 +136,4 @@ export default observer(function AddCookbookScreen() {
 const $root: ViewStyle = {
   flex: 1,
   marginHorizontal: spacing.md,
-  marginTop: spacing.xl,
-}
-
-const $titleContainer: ViewStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-}
-
-const $buttonHeightOverride: ViewStyle = {
-  minHeight: spacing.md,
 }
