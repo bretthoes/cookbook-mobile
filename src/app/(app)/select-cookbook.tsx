@@ -95,7 +95,7 @@ export default observer(function SelectCookbookScreen() {
     if (params.onSelect === "handleAddRecipeFromCamera") {
       handleAddRecipeFromCamera()
     } else {
-      router.replace(params.nextRoute as any)
+      router.push(params.nextRoute as any)
     }
   }
 
