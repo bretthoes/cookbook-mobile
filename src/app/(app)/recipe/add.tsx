@@ -96,7 +96,7 @@ export default observer(function AddRecipeScreen() {
   }
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$root}>
+    <Screen preset="scroll">
       <RecipeForm
         onSubmit={onPressSend}
         formValues={mapRecipeToFormInputs() ?? undefined}
@@ -105,8 +105,3 @@ export default observer(function AddRecipeScreen() {
     </Screen>
   )
 })
-
-const $root: ViewStyle = {
-  marginHorizontal: spacing.md,
-  marginTop: spacing.xl,
-}

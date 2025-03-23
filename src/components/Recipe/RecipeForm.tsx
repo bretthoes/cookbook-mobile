@@ -17,6 +17,8 @@ import { Icon } from "src/components/Icon"
 import { ListView } from "src/components/ListView"
 import { UseCase } from "src/components/UseCase"
 import Config from "src/config"
+import { useHeader } from "src/utils/useHeader"
+import { router } from "expo-router"
 
 export interface RecipeFormInputs {
   title: string
@@ -67,6 +69,14 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     resolver: yupResolver(recipeSchema),
     mode: "onChange",
     defaultValues: formValues,
+  })
+
+  useHeader({
+    titleTx: isEdit ? "recipeListScreen:edit" : "recipeListScreen:add",
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+    rightText: "Save",
+    onRightPress: () => handleSubmit(onSubmit, onError)(),
   })
 
   const {
@@ -123,19 +133,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   }
 
   return (
-    <>
-      <View style={$titleContainer}>
-        <Text
-          preset="heading"
-          weight="normal"
-          tx={isEdit ? "recipeListScreen:edit" : "recipeListScreen:add"}
-        />
-        <Button
-          text="Save"
-          style={$buttonHeightOverride}
-          onPress={handleSubmit(onSubmit, onError)}
-        />
-      </View>
+    <View style={$root}>
       <UseCase
         name=""
         description={
@@ -362,14 +360,12 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           />
         </View>
       </UseCase>
-    </>
+    </View>
   )
 })
 
-const $titleContainer: ViewStyle = {
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
+const $root: ViewStyle = {
+  marginHorizontal: spacing.md,
 }
 
 const $buttonHeightOverride: ViewStyle = {
