@@ -53,7 +53,7 @@ export const AuthenticationStoreModel = types
       const response = await api.updateUser(store.displayName)
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
-        this.setResult("An error occurred. Please Try again.")
+        this.setResult("An error occurred. Please try again.")
       } else this.setSubmittedSuccessfully(true)
     },
     setAuthResult(value: AuthResultSnapshotIn) {

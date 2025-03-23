@@ -4,7 +4,7 @@ import { Text } from "."
 import { colors, spacing, typography } from "../theme"
 
 interface UseCaseProps {
-  name: string
+  name?: string
   description?: string
   layout?: "column" | "row"
   children: ReactNode
@@ -18,7 +18,7 @@ export function UseCase(props: UseCaseProps) {
   const { name, description, children, layout = "column" } = props
 
   return (
-    <View>
+    <View style={$container}>
       <Text style={$name}>{name}</Text>
 
       {description && <Text style={$description}>{description}</Text>}
@@ -26,6 +26,10 @@ export function UseCase(props: UseCaseProps) {
       <View style={[layout === "row" && $rowLayout, $item]}>{children}</View>
     </View>
   )
+}
+
+const $container: ViewStyle = {
+  paddingHorizontal: spacing.md,
 }
 
 const $description: TextStyle = {
