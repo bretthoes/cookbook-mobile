@@ -51,17 +51,34 @@ export default observer(function Recipe() {
   }
 
   const handlePressMore = () => {
-    if (!isAuthor) return
+    let options = []
+    if (isAuthor) {
+      options = ["Edit Recipe", "Delete Recipe", "Go back to cookbook", "Cancel"]
+    } else {
+      options = ["Go back to cookbook", "Cancel"]
+    }
+    
+    const cancelButtonIndex = options.length - 1
 
     showActionSheetWithOptions({
-      options: ["Edit Recipe", "Delete Recipe", "Cancel"],
-      cancelButtonIndex: 2,
-      destructiveButtonIndex: 1,
+      options,
+      cancelButtonIndex,
+      destructiveButtonIndex: isAuthor ? 1 : undefined,
     }, (buttonIndex) => {
-      if (buttonIndex === 0) {
-        handlePressEdit()
-      } else if (buttonIndex === 1) {
-        handlePressDelete()
+      if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
+
+      if (isAuthor) {
+        if (buttonIndex === 0) {
+          handlePressEdit()
+        } else if (buttonIndex === 1) {
+          handlePressDelete()
+        } else if (buttonIndex === 2) {
+          router.back()
+        }
+      } else {
+        if (buttonIndex === 0) {
+          router.back()
+        }
       }
     })
   }
