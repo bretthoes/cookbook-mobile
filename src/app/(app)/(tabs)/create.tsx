@@ -45,7 +45,7 @@ export default observer(function CreateScreen() {
             pathname: "/(app)/select-cookbook",
             params: {
               nextRoute: "/(app)/recipe/add",
-              action: "Create Recipe",
+              action: "Select the cookbook where you would like to add a new recipe.",
             },
           } as any)}
         >
@@ -73,7 +73,7 @@ export default observer(function CreateScreen() {
             pathname: "/(app)/select-cookbook",
             params: {
               nextRoute: "/(app)/recipe/add",
-              action: "Create Recipe",
+              action: "Select the cookbook where you would like to add a new recipe from an image.",
               onSelect: "handleAddRecipeFromCamera",
             },
           } as any)}
@@ -102,7 +102,7 @@ export default observer(function CreateScreen() {
             pathname: "/(app)/select-cookbook",
             params: {
               nextRoute: "/(app)/recipe/select-url",
-              action: "Create Recipe",
+              action: "Select the cookbook where you would like to add a new recipe from a website.",
             },
           } as any)}
         >
@@ -130,7 +130,7 @@ export default observer(function CreateScreen() {
             pathname: "/(app)/select-cookbook",
             params: {
               nextRoute: "/(app)/invitation/add",
-              action: "Create Recipe",
+              action: "Select the cookbook where you would like to send an invitation to a friend.",
             },
           } as any)}
         >
