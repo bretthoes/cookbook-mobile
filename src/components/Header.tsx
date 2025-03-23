@@ -168,7 +168,7 @@ export function Header(props: HeaderProps) {
     rightTxOptions,
     safeAreaEdges = ["top"],
     title,
-    titleMode = "center",
+    titleMode = "flex",
     titleTx,
     titleTxOptions,
     titleContainerStyle: $titleContainerStyleOverride,
@@ -206,7 +206,7 @@ export function Header(props: HeaderProps) {
           >
             <Text
               weight="medium"
-              size="md"
+              preset="subheading"
               text={titleContent}
               style={[$title, $titleStyleOverride]}
             />
@@ -280,7 +280,7 @@ const $container: ViewStyle = {
 }
 
 const $title: TextStyle = {
-  textAlign: "center",
+  textAlign: "left",
 }
 
 const $actionTextContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
 import { ViewStyle, TouchableOpacity, View, TextStyle, Image, ImageStyle } from "react-native"
-import { Screen, Text, SubPageTitleAndSubtitle } from "src/components"
+import { Screen, Text } from "src/components"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
 import { useStores } from "src/models/helpers/useStores"
@@ -20,6 +20,7 @@ export default observer(function SelectCookbookScreen() {
 
   useHeader({
     leftIcon: "back",
+    title: "Select a Cookbook",
     onLeftPress: () => router.back(),
   })
 
@@ -113,9 +114,9 @@ export default observer(function SelectCookbookScreen() {
 
   return (
     <Screen preset="scroll" style={$root}>
-      <SubPageTitleAndSubtitle 
-        title={`Select a Cookbook`}
-        subtitle={`${params.action}`}
+      <Text
+        text={`${params.action}`}
+        style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
 
       <View style={$listContainer}>

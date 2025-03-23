@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
-import { Divider, EmptyState, ListView, Screen, SubPageTitleAndSubtitle, Text } from "src/components"
+import { Divider, EmptyState, ListView, Screen, Text } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { Href, router } from "expo-router"
@@ -22,6 +22,7 @@ export default observer(function Cookbook() {
 
   useHeader({
     leftIcon: "back",
+    title: "Members",
     onLeftPress: () => router.back(),
   })
 
@@ -85,9 +86,9 @@ export default observer(function Cookbook() {
           )
         }
         ListHeaderComponent={
-          <SubPageTitleAndSubtitle 
-            title="Members"
-            subtitle="Manage your cookbook members."
+          <Text
+            text="Manage your cookbook members."
+            style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
           />
         }
         onRefresh={manualRefresh}

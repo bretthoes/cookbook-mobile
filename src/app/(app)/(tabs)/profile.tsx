@@ -128,7 +128,7 @@ export default function Profile() {
           pathname: "/(app)/select-cookbook",
           params: {
             nextRoute: "/(app)/membership/list",
-            action: "Manage Cookbooks",
+            action: "Select a cookbook to view its members.",
           },
         })}
       />

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useState } from "react"
 import { ImageStyle, TextStyle, ViewStyle, View, ActivityIndicator, ImageSourcePropType, Platform, Image, StyleSheet, Switch, AccessibilityProps } from "react-native"
-import { Screen, Text, Button, ListItem, Card, ButtonAccessoryProps, Icon, ListView, SubPageTitleAndSubtitle } from "src/components"
+import { Screen, Text, Button, ListItem, Card, ButtonAccessoryProps, Icon, ListView } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { delay } from "src/utils/delay"
@@ -29,6 +29,7 @@ export default observer(function Invitations() {
 
   useHeader({
     leftIcon: "back",
+    title: "Invitations",
     onLeftPress: () => router.back(),
   })
 
@@ -59,10 +60,11 @@ export default observer(function Invitations() {
       preset="scroll"
       style={$root}
     >
-      <SubPageTitleAndSubtitle 
-        title="Invitations"
-        subtitle="Manage your cookbook invitations."
+      <Text
+        text="Manage your cookbook invitations."
+        style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
+        
       <ListView<Invitation>
         contentContainerStyle={$listContentContainer}
         data={invitationStore.invitations.items.slice()}

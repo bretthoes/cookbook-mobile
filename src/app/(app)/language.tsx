@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react"
-import { ViewStyle, TextStyle } from "react-native"
-import { Screen, ListItem, Text, SubPageTitleAndSubtitle } from "src/components"
-import { colors, spacing } from "src/theme"
-import { useAppTheme } from "src/utils/useAppTheme"
+import { ViewStyle } from "react-native"
+import { Screen, ListItem, Text } from "src/components"
+import { spacing } from "src/theme"
 import { router } from "expo-router"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import i18n from "i18next"
@@ -19,6 +18,8 @@ export default function LanguageScreen() {
 
   useHeader({
     leftIcon: "back",
+    title: "Select Language",
+    
     onLeftPress: () => router.back(),
   })
 
@@ -39,9 +40,9 @@ export default function LanguageScreen() {
 
   return (
     <Screen preset="scroll" style={$root}>
-      <SubPageTitleAndSubtitle 
-        title="Select Language"
-        subtitle="If you would like to request support for a language that is not listed, please make contact."
+      <Text
+        text={"If you would like to request support for a language that is not listed, please make contact."}
+        style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
       {languages.map((language) => (
         <ListItem

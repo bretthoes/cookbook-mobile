@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React from "react"
 import { ViewStyle, TextStyle, View } from "react-native"
-import { Screen, Text, ListView, SubPageTitleAndSubtitle } from "src/components"
+import { Screen, Text, ListView } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { useLocalSearchParams, router } from "expo-router"
@@ -13,6 +13,7 @@ export default observer(function MembershipScreen() {
 
   useHeader({
     leftIcon: "back",
+    title: "Membership Details",
     onLeftPress: () => router.back(),
   })
 
@@ -37,9 +38,9 @@ export default observer(function MembershipScreen() {
         estimatedItemSize={50}
         ListHeaderComponent={
           <View>
-            <SubPageTitleAndSubtitle 
-              title="Membership Details"
-              subtitle="Details and permissions for this membership."
+            <Text
+              text={`${membership.email}`}
+              style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
             />
           </View>
         }
