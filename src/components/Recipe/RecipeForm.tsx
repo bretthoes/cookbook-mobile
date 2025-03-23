@@ -133,7 +133,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   }
 
   return (
-    <View style={$root}>
+    <View>
       <UseCase
         name=""
         description={
@@ -363,9 +363,6 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     </View>
   )
 })
-
-const $root: ViewStyle = {
-}
 
 const $buttonHeightOverride: ViewStyle = {
   minHeight: spacing.md,

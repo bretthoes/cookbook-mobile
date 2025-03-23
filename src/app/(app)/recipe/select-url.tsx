@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { ViewStyle } from "react-native"
-import { Button, Screen, Text, TextField } from "src/components"
+import { Button, Screen, Text, TextField, UseCase } from "src/components"
 import { spacing } from "src/theme"
 import { useStores } from "src/models/helpers/useStores"
 import { api } from "src/services/api"
 import { router } from "expo-router"
+import { useHeader } from "src/utils/useHeader"
 
 
 export default observer(function RecipeUrlScreen() {
@@ -23,6 +24,14 @@ export default observer(function RecipeUrlScreen() {
     setResult("")
     setValidationError(null)
   }, [])
+
+  useHeader({
+    title: "Add Recipe",
+    onLeftPress: () => router.back(),
+    leftIcon: "back",
+    onRightPress: () => send(),
+    rightText: "Next",
+  })
 
   const isValidUrl = (input: string) => {
     const regex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i
@@ -52,42 +61,28 @@ export default observer(function RecipeUrlScreen() {
   }
 
   return (
-    <Screen style={$root} preset="auto" safeAreaEdges={["top"]}>
+    <Screen style={$root} preset="scroll">
+      <Text text="Enter a valid link and we'll extract the recipe for you." style={{paddingHorizontal: spacing.md}} />
+      <UseCase name="">
       <TextField
         value={url}
         onChangeText={setUrl}
-        containerStyle={$textField}
         autoCapitalize="none"
         autoComplete="url"
         autoCorrect={false}
         keyboardType="url"
-        label="Paste a valid URL below:"
-        placeholder="Your favorite recipe URL"
+        label="URL:"
+        placeholder="www.example.com/recipe"
         helper={validationError || result}
         status={validationError || result ? "error" : undefined}
       />
       <Text text={`${result}`} preset="formHelper" />
-      <Button
-        text="Send"
-        style={$tapButton}
-        preset="reversed"
-        onPress={send}
-        disabled={isSubmitted}
-      />
+      </UseCase>
+      
     </Screen>
   )
 })
 
 const $root: ViewStyle = {
   flex: 1,
-  paddingHorizontal: spacing.sm,
-  paddingTop: spacing.lg,
-}
-
-const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
-}
-
-const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
 }

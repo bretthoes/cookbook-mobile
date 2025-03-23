@@ -38,10 +38,10 @@ export const CookbookStoreModel = types
             id: response.cookbookId,
             title: self.cookbookToAdd.title,
             image: self.cookbookToAdd.image,
-            membersCount: 1,
             author: response.author,
             authorEmail: response.authorEmail,
-            recipeCount: response.recipeCount,
+            membersCount: 1,
+            recipeCount: 0,
           })
           self.cookbooks.push(newCookbook)
           self.currentCookbook = newCookbook
