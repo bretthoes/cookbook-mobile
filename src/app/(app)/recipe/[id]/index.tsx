@@ -12,6 +12,7 @@ import { useStores } from "src/models/helpers/useStores"
 import { router } from "expo-router"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { MoreButton } from "src/components/MoreButton"
+import { CustomBackButton } from "src/components/CustomBackButton"
 
 export default observer(function Recipe() {
   console.log("Recipe")
@@ -90,6 +91,10 @@ export default observer(function Recipe() {
 
   return (
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
+      <CustomBackButton 
+          onPress={() => router.back()}
+          top={recipeHasImages ? spacing.xl : spacing.sm}
+        />
       {isAuthor && (
         <MoreButton 
           onPress={handlePressMore}

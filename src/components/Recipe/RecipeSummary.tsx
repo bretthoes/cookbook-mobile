@@ -46,9 +46,9 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
       <View style={$titleContainer}>
         <Text 
           preset="heading" 
-        weight="normal" 
+          weight="normal" 
           text={recipe.title} 
-          style={{ marginTop: hasImages ? 0 : spacing.xl }} 
+          style={{ marginTop: hasImages ? 0 : spacing.xxxl }} 
         />
       </View>
 
