@@ -1,9 +1,11 @@
+import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { TextStyle, ViewStyle, View } from "react-native"
 import { Screen, Text, Button, TextField } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { spacing } from "src/theme"
+import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Invitations() {
   const { 
@@ -20,6 +22,12 @@ export default observer(function Invitations() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const error = isSubmitted ? validationError : ""
 
+  useHeader({
+    title: "Invite a Friend",
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+  })
+
   useEffect(() => {
     setResult("")
     setInviteEmail("")
@@ -34,8 +42,7 @@ export default observer(function Invitations() {
   }
 
   return (
-    <Screen style={$root} preset="fixed" safeAreaEdges={["top"]}>
-      <Text testID="login-heading" text="Invite a Friend" preset="heading" style={$logIn} />
+    <Screen style={$root} preset="scroll">
       <Text
         text={`Invite a friend to join "${currentCookbook?.title}". Your friend needs to have an account to join you.`}
         preset="default"
@@ -67,7 +74,6 @@ export default observer(function Invitations() {
 const $root: ViewStyle = {
   flex: 1,
   paddingHorizontal: spacing.sm,
-  paddingTop: spacing.lg,
 }
 
 const $textField: ViewStyle = {
