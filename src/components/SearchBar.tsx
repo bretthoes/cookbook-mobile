@@ -36,7 +36,7 @@ const $root: ViewStyle = {
   paddingHorizontal: spacing.md,
   paddingVertical: spacing.sm,
   marginHorizontal: spacing.sm,
-  borderColor: colors.palette.neutral500,
+  borderColor: colors.borderDim,
   borderWidth: 1,
   borderRadius: spacing.xs,
   backgroundColor: colors.backgroundDim,
