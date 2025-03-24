@@ -282,7 +282,7 @@ const $containerPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $containerBase,
     (theme) => ({
-      backgroundColor: theme.colors.palette.neutral100,
+      backgroundColor: theme.colors.backgroundDim,
       borderColor: theme.colors.palette.neutral300,
     }),
   ],
@@ -298,15 +298,15 @@ const $containerPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
 
 const $headingPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [],
-  reversed: [(theme) => ({ color: theme.colors.palette.neutral100 })],
+  reversed: [(theme) => ({ color: theme.colors.backgroundDim })],
 }
 
 const $contentPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [],
-  reversed: [(theme) => ({ color: theme.colors.palette.neutral100 })],
+  reversed: [(theme) => ({ color: theme.colors.backgroundDim })],
 }
 
 const $footerPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [],
-  reversed: [(theme) => ({ color: theme.colors.palette.neutral100 })],
+  reversed: [(theme) => ({ color: theme.colors.backgroundDim })],
 }

@@ -61,7 +61,7 @@ function RadioInput(props: RadioInputProps) {
   const onBackgroundColor = [
     disabled && colors.transparent,
     status === "error" && colors.errorBackground,
-    colors.palette.neutral100,
+    colors.backgroundDim,
   ].filter(Boolean)[0]
 
   const dotBackgroundColor = [

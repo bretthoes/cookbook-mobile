@@ -329,7 +329,7 @@ const $item: ViewStyle = {
   padding: spacing.md,
   marginTop: spacing.md,
   minHeight: 120,
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
 }
 
 const $itemDark: ViewStyle = {

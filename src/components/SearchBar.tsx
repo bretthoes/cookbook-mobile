@@ -39,7 +39,7 @@ const $root: ViewStyle = {
   borderColor: colors.palette.neutral500,
   borderWidth: 1,
   borderRadius: spacing.xs,
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
 }
 
 const $searchBar: TextStyle = {

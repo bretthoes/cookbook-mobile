@@ -68,7 +68,6 @@ export default observer(function Cookbook() {
 
   return (
     <Screen preset="scroll" style={$root}>
-      
       <ListView<Membership>
         data={membershipStore.memberships?.items?.slice() ?? []}
         estimatedItemSize={59}
@@ -167,7 +166,7 @@ const $right: TextStyle = {
 }
 
 const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   paddingHorizontal: spacing.md,
   marginHorizontal: spacing.lg,
 }
@@ -175,4 +174,3 @@ const $listItemStyle: ViewStyle = {
 const $root: ViewStyle = {
   flex: 1,
 }
-

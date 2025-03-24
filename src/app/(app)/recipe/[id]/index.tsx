@@ -22,7 +22,8 @@ export default observer(function Recipe() {
     membershipStore: { email, fetchEmail },
   } = useStores()
   const { showActionSheetWithOptions } = useActionSheet()
-  const isAuthor = currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  const isAuthor =
+    currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
 
   const recipeHasImages = currentRecipe?.images[0]
 
@@ -37,7 +38,7 @@ export default observer(function Recipe() {
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Delete",
@@ -45,9 +46,9 @@ export default observer(function Recipe() {
           onPress: async () => {
             await deleteRecipe()
             router.back()
-          }
-        }
-      ]
+          },
+        },
+      ],
     )
   }
 
@@ -58,30 +59,33 @@ export default observer(function Recipe() {
     } else {
       options = ["Go back to cookbook", "Cancel"]
     }
-    
+
     const cancelButtonIndex = options.length - 1
 
-    showActionSheetWithOptions({
-      options,
-      cancelButtonIndex,
-      destructiveButtonIndex: isAuthor ? 1 : undefined,
-    }, (buttonIndex) => {
-      if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex: isAuthor ? 1 : undefined,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
 
-      if (isAuthor) {
-        if (buttonIndex === 0) {
-          handlePressEdit()
-        } else if (buttonIndex === 1) {
-          handlePressDelete()
-        } else if (buttonIndex === 2) {
-          router.back()
+        if (isAuthor) {
+          if (buttonIndex === 0) {
+            handlePressEdit()
+          } else if (buttonIndex === 1) {
+            handlePressDelete()
+          } else if (buttonIndex === 2) {
+            router.back()
+          }
+        } else {
+          if (buttonIndex === 0) {
+            router.back()
+          }
         }
-      } else {
-        if (buttonIndex === 0) {
-          router.back()
-        }
-      }
-    })
+      },
+    )
   }
 
   // TODO instead of fetching this here, fetch it when we login and store email in secure storage
@@ -91,18 +95,17 @@ export default observer(function Recipe() {
 
   return (
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
-      <CustomBackButton 
-          onPress={() => router.back()}
-          top={recipeHasImages ? spacing.xl : spacing.sm}
-        />
+      <CustomBackButton
+        onPress={() => router.back()}
+        top={recipeHasImages ? spacing.xl : spacing.sm}
+      />
       {isAuthor && (
-        <MoreButton 
-          onPress={handlePressMore}
-          top={recipeHasImages ? spacing.xl : spacing.sm}
-        />
+        <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
       )}
       {currentRecipe?.images && <RecipeImages data={currentRecipe?.images} />}
-      {currentRecipe && <RecipeSummary recipe={currentRecipe} hasImages={!!currentRecipe?.images[0]} />}
+      {currentRecipe && (
+        <RecipeSummary recipe={currentRecipe} hasImages={!!currentRecipe?.images[0]} />
+      )}
 
       {currentRecipe && (
         <View style={{ minHeight: spacing.xxs }}>
@@ -182,7 +185,7 @@ export default observer(function Recipe() {
 // #region Styles
 
 const $ingredientItemStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   paddingHorizontal: spacing.md,
 }
 

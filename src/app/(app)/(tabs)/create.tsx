@@ -41,13 +41,15 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={[$itemContainer, isDark && $itemContainerDark]}
-          onPress={() => router.push({
-            pathname: "/(app)/select-cookbook",
-            params: {
-              nextRoute: "/(app)/recipe/add",
-              action: "Select the cookbook where you would like to add a new recipe.",
-            },
-          } as any)}
+          onPress={() =>
+            router.push({
+              pathname: "/(app)/select-cookbook",
+              params: {
+                nextRoute: "/(app)/recipe/add",
+                action: "Select the cookbook where you would like to add a new recipe.",
+              },
+            } as any)
+          }
         >
           <View style={[$iconContainer, isDark && $iconContainerDark]}>
             <Ionicons name="restaurant-outline" size={32} color={colors.tint} />
@@ -69,14 +71,17 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={[$itemContainer, isDark && $itemContainerDark]}
-          onPress={() => router.push({
-            pathname: "/(app)/select-cookbook",
-            params: {
-              nextRoute: "/(app)/recipe/add",
-              action: "Select the cookbook where you would like to add a new recipe from an image.",
-              onSelect: "handleAddRecipeFromCamera",
-            },
-          } as any)}
+          onPress={() =>
+            router.push({
+              pathname: "/(app)/select-cookbook",
+              params: {
+                nextRoute: "/(app)/recipe/add",
+                action:
+                  "Select the cookbook where you would like to add a new recipe from an image.",
+                onSelect: "handleAddRecipeFromCamera",
+              },
+            } as any)
+          }
         >
           <View style={[$iconContainer, isDark && $iconContainerDark]}>
             <Ionicons name="camera-outline" size={32} color={colors.tint} />
@@ -98,13 +103,16 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={[$itemContainer, isDark && $itemContainerDark]}
-          onPress={() => router.push({
-            pathname: "/(app)/select-cookbook",
-            params: {
-              nextRoute: "/(app)/recipe/select-url",
-              action: "Select the cookbook where you would like to add a new recipe from a website.",
-            },
-          } as any)}
+          onPress={() =>
+            router.push({
+              pathname: "/(app)/select-cookbook",
+              params: {
+                nextRoute: "/(app)/recipe/select-url",
+                action:
+                  "Select the cookbook where you would like to add a new recipe from a website.",
+              },
+            } as any)
+          }
         >
           <View style={[$iconContainer, isDark && $iconContainerDark]}>
             <Ionicons name="globe-outline" size={32} color={colors.tint} />
@@ -126,13 +134,16 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={[$itemContainer, isDark && $itemContainerDark, $lastItem]}
-          onPress={() => router.push({
-            pathname: "/(app)/select-cookbook",
-            params: {
-              nextRoute: "/(app)/invitation/add",
-              action: "Select the cookbook where you would like to send an invitation to a friend.",
-            },
-          } as any)}
+          onPress={() =>
+            router.push({
+              pathname: "/(app)/select-cookbook",
+              params: {
+                nextRoute: "/(app)/invitation/add",
+                action:
+                  "Select the cookbook where you would like to send an invitation to a friend.",
+              },
+            } as any)
+          }
         >
           <View style={[$iconContainer, isDark && $iconContainerDark]}>
             <Ionicons name="people-outline" size={32} color={colors.tint} />
@@ -166,7 +177,7 @@ const $title: ViewStyle = {
 }
 
 const $listContainer: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   marginHorizontal: spacing.lg,
   borderRadius: spacing.md,
 }

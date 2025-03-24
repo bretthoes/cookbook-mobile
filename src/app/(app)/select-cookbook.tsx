@@ -14,7 +14,10 @@ import { useHeader } from "src/utils/useHeader"
 
 // TODO i18n
 export default observer(function SelectCookbookScreen() {
-  const { cookbookStore, recipeStore: { setRecipeToAdd } } = useStores()
+  const {
+    cookbookStore,
+    recipeStore: { setRecipeToAdd },
+  } = useStores()
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -37,7 +40,7 @@ export default observer(function SelectCookbookScreen() {
       return
     }
     console.log("handleAddRecipeFromCamera 2")
-  
+
     const options = ["Take a Photo", "Select from Camera Roll", "Cancel"]
     const cancelButtonIndex = 2
     console.log("handleAddRecipeFromCamera 3")
@@ -55,10 +58,10 @@ export default observer(function SelectCookbookScreen() {
             allowsEditing: true,
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
           })
-  
+
           if (!result.canceled && result.assets && result.assets.length > 0) {
             const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-  
+
             if (uploadResponse.kind === "ok") {
               setRecipeToAdd(uploadResponse.recipe)
               router.replace("/(app)/recipe/add")
@@ -73,10 +76,10 @@ export default observer(function SelectCookbookScreen() {
             allowsMultipleSelection: false,
             allowsEditing: true,
           })
-  
+
           if (!result.canceled && result.assets && result.assets.length > 0) {
             const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-  
+
             if (uploadResponse.kind === "ok") {
               setRecipeToAdd(uploadResponse.recipe)
               router.replace("/(app)/recipe/add")
@@ -85,13 +88,13 @@ export default observer(function SelectCookbookScreen() {
             }
           }
         }
-      }
+      },
     )
   }
 
   const handleSelectCookbook = (cookbook: Cookbook) => {
     cookbookStore.setCurrentCookbook(cookbook)
-    
+
     if (params.onSelect === "handleAddRecipeFromCamera") {
       handleAddRecipeFromCamera()
     } else {
@@ -157,7 +160,7 @@ const $title: ViewStyle = {
 }
 
 const $listContainer: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   marginHorizontal: spacing.lg,
   borderRadius: spacing.md,
 }

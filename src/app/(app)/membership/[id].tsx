@@ -48,13 +48,17 @@ export default observer(function MembershipScreen() {
           <View style={$listItemStyle}>
             <View style={$permissionRow}>
               <Text text={item.label} />
-              <Text 
-                text={typeof item.value === 'boolean' 
-                  ? (item.value ? "Yes" : "No")
-                  : item.value || "-"} 
-                style={typeof item.value === 'boolean' 
-                  ? (item.value ? $permissionYes : $permissionNo)
-                  : $textValue} 
+              <Text
+                text={
+                  typeof item.value === "boolean" ? (item.value ? "Yes" : "No") : item.value || "-"
+                }
+                style={
+                  typeof item.value === "boolean"
+                    ? item.value
+                      ? $permissionYes
+                      : $permissionNo
+                    : $textValue
+                }
               />
             </View>
           </View>
@@ -69,7 +73,7 @@ const $root: ViewStyle = {
 }
 
 const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   paddingHorizontal: spacing.lg,
   paddingVertical: spacing.md,
   marginHorizontal: spacing.lg,
@@ -91,4 +95,5 @@ const $permissionNo: TextStyle = {
 
 const $textValue: TextStyle = {
   color: colors.text,
-} 
+}
+

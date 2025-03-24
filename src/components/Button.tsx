@@ -212,7 +212,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     ({ colors }) => ({
       borderWidth: 1,
       borderColor: colors.palette.neutral400,
-      backgroundColor: colors.palette.neutral100,
+      backgroundColor: colors.backgroundDim,
     }),
   ],
   filled: [
@@ -230,7 +230,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   default: [$baseTextStyle],
   filled: [$baseTextStyle],
-  reversed: [$baseTextStyle, ({ colors }) => ({ color: colors.palette.neutral100 })],
+  reversed: [$baseTextStyle, ({ colors }) => ({ color: colors.backgroundDim })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {

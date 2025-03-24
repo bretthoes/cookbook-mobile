@@ -19,8 +19,8 @@ export function TabBar(props: BottomTabBarProps) {
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
-              ? options.title
-              : route.name
+            ? options.title
+            : route.name
 
         if (["_sitemap", "+not-found"].includes(route.name)) return null
 
@@ -32,8 +32,8 @@ export function TabBar(props: BottomTabBarProps) {
               color: isFocused
                 ? colors.tint
                 : isDark
-                  ? colors.palette.neutral400
-                  : colors.palette.neutral600,
+                ? colors.palette.neutral400
+                : colors.palette.neutral600,
               size: 24,
             })}
           </View>
@@ -77,8 +77,8 @@ export function TabBar(props: BottomTabBarProps) {
                     color: isFocused
                       ? colors.tint
                       : isDark
-                        ? colors.palette.neutral400
-                        : colors.palette.neutral600,
+                      ? colors.palette.neutral400
+                      : colors.palette.neutral600,
                   },
                 ]}
                 text={label.toString()}
@@ -107,7 +107,7 @@ const $tabBar: ViewStyle = {
   shadowOpacity: 0.1,
   shadowRadius: 10,
   elevation: 10,
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
 }
 
 const $tabBarDark: ViewStyle = {

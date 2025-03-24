@@ -1,6 +1,14 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
-import { ActivityIndicator, Alert, ImageStyle, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  Alert,
+  ImageStyle,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
 import { Divider, EmptyState, ListView, Screen, SearchBar, Text } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
@@ -15,7 +23,11 @@ import { useActionSheet } from "@expo/react-native-action-sheet"
 import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Cookbook() {
-  const { cookbookStore, recipeStore, membershipStore: { email, fetchEmail } } = useStores()
+  const {
+    cookbookStore,
+    recipeStore,
+    membershipStore: { email, fetchEmail },
+  } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -85,7 +97,7 @@ export default observer(function Cookbook() {
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
         {
           text: "Delete",
@@ -93,28 +105,31 @@ export default observer(function Cookbook() {
           onPress: async () => {
             await cookbookStore.deleteCookbook(Number(id))
             router.back()
-          }
-        }
-      ]
+          },
+        },
+      ],
     )
   }
 
   const handlePressMore = () => {
     if (!isAuthor) return
 
-    showActionSheetWithOptions({
-      options: ["Edit Cookbook", "Delete Cookbook", "Cancel"],
-      cancelButtonIndex: 2,
-      destructiveButtonIndex: 1,
-    }, (buttonIndex) => {
-      if (buttonIndex === 0) {
-        handlePressEdit()
-      } else if (buttonIndex === 1) {
-        handlePressDelete()
-      }
-      // TODO: add a new option to add a recipe to the cookbook,
-      // and add a new option to leave the cookbook.
-    })
+    showActionSheetWithOptions(
+      {
+        options: ["Edit Cookbook", "Delete Cookbook", "Cancel"],
+        cancelButtonIndex: 2,
+        destructiveButtonIndex: 1,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          handlePressEdit()
+        } else if (buttonIndex === 1) {
+          handlePressDelete()
+        }
+        // TODO: add a new option to add a recipe to the cookbook,
+        // and add a new option to leave the cookbook.
+      },
+    )
   }
 
   if (!cookbook) return null
@@ -232,7 +247,7 @@ const $right: TextStyle = {
 }
 
 const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   paddingHorizontal: spacing.md,
   marginHorizontal: spacing.lg,
 }
@@ -240,4 +255,3 @@ const $listItemStyle: ViewStyle = {
 const $root: ViewStyle = {
   flex: 1,
 }
-
