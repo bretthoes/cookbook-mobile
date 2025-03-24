@@ -20,9 +20,8 @@ export default observer(function MembershipScreen() {
   if (!membership) return null
 
   const permissions = [
-    { label: "Email", value: membership.email },
     { label: "Name", value: membership.name ?? "" },
-    { label: "Creator", value: membership.isCreator },
+    { label: "Cookbook Owner", value: membership.isCreator },
     { label: "Can Add Recipe", value: membership.canAddRecipe },
     { label: "Can Update Recipe", value: membership.canUpdateRecipe },
     { label: "Can Delete Recipe", value: membership.canDeleteRecipe },

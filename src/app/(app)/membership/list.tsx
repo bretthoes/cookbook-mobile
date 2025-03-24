@@ -152,19 +152,6 @@ const $borderBottom: ViewStyle = {
   paddingBottom: spacing.lg,
 }
 
-const $headerContainer: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingTop: spacing.xl,
-  paddingHorizontal: spacing.md,
-  marginBottom: spacing.xl,
-}
-
-const $right: TextStyle = {
-  textAlign: "right",
-}
-
 const $listItemStyle: ViewStyle = {
   backgroundColor: colors.backgroundDim,
   paddingHorizontal: spacing.md,
