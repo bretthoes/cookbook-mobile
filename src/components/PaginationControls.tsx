@@ -68,5 +68,5 @@ const $root: ViewStyle = {
 
 const $text: TextStyle = {
   textAlign: "center",
-  color: colors.palette.neutral700,
+  color: colors.icon,
 }

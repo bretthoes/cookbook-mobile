@@ -232,7 +232,7 @@ const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   default: ({ colors }) => ({ backgroundColor: colors.background }),
   filled: ({ colors }) => ({ backgroundColor: colors.border }),
-  reversed: ({ colors }) => ({ backgroundColor: colors.palette.neutral700 }),
+  reversed: ({ colors }) => ({ backgroundColor: colors.icon }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<ViewStyle>> = {

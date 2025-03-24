@@ -70,7 +70,7 @@ const $dot: ViewStyle = {
 }
 
 const $activeDot: ViewStyle = {
-  backgroundColor: colors.palette.neutral700,
+  backgroundColor: colors.icon,
 }
 
 const $inactiveDot: ViewStyle = {

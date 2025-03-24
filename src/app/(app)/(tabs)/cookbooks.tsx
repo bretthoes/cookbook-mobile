@@ -245,14 +245,7 @@ const CookbookCard = observer(function CookbookCard({
 
   return (
     <Card
-      style={[
-        $item,
-        isDark && $itemDark,
-        isDark && {
-          shadowOpacity: 0,
-          elevation: 0,
-        },
-      ]}
+      style={$item}
       verticalAlignment="force-footer-bottom"
       onPress={handlePressCard}
       onLongPress={handlePressFavorite}
@@ -260,14 +253,14 @@ const CookbookCard = observer(function CookbookCard({
       HeadingComponent={
         <View style={$metadata}>
           <Text
-            style={[$metadataText, isDark && $metadataTextDark]}
+            style={$metadataText}
             size="xxs"
             accessibilityLabel={cookbook.members.accessibilityLabel}
           >
             {cookbook.members.textLabel}
           </Text>
           <Text
-            style={[$metadataText, isDark && $metadataTextDark]}
+            style={$metadataText}
             size="xxs"
             accessibilityLabel={cookbook.recipes.accessibilityLabel}
           >
@@ -282,12 +275,7 @@ const CookbookCard = observer(function CookbookCard({
         <Button
           onPress={handlePressFavorite}
           onLongPress={handlePressFavorite}
-          style={[
-            $favoriteButton,
-            isDark && $favoriteButtonDark,
-            isFavorite && $unFavoriteButton,
-            isDark && isFavorite && $unFavoriteButtonDark,
-          ]}
+          style={[$favoriteButton, isFavorite && $unFavoriteButton]}
           accessibilityLabel={
             isFavorite
               ? translate("demoPodcastListScreen:accessibility.unfavoriteIcon")
@@ -303,7 +291,6 @@ const CookbookCard = observer(function CookbookCard({
                 ? translate("demoPodcastListScreen:unfavoriteButton")
                 : translate("demoPodcastListScreen:favoriteButton")
             }
-            style={[isDark && $favoriteButtonTextDark]}
           />
         </Button>
       }
@@ -330,10 +317,6 @@ const $item: ViewStyle = {
   marginTop: spacing.md,
   minHeight: 120,
   backgroundColor: colors.backgroundDim,
-}
-
-const $itemDark: ViewStyle = {
-  backgroundColor: colors.palette.neutral800,
 }
 
 const $itemThumbnail: ImageStyle = {
@@ -370,10 +353,6 @@ const $metadataText: TextStyle = {
   marginBottom: spacing.xs,
 }
 
-const $metadataTextDark: TextStyle = {
-  color: colors.border,
-}
-
 const $favoriteButton: ViewStyle = {
   borderRadius: 17,
   marginTop: spacing.md,
@@ -387,23 +366,9 @@ const $favoriteButton: ViewStyle = {
   alignSelf: "flex-start",
 }
 
-const $favoriteButtonDark: ViewStyle = {
-  backgroundColor: colors.palette.neutral700,
-  borderColor: colors.palette.neutral700,
-}
-
-const $favoriteButtonTextDark: TextStyle = {
-  color: colors.background,
-}
-
 const $unFavoriteButton: ViewStyle = {
   borderColor: colors.palette.primary100,
   backgroundColor: colors.palette.primary100,
-}
-
-const $unFavoriteButtonDark: ViewStyle = {
-  borderColor: colors.palette.primary400,
-  backgroundColor: colors.palette.primary400,
 }
 
 const $emptyState: ViewStyle = {

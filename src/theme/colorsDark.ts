@@ -44,6 +44,7 @@ export const colors = {
   backgroundDim: palette.neutral100,
   border: palette.neutral400,
   borderDim: palette.neutral500,
+  icon: palette.neutral700,
   tint: palette.primary500,
   tintInactive: palette.neutral300,
   separator: palette.neutral300,

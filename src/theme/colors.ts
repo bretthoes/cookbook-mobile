@@ -70,6 +70,10 @@ export const colors = {
    * Secondary border color.
    */
   borderDim: palette.neutral500,
+  /*
+   *
+   */
+  icon: palette.neutral700,
   /**
    * The main tinting color.
    */
