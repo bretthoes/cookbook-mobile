@@ -94,7 +94,7 @@ const $tabBar: ViewStyle = {
   paddingVertical: 10,
   borderRadius: 25,
   borderCurve: "continuous",
-  shadowColor: colors.palette.neutral900,
+  shadowColor: colors.text,
   shadowOffset: { width: 0, height: 10 },
   shadowOpacity: 0.1,
   shadowRadius: 10,
@@ -104,7 +104,7 @@ const $tabBar: ViewStyle = {
 
 const $tabBarDark: ViewStyle = {
   backgroundColor: colors.text,
-  shadowColor: colors.palette.neutral900,
+  shadowColor: colors.text,
   shadowOpacity: 0.3,
 }
 
