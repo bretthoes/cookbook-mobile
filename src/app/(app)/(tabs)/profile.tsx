@@ -93,136 +93,135 @@ export default function Profile() {
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]}>
       <View style={$titleContainer}>
-      <Text
-        style={$reportBugsLink}
-        tx="profileScreen:reportBugs"
-        onPress={() =>
-          openLinkInBrowser(`mailto:${config.SUPPORT_EMAIL}?subject=Language%20Support%20Request`)
-        }
-      />
-      <Text preset="heading" tx="profileScreen:title" />
-      {email && <Text preset="default" text={email} />}
+        <Text
+          style={$reportBugsLink}
+          tx="profileScreen:reportBugs"
+          onPress={() =>
+            openLinkInBrowser(`mailto:${config.SUPPORT_EMAIL}?subject=Language%20Support%20Request`)
+          }
+        />
+        <Text preset="heading" tx="profileScreen:title" />
+        {email && <Text preset="default" text={email} />}
       </View>
       <UseCase name="Actions">
-      <Text text="Manage your info in the app." style={$description} />
-      <ListItem
-        text="View your pending invitations"
-        bottomSeparator
-        rightIcon={isRTL ? "caretLeft" : "caretRight"}
-        LeftComponent={
-          <View style={$logoContainer}>
-            <Image source={reactNativeNewsletterLogo} style={$logo} />
-          </View>
-        }
-        onPress={() => router.push("/(app)/invitation")}
-      />
-      <ListItem
-        text="Manage your cookbooks"
-        bottomSeparator
-        rightIcon={isRTL ? "caretLeft" : "caretRight"}
-        LeftComponent={
-          <View style={$logoContainer}>
-            <Image source={reactNativeNewsletterLogo} style={$logo} />
-          </View>
-        }
-        onPress={() => router.push({
-          pathname: "/(app)/select-cookbook",
-          params: {
-            nextRoute: "/(app)/membership/list",
-            action: "Select a cookbook to view its members.",
-          },
-        })}
-      />
+        <Text text="Manage your info in the app." style={$description} />
+        <ListItem
+          text="View your pending invitations"
+          bottomSeparator
+          rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          LeftComponent={
+            <View style={$logoContainer}>
+              <Image source={reactNativeNewsletterLogo} style={$logo} />
+            </View>
+          }
+          onPress={() => router.push("/(app)/invitation")}
+        />
+        <ListItem
+          text="Manage your cookbooks"
+          bottomSeparator
+          rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          LeftComponent={
+            <View style={$logoContainer}>
+              <Image source={reactNativeNewsletterLogo} style={$logo} />
+            </View>
+          }
+          onPress={() =>
+            router.push({
+              pathname: "/(app)/select-cookbook",
+              params: {
+                nextRoute: "/(app)/membership/list",
+                action: "Select a cookbook to view its members.",
+              },
+            })
+          }
+        />
       </UseCase>
-      <UseCase name="Preferences" >
-      <Text
-        text="Customize your experience in the app."
-        style={$description}
-      />
-      <View style={$themeRow}>
-        <Text text="Dark Mode" />
-        <Switch value={themeContext === "dark"} onValueChange={toggleTheme} />
-      </View>
-      {/*<View style={$themeRow}> // TODO disabled for now; need to fix padding when floating tab bar is disabled
+      <UseCase name="Preferences">
+        <Text text="Customize your experience in the app." style={$description} />
+        <View style={$themeRow}>
+          <Text text="Dark Mode" />
+          <Switch value={themeContext === "dark"} onValueChange={toggleTheme} />
+        </View>
+        {/*<View style={$themeRow}> // TODO disabled for now; need to fix padding when floating tab bar is disabled
         <Text text="Floating Tab Bar" />
         <Switch
           value={useFloatingTabBar}
           onValueChange={toggleFloatingTabBar}
         />
       </View>*/}
-      <ListItem
-        text="Choose your preferred language"
-        leftIcon="components"
-        onPress={() => router.push("/(app)/language")}
-        rightIcon={isRTL ? "caretLeft" : "caretRight"}
-        bottomSeparator
-      />
-      <ListItem
-        text="Set your display name"
-        bottomSeparator
-        rightIcon={isRTL ? "caretLeft" : "caretRight"}
-        LeftComponent={
-          <View style={$logoContainer}>
-            <Image source={reactNativeNewsletterLogo} style={$logo} />
-          </View>
-        }
-        onPress={() => router.push("/(app)/set-display-name")}
-      />
+        <ListItem
+          text="Choose your preferred language"
+          leftIcon="components"
+          onPress={() => router.push("/(app)/language")}
+          rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          bottomSeparator
+        />
+        <ListItem
+          text="Set your display name"
+          bottomSeparator
+          rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          LeftComponent={
+            <View style={$logoContainer}>
+              <Image source={reactNativeNewsletterLogo} style={$logo} />
+            </View>
+          }
+          onPress={() => router.push("/(app)/set-display-name")}
+        />
       </UseCase>
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />
       </View>
       <View style={$itemsContainer}>
-      <UseCase name="Debug">
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Id</Text>
-              <Text>{Application.applicationId}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Name</Text>
-              <Text>{Application.applicationName}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Version</Text>
-              <Text>{Application.nativeApplicationVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">App Build Version</Text>
-              <Text>{Application.nativeBuildVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Hermes Enabled</Text>
-              <Text>{String(usingHermes)}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View style={$item}>
-              <Text preset="bold">Fabric Enabled</Text>
-              <Text>{String(usingFabric)}</Text>
-            </View>
-          }
-        />
-      </UseCase>
+        <UseCase name="Debug">
+          <ListItem
+            LeftComponent={
+              <View style={$item}>
+                <Text preset="bold">App Id</Text>
+                <Text>{Application.applicationId}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View style={$item}>
+                <Text preset="bold">App Name</Text>
+                <Text>{Application.applicationName}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View style={$item}>
+                <Text preset="bold">App Version</Text>
+                <Text>{Application.nativeApplicationVersion}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View style={$item}>
+                <Text preset="bold">App Build Version</Text>
+                <Text>{Application.nativeBuildVersion}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View style={$item}>
+                <Text preset="bold">Hermes Enabled</Text>
+                <Text>{String(usingHermes)}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View style={$item}>
+                <Text preset="bold">Fabric Enabled</Text>
+                <Text>{String(usingFabric)}</Text>
+              </View>
+            }
+          />
+        </UseCase>
       </View>
       <View style={$buttonContainer}>
         <Button style={$button} tx="demoDebugScreen:reactotron" onPress={demoReactotron} />
@@ -280,7 +279,7 @@ const $description: TextStyle = {
 }
 
 const $hint: TextStyle = {
-  color: colors.palette.neutral600,
+  color: colors.textDim,
   fontSize: 12,
   lineHeight: 15,
   paddingBottom: spacing.lg,

@@ -29,7 +29,7 @@ export function TabBar(props: BottomTabBarProps) {
           <View style={{ marginBottom: -6 }}>
             {options.tabBarIcon({
               focused: isFocused,
-              color: isFocused ? colors.tint : isDark ? colors.border : colors.palette.neutral600,
+              color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
               size: 24,
             })}
           </View>
@@ -70,11 +70,7 @@ export function TabBar(props: BottomTabBarProps) {
               <Text
                 style={[
                   {
-                    color: isFocused
-                      ? colors.tint
-                      : isDark
-                      ? colors.border
-                      : colors.palette.neutral600,
+                    color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
                   },
                 ]}
                 text={label.toString()}

@@ -102,13 +102,13 @@ function SwitchInput(props: SwitchInputProps) {
       return [
         $detailStyleOverride?.backgroundColor,
         status === "error" && colors.error,
-        disabled && colors.palette.neutral600,
+        disabled && colors.textDim,
         colors.backgroundDim,
       ].filter(Boolean)[0]
     } else {
       return [
         $innerStyleOverride?.backgroundColor,
-        disabled && colors.palette.neutral600,
+        disabled && colors.textDim,
         status === "error" && colors.error,
         colors.background,
       ].filter(Boolean)[0]
@@ -204,7 +204,7 @@ function SwitchAccessibilityLabel(props: SwitchInputProps & { role: "on" | "off"
   ]
 
   const color = (function () {
-    if (disabled) return colors.palette.neutral600
+    if (disabled) return colors.textDim
     if (status === "error") return colors.error
     if (!on) return innerStyle?.backgroundColor || colors.palette.secondary500
     return detailStyle?.backgroundColor || colors.backgroundDim

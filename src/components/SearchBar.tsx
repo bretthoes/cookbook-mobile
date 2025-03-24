@@ -25,7 +25,7 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
         onChangeText={onChangeText}
         placeholderTextColor={colors.border}
       />
-      <Feather name="search" size={20} color={colors.palette.neutral600} />
+      <Feather name="search" size={20} color={colors.textDim} />
     </View>
   )
 })
