@@ -393,7 +393,7 @@ const $favoriteButtonDark: ViewStyle = {
 }
 
 const $favoriteButtonTextDark: TextStyle = {
-  color: colors.palette.neutral200,
+  color: colors.background,
 }
 
 const $unFavoriteButton: ViewStyle = {

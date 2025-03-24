@@ -15,18 +15,11 @@ export function CustomBackButton({ onPress, style, top = spacing.xl }: CustomBac
   const isDark = themeContext === "dark"
 
   return (
-    <TouchableOpacity 
-      style={[
-        $moreButton,
-        { top },
-        style
-      ]} 
-      onPress={onPress}
-    >
-      <Ionicons 
-        name="arrow-back" 
-        size={24} 
-        color={isDark ? colors.palette.neutral200 : colors.palette.neutral800} 
+    <TouchableOpacity style={[$moreButton, { top }, style]} onPress={onPress}>
+      <Ionicons
+        name="arrow-back"
+        size={24}
+        color={isDark ? colors.background : colors.palette.neutral800}
       />
     </TouchableOpacity>
   )
@@ -39,4 +32,5 @@ const $moreButton: ViewStyle = {
   backgroundColor: colors.transparent,
   borderRadius: spacing.xs,
   padding: spacing.xs,
-} 
+}
+

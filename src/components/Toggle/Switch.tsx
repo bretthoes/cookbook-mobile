@@ -110,7 +110,7 @@ function SwitchInput(props: SwitchInputProps) {
         $innerStyleOverride?.backgroundColor,
         disabled && colors.palette.neutral600,
         status === "error" && colors.error,
-        colors.palette.neutral200,
+        colors.background,
       ].filter(Boolean)[0]
     }
   })()

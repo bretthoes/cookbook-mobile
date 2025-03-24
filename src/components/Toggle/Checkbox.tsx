@@ -55,7 +55,7 @@ function CheckboxInput(props: CheckboxInputProps) {
   const offBackgroundColor = [
     disabled && colors.palette.neutral400,
     status === "error" && colors.errorBackground,
-    colors.palette.neutral200,
+    colors.background,
   ].filter(Boolean)[0]
 
   const outerBorderColor = [

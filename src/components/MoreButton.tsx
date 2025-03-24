@@ -15,18 +15,11 @@ export function MoreButton({ onPress, style, top = spacing.xl }: MoreButtonProps
   const isDark = themeContext === "dark"
 
   return (
-    <TouchableOpacity 
-      style={[
-        $moreButton,
-        { top },
-        style
-      ]} 
-      onPress={onPress}
-    >
-      <Ionicons 
-        name="ellipsis-vertical" 
-        size={24} 
-        color={isDark ? colors.palette.neutral200 : colors.palette.neutral800} 
+    <TouchableOpacity style={[$moreButton, { top }, style]} onPress={onPress}>
+      <Ionicons
+        name="ellipsis-vertical"
+        size={24}
+        color={isDark ? colors.background : colors.palette.neutral800}
       />
     </TouchableOpacity>
   )
@@ -39,4 +32,5 @@ const $moreButton: ViewStyle = {
   backgroundColor: colors.transparent,
   borderRadius: spacing.xs,
   padding: spacing.xs,
-} 
+}
+

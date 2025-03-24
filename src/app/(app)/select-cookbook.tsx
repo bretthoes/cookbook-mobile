@@ -170,7 +170,7 @@ const $itemContainer: ViewStyle = {
   alignItems: "center",
   padding: spacing.md,
   borderBottomWidth: 1,
-  borderBottomColor: colors.palette.neutral200,
+  borderBottomColor: colors.background,
   minHeight: 80,
 }
 
@@ -188,7 +188,7 @@ const $lastItem: ViewStyle = {
 const $iconContainer: ViewStyle = {
   width: 48,
   height: 48,
-  backgroundColor: colors.palette.neutral200,
+  backgroundColor: colors.background,
   alignItems: "center",
   justifyContent: "center",
   marginRight: spacing.md,
