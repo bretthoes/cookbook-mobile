@@ -3,7 +3,6 @@ import { View, ViewStyle } from "react-native"
 import { Text } from "src/components"
 import { spacing, colors } from "src/theme"
 import { Recipe } from "src/models/Recipe"
-import { TxKeyPath } from "src/i18n"
 
 const $titleContainer: ViewStyle = {
   flexDirection: "row",
@@ -21,7 +20,7 @@ const $subtitleContainer: ViewStyle = {
 const $detailsContainer: ViewStyle = {
   flexDirection: "row",
   justifyContent: "space-evenly",
-  backgroundColor: colors.palette.neutral300,
+  backgroundColor: colors.tintInactive,
   borderRadius: spacing.md,
   borderColor: colors.palette.neutral400,
   borderWidth: spacing.xxxs,
@@ -44,11 +43,11 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
   return (
     <View>
       <View style={$titleContainer}>
-        <Text 
-          preset="heading" 
-          weight="normal" 
-          text={recipe.title} 
-          style={{ marginTop: hasImages ? 0 : spacing.xxxl }} 
+        <Text
+          preset="heading"
+          weight="normal"
+          text={recipe.title}
+          style={{ marginTop: hasImages ? 0 : spacing.xxxl }}
         />
       </View>
 

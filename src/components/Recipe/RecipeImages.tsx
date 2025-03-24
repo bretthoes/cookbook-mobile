@@ -74,7 +74,7 @@ const $activeDot: ViewStyle = {
 }
 
 const $inactiveDot: ViewStyle = {
-  backgroundColor: colors.palette.neutral300,
+  backgroundColor: colors.tintInactive,
 }
 
 // #endregion

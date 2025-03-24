@@ -283,7 +283,7 @@ const $containerPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $containerBase,
     (theme) => ({
       backgroundColor: theme.colors.backgroundDim,
-      borderColor: theme.colors.palette.neutral300,
+      borderColor: theme.colors.separator,
     }),
   ],
   reversed: [

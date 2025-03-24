@@ -38,7 +38,7 @@ export function PaginationControls(props: PaginationControlsProps) {
         RightAccessory={() => (
           <Icon
             icon="caretLeft"
-            color={hasPreviousPage ? colors.palette.neutral900 : colors.palette.neutral300}
+            color={hasPreviousPage ? colors.palette.neutral900 : colors.separator}
           />
         )}
       ></Button>
@@ -51,7 +51,7 @@ export function PaginationControls(props: PaginationControlsProps) {
         RightAccessory={() => (
           <Icon
             icon="caretRight"
-            color={hasNextPage ? colors.palette.neutral900 : colors.palette.neutral300}
+            color={hasNextPage ? colors.palette.neutral900 : colors.separator}
           />
         )}
       />
