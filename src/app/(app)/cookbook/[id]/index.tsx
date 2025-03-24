@@ -111,13 +111,35 @@ export default observer(function Cookbook() {
     )
   }
 
+  const handlePressLeave = async () => {
+    Alert.alert(
+      "Leave Cookbook",
+      "Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Leave",
+          style: "destructive",
+          onPress: async () => {
+            // TODO: add a new option to leave the cookbook (delete membership).
+            //await cookbookStore.leaveCookbook()
+            router.back()
+          },
+        },
+      ],
+    )
+  }
+
   const handlePressMore = () => {
     if (!isAuthor) return
 
     showActionSheetWithOptions(
       {
-        options: ["Edit Cookbook", "Delete Cookbook", "Cancel"],
-        cancelButtonIndex: 2,
+        options: ["Edit Cookbook", "Delete Cookbook", "Leave Cookbook", "Cancel"],
+        cancelButtonIndex: 3,
         destructiveButtonIndex: 1,
       },
       (buttonIndex) => {
@@ -125,9 +147,9 @@ export default observer(function Cookbook() {
           handlePressEdit()
         } else if (buttonIndex === 1) {
           handlePressDelete()
+        } else if (buttonIndex === 2) {
+          handlePressLeave()
         }
-        // TODO: add a new option to add a recipe to the cookbook,
-        // and add a new option to leave the cookbook.
       },
     )
   }
