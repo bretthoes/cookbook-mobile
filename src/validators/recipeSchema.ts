@@ -11,7 +11,7 @@ export const recipeSchema = yup.object().shape({
     .nullable()
     .defined()
     .min(3, "Summary at least 3 characters")
-    .max(255, "Summary at most 255 characters"),
+    .max(2048, "Summary at most 2048 characters"),
   preparationTimeInMinutes: yup
     .number()
     .nullable()
@@ -59,7 +59,7 @@ export const recipeSchema = yup.object().shape({
           .string()
           .required("Direction is required")
           .min(3, "Direction at least 3 characters")
-          .max(255, "Direction at most 255 characters"),
+          .max(2048, "Direction at most 2048 characters"),
         image: yup.string().nullable().defined().default(null),
       }),
     )

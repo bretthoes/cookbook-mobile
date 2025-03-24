@@ -4,7 +4,7 @@ import { ViewStyle, TextStyle, View } from "react-native"
 import { Screen, Text, ListView } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
-import { useLocalSearchParams, router } from "expo-router"
+import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
 
 export default observer(function MembershipScreen() {

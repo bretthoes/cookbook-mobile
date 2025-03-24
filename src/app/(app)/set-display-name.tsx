@@ -23,7 +23,7 @@ export default observer(function SetDisplayName() {
   } = useStores()
   const displayNameValidator = useMemo(() => {
     if (displayName.length < 1) return "Must be at least 1 character."
-    if (displayName.length > 30) return "Cannot exceed 30 characters."
+    if (displayName.length > 60) return "Cannot exceed 60 characters."
     return ""
   }, [displayName])
 
