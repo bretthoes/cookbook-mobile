@@ -86,9 +86,9 @@ function SwitchInput(props: SwitchInputProps) {
   )
 
   const offBackgroundColor = [
-    disabled && colors.palette.neutral400,
+    disabled && colors.border,
     status === "error" && colors.errorBackground,
-    colors.palette.neutral400,
+    colors.border,
   ].filter(Boolean)[0]
 
   const onBackgroundColor = [

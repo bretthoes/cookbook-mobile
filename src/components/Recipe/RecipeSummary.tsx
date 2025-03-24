@@ -22,7 +22,7 @@ const $detailsContainer: ViewStyle = {
   justifyContent: "space-evenly",
   backgroundColor: colors.tintInactive,
   borderRadius: spacing.md,
-  borderColor: colors.palette.neutral400,
+  borderColor: colors.border,
   borderWidth: spacing.xxxs,
   margin: spacing.sm,
   padding: spacing.md,

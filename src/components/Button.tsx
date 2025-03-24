@@ -211,7 +211,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $baseViewStyle,
     ({ colors }) => ({
       borderWidth: 1,
-      borderColor: colors.palette.neutral400,
+      borderColor: colors.border,
       backgroundColor: colors.backgroundDim,
     }),
   ],
@@ -231,7 +231,7 @@ const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   default: ({ colors }) => ({ backgroundColor: colors.background }),
-  filled: ({ colors }) => ({ backgroundColor: colors.palette.neutral400 }),
+  filled: ({ colors }) => ({ backgroundColor: colors.border }),
   reversed: ({ colors }) => ({ backgroundColor: colors.palette.neutral700 }),
 }
 

@@ -112,7 +112,7 @@ export default observer(function ResetPassword() {
           testID="Update password"
           text="Update password"
           style={$tapButton}
-          textStyle={passwordSuccessfullyReset ? { color: colors.palette.neutral400 } : undefined}
+          textStyle={passwordSuccessfullyReset ? { color: colors.border } : undefined}
           preset="reversed"
           onPress={authenticate}
         />

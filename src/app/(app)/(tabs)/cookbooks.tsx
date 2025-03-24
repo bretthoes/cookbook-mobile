@@ -231,7 +231,7 @@ const CookbookCard = observer(function CookbookCard({
               <Icon
                 icon="heart"
                 size={ICON_SIZE}
-                color={isDark ? colors.palette.neutral400 : colors.palette.neutral800}
+                color={isDark ? colors.border : colors.palette.neutral800}
               />
             </Animated.View>
             <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
@@ -371,7 +371,7 @@ const $metadataText: TextStyle = {
 }
 
 const $metadataTextDark: TextStyle = {
-  color: colors.palette.neutral400,
+  color: colors.border,
 }
 
 const $favoriteButton: ViewStyle = {

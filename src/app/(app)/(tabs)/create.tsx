@@ -32,11 +32,7 @@ export default observer(function CreateScreen() {
               style={[$itemDescription, isDark && $itemDescriptionDark]}
             />
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={isDark ? colors.palette.neutral400 : colors.text}
-          />
+          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -62,11 +58,7 @@ export default observer(function CreateScreen() {
               style={[$itemDescription, isDark && $itemDescriptionDark]}
             />
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={isDark ? colors.palette.neutral400 : colors.text}
-          />
+          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -94,11 +86,7 @@ export default observer(function CreateScreen() {
               style={[$itemDescription, isDark && $itemDescriptionDark]}
             />
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={isDark ? colors.palette.neutral400 : colors.text}
-          />
+          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -125,11 +113,7 @@ export default observer(function CreateScreen() {
               style={[$itemDescription, isDark && $itemDescriptionDark]}
             />
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={isDark ? colors.palette.neutral400 : colors.text}
-          />
+          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -156,11 +140,7 @@ export default observer(function CreateScreen() {
               style={[$itemDescription, isDark && $itemDescriptionDark]}
             />
           </View>
-          <Ionicons
-            name="chevron-forward"
-            size={24}
-            color={isDark ? colors.palette.neutral400 : colors.text}
-          />
+          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
       </View>
     </Screen>
@@ -240,5 +220,5 @@ const $itemDescription: TextStyle = {
 }
 
 const $itemDescriptionDark: TextStyle = {
-  color: colors.palette.neutral400,
+  color: colors.border,
 }

@@ -59,7 +59,7 @@ export default observer(function EmailVerification() {
         onPress={handleResendEmail}
         style={$tapButton}
         disabled={isCooldown}
-        textStyle={isCooldown ? { color: colors.palette.neutral400 } : undefined}
+        textStyle={isCooldown ? { color: colors.border } : undefined}
       />
 
       <Text text={`${result}`} preset="formHelper" style={$formHelper} />
