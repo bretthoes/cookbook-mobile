@@ -103,7 +103,7 @@ const $tabBar: ViewStyle = {
 }
 
 const $tabBarDark: ViewStyle = {
-  backgroundColor: colors.palette.neutral800,
+  backgroundColor: colors.text,
   shadowColor: colors.palette.neutral900,
   shadowOpacity: 0.3,
 }

@@ -56,7 +56,7 @@ export default observer(function ResetPassword() {
         return (
           <Icon
             icon={isPasswordHidden ? "view" : "hidden"}
-            color={colors.palette.neutral800}
+            color={colors.text}
             containerStyle={props.style}
             size={20}
             onPress={() => setIsPasswordHidden(!isPasswordHidden)}

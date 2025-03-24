@@ -216,11 +216,7 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     }),
   ],
   filled: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.tintInactive })],
-  reversed: [
-    $styles.row,
-    $baseViewStyle,
-    ({ colors }) => ({ backgroundColor: colors.palette.neutral800 }),
-  ],
+  reversed: [$styles.row, $baseViewStyle, ({ colors }) => ({ backgroundColor: colors.text })],
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {

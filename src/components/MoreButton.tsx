@@ -19,7 +19,7 @@ export function MoreButton({ onPress, style, top = spacing.xl }: MoreButtonProps
       <Ionicons
         name="ellipsis-vertical"
         size={24}
-        color={isDark ? colors.background : colors.palette.neutral800}
+        color={isDark ? colors.background : colors.text}
       />
     </TouchableOpacity>
   )
@@ -33,4 +33,3 @@ const $moreButton: ViewStyle = {
   borderRadius: spacing.xs,
   padding: spacing.xs,
 }
-

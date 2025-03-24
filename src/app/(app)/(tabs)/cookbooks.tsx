@@ -228,11 +228,7 @@ const CookbookCard = observer(function CookbookCard({
             <Animated.View
               style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
             >
-              <Icon
-                icon="heart"
-                size={ICON_SIZE}
-                color={isDark ? colors.border : colors.palette.neutral800}
-              />
+              <Icon icon="heart" size={ICON_SIZE} color={isDark ? colors.border : colors.text} />
             </Animated.View>
             <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
               <Icon icon="heart" size={ICON_SIZE} color={colors.palette.primary400} />

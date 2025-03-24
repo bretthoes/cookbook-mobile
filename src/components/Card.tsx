@@ -257,7 +257,7 @@ const $containerBase: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
   padding: theme.spacing.xs,
   borderWidth: 1,
-  shadowColor: theme.colors.palette.neutral800,
+  shadowColor: theme.colors.text,
   shadowOffset: { width: 0, height: 12 },
   shadowOpacity: 0.08,
   shadowRadius: 12.81,
@@ -290,7 +290,7 @@ const $containerPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
     $styles.row,
     $containerBase,
     (theme) => ({
-      backgroundColor: theme.colors.palette.neutral800,
+      backgroundColor: theme.colors.text,
       borderColor: theme.colors.borderDim,
     }),
   ],

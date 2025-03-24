@@ -66,7 +66,7 @@ export default observer(function Login(_props) {
         return (
           <Icon
             icon={isAuthPasswordHidden ? "view" : "hidden"}
-            color={colors.palette.neutral800}
+            color={colors.text}
             containerStyle={props.style}
             size={20}
             onPress={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}

@@ -54,7 +54,7 @@ function RadioInput(props: RadioInputProps) {
   const outerBorderColor = [
     disabled && colors.border,
     status === "error" && colors.error,
-    !on && colors.palette.neutral800,
+    !on && colors.text,
     colors.palette.secondary500,
   ].filter(Boolean)[0]
 
