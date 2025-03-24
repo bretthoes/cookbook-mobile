@@ -53,12 +53,7 @@ export default observer(function Recipe() {
   }
 
   const handlePressMore = () => {
-    let options = []
-    if (isAuthor) {
-      options = ["Edit Recipe", "Delete Recipe", "Go back to cookbook", "Cancel"]
-    } else {
-      options = ["Go back to cookbook", "Cancel"]
-    }
+    const options = ["Edit Recipe", "Delete Recipe", "Cancel"]
 
     const cancelButtonIndex = options.length - 1
 
@@ -66,23 +61,15 @@ export default observer(function Recipe() {
       {
         options,
         cancelButtonIndex,
-        destructiveButtonIndex: isAuthor ? 1 : undefined,
+          destructiveButtonIndex: 1,
       },
       (buttonIndex) => {
         if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
 
-        if (isAuthor) {
-          if (buttonIndex === 0) {
-            handlePressEdit()
-          } else if (buttonIndex === 1) {
-            handlePressDelete()
-          } else if (buttonIndex === 2) {
-            router.back()
-          }
-        } else {
-          if (buttonIndex === 0) {
-            router.back()
-          }
+        if (buttonIndex === 0) {
+          handlePressEdit()
+        } else if (buttonIndex === 1) {
+          handlePressDelete()
         }
       },
     )
@@ -190,7 +177,7 @@ const $ingredientItemStyle: ViewStyle = {
 }
 
 const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.palette.neutral100,
+  backgroundColor: colors.backgroundDim,
   paddingHorizontal: spacing.md,
 }
 
