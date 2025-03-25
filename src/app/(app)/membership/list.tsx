@@ -106,7 +106,7 @@ export default observer(function Cookbook() {
               text={`${item.name ?? item.email}`}
               onPress={async () => {
                 await membershipStore.single(item.id)
-                router.push(`(app)/membership/${item.id}` as Href<`(app)/membership/${number}`>)
+                router.push(`/membership/${item.id}`)
               }}
             />
           </View>

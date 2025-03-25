@@ -1,21 +1,67 @@
 import { observer } from "mobx-react-lite"
-import React from "react"
+import React, { useEffect, useState } from "react"
 import { ViewStyle, TextStyle, View } from "react-native"
-import { Screen, Text, ListView } from "src/components"
+import { Screen, Text, ListView, Icon } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
+import { useActionSheet } from "@expo/react-native-action-sheet"
+import * as SecureStore from "expo-secure-store"
 
 export default observer(function MembershipScreen() {
   const { membershipStore } = useStores()
   const membership = membershipStore.currentMembership
+  const { showActionSheetWithOptions } = useActionSheet()
+  const [email, setEmail] = useState<string | null>(null)
+  const [isOwner, setIsOwner] = useState<boolean>(false)
+
+  useEffect(() => {
+    SecureStore.getItemAsync("email").then((result) => {
+      console.log("Stored email:", result)
+      setEmail(result)
+    })
+  }, [])
+
+  useEffect(() => {
+    console.log("Email state:", email)
+    console.log("Memberships:", membershipStore.memberships?.items)
+    if (email && membershipStore.memberships?.items) {
+      const userMembership = membershipStore.memberships.items.find(
+        (m) => m.email === email && m.isCreator
+      )
+      console.log("Found user membership:", userMembership)
+      setIsOwner(!!userMembership)
+    }
+  }, [email, membershipStore.memberships?.items])
+
+  console.log("isOwner:", isOwner)
+
+  const handlePressMore = () => {
+    const options = ["Edit", "Cancel"]
+    const cancelButtonIndex = 1
+
+    showActionSheetWithOptions(
+      { 
+        options,
+        cancelButtonIndex,
+      },
+      (selectedIndex) => {
+        if (selectedIndex === 0) {
+          // Edit
+          router.push(`/membership/${membership?.id}/edit`)
+        }
+      },
+    )
+  }
 
   useHeader({
     leftIcon: "back",
     title: "Membership Details",
     onLeftPress: () => router.back(),
-  })
+    rightIcon: isOwner ? "more" : undefined,
+    onRightPress: isOwner ? handlePressMore : undefined,
+  }, [isOwner])
 
   if (!membership) return null
 

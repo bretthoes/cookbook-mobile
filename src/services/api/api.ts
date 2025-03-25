@@ -834,6 +834,58 @@ export class Api {
       throw error
     }
   }
+
+  /**
+   * Updates a membership's permissions.
+   */
+  async updateMembership(
+    membershipId: number,
+    membership: MembershipSnapshotOut,
+  ): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<MembershipSnapshotOut> = await this.authorizedRequest(
+      `Memberships/${membershipId}`,
+      "PUT",
+      { Id: membershipId, Membership: membership },
+    )
+
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      return { kind: "ok" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Deletes a membership.
+   */
+  async deleteMembership(membershipId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    const response: ApiResponse<MembershipSnapshotOut> = await this.authorizedRequest(
+      `Memberships/${membershipId}`,
+      "DELETE",
+    )
+
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      return { kind: "ok" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
 }
 
 // Singleton instance of the API for convenience

@@ -64,6 +64,7 @@ export const AuthenticationStoreModel = types
       const response = await api.login(store.authEmail, password)
       switch (response.kind) {
         case "ok":
+          await SecureStore.setItemAsync("email", store.authEmail)
           await this.saveTokens(response.authResult)
           if (isFirstLogin) {
             await SecureStore.deleteItemAsync("password")
@@ -94,6 +95,7 @@ export const AuthenticationStoreModel = types
       store.authResult = undefined
       await SecureStore.deleteItemAsync("accessToken")
       await SecureStore.deleteItemAsync("refreshToken")
+      await SecureStore.deleteItemAsync("email")
     },
     loadStoredTokens() {
       const accessToken = SecureStore.getItem("accessToken")
