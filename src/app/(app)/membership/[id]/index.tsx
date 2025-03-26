@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
-import { ViewStyle, TextStyle, View } from "react-native"
+import { ViewStyle, TextStyle, View, Alert } from "react-native"
 import { Screen, Text, ListView, Icon } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
@@ -38,8 +38,8 @@ export default observer(function MembershipScreen() {
   console.log("isOwner:", isOwner)
 
   const handlePressMore = () => {
-    const options = ["Edit", "Cancel"]
-    const cancelButtonIndex = 1
+    const options = ["Edit", "Delete", "Cancel"]
+    const cancelButtonIndex = 2
 
     showActionSheetWithOptions(
       { 
@@ -50,6 +50,26 @@ export default observer(function MembershipScreen() {
         if (selectedIndex === 0) {
           // Edit
           router.push(`/membership/${membership?.id}/edit`)
+        } else if (selectedIndex === 1) {
+          // Delete
+          Alert.alert(
+            "Delete Member",
+            "Are you sure you want to delete this member?",
+            [
+              {
+                text: "Cancel",
+                style: "cancel"
+              },
+              {
+                text: "Delete",
+                style: "destructive",
+                onPress: async () => {
+                  await membershipStore.deleteMembership(membership?.id ?? 0)
+                  router.back()
+                }
+              }
+            ]
+          )
         }
       },
     )
@@ -80,7 +100,7 @@ export default observer(function MembershipScreen() {
     <Screen preset="scroll" style={$root}>
       <ListView
         data={permissions}
-        estimatedItemSize={50}
+        estimatedItemSize={56}
         ListHeaderComponent={
           <View>
             <Text
