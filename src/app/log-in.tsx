@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "../components"
+import { Button, Divider, Icon, Screen, Text, TextField, TextFieldAccessoryProps, UseCase } from "../components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "../theme"
 import { router } from "expo-router"
@@ -78,82 +78,87 @@ export default observer(function Login(_props) {
 
   return (
     <Screen
-      preset="auto"
-      contentContainerStyle={$screenContentContainer}
+      preset="scroll"
+      style={$root}
       safeAreaEdges={["top", "bottom"]}
     >
-      <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" style={$logIn} />
-      <Text tx="loginScreen:enterDetails" preset="subheading" style={$enterDetails} />
-      {attemptsCount > 2 && <Text tx="loginScreen:hint" size="sm" weight="light" style={$hint} />}
+      <View style={$content}>
+        <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" />
+        <Text tx="loginScreen:enterDetails" preset="subheading" style={$enterDetails} />
+        {attemptsCount > 2 && <Text tx="loginScreen:hint" size="sm" weight="light" style={$hint} />}
+      </View>
 
-      <TextField
-        value={authEmail}
-        onChangeText={setAuthEmail}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="email"
-        autoCorrect={false}
-        keyboardType="email-address"
-        labelTx="loginScreen:emailFieldLabel"
-        placeholderTx="loginScreen:emailFieldPlaceholder"
-        helper={error}
-        status={error ? "error" : undefined}
-        onSubmitEditing={() => authPasswordInput.current?.focus()}
-      />
+      <UseCase>
+        <TextField
+          value={authEmail}
+          onChangeText={setAuthEmail}
+          autoCapitalize="none"
+          autoComplete="email"
+          autoCorrect={false}
+          keyboardType="email-address"
+          labelTx="loginScreen:emailFieldLabel"
+          placeholderTx="loginScreen:emailFieldPlaceholder"
+          helper={error}
+          status={error ? "error" : undefined}
+          onSubmitEditing={() => authPasswordInput.current?.focus()}
+        />
+        <Divider style={{ marginVertical: spacing.xxs }} />
 
-      <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-        <Text text="Password" preset="formLabel" style={$logIn} />
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+          <Text text="Password" preset="formLabel" />
+          <Text
+            text="Forgot Password?"
+            style={$forgotPasswordInline}
+            onPress={() => router.push("/forgot-password")}
+          />
+        </View>
+        <TextField
+          ref={authPasswordInput}
+          value={authPassword}
+          onChangeText={setAuthPassword}
+          autoCapitalize="none"
+          autoComplete="password"
+          autoCorrect={false}
+          secureTextEntry={isAuthPasswordHidden}
+          // labelTx="loginScreen.passwordFieldLabel"
+          placeholderTx="loginScreen:passwordFieldPlaceholder"
+          onSubmitEditing={authenticate}
+          RightAccessory={PasswordRightAccessory}
+        />
+
+        <Text text={`${result}`} preset="formHelper" style={$result} />
+      </UseCase>
+
+      <View style={$content}>
+        <Button
+          testID="login-button"
+          tx="loginScreen:tapToLogIn"
+          style={$tapButton}
+          preset="reversed"
+          onPress={authenticate}
+        />
+
         <Text
-          text="Forgot Password?"
-          style={$forgotPasswordInline}
-          onPress={() => router.push("/forgot-password")}
+          text="No account? Register"
+          style={$register}
+          onPress={() => router.push("/register")}
         />
       </View>
-      <TextField
-        ref={authPasswordInput}
-        value={authPassword}
-        onChangeText={setAuthPassword}
-        containerStyle={$textField}
-        autoCapitalize="none"
-        autoComplete="password"
-        autoCorrect={false}
-        secureTextEntry={isAuthPasswordHidden}
-        // labelTx="loginScreen.passwordFieldLabel"
-        placeholderTx="loginScreen:passwordFieldPlaceholder"
-        onSubmitEditing={authenticate}
-        RightAccessory={PasswordRightAccessory}
-      />
-
-      <Text text={`${result}`} preset="formHelper" style={$result} />
-
-      <Button
-        testID="login-button"
-        tx="loginScreen:tapToLogIn"
-        style={$tapButton}
-        preset="reversed"
-        onPress={authenticate}
-      />
-
-      <Text
-        text="No account? Register"
-        style={$register}
-        onPress={() => router.push("/register")}
-      />
     </Screen>
   )
 })
 
-const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.xxl,
-  paddingHorizontal: spacing.lg,
+const $root: ViewStyle = {
+  flex: 1,
+}
+
+const $content: ViewStyle = {
+  marginTop: spacing.xl,
+  paddingHorizontal: spacing.md,
 }
 
 const $result: TextStyle = {
-  color: colors.palette.angry500,
-}
-
-const $logIn: TextStyle = {
-  marginBottom: spacing.sm,
+  color: colors.error,
 }
 
 const $enterDetails: TextStyle = {
@@ -163,10 +168,6 @@ const $enterDetails: TextStyle = {
 const $hint: TextStyle = {
   color: colors.tint,
   marginBottom: spacing.md,
-}
-
-const $textField: ViewStyle = {
-  marginBottom: spacing.lg,
 }
 
 const $tapButton: ViewStyle = {
