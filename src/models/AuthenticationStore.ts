@@ -56,23 +56,23 @@ export const AuthenticationStoreModel = types
       const response = await api.updateUser(store.displayName)
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
-        this.setResult("An error occurred. Please try again.")
-      } else this.setSubmittedSuccessfully(true)
+        store.setProp("result", "An error occurred. Please try again.")
+      } else store.setProp("submittedSuccessfully", true)
     },
     setAuthResult(value: AuthResultSnapshotIn) {
       store.authResult = AuthResultModel.create(value)
       store.authToken = value.accessToken
     },
     async saveTokens(authResult: AuthResultSnapshotIn) {
-      store.authResult = AuthResultModel.create(authResult)
-      store.authToken = authResult.accessToken
+      store.setProp("authResult", AuthResultModel.create(authResult))
+      store.setProp("authToken", authResult.accessToken)
       await SecureStore.setItemAsync("accessToken", authResult.accessToken)
       await SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
     },
     async logout() {
-      store.authToken = undefined
-      store.authEmail = ""
-      store.authResult = undefined
+      store.setProp("authToken", undefined)
+      store.setProp("authEmail", "")
+      store.setProp("authResult", undefined)
       await SecureStore.deleteItemAsync("accessToken")
       await SecureStore.deleteItemAsync("refreshToken")
       await SecureStore.deleteItemAsync("email")
