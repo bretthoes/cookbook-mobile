@@ -18,6 +18,8 @@ export const CookbookStoreModel = types
       self.cookbookToAdd = CookbookToAddModel.create(cookbook)
     },
     async fetch(pageNumber = 1, pageSize = 100) {
+      // TODO need to handle a different user logging in and clearing the referenced favorites
+      //self.setProp("favorites", [])
       const response = await api.getCookbooks(pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("cookbooks", response.cookbooks.items)

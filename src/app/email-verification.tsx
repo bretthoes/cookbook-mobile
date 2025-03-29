@@ -23,8 +23,13 @@ export default observer(function EmailVerification() {
 
     // if the email has been verified, use password set in
     // secure storage to log in the user to the main app
-    await login((await SecureStore.getItemAsync("password")) ?? "", true)
-    setErrorMessage("Your email is not yet verified. Please check your inbox.")
+    var result = await login((await SecureStore.getItemAsync("password")) ?? "", true)
+    console.log("checkEmailVerified", result)
+    if (result) {
+      router.replace("/log-in")
+    } else {
+      setErrorMessage("Your email is not yet verified. Please check your inbox.")
+    }
     setIsVerifying(false)
   }
 

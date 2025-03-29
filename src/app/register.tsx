@@ -45,14 +45,12 @@ export default observer(function Register() {
 
     if (validationError || passwordValidationError) return
 
-    await register(password)
-
-    // If successful, reset the fields
-    setIsSubmitted(false)
-    if (result === "success") {
+    const success = await register(password)
+    if (success) {
       setPassword("")
       router.push("/set-display-name")
     }
+    setIsSubmitted(false)
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(

@@ -1,5 +1,5 @@
 import { api } from "../services/api"
-import { Instance, SnapshotOut, types } from "mobx-state-tree"
+import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import * as SecureStore from "expo-secure-store"
 import { AuthResultModel, AuthResultSnapshotIn } from "./AuthResult"
 import { withSetPropAction } from "./helpers/withSetPropAction"
@@ -44,8 +44,11 @@ export const AuthenticationStoreModel = types
       store.displayName = value
     },
     async fetchDisplayName() {
+      console.log("fetchDisplayName", store.displayName)
       if (store.displayName) return
+      console.log("fetchDisplayName", store.displayName)
       const response = await api.getDisplayName()
+      console.log("fetchDisplayName", response)
       if (response.kind === "ok") this.setDisplayName(response.displayName)
       else console.error(`Error fetching display name: ${JSON.stringify(response)}`)
     },
@@ -60,32 +63,9 @@ export const AuthenticationStoreModel = types
       store.authResult = AuthResultModel.create(value)
       store.authToken = value.accessToken
     },
-    async login(password: string, isFirstLogin = false) {
-      const response = await api.login(store.authEmail, password)
-      switch (response.kind) {
-        case "ok":
-          await SecureStore.setItemAsync("email", store.authEmail)
-          await this.saveTokens(response.authResult)
-          if (isFirstLogin) {
-            await SecureStore.deleteItemAsync("password")
-            if (store.displayName) {
-              await this.update()
-            }
-          }
-          break
-        case "unauthorized":
-          this.setResult("Email or password is incorrect.")
-          break
-        case "notallowed":
-          this.resendConfirmationEmail()
-          break
-        default:
-          this.setResult("Cannot connect. Please try again later.")
-          console.error(`Error logging in: ${JSON.stringify(response)}`)
-      }
-    },
     async saveTokens(authResult: AuthResultSnapshotIn) {
-      this.setAuthResult(authResult)
+      store.authResult = AuthResultModel.create(authResult)
+      store.authToken = authResult.accessToken
       await SecureStore.setItemAsync("accessToken", authResult.accessToken)
       await SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
     },
@@ -100,58 +80,102 @@ export const AuthenticationStoreModel = types
     loadStoredTokens() {
       const accessToken = SecureStore.getItem("accessToken")
       if (accessToken) {
-        this.setAuthToken(accessToken)
+        store.authToken = accessToken
       }
     },
-    async register(password: string) {
-      this.setResult("")
-      const response = await api.register(store.authEmail, password)
+    login: flow(function* (password: string, isFirstLogin = false) {
+      store.result = ""
+      const response = yield api.login(store.authEmail, password)
       switch (response.kind) {
         case "ok":
-          await SecureStore.setItemAsync("password", password)
-          this.setResult("success")
-          break
-        case "rejected":
-          this.setResult("This email is already taken.")
-          break
+          yield SecureStore.setItemAsync("email", store.authEmail)
+          store.authResult = AuthResultModel.create(response.authResult)
+          store.authToken = response.authResult.accessToken
+          yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
+          yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+          if (isFirstLogin) {
+            yield SecureStore.deleteItemAsync("password")
+            if (store.displayName) {
+              const updateResponse = yield api.updateUser(store.displayName)
+              if (updateResponse.kind !== "ok") {
+                console.error(`Error updating user: ${JSON.stringify(updateResponse)}`)
+                store.result = "An error occurred. Please Try again."
+              } else {
+                store.result = "Successfully updated."
+              }
+            }
+          }
+          return true
+        case "unauthorized":
+          store.result = "Email or password is incorrect."
+          return false
+        case "notallowed":
+          const resendResponse = yield api.resendConfirmationEmail(store.authEmail)
+          if (resendResponse.kind === "ok") {
+            store.result = "A confirmation email has been resent."
+          } else {
+            store.result = "An error occurred sending email. Please try again."
+            console.error(`error in resendConfirmationEmail: ${JSON.stringify(resendResponse)}`)
+          }
+          return false
         default:
-          this.setResult("Something went wrong, please try again later.")
-          console.error(`Error registering: ${JSON.stringify(response)}`)
+          store.result = "Cannot connect. Please try again later."
+          console.error(`Error logging in: ${JSON.stringify(response)}`)
+          return false
       }
-    },
-    async resendConfirmationEmail() {
-      const response = await api.resendConfirmationEmail(store.authEmail)
+    }),
+    register: flow(function* (password: string) {
+      store.result = ""
+      const response = yield api.register(store.authEmail, password)
+      switch (response.kind) {
+        case "ok":
+          yield SecureStore.setItemAsync("email", store.authEmail)
+          yield SecureStore.setItemAsync("password", password)
+          return true
+        case "rejected":
+          store.result = "This email is already taken."
+          return false
+        default:
+          store.result = "Something went wrong, please try again later."
+          console.error(`Error registering: ${JSON.stringify(response)}`)
+          return false
+      }
+    }),
+    resendConfirmationEmail: flow(function* () {
+      const response = yield api.resendConfirmationEmail(store.authEmail)
       if (response.kind === "ok") {
-        this.setResult("A confirmation email has been resent.")
+        store.result = "A confirmation email has been resent."
       } else {
-        this.setResult("An error occurred sending email. Please try again.")
+        store.result = "An error occurred sending email. Please try again."
         console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
       }
-    },
-    async forgotPassword() {
-      const response = await api.forgotPassword(store.authEmail)
+    }),
+    forgotPassword: flow(function* () {
+      const response = yield api.forgotPassword(store.authEmail)
       if (response.kind === "ok") {
         // TODO tell user email is sent
       } else {
         console.error(`Error in forgotPassword: ${JSON.stringify(response)}`)
       }
-    },
-    async resetPassword(resetCode: string, password: string) {
-      const response = await api.resetPassword(store.authEmail, resetCode, password)
+    }),
+    resetPassword: flow(function* (resetCode: string, password: string) {
+      const response = yield api.resetPassword(store.authEmail, resetCode, password)
       if (response.kind === "ok") {
-        this.setResult("Password reset successfully.")
+        store.result = "Password reset successfully."
       } else {
-        this.setResult("An error occurred. Please Try again.")
+        store.result = "An error occurred. Please Try again."
         console.error(`Error registering: ${JSON.stringify(response)}`)
       }
-    },
-    async update() {
-      const response = await api.updateUser(store.displayName)
+    }),
+    update: flow(function* () {
+      const response = yield api.updateUser(store.displayName)
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
-        this.setResult("An error occurred. Please Try again.")
-      } else this.setResult("Successfully updated.")
-    },
+        store.result = "An error occurred. Please Try again."
+      } else {
+        store.result = "Successfully updated."
+      }
+    }),
   }))
 
 export interface AuthenticationStore extends Instance<typeof AuthenticationStoreModel> {}
