@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { ActivityIndicator, TextStyle, ViewStyle, TouchableOpacity } from "react-native"
 import { Button, Screen, Text } from "src/components"
@@ -9,13 +9,19 @@ import { router } from "expo-router"
 
 export default observer(function EmailVerification() {
   const {
-    authenticationStore: { authEmail, login, resendConfirmationEmail, result },
+    authenticationStore: { authEmail, login, resendConfirmationEmail, result, setResult },
   } = useStores()
 
   const [isVerifying, setIsVerifying] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const [isCooldown, setIsCooldown] = useState(false)
   const [cooldownTime, setCooldownTime] = useState(0)
+
+  useEffect(() => {
+    return () => {
+      setResult("")
+    }
+  }, [])
 
   async function checkEmailVerified() {
     setIsVerifying(true)
