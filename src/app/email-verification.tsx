@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { observer } from "mobx-react-lite"
-import { ActivityIndicator, TextStyle, ViewStyle } from "react-native"
+import { ActivityIndicator, TextStyle, ViewStyle, TouchableOpacity } from "react-native"
 import { Button, Screen, Text } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import * as SecureStore from "expo-secure-store"
@@ -59,20 +59,30 @@ export default observer(function EmailVerification() {
       <Text weight="bold">{authEmail}</Text>
       <Text>Please check your inbox and click the verification link.</Text>
 
-      <Button
-        text={isCooldown ? `Resend Email (${cooldownTime}s)` : "Resend Email"}
-        onPress={handleResendEmail}
-        style={$tapButton}
-        disabled={isCooldown}
-        textStyle={isCooldown ? { color: colors.border } : undefined}
-      />
-
       <Text text={`${result}`} preset="formHelper" style={$formHelper} />
 
       <Button text="I have verified my email" onPress={checkEmailVerified} style={$tapButton} />
 
       {isVerifying && <ActivityIndicator />}
       {errorMessage ? <Text style={{ color: "red" }}>{errorMessage}</Text> : null}
+
+      <TouchableOpacity 
+        onPress={handleResendEmail} 
+        disabled={isCooldown}
+        style={$resendContainer}
+      >
+        <Text 
+          style={[
+            $resendText,
+            isCooldown && { color: colors.border }
+          ]}
+        >
+          {isCooldown 
+            ? `Didn't get the email? Click here to resend (${cooldownTime}s)`
+            : "Didn't get the email? Click here to resend"
+          }
+        </Text>
+      </TouchableOpacity>
     </Screen>
   )
 })
@@ -92,4 +102,14 @@ const $formHelper: TextStyle = {
 const $tapButton: ViewStyle = {
   marginTop: spacing.xs,
   marginBottom: spacing.xs,
+}
+
+const $resendContainer: ViewStyle = {
+  marginTop: spacing.md,
+  alignItems: "center",
+}
+
+const $resendText: TextStyle = {
+  color: colors.tint,
+  textDecorationLine: "underline",
 }
