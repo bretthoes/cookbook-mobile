@@ -47,6 +47,7 @@ export default observer(function SetDisplayName() {
     })()
     return () => {
       setResult("")
+      setDisplayName("")
     }
   }, [fetchDisplayName])
 
