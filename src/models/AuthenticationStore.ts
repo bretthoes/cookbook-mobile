@@ -109,6 +109,7 @@ export const AuthenticationStoreModel = types
       switch (response.kind) {
         case "ok":
           await SecureStore.setItemAsync("password", password)
+          this.setResult("success")
           break
         case "rejected":
           this.setResult("This email is already taken.")

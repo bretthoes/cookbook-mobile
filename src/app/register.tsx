@@ -49,9 +49,10 @@ export default observer(function Register() {
 
     // If successful, reset the fields
     setIsSubmitted(false)
-    setPassword("")
-
-    router.push("/set-display-name")
+    if (result === "success") {
+      setPassword("")
+      router.push("/set-display-name")
+    }
   }
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -130,7 +131,7 @@ export default observer(function Register() {
       <Text
         text="Already have an account? Login"
         style={$register}
-          onPress={() => router.push("/log-in")}
+        onPress={() => router.push("/log-in")}
         />
       </View>
     </Screen>
@@ -151,8 +152,7 @@ const $enterDetails: TextStyle = {
 }
 
 const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
-  marginBottom: spacing.xs,
+  marginBottom: spacing.sm,
 }
 
 const $register: TextStyle = {
