@@ -640,7 +640,7 @@ export class Api {
     }
 
     try {
-      const displayName = response.data.displayName
+      const displayName = response.data
       return { kind: "ok", displayName }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
