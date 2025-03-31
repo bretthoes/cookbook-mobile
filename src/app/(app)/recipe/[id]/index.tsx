@@ -18,13 +18,15 @@ export default observer(function Recipe() {
   console.log("Recipe")
   // Pull in one of our MST stores
   const {
+    cookbookStore: { currentCookbook },
     recipeStore: { currentRecipe, deleteRecipe },
     membershipStore: { email, fetchEmail },
   } = useStores()
   const { showActionSheetWithOptions } = useActionSheet()
-  const isAuthor =
+  const isRecipeAuthor =
     currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
-
+  const ownsCookbook = currentCookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  const canEdit = isRecipeAuthor || ownsCookbook
   const recipeHasImages = currentRecipe?.images[0]
 
   const handlePressEdit = () => {
@@ -86,7 +88,7 @@ export default observer(function Recipe() {
         onPress={() => router.back()}
         top={recipeHasImages ? spacing.xl : spacing.sm}
       />
-      {isAuthor && (
+      {canEdit && (
         <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
       )}
       {currentRecipe?.images && <RecipeImages data={currentRecipe?.images} />}
