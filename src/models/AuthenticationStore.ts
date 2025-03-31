@@ -110,6 +110,7 @@ export const AuthenticationStoreModel = types
           store.result = "Email or password is incorrect."
           return false
         case "notallowed":
+          if (isFirstLogin) return false
           const resendResponse = yield api.resendConfirmationEmail(store.authEmail)
           if (resendResponse.kind === "ok") {
             store.result = "A confirmation email has been resent."

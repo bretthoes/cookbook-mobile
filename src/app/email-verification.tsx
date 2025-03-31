@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { ActivityIndicator, TextStyle, ViewStyle, TouchableOpacity } from "react-native"
-import { Button, Screen, Text } from "src/components"
+import { Button, Divider, Header, Screen, Text, UseCase } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import * as SecureStore from "expo-secure-store"
 import { colors, spacing } from "src/theme"
@@ -34,7 +34,7 @@ export default observer(function EmailVerification() {
     if (result) {
       router.replace("/log-in")
     } else {
-      setErrorMessage("Your email is not yet verified. Please check your inbox.")
+      setErrorMessage("Your email is not yet verified. Please check your inbox before continuing.")
     }
     setIsVerifying(false)
   }
@@ -43,6 +43,7 @@ export default observer(function EmailVerification() {
     if (isCooldown) return
 
     resendConfirmationEmail()
+    setErrorMessage("")
     setIsCooldown(true)
     setCooldownTime(60) // 60 seconds
 
@@ -59,18 +60,25 @@ export default observer(function EmailVerification() {
   }
 
   return (
-    <Screen style={$root} preset="auto" safeAreaEdges={["top", "bottom"]}>
-      <Text text="Confirm your account" preset="heading" />
+    <Screen style={$root} preset="scroll">
+      <Header
+          leftIcon="back"
+          onLeftPress={() => router.back()}
+          rightText="Next"
+          onRightPress={checkEmailVerified}
+        />
+      <Text text="Confirm your account" preset="subheading" style={{paddingHorizontal: spacing.md}} />
+      <UseCase>
       <Text>We've sent a confirmation email to</Text>
       <Text weight="bold">{authEmail}</Text>
+      <Divider />
       <Text>Please check your inbox and click the verification link.</Text>
 
       <Text text={`${result}`} preset="formHelper" style={$formHelper} />
 
-      <Button text="I have verified my email" onPress={checkEmailVerified} style={$tapButton} />
-
       {isVerifying && <ActivityIndicator />}
       {errorMessage ? <Text style={{ color: "red" }}>{errorMessage}</Text> : null}
+      </UseCase>
 
       <TouchableOpacity 
         onPress={handleResendEmail} 
@@ -95,23 +103,13 @@ export default observer(function EmailVerification() {
 
 const $root: ViewStyle = {
   flex: 1,
-  paddingVertical: spacing.xxl,
-  paddingHorizontal: spacing.lg,
 }
 
 const $formHelper: TextStyle = {
-  marginTop: spacing.xs,
-  marginBottom: spacing.xs,
-  color: colors.palette.angry500,
-}
-
-const $tapButton: ViewStyle = {
-  marginTop: spacing.xs,
-  marginBottom: spacing.xs,
+  color: colors.error,
 }
 
 const $resendContainer: ViewStyle = {
-  marginTop: spacing.md,
   alignItems: "center",
 }
 

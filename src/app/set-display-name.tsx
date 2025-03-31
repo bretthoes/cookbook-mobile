@@ -54,7 +54,7 @@ export default observer(function SetDisplayName() {
           style={$content}
         />
         <UseCase>
-          {<Text text="No special characters!" size="sm" weight="light" style={$hint} />}
+          {<Text text="No special characters, please!" size="sm" weight="light" style={$hint} />}
           <TextField
             value={displayName}
             onChangeText={setDisplayName}
