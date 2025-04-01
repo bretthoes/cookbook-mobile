@@ -64,7 +64,7 @@ export default observer(function MembershipScreen() {
                 text: "Delete",
                 style: "destructive",
                 onPress: async () => {
-                  await membershipStore.deleteMembership(membership?.id ?? 0)
+                  await membershipStore.delete(membership?.id ?? 0)
                   router.back()
                 }
               }

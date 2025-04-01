@@ -26,13 +26,14 @@ export default observer(function Cookbook() {
   const {
     cookbookStore,
     recipeStore,
-    membershipStore: { email, fetchEmail },
+    membershipStore,
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
+  const membershipId = membershipStore.ownMembership?.id ?? membershipStore.currentMembership?.id
 
   const cookbook = cookbookStore.cookbooks.find((c) => c.id === Number(id))
-  const isAuthor = cookbook?.authorEmail?.toLowerCase() === email?.toLowerCase() && !!email
+  const isAuthor = cookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -42,7 +43,7 @@ export default observer(function Cookbook() {
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
     ;(async function load() {
-      await fetchEmail()
+      await membershipStore.fetchEmail()
       setIsLoading(true)
       await recipeStore.fetch(Number(id))
       setIsLoading(false)
@@ -87,6 +88,7 @@ export default observer(function Cookbook() {
   }
 
   const handlePressEdit = () => {
+    if (!isAuthor) return
     router.push(`/cookbook/${id}/edit` as Href<`/cookbook/${string}/edit`>)
   }
 
@@ -112,6 +114,17 @@ export default observer(function Cookbook() {
   }
 
   const handlePressLeave = async () => {
+    // TODO should refresh current cookbook here to ensure membersCount is up to date.
+    if (isAuthor && cookbook?.membersCount !== 1) {
+      Alert.alert("Leave Cookbook", "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).", [
+        {
+          text: "OK",
+          style: "cancel",
+        },
+      ])
+      return
+    }
+
     Alert.alert(
       "Leave Cookbook",
       "Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
@@ -124,9 +137,10 @@ export default observer(function Cookbook() {
           text: "Leave",
           style: "destructive",
           onPress: async () => {
-            // TODO: add a new option to leave the cookbook (delete membership).
-            //await cookbookStore.leaveCookbook()
-            router.back()
+            console.log("Leaving cookbook", membershipId)
+            if (!membershipId) return
+              await membershipStore.delete(membershipId)
+              router.back()
           },
         },
       ],
@@ -134,11 +148,10 @@ export default observer(function Cookbook() {
   }
 
   const handlePressMore = () => {
-    if (!isAuthor) return
 
     showActionSheetWithOptions(
       {
-        options: ["Edit Cookbook", "Delete Cookbook", "Leave Cookbook", "Cancel"],
+        options: ["Edit Cookbook", "Leave Cookbook", "Cancel"],
         cancelButtonIndex: 3,
         destructiveButtonIndex: 1,
       },
@@ -146,8 +159,6 @@ export default observer(function Cookbook() {
         if (buttonIndex === 0) {
           handlePressEdit()
         } else if (buttonIndex === 1) {
-          handlePressDelete()
-        } else if (buttonIndex === 2) {
           handlePressLeave()
         }
       },

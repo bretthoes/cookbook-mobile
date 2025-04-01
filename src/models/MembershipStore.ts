@@ -1,4 +1,4 @@
-import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
+import { flow, Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { Membership, MembershipModel } from "./Membership"
 import { api } from "src/services/api"
@@ -18,8 +18,7 @@ export const MembershipStoreModel = types
     email: types.maybeNull(types.string),
   })
   .actions(withSetPropAction)
-  .actions((self) => {
-    const actions = {
+  .actions((self) => ({
       async fetch(cookbookId: number, pageNumber = 1, pageSize = 10) {
         self.currentMembership = null
         const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
@@ -56,21 +55,25 @@ export const MembershipStoreModel = types
         const response = await api.updateMembership(id, membership)
         if (response.kind === "ok") {
           // Refresh the memberships list
-          await actions.fetch(id)
+          await this.fetch(id)
         } else {
           console.error(`Error updating membership: ${JSON.stringify(response)}`)
         }
       },
-      async deleteMembership(id: number) {
-        const response = await api.deleteMembership(id)
+      delete: flow(function* (id: number) {
+        console.log("Deleting membership", id)
+        const response = yield api.deleteMembership(id)
         if (response.kind === "ok") {
+          console.log("Membership deleted", response)
           // Remove the membership from the list
-          await actions.fetch(id)
-          self.currentMembership = null
+          yield api.GetMemberships(id, 1, 10)
+          self.setProp("currentMembership", null)
+          return true
         } else {
           console.error(`Error deleting membership: ${JSON.stringify(response)}`)
+          return false
         }
-      },
+      }),
       setMembershipProperty(id: number, property: keyof typeof MembershipModel.properties, value: boolean) {
         const membership = self.currentMembership
         if (!membership) return
@@ -78,9 +81,7 @@ export const MembershipStoreModel = types
         membership.setProp(property, value)
         self.currentMembership = membership
       },
-    }
-    return actions
-  })
+  }))
 
 export interface MembershipStore extends Instance<typeof MembershipStoreModel> {}
 export interface MembershipStoreSnapshotOut extends SnapshotOut<typeof MembershipStoreModel> {}
