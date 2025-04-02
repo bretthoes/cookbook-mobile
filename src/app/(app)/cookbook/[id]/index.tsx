@@ -116,10 +116,10 @@ export default observer(function Cookbook() {
           text: "Leave",
           style: "destructive",
           onPress: async () => {
-            console.log("Leaving cookbook", membershipStore.ownMembership?.id)
             if (!membershipStore.ownMembership?.id) return
               var result = await membershipStore.delete(membershipStore.ownMembership?.id)
               if (result) {
+                cookbookStore.remove(cookbook?.id ?? 0)
                 router.back()
               } else {
                 Alert.alert("Error", "Failed to leave cookbook. Please try again.")

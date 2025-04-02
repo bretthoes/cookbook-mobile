@@ -1,4 +1,4 @@
-import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
 import { Cookbook, CookbookModel, CookbookToAddModel, CookbookToAddSnapshotIn } from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
@@ -27,8 +27,18 @@ export const CookbookStoreModel = types
         console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
       }
     },
-    setCurrentCookbook(cookbook: Cookbook) {
-      self.currentCookbook = cookbook
+    setCurrentCookbook(id: number) {
+      const cookbook = self.cookbooks.find(cookbook => cookbook.id === id)
+      if (cookbook) {
+        self.currentCookbook = cookbook
+      }
+    },
+    remove (id: number){
+      self.setProp("cookbooks", self.cookbooks.filter(cookbook => cookbook.id !== id))
+    },
+    clearCurrentCookbook() {
+      self.currentCookbook = null
+      
     },
     create: flow(function* () {
       try {
