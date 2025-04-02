@@ -31,7 +31,7 @@ export const MembershipStoreModel = types
       async single(id: number) {
         const response = await api.getMembership(id)
         if (response.kind == "ok") {
-          self.setProp("currentMembership", response.membership)
+          self.setProp("ownMembership", response.membership)
         } else {
           console.error(`Error fetching membership: ${JSON.stringify(response)}`)
         }

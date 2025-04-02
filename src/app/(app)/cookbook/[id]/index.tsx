@@ -30,7 +30,6 @@ export default observer(function Cookbook() {
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
-  const membershipId = membershipStore.ownMembership?.id ?? membershipStore.currentMembership?.id
 
   const cookbook = cookbookStore.cookbooks.find((c) => c.id === Number(id))
   const isAuthor = cookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
@@ -44,6 +43,7 @@ export default observer(function Cookbook() {
   useEffect(() => {
     ;(async function load() {
       await membershipStore.fetchEmail()
+      await membershipStore.single(cookbook?.id ?? 0)
       setIsLoading(true)
       await recipeStore.fetch(Number(id))
       setIsLoading(false)
@@ -92,27 +92,6 @@ export default observer(function Cookbook() {
     router.push(`/cookbook/${id}/edit` as Href<`/cookbook/${string}/edit`>)
   }
 
-  const handlePressDelete = async () => {
-    Alert.alert(
-      "Delete Cookbook",
-      "Are you sure you want to delete this cookbook? This action cannot be undone and will delete all recipes in this cookbook.",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Delete",
-          style: "destructive",
-          onPress: async () => {
-            await cookbookStore.deleteCookbook(Number(id))
-            router.back()
-          },
-        },
-      ],
-    )
-  }
-
   const handlePressLeave = async () => {
     // TODO should refresh current cookbook here to ensure membersCount is up to date.
     if (isAuthor && cookbook?.membersCount !== 1) {
@@ -137,10 +116,14 @@ export default observer(function Cookbook() {
           text: "Leave",
           style: "destructive",
           onPress: async () => {
-            console.log("Leaving cookbook", membershipId)
-            if (!membershipId) return
-              await membershipStore.delete(membershipId)
-              router.back()
+            console.log("Leaving cookbook", membershipStore.ownMembership?.id)
+            if (!membershipStore.ownMembership?.id) return
+              var result = await membershipStore.delete(membershipStore.ownMembership?.id)
+              if (result) {
+                router.back()
+              } else {
+                Alert.alert("Error", "Failed to leave cookbook. Please try again.")
+              }
           },
         },
       ],

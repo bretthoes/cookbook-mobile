@@ -193,14 +193,14 @@ export class Api {
   }
 
   /**
-   * Gets a single recipe by its id.
+   * Gets the membership by cookbookId.
    */
   async getMembership(
-    membershipId: number,
+    cookbookId: number,
   ): Promise<{ kind: "ok"; membership: MembershipSnapshotOut } | GeneralApiProblem> {
-    // make the API call to get the recipe by id
+    // make the API call to get the membership by cookbookId
     const response: ApiResponse<MembershipSnapshotOut> = await this.authorizedRequest(
-      `Memberships/${membershipId}`,
+      `Memberships/by-cookbook/${cookbookId}`,
       "GET",
     )
 
