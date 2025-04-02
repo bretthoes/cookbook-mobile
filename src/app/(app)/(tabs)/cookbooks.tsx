@@ -56,11 +56,13 @@ export default observer(function DemoPodcastListScreen(_props) {
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    ;(async function load() {
-      setIsLoading(true)
+    const fetchData = async () => {
       await cookbookStore.fetch()
+    }
+    setIsLoading(true)
+    fetchData()
+      .catch(console.error)
       setIsLoading(false)
-    })()
   }, [cookbookStore])
 
   // simulate a longer refresh, if the refresh is too fast for UX

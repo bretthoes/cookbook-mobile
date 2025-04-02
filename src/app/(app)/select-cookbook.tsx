@@ -27,9 +27,20 @@ export default observer(function SelectCookbookScreen() {
     onLeftPress: () => router.back(),
   })
 
+  // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    cookbookStore.fetch() // Ensure we have latest cookbooks
-  }, [])
+    // declare the data fetching function
+    const fetchData = async () => {
+      await cookbookStore.fetch()
+    }
+    // call the function
+    setIsLoading(true)
+    fetchData()
+      .catch(console.error)
+      setIsLoading(false)
+  }, [cookbookStore])
+
+  const [isLoading, setIsLoading] = React.useState(false)
 
   const handleAddRecipeFromCamera = async () => {
     console.log("handleAddRecipeFromCamera")

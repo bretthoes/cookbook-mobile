@@ -14,7 +14,6 @@ import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Cookbook() {
   const { cookbookStore, recipeStore, membershipStore } = useStores()
-
   const id = cookbookStore.currentCookbook?.id ?? 0
 
   const [refreshing, setRefreshing] = useState(false)
@@ -28,12 +27,14 @@ export default observer(function Cookbook() {
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    ;(async function load() {
-      setIsLoading(true)
+    const fetchData = async () => {
       await membershipStore.fetch(id)
-      setIsLoading(false)
-    })()
-  }, [recipeStore])
+    }
+    setIsLoading(true)
+    fetchData()
+      .catch(console.error)
+    setIsLoading(false)
+  }, [membershipStore])
 
   useEffect(() => {
     ;(async function reload() {
