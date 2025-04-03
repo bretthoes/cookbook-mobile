@@ -19,7 +19,7 @@ type DataItem = {
 export default observer(function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { membershipStore } = useStores()
-  const membership = membershipStore.currentMembership
+  const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
 
   useHeader({
     title: "Edit Member",

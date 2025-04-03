@@ -13,14 +13,12 @@ export const MembershipStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    currentMembership: types.maybeNull(MembershipModel),
     ownMembership: types.maybeNull(MembershipModel),
     email: types.maybeNull(types.string),
   })
   .actions(withSetPropAction)
   .actions((self) => ({
       async fetch(cookbookId: number, pageNumber = 1, pageSize = 10) {
-        self.currentMembership = null
         const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
         if (response.kind == "ok") {
           self.setProp("memberships", response.memberships)
@@ -35,12 +33,6 @@ export const MembershipStoreModel = types
         } else {
           console.error(`Error fetching membership: ${JSON.stringify(response)}`)
         }
-      },
-      setCurrentMembership(membership: Membership) {
-        self.currentMembership = membership
-      },
-      clearCurrentMembership() {
-        self.currentMembership = null
       },
       async fetchEmail() {
         if (self.email) return
@@ -67,7 +59,6 @@ export const MembershipStoreModel = types
           console.log("Membership deleted", response)
           // Remove the membership from the list
           yield api.GetMemberships(id, 1, 10)
-          self.setProp("currentMembership", null)
           return true
         } else {
           console.error(`Error deleting membership: ${JSON.stringify(response)}`)
@@ -79,7 +70,6 @@ export const MembershipStoreModel = types
         if (!membership) return
 
         membership.setProp(property, value)
-        self.currentMembership = membership
       },
   }))
 

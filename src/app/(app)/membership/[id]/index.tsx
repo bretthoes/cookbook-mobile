@@ -33,13 +33,14 @@ export default observer(function MembershipScreen() {
   }, [email, membershipStore.memberships?.items])
 
   const handlePressMore = () => {
-    const options = ["Edit", "Delete", "Cancel"]
+    const options = ["Edit membership", "Delete membership", "Cancel"]
     const cancelButtonIndex = 2
 
     showActionSheetWithOptions(
       { 
         options,
         cancelButtonIndex,
+        destructiveButtonIndex: 1,
       },
       (selectedIndex) => {
         if (selectedIndex === 0) {
@@ -49,7 +50,7 @@ export default observer(function MembershipScreen() {
           // Delete
           Alert.alert(
             "Delete Member",
-            "Are you sure you want to delete this member?",
+            "This will remove the member from this cookbook. Are you sure?",
             [
               {
                 text: "Cancel",
