@@ -106,7 +106,6 @@ export default observer(function Cookbook() {
               lastIndex={membershipStore.memberships?.items?.length - 1}
               text={`${item.name ?? item.email}`}
               onPress={async () => {
-                await membershipStore.single(item.id)
                 router.push(`/membership/${item.id}`)
               }}
             />

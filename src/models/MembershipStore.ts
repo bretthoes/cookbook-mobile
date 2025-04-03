@@ -49,7 +49,7 @@ export const MembershipStoreModel = types
         else console.error(`Error fetching email: ${JSON.stringify(response)}`)
       },
       async updateMembership(id: number) {
-        const membership = self.currentMembership
+        const membership = self.memberships.items.find(m => m.id === id)
         if (!membership) return
 
         const response = await api.updateMembership(id, membership)
@@ -75,7 +75,7 @@ export const MembershipStoreModel = types
         }
       }),
       setMembershipProperty(id: number, property: keyof typeof MembershipModel.properties, value: boolean) {
-        const membership = self.currentMembership
+        const membership = self.memberships.items.find(m => m.id === id)
         if (!membership) return
 
         membership.setProp(property, value)

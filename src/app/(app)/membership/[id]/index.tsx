@@ -4,38 +4,33 @@ import { ViewStyle, TextStyle, View, Alert } from "react-native"
 import { Screen, Text, ListView, Icon } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
-import { router } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import * as SecureStore from "expo-secure-store"
 
 export default observer(function MembershipScreen() {
   const { membershipStore } = useStores()
-  const membership = membershipStore.currentMembership
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
   const { showActionSheetWithOptions } = useActionSheet()
   const [email, setEmail] = useState<string | null>(null)
   const [isOwner, setIsOwner] = useState<boolean>(false)
 
   useEffect(() => {
     SecureStore.getItemAsync("email").then((result) => {
-      console.log("Stored email:", result)
       setEmail(result)
     })
   }, [])
 
   useEffect(() => {
-    console.log("Email state:", email)
-    console.log("Memberships:", membershipStore.memberships?.items)
     if (email && membershipStore.memberships?.items) {
       const userMembership = membershipStore.memberships.items.find(
         (m) => m.email === email && m.isCreator
       )
-      console.log("Found user membership:", userMembership)
       setIsOwner(!!userMembership)
     }
   }, [email, membershipStore.memberships?.items])
-
-  console.log("isOwner:", isOwner)
 
   const handlePressMore = () => {
     const options = ["Edit", "Delete", "Cancel"]
@@ -49,7 +44,7 @@ export default observer(function MembershipScreen() {
       (selectedIndex) => {
         if (selectedIndex === 0) {
           // Edit
-          router.push(`/membership/${membership?.id}/edit`)
+          router.push(`/membership/${id}/edit`)
         } else if (selectedIndex === 1) {
           // Delete
           Alert.alert(
@@ -64,7 +59,7 @@ export default observer(function MembershipScreen() {
                 text: "Delete",
                 style: "destructive",
                 onPress: async () => {
-                  await membershipStore.delete(membership?.id ?? 0)
+                  await membershipStore.delete(parseInt(id))
                   router.back()
                 }
               }
