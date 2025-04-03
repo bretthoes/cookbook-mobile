@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React from "react"
-import { View, ViewStyle } from "react-native"
+import { Alert, View, ViewStyle } from "react-native"
 import { ListView, Screen, Text, Switch } from "src/components"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
@@ -26,9 +26,14 @@ export default observer(function MembershipEditScreen() {
     leftIcon: "back",
     rightText: "Save",
     onLeftPress: () => router.back(),
-    onRightPress: () => {
-      membershipStore.updateMembership(parseInt(id))
-      router.back()
+    onRightPress: async () => {
+      var result = await membershipStore.update(parseInt(id))
+      if (result) {
+        router.back()
+      }
+      else {
+        Alert.alert("Error", "Failed to update membership")
+      }
     }
   })
 

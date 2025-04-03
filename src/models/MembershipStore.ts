@@ -40,18 +40,22 @@ export const MembershipStoreModel = types
         if (response.kind === "ok") self.setProp("email", response.email)
         else console.error(`Error fetching email: ${JSON.stringify(response)}`)
       },
-      async updateMembership(id: number) {
+      update: flow(function* (id: number) {
         const membership = self.memberships.items.find(m => m.id === id)
-        if (!membership) return
-
-        const response = await api.updateMembership(id, membership)
+        if (!membership) return false
+        const response = yield api.updateMembership(id, membership)
         if (response.kind === "ok") {
           // Refresh the memberships list
-          await this.fetch(id)
+          const fetchResponse = yield api.GetMemberships(id, 1, 10)
+          if (fetchResponse.kind === "ok") {
+            self.setProp("memberships", fetchResponse.memberships)
+          }
+          return true
         } else {
           console.error(`Error updating membership: ${JSON.stringify(response)}`)
+          return false
         }
-      },
+      }),
       delete: flow(function* (id: number) {
         console.log("Deleting membership", id)
         const response = yield api.deleteMembership(id)

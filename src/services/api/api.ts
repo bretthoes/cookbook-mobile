@@ -845,7 +845,16 @@ export class Api {
     const response: ApiResponse<MembershipSnapshotOut> = await this.authorizedRequest(
       `Memberships/${membershipId}`,
       "PUT",
-      { Id: membershipId, Membership: membership },
+      { 
+        Id: membershipId,
+        IsCreator: membership.isCreator,
+        CanAddRecipe: membership.canAddRecipe,
+        CanUpdateRecipe: membership.canUpdateRecipe,
+        CanDeleteRecipe: membership.canDeleteRecipe,
+        CanSendInvite: membership.canSendInvite,
+        CanRemoveMember: membership.canRemoveMember,
+        CanEditCookbookDetails: membership.canEditCookbookDetails,
+      },
     )
 
     if (!response.ok) {
