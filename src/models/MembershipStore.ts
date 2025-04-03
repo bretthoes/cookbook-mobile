@@ -45,11 +45,6 @@ export const MembershipStoreModel = types
         if (!membership) return false
         const response = yield api.updateMembership(id, membership)
         if (response.kind === "ok") {
-          // Refresh the memberships list
-          const fetchResponse = yield api.GetMemberships(id, 1, 10)
-          if (fetchResponse.kind === "ok") {
-            self.setProp("memberships", fetchResponse.memberships)
-          }
           return true
         } else {
           console.error(`Error updating membership: ${JSON.stringify(response)}`)

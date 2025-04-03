@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite"
-import React from "react"
-import { Alert, View, ViewStyle } from "react-native"
+import React, { useState } from "react"
+import { Alert, View, ViewStyle, TextStyle } from "react-native"
 import { ListView, Screen, Text, Switch } from "src/components"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
@@ -20,6 +20,7 @@ export default observer(function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { membershipStore } = useStores()
   const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
+  const [resultMessage, setResultMessage] = useState<string | null>(null)
 
   useHeader({
     title: "Edit Member",
@@ -27,12 +28,11 @@ export default observer(function MembershipEditScreen() {
     rightText: "Save",
     onLeftPress: () => router.back(),
     onRightPress: async () => {
-      var result = await membershipStore.update(parseInt(id))
+      const result = await membershipStore.update(parseInt(id))
       if (result) {
-        router.back()
-      }
-      else {
-        Alert.alert("Error", "Failed to update membership")
+        setResultMessage("Membership updated successfully.")
+      } else {
+        setResultMessage("Failed to update membership. Please try again.")
       }
     }
   })
@@ -76,6 +76,15 @@ export default observer(function MembershipEditScreen() {
         estimatedItemSize={56}
         contentContainerStyle={$listContentContainer}
       />
+      {resultMessage && (
+        <Text 
+          text={resultMessage} 
+          style={[
+            $resultMessage,
+            resultMessage.includes("successfully") ? $successMessage : $errorMessage
+          ]} 
+        />
+      )}
     </Screen>
   )
 })
@@ -94,5 +103,20 @@ const $item: ViewStyle = {
   alignItems: "center",
   paddingVertical: spacing.sm,
   borderBottomWidth: 1,
-  borderBottomColor: colors.palette.neutral300,
+  borderBottomColor: colors.separator,
+}
+
+const $resultMessage: TextStyle = {
+  textAlign: "center",
+  padding: spacing.md,
+  margin: spacing.md,
+  borderRadius: spacing.xs,
+}
+
+const $successMessage: TextStyle = {
+  color: colors.text,
+}
+
+const $errorMessage: TextStyle = {
+  color: colors.error,
 }
