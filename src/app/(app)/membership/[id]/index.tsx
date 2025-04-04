@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { ViewStyle, TextStyle, View, Alert } from "react-native"
-import { Screen, Text, ListView, Icon } from "src/components"
+import { Screen, Text, ListView, Icon, Button } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
@@ -13,7 +13,6 @@ export default observer(function MembershipScreen() {
   const { membershipStore } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
-  if (!membership) return null
   const { showActionSheetWithOptions } = useActionSheet()
   const [email, setEmail] = useState<string | null>(null)
   const [isOwner, setIsOwner] = useState<boolean>(false)
@@ -61,15 +60,16 @@ export default observer(function MembershipScreen() {
       },
     )
   }
+  
   const permissions = [
-    { label: "Name", value: membership.name ?? "" },
-    { label: "Cookbook Owner", value: membership.isCreator },
-    { label: "Can Add Recipe", value: membership.canAddRecipe },
-    { label: "Can Update Recipe", value: membership.canUpdateRecipe },
-    { label: "Can Delete Recipe", value: membership.canDeleteRecipe },
-    { label: "Can Send Invite", value: membership.canSendInvite },
-    { label: "Can Remove Member", value: membership.canRemoveMember },
-    { label: "Can Edit Cookbook Details", value: membership.canEditCookbookDetails },
+    { label: "Name", value: membership?.name ?? "" },
+    { label: "Cookbook Owner", value: membership?.isCreator },
+    { label: "Can Add Recipe", value: membership?.canAddRecipe },
+    { label: "Can Update Recipe", value: membership?.canUpdateRecipe },
+    { label: "Can Delete Recipe", value: membership?.canDeleteRecipe },
+    { label: "Can Send Invite", value: membership?.canSendInvite },
+    { label: "Can Remove Member", value: membership?.canRemoveMember },
+    { label: "Can Edit Cookbook Details", value: membership?.canEditCookbookDetails },
   ]
 
   useEffect(() => {
@@ -94,6 +94,22 @@ export default observer(function MembershipScreen() {
     rightIcon: isOwner ? "more" : undefined,
     onRightPress: isOwner ? handlePressMore : undefined,
   }, [isOwner])
+
+  // If membership is not found, show a message and return
+  if (!membership) {
+    return (
+      <Screen preset="scroll" style={$root}>
+        <View style={{ padding: spacing.lg }}>
+          <Text text="Membership not found" style={{ textAlign: "center" }} />
+          <Button
+            text="Go Back"
+            onPress={() => router.back()}
+            style={{ marginTop: spacing.md }}
+          />
+        </View>
+      </Screen>
+    )
+  }
 
   return (
     <Screen preset="scroll" style={$root}>
