@@ -188,7 +188,7 @@ export function Header(props: HeaderProps) {
           tx={leftTx}
           text={leftText}
           icon={leftIcon}
-          iconColor={leftIconColor}
+          iconColor={leftIconColor || colors.text}
           onPress={onLeftPress}
           txOptions={leftTxOptions}
           backgroundColor={backgroundColor}
@@ -217,7 +217,7 @@ export function Header(props: HeaderProps) {
           tx={rightTx}
           text={rightText}
           icon={rightIcon}
-          iconColor={rightIconColor}
+          iconColor={rightIconColor || colors.text}
           onPress={onRightPress}
           txOptions={rightTxOptions}
           backgroundColor={backgroundColor}

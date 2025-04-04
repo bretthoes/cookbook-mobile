@@ -21,6 +21,8 @@ import { RecipeListItem } from "src/components/Recipe/RecipeListItem"
 import { PaginationControls } from "src/components/PaginationControls"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { useHeader } from "src/utils/useHeader"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 export default observer(function Cookbook() {
   const {
@@ -30,6 +32,7 @@ export default observer(function Cookbook() {
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
+  const { themed } = useAppTheme()
 
   const cookbook = cookbookStore.cookbooks.find((c) => c.id === Number(id))
   const isAuthor = cookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
@@ -38,6 +41,18 @@ export default observer(function Cookbook() {
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const debouncedSearchQuery = useDebounce(searchQuery)
+
+  // Memoize themed styles
+  const $themedContainer = React.useMemo(() => themed($container), [themed])
+  const $themedTitle = React.useMemo(() => themed($title), [themed])
+  const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
+  const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
+  const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
+  const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
+  const $themedHeaderContainer = React.useMemo(() => themed($headerContainer), [themed])
+  const $themedRight = React.useMemo(() => themed($right), [themed])
+  const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
+  const $themedRoot = React.useMemo(() => themed($root), [themed])
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -157,7 +172,7 @@ export default observer(function Cookbook() {
   if (!cookbook) return null
 
   return (
-    <Screen preset="scroll" style={$root}>
+    <Screen preset="scroll" style={$themedRoot}>
       <ListView<RecipeBrief>
         data={recipeStore.recipes?.items?.slice() ?? []}
         estimatedItemSize={59}
@@ -167,9 +182,9 @@ export default observer(function Cookbook() {
           ) : (
             <EmptyState
               preset="generic"
-              style={$emptyState}
+              style={$themedEmptyState}
               buttonOnPress={manualRefresh}
-              imageStyle={$emptyStateImage}
+              imageStyle={$themedEmptyStateImage}
               ImageProps={{ resizeMode: "contain" }}
             />
           )
@@ -189,9 +204,9 @@ export default observer(function Cookbook() {
         renderItem={({ item, index }) => (
           <View
             style={[
-              $listItemStyle,
-              index === 0 && $borderTop,
-              index === recipeStore.recipes?.items?.length - 1 && $borderBottom,
+              $themedListItemStyle,
+              index === 0 && $themedBorderTop,
+              index === recipeStore.recipes?.items?.length - 1 && $themedBorderBottom,
             ]}
           >
             <RecipeListItem
@@ -225,55 +240,55 @@ export default observer(function Cookbook() {
   )
 })
 
-const $container: ViewStyle = {
-  paddingHorizontal: spacing.lg,
-  paddingTop: spacing.xl,
-}
+const $container: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  paddingTop: theme.spacing.xl,
+})
 
-const $title: ViewStyle = {
-  marginBottom: spacing.md,
-}
+const $title: ThemedStyle<ViewStyle> = (theme) => ({
+  marginBottom: theme.spacing.md,
+})
 
-const $emptyState: ViewStyle = {
-  marginTop: spacing.xxl,
-  paddingHorizontal: spacing.md,
-}
+const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
+  marginTop: theme.spacing.xxl,
+  paddingHorizontal: theme.spacing.md,
+})
 
-const $emptyStateImage: ImageStyle = {
+const $emptyStateImage: ThemedStyle<ImageStyle> = (theme) => ({
   transform: [{ scaleX: isRTL ? -1 : 1 }],
-}
+})
 
-const $borderTop: ViewStyle = {
-  borderTopLeftRadius: spacing.xs,
-  borderTopRightRadius: spacing.xs,
-  paddingTop: spacing.lg,
-}
+const $borderTop: ThemedStyle<ViewStyle> = (theme) => ({
+  borderTopLeftRadius: theme.spacing.xs,
+  borderTopRightRadius: theme.spacing.xs,
+  paddingTop: theme.spacing.lg,
+})
 
-const $borderBottom: ViewStyle = {
-  borderBottomLeftRadius: spacing.xs,
-  borderBottomRightRadius: spacing.xs,
-  paddingBottom: spacing.lg,
-}
+const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
+  borderBottomLeftRadius: theme.spacing.xs,
+  borderBottomRightRadius: theme.spacing.xs,
+  paddingBottom: theme.spacing.lg,
+})
 
-const $headerContainer: ViewStyle = {
+const $headerContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "space-between",
-  paddingTop: spacing.xl,
-  paddingHorizontal: spacing.md,
-  marginBottom: spacing.xl,
-}
+  paddingTop: theme.spacing.xl,
+  paddingHorizontal: theme.spacing.md,
+  marginBottom: theme.spacing.xl,
+})
 
-const $right: TextStyle = {
+const $right: ThemedStyle<TextStyle> = (theme) => ({
   textAlign: "right",
-}
+})
 
-const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.backgroundDim,
-  paddingHorizontal: spacing.md,
-  marginHorizontal: spacing.lg,
-}
+const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
+  paddingHorizontal: theme.spacing.md,
+  marginHorizontal: theme.spacing.lg,
+})
 
-const $root: ViewStyle = {
+const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-}
+})

@@ -1,7 +1,8 @@
-import React from "react"
+import React, { useMemo } from "react"
 import { ViewStyle, TextStyle, View } from "react-native"
 import { Screen, Text, Button } from "./index"
-import { colors, spacing } from "../theme"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 import { router } from "expo-router"
 
 interface ItemNotFoundProps {
@@ -32,37 +33,44 @@ export function ItemNotFound({
   onButtonPress = () => router.back(),
   style,
 }: ItemNotFoundProps) {
+  const { themed } = useAppTheme()
+
+  const $themedRoot = useMemo(() => themed($root), [themed])
+  const $themedContainer = useMemo(() => themed($container), [themed])
+  const $themedMessage = useMemo(() => themed($message), [themed])
+  const $themedButton = useMemo(() => themed($button), [themed])
+
   return (
-    <Screen preset="scroll" style={[$root, style]}>
-      <View style={$container}>
-        <Text text={message} style={$message} />
+    <Screen preset="scroll" style={[$themedRoot, style]}>
+      <View style={$themedContainer}>
+        <Text text={message} style={$themedMessage} />
         <Button
           text={buttonText}
           onPress={onButtonPress}
-          style={$button}
+          style={$themedButton}
         />
       </View>
     </Screen>
   )
 }
 
-const $root: ViewStyle = {
+const $root: ThemedStyle<ViewStyle> = () => ({
   flex: 1,
-}
+})
 
-const $container: ViewStyle = {
-  padding: spacing.lg,
+const $container: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.lg,
   flex: 1,
   justifyContent: "center",
   alignItems: "center",
-}
+})
 
-const $message: TextStyle = {
+const $message: ThemedStyle<TextStyle> = (theme) => ({
   textAlign: "center",
-  marginBottom: spacing.md,
-  color: colors.textDim,
-}
+  marginBottom: theme.spacing.md,
+  color: theme.colors.textDim,
+})
 
-const $button: ViewStyle = {
-  marginTop: spacing.md,
-} 
+const $button: ThemedStyle<ViewStyle> = (theme) => ({
+  marginTop: theme.spacing.md,
+}) 

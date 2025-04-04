@@ -38,6 +38,7 @@ import { Cookbook } from "src/models"
 import { router } from "expo-router"
 import { useStores } from "src/models/helpers/useStores"
 import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 const ICON_SIZE = 14
 
@@ -148,6 +149,7 @@ const CookbookCard = observer(function CookbookCard({
   isFavorite: boolean
   isDark: boolean
 }) {
+  const { themed } = useAppTheme()
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
@@ -228,37 +230,44 @@ const CookbookCard = observer(function CookbookCard({
         return (
           <View>
             <Animated.View
-              style={[$iconContainer, StyleSheet.absoluteFill, animatedLikeButtonStyles]}
+              style={[themed($iconContainer), StyleSheet.absoluteFill, animatedLikeButtonStyles]}
             >
               <Icon icon="heart" size={ICON_SIZE} color={isDark ? colors.border : colors.text} />
             </Animated.View>
-            <Animated.View style={[$iconContainer, animatedUnlikeButtonStyles]}>
+            <Animated.View style={[themed($iconContainer), animatedUnlikeButtonStyles]}>
               <Icon icon="heart" size={ICON_SIZE} color={colors.palette.primary400} />
             </Animated.View>
           </View>
         )
       },
-    [isDark],
+    [isDark, themed],
   )
+
+  const $themedItem = useMemo(() => themed($item), [themed])
+  const $themedItemThumbnail = useMemo(() => themed($itemThumbnail), [themed])
+  const $themedMetadata = useMemo(() => themed($metadata), [themed])
+  const $themedMetadataText = useMemo(() => themed($metadataText), [themed])
+  const $themedFavoriteButton = useMemo(() => themed($favoriteButton), [themed])
+  const $themedUnFavoriteButton = useMemo(() => themed($unFavoriteButton), [themed])
 
   return (
     <Card
-      style={$item}
+      style={$themedItem}
       verticalAlignment="force-footer-bottom"
       onPress={handlePressCard}
       onLongPress={handlePressFavorite}
       preset={isDark ? "reversed" : "default"}
       HeadingComponent={
-        <View style={$metadata}>
+        <View style={$themedMetadata}>
           <Text
-            style={$metadataText}
+            style={$themedMetadataText}
             size="xxs"
             accessibilityLabel={cookbook.members.accessibilityLabel}
           >
             {cookbook.members.textLabel}
           </Text>
           <Text
-            style={$metadataText}
+            style={$themedMetadataText}
             size="xxs"
             accessibilityLabel={cookbook.recipes.accessibilityLabel}
           >
@@ -268,12 +277,12 @@ const CookbookCard = observer(function CookbookCard({
       }
       content={cookbook.parsedTitleAndSubtitle.title}
       {...accessibilityHintProps}
-      RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
+      RightComponent={<Image source={imageUri} style={$themedItemThumbnail} />}
       FooterComponent={
         <Button
           onPress={handlePressFavorite}
           onLongPress={handlePressFavorite}
-          style={[$favoriteButton, isFavorite && $unFavoriteButton]}
+          style={[$themedFavoriteButton, isFavorite && $themedUnFavoriteButton]}
           accessibilityLabel={
             isFavorite
               ? translate("demoPodcastListScreen:accessibility.unfavoriteIcon")
@@ -310,19 +319,19 @@ const $heading: ViewStyle = {
   marginBottom: spacing.md,
 }
 
-const $item: ViewStyle = {
-  padding: spacing.md,
-  marginTop: spacing.md,
+const $item: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.md,
+  marginTop: theme.spacing.md,
   minHeight: 120,
-  backgroundColor: colors.backgroundDim,
-}
+  backgroundColor: theme.colors.backgroundDim,
+})
 
-const $itemThumbnail: ImageStyle = {
-  marginTop: spacing.sm,
+const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
+  marginTop: theme.spacing.sm,
   height: 90,
   width: 90,
   alignSelf: "flex-start",
-}
+})
 
 const $toggle: ViewStyle = {
   marginTop: spacing.md,
@@ -332,42 +341,42 @@ const $labelStyle: TextStyle = {
   textAlign: "left",
 }
 
-const $iconContainer: ViewStyle = {
+const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   height: ICON_SIZE,
   width: ICON_SIZE,
   flexDirection: "row",
-  marginEnd: spacing.sm,
-}
+  marginEnd: theme.spacing.sm,
+})
 
-const $metadata: TextStyle = {
-  color: colors.textDim,
-  marginTop: spacing.xs,
+const $metadata: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  marginTop: theme.spacing.xs,
   flexDirection: "row",
-}
+})
 
-const $metadataText: TextStyle = {
-  color: colors.textDim,
-  marginEnd: spacing.md,
-  marginBottom: spacing.xs,
-}
+const $metadataText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  marginEnd: theme.spacing.md,
+  marginBottom: theme.spacing.xs,
+})
 
-const $favoriteButton: ViewStyle = {
+const $favoriteButton: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: 17,
-  marginTop: spacing.md,
+  marginTop: theme.spacing.md,
   justifyContent: "flex-start",
-  backgroundColor: colors.tintInactive,
-  borderColor: colors.tintInactive,
-  paddingHorizontal: spacing.md,
-  paddingTop: spacing.xxxs,
+  backgroundColor: theme.colors.tintInactive,
+  borderColor: theme.colors.tintInactive,
+  paddingHorizontal: theme.spacing.md,
+  paddingTop: theme.spacing.xxxs,
   paddingBottom: 0,
   minHeight: 32,
   alignSelf: "flex-start",
-}
+})
 
-const $unFavoriteButton: ViewStyle = {
-  borderColor: colors.palette.primary100,
-  backgroundColor: colors.palette.primary100,
-}
+const $unFavoriteButton: ThemedStyle<ViewStyle> = (theme) => ({
+  borderColor: theme.colors.palette.primary100,
+  backgroundColor: theme.colors.palette.primary100,
+})
 
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,

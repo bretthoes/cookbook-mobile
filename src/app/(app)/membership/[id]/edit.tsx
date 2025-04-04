@@ -6,6 +6,8 @@ import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
 import { useStores } from "src/models/helpers/useStores"
 import { useHeader } from "src/utils/useHeader"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 type MembershipProperty = "canAddRecipe" | "canUpdateRecipe" | "canDeleteRecipe" | "canSendInvite" | "canRemoveMember" | "canEditCookbookDetails"
 
@@ -21,6 +23,15 @@ export default observer(function MembershipEditScreen() {
   const { membershipStore } = useStores()
   const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
   const [resultMessage, setResultMessage] = useState<string | null>(null)
+  const { themed } = useAppTheme()
+
+  // Memoize themed styles
+  const $themedScreenContentContainer = React.useMemo(() => themed($screenContentContainer), [themed])
+  const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
+  const $themedItem = React.useMemo(() => themed($item), [themed])
+  const $themedResultMessage = React.useMemo(() => themed($resultMessage), [themed])
+  const $themedSuccessMessage = React.useMemo(() => themed($successMessage), [themed])
+  const $themedErrorMessage = React.useMemo(() => themed($errorMessage), [themed])
 
   useHeader({
     title: "Edit Member",
@@ -51,7 +62,7 @@ export default observer(function MembershipEditScreen() {
   ]
 
   const renderItem = ({ item }: { item: DataItem }) => (
-    <View style={$item}>
+    <View style={$themedItem}>
       <Text text={item.label} size="sm" />
       {item.type === "switch" ? (
         <Switch
@@ -69,19 +80,19 @@ export default observer(function MembershipEditScreen() {
   )
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$screenContentContainer}>
+    <Screen preset="scroll" contentContainerStyle={$themedScreenContentContainer}>
       <ListView
         data={data}
         renderItem={renderItem}
         estimatedItemSize={56}
-        contentContainerStyle={$listContentContainer}
+        contentContainerStyle={$themedListContentContainer}
       />
       {resultMessage && (
         <Text 
           text={resultMessage} 
           style={[
-            $resultMessage,
-            resultMessage.includes("successfully") ? $successMessage : $errorMessage
+            $themedResultMessage,
+            resultMessage.includes("successfully") ? $themedSuccessMessage : $themedErrorMessage
           ]} 
         />
       )}
@@ -89,34 +100,34 @@ export default observer(function MembershipEditScreen() {
   )
 })
 
-const $screenContentContainer: ViewStyle = {
+const $screenContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-}
+})
 
-const $listContentContainer: ViewStyle = {
-  padding: spacing.md,
-}
+const $listContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.md,
+})
 
-const $item: ViewStyle = {
+const $item: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  paddingVertical: spacing.sm,
+  paddingVertical: theme.spacing.sm,
   borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
-}
+  borderBottomColor: theme.colors.separator,
+})
 
-const $resultMessage: TextStyle = {
+const $resultMessage: ThemedStyle<TextStyle> = (theme) => ({
   textAlign: "center",
-  padding: spacing.md,
-  margin: spacing.md,
-  borderRadius: spacing.xs,
-}
+  padding: theme.spacing.md,
+  margin: theme.spacing.md,
+  borderRadius: theme.spacing.xs,
+})
 
-const $successMessage: TextStyle = {
-  color: colors.text,
-}
+const $successMessage: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.text,
+})
 
-const $errorMessage: TextStyle = {
-  color: colors.error,
-}
+const $errorMessage: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+})

@@ -13,6 +13,8 @@ import { router } from "expo-router"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { MoreButton } from "src/components/MoreButton"
 import { CustomBackButton } from "src/components/CustomBackButton"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 export default observer(function Recipe() {
   const {
@@ -21,11 +23,19 @@ export default observer(function Recipe() {
     membershipStore: { email, fetchEmail },
   } = useStores()
   const { showActionSheetWithOptions } = useActionSheet()
+  const { themed } = useAppTheme()
   const isRecipeAuthor =
     currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
   const ownsCookbook = currentCookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
   const canEdit = isRecipeAuthor || ownsCookbook
   const recipeHasImages = currentRecipe?.images[0]
+
+  const $themedIngredientItemStyle = React.useMemo(() => themed($ingredientItemStyle), [themed])
+  const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
+  const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
+  const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
+  const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
+  const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
 
   const handlePressEdit = () => {
     router.push(`/recipe/${currentRecipe?.id}/edit`)
@@ -111,9 +121,9 @@ export default observer(function Recipe() {
               item && (
                 <View
                   style={[
-                    $ingredientItemStyle,
-                    index === 0 && $borderTop,
-                    index === currentRecipe!.ingredients.length - 1 && $borderBottom,
+                    $themedIngredientItemStyle,
+                    index === 0 && $themedBorderTop,
+                    index === currentRecipe!.ingredients.length - 1 && $themedBorderBottom,
                   ]}
                 >
                   <CustomListItem
@@ -127,7 +137,7 @@ export default observer(function Recipe() {
             }
             data={currentRecipe?.ingredients}
             estimatedItemSize={59}
-            contentContainerStyle={$ingredientsContainer}
+            contentContainerStyle={$themedIngredientsContainer}
             ListEmptyComponent={<View />}
           ></ListView>
         </View>
@@ -147,9 +157,9 @@ export default observer(function Recipe() {
               item && (
                 <View
                   style={[
-                    $listItemStyle,
-                    index === 0 && $borderTop,
-                    index === currentRecipe!.directions.length - 1 && $borderBottom,
+                    $themedListItemStyle,
+                    index === 0 && $themedBorderTop,
+                    index === currentRecipe!.directions.length - 1 && $themedBorderBottom,
                   ]}
                 >
                   <CustomListItem
@@ -163,7 +173,7 @@ export default observer(function Recipe() {
             }
             data={currentRecipe?.directions}
             estimatedItemSize={59}
-            contentContainerStyle={$directionsContainer}
+            contentContainerStyle={$themedDirectionsContainer}
             ListEmptyComponent={<View />}
           ></ListView>
         </View>
@@ -174,32 +184,32 @@ export default observer(function Recipe() {
 
 // #region Styles
 
-const $ingredientItemStyle: ViewStyle = {
-  backgroundColor: colors.backgroundDim,
-  paddingHorizontal: spacing.md,
-}
+const $ingredientItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
+  paddingHorizontal: theme.spacing.md,
+})
 
-const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.backgroundDim,
-  paddingHorizontal: spacing.md,
-}
+const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
+  paddingHorizontal: theme.spacing.md,
+})
 
-const $borderTop: ViewStyle = {
-  borderTopLeftRadius: spacing.xs,
-  borderTopRightRadius: spacing.xs,
-}
+const $borderTop: ThemedStyle<ViewStyle> = (theme) => ({
+  borderTopLeftRadius: theme.spacing.xs,
+  borderTopRightRadius: theme.spacing.xs,
+})
 
-const $borderBottom: ViewStyle = {
-  borderBottomLeftRadius: spacing.xs,
-  borderBottomRightRadius: spacing.xs,
-}
+const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
+  borderBottomLeftRadius: theme.spacing.xs,
+  borderBottomRightRadius: theme.spacing.xs,
+})
 
-const $directionsContainer: ViewStyle = {
-  padding: spacing.md,
-}
+const $directionsContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.md,
+})
 
-const $ingredientsContainer: ViewStyle = {
-  padding: spacing.md,
-}
+const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.md,
+})
 
 // #endregion

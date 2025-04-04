@@ -10,6 +10,8 @@ import {
 } from "react-native"
 import { RecipeImage } from "src/models/Recipe"
 import { AutoImage } from "../AutoImage"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 const { width: viewportWidth } = Dimensions.get("window")
 
@@ -19,8 +21,14 @@ export interface RecipeImagesProps {
 
 export function RecipeImages(props: RecipeImagesProps) {
   const { data } = props
+  const { themed } = useAppTheme()
   const shouldShowPagination = data.length > 1
   const [activeIndex, setActiveIndex] = useState(0)
+
+  const $themedDotContainer = React.useMemo(() => themed($dotContainer), [themed])
+  const $themedDot = React.useMemo(() => themed($dot), [themed])
+  const $themedActiveDot = React.useMemo(() => themed($activeDot), [themed])
+  const $themedInactiveDot = React.useMemo(() => themed($inactiveDot), [themed])
 
   // Handle scroll event to update the active dot based on the current image
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -44,9 +52,9 @@ export function RecipeImages(props: RecipeImagesProps) {
         ))}
       </ScrollView>
       {shouldShowPagination && (
-        <View style={$dotContainer}>
+        <View style={$themedDotContainer}>
           {data.map((_, index) => (
-            <View key={index} style={[$dot, index === activeIndex ? $activeDot : $inactiveDot]} />
+            <View key={index} style={[$themedDot, index === activeIndex ? $themedActiveDot : $themedInactiveDot]} />
           ))}
         </View>
       )}
@@ -56,25 +64,25 @@ export function RecipeImages(props: RecipeImagesProps) {
 
 // #region Styles
 
-const $dotContainer: ViewStyle = {
+const $dotContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   justifyContent: "center",
-  marginTop: spacing.sm,
-}
+  marginTop: theme.spacing.sm,
+})
 
-const $dot: ViewStyle = {
-  width: spacing.xs,
-  height: spacing.xs,
-  borderRadius: spacing.xs,
-  marginHorizontal: spacing.xxs,
-}
+const $dot: ThemedStyle<ViewStyle> = (theme) => ({
+  width: theme.spacing.xs,
+  height: theme.spacing.xs,
+  borderRadius: theme.spacing.xs,
+  marginHorizontal: theme.spacing.xxs,
+})
 
-const $activeDot: ViewStyle = {
-  backgroundColor: colors.icon,
-}
+const $activeDot: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.icon,
+})
 
-const $inactiveDot: ViewStyle = {
-  backgroundColor: colors.tintInactive,
-}
+const $inactiveDot: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.tintInactive,
+})
 
 // #endregion

@@ -11,13 +11,24 @@ import { PaginationControls } from "src/components/PaginationControls"
 import { Membership } from "src/models"
 import { RecipeListItem } from "src/components/Recipe/RecipeListItem"
 import { useHeader } from "src/utils/useHeader"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 export default observer(function Cookbook() {
   const { cookbookStore, recipeStore, membershipStore } = useStores()
   const id = cookbookStore.currentCookbook?.id ?? 0
+  const { themed } = useAppTheme()
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  // Memoize themed styles
+  const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
+  const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
+  const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
+  const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
+  const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
+  const $themedRoot = React.useMemo(() => themed($root), [themed])
 
   useHeader({
     leftIcon: "back",
@@ -71,7 +82,7 @@ export default observer(function Cookbook() {
   if (!id) return null
 
   return (
-    <Screen preset="scroll" style={$root}>
+    <Screen preset="scroll" style={$themedRoot}>
       <ListView<Membership>
         data={membershipStore.memberships?.items?.slice() ?? []}
         estimatedItemSize={59}
@@ -81,9 +92,9 @@ export default observer(function Cookbook() {
           ) : (
             <EmptyState
               preset="generic"
-              style={$emptyState}
+              style={$themedEmptyState}
               buttonOnPress={manualRefresh}
-              imageStyle={$emptyStateImage}
+              imageStyle={$themedEmptyStateImage}
               ImageProps={{ resizeMode: "contain" }}
             />
           )
@@ -99,9 +110,9 @@ export default observer(function Cookbook() {
         renderItem={({ item, index }) => (
           <View
             style={[
-              $listItemStyle,
-              index === 0 && $borderTop,
-              index === membershipStore.memberships?.items?.length - 1 && $borderBottom,
+              $themedListItemStyle,
+              index === 0 && $themedBorderTop,
+              index === membershipStore.memberships?.items?.length - 1 && $themedBorderBottom,
             ]}
           >
             <RecipeListItem
@@ -134,33 +145,33 @@ export default observer(function Cookbook() {
   )
 })
 
-const $emptyState: ViewStyle = {
-  marginTop: spacing.xxl,
-  paddingHorizontal: spacing.md,
-}
+const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
+  marginTop: theme.spacing.xxl,
+  paddingHorizontal: theme.spacing.md,
+})
 
-const $emptyStateImage: ImageStyle = {
+const $emptyStateImage: ThemedStyle<ImageStyle> = (theme) => ({
   transform: [{ scaleX: isRTL ? -1 : 1 }],
-}
+})
 
-const $borderTop: ViewStyle = {
-  borderTopLeftRadius: spacing.xs,
-  borderTopRightRadius: spacing.xs,
-  paddingTop: spacing.lg,
-}
+const $borderTop: ThemedStyle<ViewStyle> = (theme) => ({
+  borderTopLeftRadius: theme.spacing.xs,
+  borderTopRightRadius: theme.spacing.xs,
+  paddingTop: theme.spacing.lg,
+})
 
-const $borderBottom: ViewStyle = {
-  borderBottomLeftRadius: spacing.xs,
-  borderBottomRightRadius: spacing.xs,
-  paddingBottom: spacing.lg,
-}
+const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
+  borderBottomLeftRadius: theme.spacing.xs,
+  borderBottomRightRadius: theme.spacing.xs,
+  paddingBottom: theme.spacing.lg,
+})
 
-const $listItemStyle: ViewStyle = {
-  backgroundColor: colors.backgroundDim,
-  paddingHorizontal: spacing.md,
-  marginHorizontal: spacing.lg,
-}
+const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
+  paddingHorizontal: theme.spacing.md,
+  marginHorizontal: theme.spacing.lg,
+})
 
-const $root: ViewStyle = {
+const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-}
+})

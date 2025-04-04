@@ -11,6 +11,8 @@ import * as ImagePicker from "expo-image-picker"
 import { api } from "src/services/api"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { useHeader } from "src/utils/useHeader"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 // TODO i18n
 export default observer(function SelectCookbookScreen() {
@@ -20,6 +22,20 @@ export default observer(function SelectCookbookScreen() {
   } = useStores()
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
+  const { themed } = useAppTheme()
+
+  // Memoize themed styles
+  const $themedRoot = React.useMemo(() => themed($root), [themed])
+  const $themedTitle = React.useMemo(() => themed($title), [themed])
+  const $themedListContainer = React.useMemo(() => themed($listContainer), [themed])
+  const $themedItemContainer = React.useMemo(() => themed($itemContainer), [themed])
+  const $themedFirstItem = React.useMemo(() => themed($firstItem), [themed])
+  const $themedLastItem = React.useMemo(() => themed($lastItem), [themed])
+  const $themedIconContainer = React.useMemo(() => themed($iconContainer), [themed])
+  const $themedCookbookImage = React.useMemo(() => themed($cookbookImage), [themed])
+  const $themedTextContainer = React.useMemo(() => themed($textContainer), [themed])
+  const $themedItemTitle = React.useMemo(() => themed($itemTitle), [themed])
+  const $themedItemDescription = React.useMemo(() => themed($itemDescription), [themed])
 
   useHeader({
     leftIcon: "back",
@@ -118,7 +134,7 @@ export default observer(function SelectCookbookScreen() {
       return (
         <Image
           source={{ uri: cookbook.getImage }}
-          style={$cookbookImage}
+          style={$themedCookbookImage}
           defaultSource={require("assets/images/logo.png")}
         />
       )
@@ -127,30 +143,30 @@ export default observer(function SelectCookbookScreen() {
   }
 
   return (
-    <Screen preset="scroll" style={$root}>
+    <Screen preset="scroll" style={$themedRoot}>
       <Text
         text={`${params.action}`}
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
 
-      <View style={$listContainer}>
+      <View style={$themedListContainer}>
         {cookbookStore.cookbooks.map((cookbook, index) => (
           <TouchableOpacity
             key={cookbook.id}
             style={[
-              $itemContainer,
-              index === 0 && $firstItem,
-              index === cookbookStore.cookbooks.length - 1 && $lastItem,
+              $themedItemContainer,
+              index === 0 && $themedFirstItem,
+              index === cookbookStore.cookbooks.length - 1 && $themedLastItem,
             ]}
             onPress={() => handleSelectCookbook(cookbook)}
           >
-            <View style={$iconContainer}>{renderCookbookImage(cookbook)}</View>
-            <View style={$textContainer}>
-              <Text preset="subheading" text={cookbook.title} style={$itemTitle} />
+            <View style={$themedIconContainer}>{renderCookbookImage(cookbook)}</View>
+            <View style={$themedTextContainer}>
+              <Text preset="subheading" text={cookbook.title} style={$themedItemTitle} />
               <Text
                 preset="formHelper"
                 text={`${cookbook.members.textLabel}`}
-                style={$itemDescription}
+                style={$themedItemDescription}
               />
             </View>
             <Ionicons name="chevron-forward" size={24} color={colors.text} />
@@ -161,68 +177,68 @@ export default observer(function SelectCookbookScreen() {
   )
 })
 
-const $root: ViewStyle = {
+const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-}
+})
 
-const $title: ViewStyle = {
-  marginBottom: spacing.lg,
-  paddingHorizontal: spacing.lg,
-}
+const $title: ThemedStyle<ViewStyle> = (theme) => ({
+  marginBottom: theme.spacing.lg,
+  paddingHorizontal: theme.spacing.lg,
+})
 
-const $listContainer: ViewStyle = {
-  backgroundColor: colors.backgroundDim,
-  marginHorizontal: spacing.lg,
-  borderRadius: spacing.md,
-}
+const $listContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
+  marginHorizontal: theme.spacing.lg,
+  borderRadius: theme.spacing.md,
+})
 
-const $itemContainer: ViewStyle = {
+const $itemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   alignItems: "center",
-  padding: spacing.md,
+  padding: theme.spacing.md,
   borderBottomWidth: 1,
-  borderBottomColor: colors.background,
+  borderBottomColor: theme.colors.background,
   minHeight: 80,
-}
+})
 
-const $firstItem: ViewStyle = {
-  borderTopLeftRadius: spacing.md,
-  borderTopRightRadius: spacing.md,
-}
+const $firstItem: ThemedStyle<ViewStyle> = (theme) => ({
+  borderTopLeftRadius: theme.spacing.md,
+  borderTopRightRadius: theme.spacing.md,
+})
 
-const $lastItem: ViewStyle = {
+const $lastItem: ThemedStyle<ViewStyle> = (theme) => ({
   borderBottomWidth: 0,
-  borderBottomLeftRadius: spacing.md,
-  borderBottomRightRadius: spacing.md,
-}
+  borderBottomLeftRadius: theme.spacing.md,
+  borderBottomRightRadius: theme.spacing.md,
+})
 
-const $iconContainer: ViewStyle = {
+const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   width: 48,
   height: 48,
-  backgroundColor: colors.background,
+  backgroundColor: theme.colors.background,
   alignItems: "center",
   justifyContent: "center",
-  marginRight: spacing.md,
+  marginRight: theme.spacing.md,
   overflow: "hidden",
-}
+})
 
-const $cookbookImage: ImageStyle = {
+const $cookbookImage: ThemedStyle<ImageStyle> = (theme) => ({
   width: 48,
   height: 48,
   borderRadius: 24,
-}
+})
 
-const $textContainer: ViewStyle = {
+const $textContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-  marginRight: spacing.sm,
-}
+  marginRight: theme.spacing.sm,
+})
 
-const $itemTitle: TextStyle = {
+const $itemTitle: ThemedStyle<TextStyle> = (theme) => ({
   fontSize: 16,
-  marginBottom: spacing.xs,
-}
+  marginBottom: theme.spacing.xs,
+})
 
-const $itemDescription: TextStyle = {
-  color: colors.textDim,
+const $itemDescription: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
   fontSize: 14,
-}
+})

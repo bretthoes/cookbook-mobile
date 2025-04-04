@@ -1,7 +1,8 @@
 /* eslint-disable  react-native/no-inline-styles */
-import React from "react"
+import React, { useMemo } from "react"
 import { StyleProp, View, ViewStyle } from "react-native"
-import { colors } from "../theme"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 interface DividerProps {
   type?: "vertical" | "horizontal"
@@ -16,11 +17,15 @@ interface DividerProps {
  */
 export function Divider(props: DividerProps) {
   const { type = "horizontal", size = 10, line = false, style: $styleOverride } = props
+  const { themed } = useAppTheme()
+
+  const $themedDivider = useMemo(() => themed($divider), [themed])
+  const $themedLine = useMemo(() => themed($line), [themed])
 
   return (
     <View
       style={[
-        $divider,
+        $themedDivider,
         type === "horizontal" && { height: size },
         type === "vertical" && { width: size },
         $styleOverride,
@@ -29,7 +34,7 @@ export function Divider(props: DividerProps) {
       {line && (
         <View
           style={[
-            $line,
+            $themedLine,
             type === "horizontal" && {
               width: 150,
               height: 1,
@@ -49,14 +54,14 @@ export function Divider(props: DividerProps) {
   )
 }
 
-const $divider: ViewStyle = {
+const $divider: ThemedStyle<ViewStyle> = () => ({
   flexGrow: 0,
   flexShrink: 0,
-}
+})
 
-const $line: ViewStyle = {
-  backgroundColor: colors.border,
+const $line: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.border,
   position: "absolute",
   left: "50%",
   top: "50%",
-}
+})

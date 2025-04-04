@@ -13,6 +13,8 @@ import Animated from "react-native-reanimated"
 import { ContentStyle } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 const rnrImage1 = require("assets/images/demo/rnr-image-1.png")
 const rnrImage2 = require("assets/images/demo/rnr-image-2.png")
@@ -109,7 +111,7 @@ export default observer(function Invitations() {
   )
 })
 
-const InvitationCard = observer(function CookbookCard({
+const InvitationCard = observer(function InvitationCard({
   invitation,
   isFavorite,
   onPressFavorite,
@@ -121,6 +123,7 @@ const InvitationCard = observer(function CookbookCard({
   isDark: boolean
 }) {
   const { invitationStore } = useStores()
+  const { themed } = useAppTheme()
   const acceptPressed = useSharedValue(0)
   const rejectPressed = useSharedValue(0)
   const cardOpacity = useSharedValue(1)
@@ -244,7 +247,7 @@ const InvitationCard = observer(function CookbookCard({
         return (
           <View>
             <Animated.View
-              style={[$iconContainer, StyleSheet.absoluteFill, animatedAcceptButtonStyles]}
+              style={[themed($iconContainer), StyleSheet.absoluteFill, animatedAcceptButtonStyles]}
             >
               <Icon
                 icon="check"
@@ -252,13 +255,13 @@ const InvitationCard = observer(function CookbookCard({
                 color={isDark ? colors.textDim : colors.text}
               />
             </Animated.View>
-            <Animated.View style={[$iconContainer, animatedAcceptPressedStyles]}>
+            <Animated.View style={[themed($iconContainer), animatedAcceptPressedStyles]}>
               <Icon icon="check" size={ICON_SIZE} color={colors.tint} />
             </Animated.View>
           </View>
         )
       },
-    [isDark, animatedAcceptButtonStyles, animatedAcceptPressedStyles],
+    [isDark, animatedAcceptButtonStyles, animatedAcceptPressedStyles, themed],
   )
 
   const RejectButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(
@@ -267,7 +270,7 @@ const InvitationCard = observer(function CookbookCard({
         return (
           <View>
             <Animated.View
-              style={[$iconContainer, StyleSheet.absoluteFill, animatedRejectButtonStyles]}
+              style={[themed($iconContainer), StyleSheet.absoluteFill, animatedRejectButtonStyles]}
             >
               <Icon
                 icon="x"
@@ -275,20 +278,28 @@ const InvitationCard = observer(function CookbookCard({
                 color={isDark ? colors.textDim : colors.text}
               />
             </Animated.View>
-            <Animated.View style={[$iconContainer, animatedRejectPressedStyles]}>
+            <Animated.View style={[themed($iconContainer), animatedRejectPressedStyles]}>
               <Icon icon="x" size={ICON_SIZE} color={colors.error} />
             </Animated.View>
           </View>
         )
       },
-    [isDark, animatedRejectButtonStyles, animatedRejectPressedStyles],
+    [isDark, animatedRejectButtonStyles, animatedRejectPressedStyles, themed],
   )
+
+  const $themedItem = useMemo(() => themed($item), [themed])
+  const $themedItemThumbnail = useMemo(() => themed($itemThumbnail), [themed])
+  const $themedMetadata = useMemo(() => themed($metadata), [themed])
+  const $themedMetadataText = useMemo(() => themed($metadataText), [themed])
+  const $themedActionButton = useMemo(() => themed($actionButton), [themed])
+  const $themedAcceptButton = useMemo(() => themed($acceptButton), [themed])
+  const $themedRejectButton = useMemo(() => themed($rejectButton), [themed])
 
   return (
     <Animated.View style={animatedCardStyle}>
       <Card
         style={[
-          $item,
+          $themedItem,
           isDark && {
             shadowOpacity: 0,
             elevation: 0,
@@ -297,16 +308,16 @@ const InvitationCard = observer(function CookbookCard({
         verticalAlignment="force-footer-bottom"
         onPress={handlePressCard}
         HeadingComponent={
-          <View style={$metadata}>
+          <View style={$themedMetadata}>
             <Text
-              style={$metadataText}
+              style={$themedMetadataText}
               size="xxs"
               accessibilityLabel={invitation.getSenderInfo}
             >
               {invitation.getSenderInfo}
             </Text>
             <Text
-              style={$metadataText}
+              style={$themedMetadataText}
               size="xxs"
               accessibilityLabel={invitation.getTimeAgo}
             >
@@ -316,12 +327,12 @@ const InvitationCard = observer(function CookbookCard({
         }
         content={invitation.getParsedInvitationMessage}
         {...accessibilityHintProps}
-        RightComponent={<Image source={imageUri} style={$itemThumbnail} />}
+        RightComponent={<Image source={imageUri} style={$themedItemThumbnail} />}
         FooterComponent={
           <View style={$buttonContainer}>
             <Button
               onPress={() => handleRespond(true)}
-              style={[$actionButton, $acceptButton]}
+              style={[$themedActionButton, $themedAcceptButton]}
               accessibilityLabel={translate("pendingInvitationScreen:accept")}
               LeftAccessory={AcceptButtonLeftAccessory}
             >
@@ -333,7 +344,7 @@ const InvitationCard = observer(function CookbookCard({
             </Button>
             <Button
               onPress={() => handleRespond(false)}
-              style={[$actionButton, $rejectButton]}
+              style={[$themedActionButton, $themedRejectButton]}
               accessibilityLabel={translate("pendingInvitationScreen:reject")}
               LeftAccessory={RejectButtonLeftAccessory}
             >
@@ -363,37 +374,37 @@ const $heading: ViewStyle = {
   marginBottom: spacing.md,
 }
 
-const $item: ViewStyle = {
-  padding: spacing.md,
-  marginTop: spacing.md,
+const $item: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.md,
+  marginTop: theme.spacing.md,
   minHeight: 120,
-  backgroundColor: colors.background,
-}
+  backgroundColor: theme.colors.background,
+})
 
-const $itemThumbnail: ImageStyle = {
-  marginTop: spacing.sm,
+const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
+  marginTop: theme.spacing.sm,
   height: 90,
   width: 90,
   alignSelf: "flex-start",
-}
+})
 
-const $iconContainer: ViewStyle = {
+const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   height: ICON_SIZE,
   width: ICON_SIZE,
   flexDirection: "row",
-  marginEnd: spacing.sm,
-}
+  marginEnd: theme.spacing.sm,
+})
 
-const $metadata: TextStyle = {
-  color: colors.textDim,
-  marginTop: spacing.xs,
+const $metadata: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  marginTop: theme.spacing.xs,
   flexDirection: "column",
-}
+})
 
-const $metadataText: TextStyle = {
-  color: colors.textDim,
-  marginBottom: spacing.xs,
-}
+const $metadataText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  marginBottom: theme.spacing.xs,
+})
 
 const $buttonContainer: ViewStyle = {
   flexDirection: "row",
@@ -402,25 +413,25 @@ const $buttonContainer: ViewStyle = {
   gap: spacing.sm,
 }
 
-const $actionButton: ViewStyle = {
+const $actionButton: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
   borderRadius: 17,
   justifyContent: "center",
-  paddingHorizontal: spacing.md,
-  paddingTop: spacing.xxxs,
+  paddingHorizontal: theme.spacing.md,
+  paddingTop: theme.spacing.xxxs,
   paddingBottom: 0,
   minHeight: 32,
-}
+})
 
-const $acceptButton: ViewStyle = {
-  backgroundColor: colors.tint,
-  borderColor: colors.tint,
-}
+const $acceptButton: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.tint,
+  borderColor: theme.colors.tint,
+})
 
-const $rejectButton: ViewStyle = {
-  backgroundColor: colors.errorBackground,
-  borderColor: colors.error,
-}
+const $rejectButton: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.errorBackground,
+  borderColor: theme.colors.error,
+})
 
 const $emptyState: ViewStyle = {
   marginTop: spacing.xxl,

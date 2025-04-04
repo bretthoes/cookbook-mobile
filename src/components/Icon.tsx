@@ -1,4 +1,4 @@
-import { ComponentType } from "react"
+import { ComponentType, useMemo } from "react"
 import {
   Image,
   ImageStyle,
@@ -10,6 +10,7 @@ import {
   ViewStyle,
 } from "react-native"
 import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 export type IconTypes = keyof typeof iconRegistry
 
@@ -53,37 +54,45 @@ interface IconProps extends TouchableOpacityProps {
  * @returns {JSX.Element} The rendered `Icon` component.
  */
 export function Icon(props: IconProps) {
-  const {
-    icon,
-    color,
-    size,
-    style: $imageStyleOverride,
-    containerStyle: $containerStyleOverride,
-    ...WrapperProps
-  } = props
+  const { icon, color, size, style: $imageStyleOverride, containerStyle: $containerStyleOverride, onPress } = props
+  const { themed } = useAppTheme()
 
-  const isPressable = !!WrapperProps.onPress
-  const Wrapper = (WrapperProps?.onPress ? TouchableOpacity : View) as ComponentType<
-    TouchableOpacityProps | ViewProps
-  >
+  const $themedContainer = useMemo(() => themed($container), [themed])
+  const $themedImage = useMemo(() => themed($image), [themed])
 
-  const { theme } = useAppTheme()
+  const Container = onPress ? TouchableOpacity : View
 
-  const $imageStyle: StyleProp<ImageStyle> = [
-    $imageStyleBase,
-    { tintColor: color ?? theme.colors.text },
-    size !== undefined && { width: size, height: size },
-    $imageStyleOverride,
-  ]
+  if (onPress) {
+    return (
+      <TouchableOpacity
+        style={[$themedContainer, $containerStyleOverride]}
+        onPress={onPress}
+      >
+        <Image
+          source={iconRegistry[icon]}
+          style={[
+            $themedImage,
+            size ? { width: size, height: size } : undefined,
+            color ? { tintColor: color } : undefined,
+            $imageStyleOverride,
+          ]}
+        />
+      </TouchableOpacity>
+    )
+  }
 
   return (
-    <Wrapper
-      accessibilityRole={isPressable ? "imagebutton" : undefined}
-      {...WrapperProps}
-      style={$containerStyleOverride}
-    >
-      <Image style={$imageStyle} source={iconRegistry[icon]} />
-    </Wrapper>
+    <View style={[$themedContainer, $containerStyleOverride]}>
+      <Image
+        source={iconRegistry[icon]}
+        style={[
+          $themedImage,
+          size ? { width: size, height: size } : undefined,
+          color ? { tintColor: color } : undefined,
+          $imageStyleOverride,
+        ]}
+      />
+    </View>
   )
 }
 
@@ -112,6 +121,13 @@ export const iconRegistry = {
   x: require("../../assets/icons/x.png"),
 }
 
-const $imageStyleBase: ImageStyle = {
+const $container: ThemedStyle<ViewStyle> = () => ({
+  alignItems: "center",
+  justifyContent: "center",
+})
+
+const $image: ThemedStyle<ImageStyle> = () => ({
+  width: 24,
+  height: 24,
   resizeMode: "contain",
-}
+})

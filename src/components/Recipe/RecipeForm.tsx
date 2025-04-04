@@ -19,6 +19,8 @@ import { UseCase } from "src/components/UseCase"
 import Config from "src/config"
 import { useHeader } from "src/utils/useHeader"
 import { router } from "expo-router"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
 export interface RecipeFormInputs {
   title: string
@@ -59,6 +61,12 @@ export interface RecipeFormProps {
 
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const { onSubmit, onError, formValues = defaultForm, isEdit = false } = props
+  const { themed } = useAppTheme()
+
+  const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])
+  const $themedDirectionItemContainer = React.useMemo(() => themed($directionItemContainer), [themed])
+  const $themedDirectionIndex = React.useMemo(() => themed($directionIndex), [themed])
+  const $themedTextFieldContainer = React.useMemo(() => themed($textFieldContainer), [themed])
 
   const {
     control,
@@ -276,7 +284,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                 <Button
                   text="Add another ingredient"
                   onPress={() => addIngredient({ name: "", optional: false })}
-                  style={$buttonHeightOverride}
+                  style={$themedButtonHeightOverride}
                 />
                 <Divider size={spacing.xl} />
               </View>
@@ -284,8 +292,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             estimatedItemSize={162}
             data={ingredientFields}
             renderItem={({ index }) => (
-              <View style={$directionItemContainer}>
-                <Text text={"-"} style={$directionIndex} />
+              <View style={$themedDirectionItemContainer}>
+                <Text text={"-"} style={$themedDirectionIndex} />
                 <Controller
                   control={control}
                   name={`ingredients.${index}.name`}
@@ -294,7 +302,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                       value={field.value}
                       onChangeText={field.onChange}
                       placeholder="Add ingredient here..."
-                      containerStyle={$textFieldContainer}
+                      containerStyle={$themedTextFieldContainer}
                       status="error"
                       helper={errors.ingredients?.[index]?.name?.message ?? ""}
                       maxLength={255}
@@ -325,7 +333,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                 <Button
                   text="Add another direction"
                   onPress={() => addDirection({ text: "", image: "" })}
-                  style={$buttonHeightOverride}
+                  style={$themedButtonHeightOverride}
                 />
                 <Divider size={spacing.xl} />
               </View>
@@ -333,8 +341,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             estimatedItemSize={162}
             data={directionFields}
             renderItem={({ index }) => (
-              <View style={$directionItemContainer}>
-                <Text text={`${index + 1}.`} style={$directionIndex} />
+              <View style={$themedDirectionItemContainer}>
+                <Text text={`${index + 1}.`} style={$themedDirectionIndex} />
                 <Controller
                   control={control}
                   name={`directions.${index}.text`}
@@ -343,7 +351,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                       value={field.value}
                       onChangeText={field.onChange}
                       placeholder="Add direction here..."
-                      containerStyle={$textFieldContainer}
+                      containerStyle={$themedTextFieldContainer}
                       helper={errors.directions?.[index]?.text?.message ?? ""}
                       status="error"
                       maxLength={255}
@@ -364,20 +372,20 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   )
 })
 
-const $buttonHeightOverride: ViewStyle = {
-  minHeight: spacing.md,
-}
+const $buttonHeightOverride: ThemedStyle<ViewStyle> = (theme) => ({
+  minHeight: theme.spacing.md,
+})
 
-const $directionItemContainer: ViewStyle = {
+const $directionItemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   alignItems: "center",
-}
+})
 
-const $directionIndex: ViewStyle = {
-  marginRight: spacing.sm,
-}
+const $directionIndex: ThemedStyle<ViewStyle> = (theme) => ({
+  marginRight: theme.spacing.sm,
+})
 
-const $textFieldContainer: ViewStyle = {
+const $textFieldContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
   minHeight: 50,
-}
+})

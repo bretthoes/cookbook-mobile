@@ -3,36 +3,38 @@ import { View, ViewStyle } from "react-native"
 import { Text } from "src/components"
 import { spacing, colors } from "src/theme"
 import { Recipe } from "src/models/Recipe"
+import { useAppTheme } from "src/utils/useAppTheme"
+import type { ThemedStyle } from "src/theme"
 
-const $titleContainer: ViewStyle = {
+const $titleContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   justifyContent: "space-between",
   alignItems: "center",
-  marginHorizontal: spacing.sm,
-}
+  marginHorizontal: theme.spacing.sm,
+})
 
-const $subtitleContainer: ViewStyle = {
+const $subtitleContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   justifyContent: "space-between",
-  marginHorizontal: spacing.sm,
-}
+  marginHorizontal: theme.spacing.sm,
+})
 
-const $detailsContainer: ViewStyle = {
+const $detailsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   justifyContent: "space-evenly",
-  backgroundColor: colors.tintInactive,
-  borderRadius: spacing.md,
-  borderColor: colors.border,
-  borderWidth: spacing.xxxs,
-  margin: spacing.sm,
-  padding: spacing.md,
-}
+  backgroundColor: theme.colors.tintInactive,
+  borderRadius: theme.spacing.md,
+  borderColor: theme.colors.border,
+  borderWidth: theme.spacing.xxxs,
+  margin: theme.spacing.sm,
+  padding: theme.spacing.md,
+})
 
-const $descriptionContainer: ViewStyle = {
+const $descriptionContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "column",
   alignItems: "flex-start",
-  marginHorizontal: spacing.sm,
-}
+  marginHorizontal: theme.spacing.sm,
+})
 
 export interface RecipeSummaryProps {
   recipe: Recipe
@@ -40,9 +42,16 @@ export interface RecipeSummaryProps {
 }
 
 export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
+  const { themed } = useAppTheme()
+  
+  const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
+  const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
+  const $themedDetailsContainer = React.useMemo(() => themed($detailsContainer), [themed])
+  const $themedDescriptionContainer = React.useMemo(() => themed($descriptionContainer), [themed])
+
   return (
     <View>
-      <View style={$titleContainer}>
+      <View style={$themedTitleContainer}>
         <Text
           preset="heading"
           weight="normal"
@@ -51,11 +60,11 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
         />
       </View>
 
-      <View style={$subtitleContainer}>
+      <View style={$themedSubtitleContainer}>
         <Text preset="subheading" weight="light" text={recipe.author ?? ""} />
       </View>
 
-      <View style={$detailsContainer}>
+      <View style={$themedDetailsContainer}>
         {!!recipe.servings && (
           <View>
             <Text weight="light" tx={"recipeDetailsScreen:servings"} />
@@ -86,7 +95,7 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
       </View>
 
       {!!recipe.summary && (
-        <View style={$descriptionContainer}>
+        <View style={$themedDescriptionContainer}>
           <Text weight="light" tx={"recipeDetailsScreen:summary"} />
           <Text weight="light" text={recipe.summary ?? ""} />
         </View>
