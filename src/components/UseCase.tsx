@@ -1,7 +1,9 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode, useMemo } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { Text } from "."
 import { colors, spacing, typography } from "../theme"
+import { useAppTheme } from "../utils/useAppTheme"
+import type { ThemedStyle } from "../theme"
 
 interface UseCaseProps {
   name?: string
@@ -16,36 +18,44 @@ interface UseCaseProps {
  */
 export function UseCase(props: UseCaseProps) {
   const { name, description, children, layout = "column" } = props
+  const { themed } = useAppTheme()
+
+  const $themedContainer = useMemo(() => themed($container), [themed])
+  const $themedItem = useMemo(() => themed($item), [themed])
+  const $themedName = useMemo(() => themed($name), [themed])
+  const $themedDescription = useMemo(() => themed($description), [themed])
 
   return (
-    <View style={$container}>
-      <Text preset="subheading" style={$name}>
+    <View style={$themedContainer}>
+      <Text preset="subheading" style={$themedName}>
         {name}
       </Text>
 
-      {description && <Text style={$description}>{description}</Text>}
+      {description && <Text style={$themedDescription}>{description}</Text>}
 
-      <View style={[layout === "row" && $rowLayout, $item]}>{children}</View>
+      <View style={[layout === "row" && $rowLayout, $themedItem]}>{children}</View>
     </View>
   )
 }
 
-const $container: ViewStyle = {
-  paddingHorizontal: spacing.md,
-}
+const $container: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.md,
+})
 
-const $description: TextStyle = {
-  marginTop: spacing.md,
-}
+const $description: ThemedStyle<TextStyle> = (theme) => ({
+  marginTop: theme.spacing.md,
+})
 
-const $item: ViewStyle = {
-  backgroundColor: colors.backgroundDim,
+const $item: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
   borderRadius: 8,
-  padding: spacing.lg,
-  marginVertical: spacing.md,
-}
+  padding: theme.spacing.lg,
+  marginVertical: theme.spacing.md,
+})
 
-const $name: TextStyle = {}
+const $name: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.text,
+})
 
 const $rowLayout: ViewStyle = {
   flexDirection: "row",
