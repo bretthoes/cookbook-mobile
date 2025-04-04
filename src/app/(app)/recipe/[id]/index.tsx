@@ -15,8 +15,6 @@ import { MoreButton } from "src/components/MoreButton"
 import { CustomBackButton } from "src/components/CustomBackButton"
 
 export default observer(function Recipe() {
-  console.log("Recipe")
-  // Pull in one of our MST stores
   const {
     cookbookStore: { currentCookbook },
     recipeStore: { currentRecipe, deleteRecipe },
@@ -79,7 +77,10 @@ export default observer(function Recipe() {
 
   // TODO instead of fetching this here, fetch it when we login and store email in secure storage
   useEffect(() => {
-    fetchEmail()
+    const fetchData = async () => {
+      await fetchEmail()
+    }
+    fetchData()
   }, [])
 
   return (

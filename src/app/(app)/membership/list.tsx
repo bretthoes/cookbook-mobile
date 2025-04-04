@@ -37,9 +37,12 @@ export default observer(function Cookbook() {
   }, [membershipStore])
 
   useEffect(() => {
-    ;(async function reload() {
+    setIsLoading(true)
+    const reload = async () => {
       await membershipStore.fetch(id)
-    })()
+    }
+    reload()
+    setIsLoading(false)
   }, [membershipStore.fetch])
 
   // simulate a longer refresh, if the refresh is too fast for UX

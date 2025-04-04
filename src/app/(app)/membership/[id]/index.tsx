@@ -13,24 +13,10 @@ export default observer(function MembershipScreen() {
   const { membershipStore } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
+  if (!membership) return null
   const { showActionSheetWithOptions } = useActionSheet()
   const [email, setEmail] = useState<string | null>(null)
   const [isOwner, setIsOwner] = useState<boolean>(false)
-
-  useEffect(() => {
-    SecureStore.getItemAsync("email").then((result) => {
-      setEmail(result)
-    })
-  }, [])
-
-  useEffect(() => {
-    if (email && membershipStore.memberships?.items) {
-      const userMembership = membershipStore.memberships.items.find(
-        (m) => m.email === email && m.isCreator
-      )
-      setIsOwner(!!userMembership)
-    }
-  }, [email, membershipStore.memberships?.items])
 
   const handlePressMore = () => {
     const options = ["Edit membership", "Delete membership", "Cancel"]
@@ -60,8 +46,13 @@ export default observer(function MembershipScreen() {
                 text: "Delete",
                 style: "destructive",
                 onPress: async () => {
-                  await membershipStore.delete(parseInt(id))
-                  router.back()
+                  var result = await membershipStore.delete(parseInt(id)) 
+                  if (result) {
+                    router.back()
+                  }
+                  else {
+                    Alert.alert("Error", "Failed to delete membership")
+                  }
                 }
               }
             ]
@@ -70,17 +61,6 @@ export default observer(function MembershipScreen() {
       },
     )
   }
-
-  useHeader({
-    leftIcon: "back",
-    title: "Membership Details",
-    onLeftPress: () => router.back(),
-    rightIcon: isOwner ? "more" : undefined,
-    onRightPress: isOwner ? handlePressMore : undefined,
-  }, [isOwner])
-
-  if (!membership) return null
-
   const permissions = [
     { label: "Name", value: membership.name ?? "" },
     { label: "Cookbook Owner", value: membership.isCreator },
@@ -91,6 +71,29 @@ export default observer(function MembershipScreen() {
     { label: "Can Remove Member", value: membership.canRemoveMember },
     { label: "Can Edit Cookbook Details", value: membership.canEditCookbookDetails },
   ]
+
+  useEffect(() => {
+    SecureStore.getItemAsync("email").then((result) => {
+      setEmail(result)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (email && membershipStore.memberships?.items) {
+      const userMembership = membershipStore.memberships.items.find(
+        (m) => m.email === email && m.isCreator
+      )
+      setIsOwner(!!userMembership)
+    }
+  }, [email, membershipStore.memberships?.items])
+
+  useHeader({
+    leftIcon: "back",
+    title: "Membership Details",
+    onLeftPress: () => router.back(),
+    rightIcon: isOwner ? "more" : undefined,
+    onRightPress: isOwner ? handlePressMore : undefined,
+  }, [isOwner])
 
   return (
     <Screen preset="scroll" style={$root}>

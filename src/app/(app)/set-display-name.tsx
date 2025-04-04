@@ -40,11 +40,12 @@ export default observer(function SetDisplayName() {
   })
 
   useEffect(() => {
-    setResult("")
-    setSubmittedSuccessfully(false)
-    ;(async function load() {
+    const load = async () => {
+      setResult("")
+      setSubmittedSuccessfully(false)
       await fetchDisplayName()
-    })()
+    }
+    load()
     return () => {
       setResult("")
       setDisplayName("")

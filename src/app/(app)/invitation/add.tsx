@@ -1,10 +1,10 @@
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useMemo } from "react"
 import { TextStyle, ViewStyle, View } from "react-native"
 import { Screen, Text, Button, TextField, UseCase, Divider } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
-import { spacing } from "src/theme"
+import { colors, spacing } from "src/theme"
 import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Invitations() {
@@ -12,57 +12,80 @@ export default observer(function Invitations() {
     cookbookStore: { currentCookbook },
     invitationStore: { 
       invite,
-      inviteEmail,
-      setInviteEmail, 
-      validationError,
-      result,
-      setResult
     }
   } = useStores()
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const error = isSubmitted ? validationError : ""
+  const [result, setResult] = useState("")
+  const [inviteEmail, setInviteEmail] = useState("")
+  
+  // Validation function moved from store to component
+  const getValidationError = (email: string) => {
+    if (email.length === 0) return "can't be blank"
+    if (email.length < 6) return "must be at least 6 characters"
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+      return "must be a valid email address"
+    return ""
+  }
+  
+  const validationError = useMemo(() => 
+    isSubmitted ? getValidationError(inviteEmail) : ""
+  , [isSubmitted, inviteEmail])
 
   useHeader({
     title: "Invite a Friend",
     leftIcon: "back",
     onLeftPress: () => router.back(),
-    rightText: "Send",
-    onRightPress: () => send(),
   })
 
+  // Reset email when component mounts
   useEffect(() => {
-    setResult("")
     setInviteEmail("")
   }, [])
 
   async function send() {
     setIsSubmitted(true)
-    if (validationError) return
+    
+    // Directly check for validation errors
+    const error = getValidationError(inviteEmail)
+    if (error) {
+      return
+    }
+    
     const cookbookId = currentCookbook?.id ?? 0;
-    await invite(cookbookId)
+    setResult(await invite(cookbookId, inviteEmail))
     setIsSubmitted(false)
+    setInviteEmail("")
   }
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text text={`Invite a friend to join "${currentCookbook?.title}". Your friend needs to have an account to join you.`}
+      <Text text={`Invite a friend to join ${currentCookbook?.title ?? "your cookbook"}.`}
         style={{ paddingHorizontal: spacing.md }}
       />
       <UseCase>
+        <Text text="Your friend needs to have an account to receive an invitation!" style={$hint} />
         <Divider />
         <TextField
           value={inviteEmail}
-          onChangeText={setInviteEmail}
+          onChangeText={(text) => {
+            const cleanText = text.replace(/\s/g, "")
+            setInviteEmail(cleanText)
+          }}
           autoCapitalize="none"
           label="Email Address"
           autoComplete="email"
           autoCorrect={false}
           keyboardType="email-address"
           placeholder="Enter an email address"
-          helper={error}
-          status={error ? "error" : undefined}
+          helper={validationError}
+          status={validationError ? "error" : undefined}
         />
         <Text text={`${result}`} preset="formHelper" />
+        <Button
+          text="Send Invitation"
+          onPress={send}
+          style={{ marginTop: spacing.md }}
+        />
       </UseCase>
     </Screen>
   )
@@ -71,3 +94,8 @@ export default observer(function Invitations() {
 const $root: ViewStyle = {
   flex: 1,
 }
+
+const $hint: TextStyle = {
+  color: colors.tint,
+}
+

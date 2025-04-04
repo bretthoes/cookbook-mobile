@@ -41,19 +41,32 @@ export default observer(function Cookbook() {
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    ;(async function load() {
+    setIsLoading(true)
+    const fetchData = async () => {
       await membershipStore.fetchEmail()
       await membershipStore.single(cookbook?.id ?? 0)
-      setIsLoading(true)
       await recipeStore.fetch(Number(id))
-      setIsLoading(false)
-    })()
+    }
+    
+    fetchData()
+    setIsLoading(false)
   }, [recipeStore])
 
+  // simulate a longer refresh, if the refresh is too fast for UX
+  async function manualRefresh() {
+    setRefreshing(true)
+    await Promise.all([recipeStore.fetch(Number(id), searchQuery), delay(750)])
+    setRefreshing(false)
+  }
+
+  // re-fetch recipes when the search query changes
   useEffect(() => {
-    ;(async function reload() {
+    setIsLoading(true)
+    const fetchData = async () => {
       await recipeStore.fetch(Number(id), searchQuery)
-    })()
+    }
+    fetchData()
+    setIsLoading(false)
   }, [debouncedSearchQuery, recipeStore.fetch])
 
   useHeader({
@@ -63,13 +76,6 @@ export default observer(function Cookbook() {
     rightIcon: "more",
     onRightPress: () => handlePressMore(),
   })
-
-  // simulate a longer refresh, if the refresh is too fast for UX
-  async function manualRefresh() {
-    setRefreshing(true)
-    await Promise.all([cookbookStore.fetch(), delay(750)])
-    setRefreshing(false)
-  }
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {

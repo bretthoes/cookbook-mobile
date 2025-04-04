@@ -17,16 +17,16 @@ export const CookbookStoreModel = types
     setCookbookToAdd(cookbook: CookbookToAddSnapshotIn) {
       self.cookbookToAdd = CookbookToAddModel.create(cookbook)
     },
-    async fetch(pageNumber = 1, pageSize = 100) {
+    fetch: flow(function* (pageNumber = 1, pageSize = 100) {
       // TODO need to handle a different user logging in and clearing the referenced favorites
       //self.setProp("favorites", [])
-      const response = await api.getCookbooks(pageNumber, pageSize)
+      const response = yield api.getCookbooks(pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("cookbooks", response.cookbooks.items)
       } else {
         console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
       }
-    },
+    }),
     setCurrentCookbook(id: number) {
       const cookbook = self.cookbooks.find(cookbook => cookbook.id === id)
       if (cookbook) {
@@ -70,18 +70,7 @@ export const CookbookStoreModel = types
     },
     removeFavorite(cookbook: Cookbook) {
       self.favorites.remove(cookbook)
-    },
-    async deleteCookbook(cookbookId: number) {
-      const response = await api.deleteCookbook(cookbookId)
-      if (response.kind === "ok") {
-        self.setProp("cookbooks", self.cookbooks.filter(cookbook => cookbook.id !== cookbookId))
-        if (self.currentCookbook?.id === cookbookId) {
-          self.currentCookbook = null
-        }
-      } else {
-        console.error(`Error deleting cookbook: ${JSON.stringify(response)}`)
-      }
-    },
+    }
   }))
   .views((store) => ({
     get cookbooksForList() {

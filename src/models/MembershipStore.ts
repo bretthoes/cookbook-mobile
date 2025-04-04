@@ -18,28 +18,35 @@ export const MembershipStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((self) => ({
-      async fetch(cookbookId: number, pageNumber = 1, pageSize = 10) {
-        const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
+      fetch: flow(function* (cookbookId: number, pageNumber = 1, pageSize = 10) {
+        const response = yield api.GetMemberships(cookbookId, pageNumber, pageSize)
         if (response.kind == "ok") {
           self.setProp("memberships", response.memberships)
         } else {
           console.error(`Error fetching memberships: ${JSON.stringify(response)}`)
         }
-      },
-      async single(id: number) {
-        const response = await api.getMembership(id)
+      }),
+      single: flow(function* (id: number) {
+        const response = yield api.getMembership(id)
         if (response.kind == "ok") {
           self.setProp("ownMembership", response.membership)
+          return true
         } else {
           console.error(`Error fetching membership: ${JSON.stringify(response)}`)
+          return false
         }
-      },
-      async fetchEmail() {
+      }),
+      fetchEmail: flow(function* () {
         if (self.email) return
-        const response = await api.getEmail()
-        if (response.kind === "ok") self.setProp("email", response.email)
-        else console.error(`Error fetching email: ${JSON.stringify(response)}`)
-      },
+        const response = yield api.getEmail()
+        if (response.kind === "ok") {
+          self.setProp("email", response.email)
+          return true
+        } else {
+          console.error(`Error fetching email: ${JSON.stringify(response)}`)
+          return false
+        }
+      }),
       update: flow(function* (id: number) {
         const membership = self.memberships.items.find(m => m.id === id)
         if (!membership) return false
@@ -52,12 +59,13 @@ export const MembershipStoreModel = types
         }
       }),
       delete: flow(function* (id: number) {
-        console.log("Deleting membership", id)
         const response = yield api.deleteMembership(id)
         if (response.kind === "ok") {
           console.log("Membership deleted", response)
-          // Remove the membership from the list
-          yield api.GetMemberships(id, 1, 10)
+          self.setProp("memberships", {
+            ...self.memberships,
+            items: self.memberships.items.filter(item => item.id !== id)
+          })
           return true
         } else {
           console.error(`Error deleting membership: ${JSON.stringify(response)}`)

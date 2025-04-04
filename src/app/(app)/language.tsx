@@ -24,11 +24,13 @@ export default function LanguageScreen() {
   })
 
   useEffect(() => {
-    AsyncStorage.getItem("language").then((value) => {
+    const fetchLanguage = async () => { 
+      const value = await AsyncStorage.getItem("language")
       if (value !== null) {
         setCurrentLanguage(value)
       }
-    })
+    }
+    fetchLanguage()
   }, [])
 
   const handleLanguageSelect = async (languageCode: string) => {
