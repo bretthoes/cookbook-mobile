@@ -171,58 +171,56 @@ export default function Profile() {
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />
       </View>
-      <View style={$itemsContainer}>
-        <UseCase name="Debug">
-          <ListItem
-            LeftComponent={
-              <View style={$item}>
-                <Text preset="bold">App Id</Text>
-                <Text>{Application.applicationId}</Text>
-              </View>
-            }
-          />
-          <ListItem
-            LeftComponent={
-              <View style={$item}>
-                <Text preset="bold">App Name</Text>
-                <Text>{Application.applicationName}</Text>
-              </View>
-            }
-          />
-          <ListItem
-            LeftComponent={
-              <View style={$item}>
-                <Text preset="bold">App Version</Text>
-                <Text>{Application.nativeApplicationVersion}</Text>
-              </View>
-            }
-          />
-          <ListItem
-            LeftComponent={
-              <View style={$item}>
-                <Text preset="bold">App Build Version</Text>
-                <Text>{Application.nativeBuildVersion}</Text>
-              </View>
-            }
-          />
-          <ListItem
-            LeftComponent={
-              <View style={$item}>
-                <Text preset="bold">Hermes Enabled</Text>
-                <Text>{String(usingHermes)}</Text>
-              </View>
-            }
-          />
-          <ListItem
-            LeftComponent={
-              <View style={$item}>
-                <Text preset="bold">Fabric Enabled</Text>
-                <Text>{String(usingFabric)}</Text>
-              </View>
-            }
-          />
-        </UseCase>
-      </View>
+      <UseCase name="Debug">
+        <ListItem
+          LeftComponent={
+            <View>
+              <Text preset="bold">App Id</Text>
+              <Text>{Application.applicationId}</Text>
+            </View>
+          }
+        />
+        <ListItem
+          LeftComponent={
+            <View>
+              <Text preset="bold">App Name</Text>
+              <Text>{Application.applicationName}</Text>
+            </View>
+          }
+        />
+        <ListItem
+          LeftComponent={
+            <View>
+              <Text preset="bold">App Version</Text>
+              <Text>{Application.nativeApplicationVersion}</Text>
+            </View>
+          }
+        />
+        <ListItem
+          LeftComponent={
+            <View>
+              <Text preset="bold">App Build Version</Text>
+              <Text>{Application.nativeBuildVersion}</Text>
+            </View>
+          }
+        />
+        <ListItem
+          LeftComponent={
+            <View>
+              <Text preset="bold">Hermes Enabled</Text>
+              <Text>{String(usingHermes)}</Text>
+            </View>
+          }
+        />
+        <ListItem
+          LeftComponent={
+            <View>
+              <Text preset="bold">Fabric Enabled</Text>
+              <Text>{String(usingFabric)}</Text>
+            </View>
+          }
+        />
+      </UseCase>
       <View style={$buttonContainer}>
         <Button style={$button} tx="demoDebugScreen:reactotron" onPress={demoReactotron} />
         <Text style={$hint} tx={`demoDebugScreen:${Platform.OS}ReactotronHint` as const} />
@@ -252,14 +250,6 @@ const $reportBugsLink: TextStyle = {
   alignSelf: isRTL ? "flex-start" : "flex-end",
 }
 
-const $item: ViewStyle = {
-  marginBottom: spacing.md,
-}
-
-const $itemsContainer: ViewStyle = {
-  marginBottom: spacing.xl,
-}
-
 const $button: ViewStyle = {
   marginTop: spacing.lg,
   marginBottom: spacing.xs,
@@ -268,10 +258,6 @@ const $button: ViewStyle = {
 const $buttonContainer: ViewStyle = {
   marginBottom: spacing.md,
   paddingHorizontal: spacing.xl,
-}
-
-const $sectionTitle: TextStyle = {
-  marginTop: spacing.xxl,
 }
 
 const $description: TextStyle = {
