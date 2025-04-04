@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { ViewStyle, TextStyle, View, Alert } from "react-native"
 import { Screen, Text, ListView, Icon, Button } from "src/components"
+import { ItemNotFound } from "src/components/ItemNotFound"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
@@ -95,20 +96,8 @@ export default observer(function MembershipScreen() {
     onRightPress: isOwner ? handlePressMore : undefined,
   }, [isOwner])
 
-  // If membership is not found, show a message and return
   if (!membership) {
-    return (
-      <Screen preset="scroll" style={$root}>
-        <View style={{ padding: spacing.lg }}>
-          <Text text="Membership not found" style={{ textAlign: "center" }} />
-          <Button
-            text="Go Back"
-            onPress={() => router.back()}
-            style={{ marginTop: spacing.md }}
-          />
-        </View>
-      </Screen>
-    )
+    return <ItemNotFound message="Membership not found" />
   }
 
   return (
