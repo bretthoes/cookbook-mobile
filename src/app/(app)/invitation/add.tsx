@@ -18,7 +18,6 @@ export default observer(function Invitations() {
   const [result, setResult] = useState("")
   const [inviteEmail, setInviteEmail] = useState("")
   
-  // Validation function moved from store to component
   const getValidationError = (email: string) => {
     if (email.length === 0) return "can't be blank"
     if (email.length < 6) return "must be at least 6 characters"

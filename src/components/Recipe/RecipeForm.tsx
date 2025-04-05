@@ -195,6 +195,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               helper={errors.summary?.message ?? ""}
               placeholder="Enter summary (optional)"
               multiline
+              maxLength={2048}
             />
           )}
         />
@@ -354,7 +355,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                       containerStyle={$themedTextFieldContainer}
                       helper={errors.directions?.[index]?.text?.message ?? ""}
                       status="error"
-                      maxLength={255}
+                      maxLength={2048}
                       multiline
                       RightAccessory={() => (
                         <Icon icon="x" onPress={() => removeDirection(index)} />
