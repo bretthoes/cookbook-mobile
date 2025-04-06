@@ -1,8 +1,8 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { View, ViewStyle, Alert } from "react-native"
+import { View, ViewStyle, Alert, TouchableOpacity } from "react-native"
 import { spacing } from "src/theme"
-import { Checkbox, ListItem, ListView, Screen, Text } from "src/components"
+import { ListItem, ListView, Screen, Text } from "src/components"
 import { RecipeImages } from "src/components/Recipe/RecipeImages"
 import { RecipeIngredient } from "src/models/Recipe"
 import { RecipeDirection } from "src/models/Recipe/RecipeDirection"
@@ -16,6 +16,7 @@ import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
 import { DirectionText } from "src/components/Recipe/DirectionText"
+import { IngredientItem } from "src/components/Recipe/IngredientItem"
 
 export default observer(function Recipe() {
   const {
@@ -31,7 +32,6 @@ export default observer(function Recipe() {
   const canEdit = isRecipeAuthor || ownsCookbook
   const recipeHasImages = currentRecipe?.images[0]
 
-  const $themedIngredientItemStyle = React.useMemo(() => themed($ingredientItemStyle), [themed])
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
   const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
   const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
@@ -122,22 +122,12 @@ export default observer(function Recipe() {
             }
             renderItem={({ item, index }) =>
               item && (
-                <View
-                  style={[
-                    $themedIngredientItemStyle,
-                    index === 0 && $themedBorderTop,
-                    index === currentRecipe!.ingredients.length - 1 && $themedBorderBottom,
-                  ]}
-                >
-                  <ListItem
-                    LeftComponent={<View style={{ marginTop: spacing.xxs, padding: spacing.xs }}><Checkbox /></View>}
-                    text={`${item?.name}`}
-                    height={spacing.xl}
-                    bottomSeparator={index !== currentRecipe!.ingredients.length - 1}
-                    topSeparator={index !== 0}
-                    TextProps={{ size: "md" }}
-                  />
-                </View>
+                <IngredientItem
+                  ingredient={item}
+                  index={index}
+                  isFirst={index === 0}
+                  isLast={index === currentRecipe!.ingredients.length - 1}
+                />
               )
             }
             data={currentRecipe?.ingredients}
@@ -192,11 +182,6 @@ export default observer(function Recipe() {
 
 // #region Styles
 
-const $ingredientItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
-  backgroundColor: theme.colors.backgroundDim,
-  paddingHorizontal: theme.spacing.md,
-})
-
 const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.backgroundDim,
   paddingHorizontal: theme.spacing.md,
@@ -218,6 +203,8 @@ const $directionsContainer: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
+  paddingTop: theme.spacing.lg,
+  paddingBottom: theme.spacing.lg,
 })
 
 // #endregion
