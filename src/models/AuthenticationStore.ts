@@ -57,7 +57,9 @@ export const AuthenticationStoreModel = types
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
         store.setProp("result", "An error occurred. Please try again.")
+        return false
       } else store.setProp("submittedSuccessfully", true)
+      return true
     }),
     setAuthResult(value: AuthResultSnapshotIn) {
       store.setProp("authResult", AuthResultModel.create(value))

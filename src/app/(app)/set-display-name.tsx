@@ -1,71 +1,94 @@
-import React, { FC, useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { TextStyle, ViewStyle } from "react-native"
-import { Button, Screen, Text, TextField, UseCase } from "src/components"
+import { ViewStyle } from "react-native"
+import { Screen, Text, TextField, UseCase } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
-import { colors, spacing } from "src/theme"
+import { spacing } from "src/theme"
 import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
 
 export default observer(function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [localDisplayName, setLocalDisplayName] = useState("")
+  const [result, setResult] = useState("")
   const {
     authenticationStore: {
       displayName,
       setDisplayName,
       updateDisplayName,
       fetchDisplayName,
-      result,
-      setResult,
-      submittedSuccessfully,
-      setSubmittedSuccessfully,
     },
   } = useStores()
-  const displayNameValidator = useMemo(() => {
-    if (displayName.length > 60) return "cannot exceed 60 characters"
-    if (!/^[\p{L}\p{M} \-']+$/u.test(displayName)) {
-      return "can only contain letters, spaces, hyphens, and apostrophes"
-    }
-    return ""
-  }, [displayName])
 
-  const error = isSubmitted ? displayNameValidator : ""
+  const getValidationError = (name: string) => {
+    if (name.length === 0) return "can't be blank"
+    if (name.length > 255) return "cannot exceed 255 characters"
+    if (!isValidDisplayName(name))
+      return "can only contain letters, spaces, hyphens, and apostrophes"
+    return ""
+  }
+
+  const isValidDisplayName = (input: string) => {
+    const regex = /^[\p{L}\p{M} \-']+$/u
+    return regex.test(input)
+  }
+
+  const validationError = useMemo(() => 
+    isSubmitted ? getValidationError(localDisplayName) : ""
+  , [isSubmitted, localDisplayName])
+
+  useEffect(() => {
+    // Reset state when component mounts
+    setLocalDisplayName("")
+    setIsSubmitted(false)
+    setResult("")
+    
+    // Fetch the current display name
+    const load = async () => {
+      await fetchDisplayName()
+      // Set the local display name to the fetched value
+      setLocalDisplayName(displayName)
+    }
+    load()
+    
+    return () => {
+      setResult("")
+    }
+  }, [fetchDisplayName, displayName])
+
+  const handleSave = async () => {
+    setIsSubmitted(true)
+    setResult("")
+    const error = getValidationError(localDisplayName)
+    if (error) return
+
+    // Check if the local display name is already equal to the store's display name
+    if (localDisplayName === displayName) {
+      setResult("No changes to save.")
+      setIsSubmitted(false)
+      return
+    }
+
+    // Update the store's display name with the local value
+    setDisplayName(localDisplayName)
+    
+    // Call the update function
+    const success = await updateDisplayName()
+    if (success) {
+      setResult("Display name updated successfully!")
+    } else {
+      setResult("Failed to update display name, please try again.")
+    }
+    setIsSubmitted(false)
+  }
 
   useHeader({
     title: "Set a display name",
     leftIcon: "back",
     rightText: "Save",
     onLeftPress: () => router.back(),
-    onRightPress: () => forward(),
-  })
-
-  useEffect(() => {
-    const load = async () => {
-      setResult("")
-      setSubmittedSuccessfully(false)
-      await fetchDisplayName()
-    }
-    load()
-    return () => {
-      setResult("")
-      setDisplayName("")
-    }
-  }, [fetchDisplayName])
-
-  useEffect(() => {
-    if (submittedSuccessfully) {
-      setIsSubmitted(false)
-      router.back()
-    }
-  }, [submittedSuccessfully])
-
-  async function forward() {
-    setIsSubmitted(true)
-
-    if (displayNameValidator) return
-
-    await updateDisplayName()
-  }
+    onRightPress: handleSave,
+  }, [localDisplayName])
 
   return (
     <Screen style={$root} preset="scroll">
@@ -75,18 +98,20 @@ export default observer(function SetDisplayName() {
       />
       <UseCase name="">
         <TextField
-          value={displayName}
-          onChangeText={setDisplayName}
-          helper={error}
-          status={error ? "error" : undefined}
+          value={localDisplayName}
+          onChangeText={setLocalDisplayName}
+          helper={validationError}
+          status={validationError ? "error" : undefined}
           autoCapitalize="none"
           autoComplete="name"
           autoCorrect={false}
           label="Display name"
           placeholder=""
-          onSubmitEditing={forward}
         />
-        <Text text={`${result}`} preset="formHelper" style={$result} />
+        <Text 
+          text={`${result}`} 
+          preset="formHelper" 
+        />
       </UseCase>
     </Screen>
   )
@@ -94,8 +119,4 @@ export default observer(function SetDisplayName() {
 
 const $root: ViewStyle = {
   flex: 1,
-}
-
-const $result: TextStyle = {
-  color: colors.error,
 }
