@@ -18,6 +18,8 @@ import { useAppTheme } from "src/utils/useAppTheme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useRouter } from "expo-router"
 import config from "src/config/config.dev"
+import Feather from '@expo/vector-icons/Feather';
+import { AntDesign, MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons"
 
 const reactNativeNewsletterLogo = require("assets/images/demo/rnn-logo.png")
 
@@ -104,25 +106,28 @@ export default function Profile() {
         {email && <Text preset="default" text={email} />}
       </View>
       <UseCase name="Actions">
-        <Text text="Manage your info in the app." style={$description} />
+        <Text text="Manage your info." style={$description} />
         <ListItem
           text="View your pending invitations"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
-            <View style={$logoContainer}>
-              <Image source={reactNativeNewsletterLogo} style={$logo} />
+            <View style={$iconContainer}>
+              <Feather name="mail" size={24} color="black" />
             </View>
           }
           onPress={() => router.push("/(app)/invitation")}
         />
         <ListItem
-          text="Manage your cookbooks"
+          text="Manage your cookbook memberships"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
-            <View style={$logoContainer}>
-              <Image source={reactNativeNewsletterLogo} style={$logo} />
+            <View style={$iconContainer}>
+              <MaterialCommunityIcons
+                name="bookshelf"
+                size={24}
+              />
             </View>
           }
           onPress={() =>
@@ -137,11 +142,20 @@ export default function Profile() {
         />
       </UseCase>
       <UseCase name="Preferences">
-        <Text text="Customize your experience in the app." style={$description} />
-        <View style={$themeRow}>
-          <Text text="Dark Mode" />
-          <Switch value={themeContext === "dark"} onValueChange={toggleTheme} />
-        </View>
+        <Text text="Customize your experience." style={$description} />
+        <ListItem
+          text="Dark Mode"
+          bottomSeparator
+          rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          LeftComponent={
+            <View style={$iconContainer}>
+              <MaterialIcons name="dark-mode" size={24} color="black" />
+            </View>
+          }
+          RightComponent={
+            <Switch value={themeContext === "dark"} onValueChange={toggleTheme} />
+          }
+        />
         {/*<View style={$themeRow}> // TODO disabled for now; need to fix padding when floating tab bar is disabled
         <Text text="Floating Tab Bar" />
         <Switch
@@ -151,7 +165,12 @@ export default function Profile() {
       </View>*/}
         <ListItem
           text="Choose your preferred language"
-          leftIcon="components"
+          //leftIcon="components"
+          LeftComponent={
+            <View style={$iconContainer}>
+              <FontAwesome name="language" size={24} color="black" />
+            </View>
+          }
           onPress={() => router.push("/(app)/language")}
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           bottomSeparator
@@ -161,8 +180,8 @@ export default function Profile() {
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
-            <View style={$logoContainer}>
-              <Image source={reactNativeNewsletterLogo} style={$logo} />
+            <View style={$iconContainer}>
+              <AntDesign name="user" color="black" size={24} />
             </View>
           }
           onPress={() => router.push("/(app)/set-display-name")}
@@ -234,16 +253,6 @@ const $titleContainer: ViewStyle = {
   paddingBottom: spacing.lg,
 }
 
-const $themeRow: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: spacing.sm,
-  paddingVertical: spacing.xs,
-  borderBottomWidth: 1,
-  borderBottomColor: colors.separator,
-}
-
 const $reportBugsLink: TextStyle = {
   color: colors.tint,
   marginBottom: spacing.lg,
@@ -256,7 +265,7 @@ const $button: ViewStyle = {
 }
 
 const $buttonContainer: ViewStyle = {
-  marginBottom: spacing.md,
+  marginBottom: spacing.xxxl,
   paddingHorizontal: spacing.xl,
 }
 
@@ -281,4 +290,13 @@ const $logoContainer: ViewStyle = {
 const $logo: ImageStyle = {
   height: 38,
   width: 38,
+}
+
+const $iconContainer: ViewStyle = {
+  marginEnd: spacing.md,
+  marginTop: spacing.xs,
+  justifyContent: "center",
+  alignItems: "center",
+  width: 38,
+  height: 38,
 }
