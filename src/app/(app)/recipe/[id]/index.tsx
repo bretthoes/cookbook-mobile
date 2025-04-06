@@ -1,7 +1,7 @@
-import React, { FC, useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle, Alert } from "react-native"
-import { colors, spacing } from "src/theme"
+import { spacing } from "src/theme"
 import { Checkbox, ListItem, ListView, Screen, Text } from "src/components"
 import { RecipeImages } from "src/components/Recipe/RecipeImages"
 import { RecipeIngredient } from "src/models/Recipe"
@@ -15,7 +15,7 @@ import { CustomBackButton } from "src/components/CustomBackButton"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
-import { Toggle } from "src/components/Toggle/Toggle"
+import { DirectionText } from "src/components/Recipe/DirectionText"
 
 export default observer(function Recipe() {
   const {
@@ -168,11 +168,13 @@ export default observer(function Recipe() {
                   ]}
                 >
                   <ListItem
-                    text={`${item?.ordinal}. ${item?.text}`}
+                    style={{ padding: spacing.sm }}
+                    LeftComponent={
+                      <DirectionText ordinal={item?.ordinal} text={item?.text} />
+                    }
                     height={spacing.xl}
                     bottomSeparator={index !== currentRecipe!.directions.length - 1}
                     topSeparator={index !== 0}
-                    TextProps={{ size: "md" }}
                   />
                 </View>
               )
