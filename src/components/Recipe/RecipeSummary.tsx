@@ -96,8 +96,8 @@ export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
 
       {!!recipe.summary && (
         <View style={$themedDescriptionContainer}>
-          <Text weight="light" tx={"recipeDetailsScreen:summary"} />
-          <Text weight="light" text={recipe.summary ?? ""} />
+          <Text preset="subheading" tx={"recipeDetailsScreen:summary"} />
+          <Text preset="default" text={recipe.summary ?? ""} />
         </View>
       )}
     </View>

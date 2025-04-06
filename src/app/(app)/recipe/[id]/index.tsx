@@ -115,7 +115,7 @@ export default observer(function Recipe() {
           <ListView<RecipeIngredient>
             ListHeaderComponent={
               <Text
-                weight="light"
+                preset="subheading"
                 tx="recipeDetailsScreen:ingredients"
                 style={{ paddingBottom: spacing.md }}
               />
@@ -151,7 +151,7 @@ export default observer(function Recipe() {
           <ListView<RecipeDirection>
             ListHeaderComponent={
               <Text
-                weight="light"
+                preset="subheading"
                 tx="recipeDetailsScreen:directions"
                 style={{ paddingBottom: spacing.md }}
               />
