@@ -31,9 +31,7 @@ export const IngredientItem = ({
   const $themedSeparator = useMemo(() => themed($separator), [themed])
   
   const handleValueChange = (value: boolean) => {
-    console.log(`Toggling ingredient ${ingredient.id}, current state: ${isChecked}`)
     setIsChecked(value)
-    console.log(`New state for ingredient ${ingredient.id}: ${value}`)
   }
   
   return (
