@@ -2,11 +2,10 @@ import React, { FC, useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { View, ViewStyle, Alert } from "react-native"
 import { colors, spacing } from "src/theme"
-import { ListView, Screen, Text } from "src/components"
+import { Checkbox, ListItem, ListView, Screen, Text } from "src/components"
 import { RecipeImages } from "src/components/Recipe/RecipeImages"
 import { RecipeIngredient } from "src/models/Recipe"
 import { RecipeDirection } from "src/models/Recipe/RecipeDirection"
-import { CustomListItem } from "src/components/CustomListItem"
 import { RecipeSummary } from "src/components/Recipe/RecipeSummary"
 import { useStores } from "src/models/helpers/useStores"
 import { router } from "expo-router"
@@ -16,6 +15,7 @@ import { CustomBackButton } from "src/components/CustomBackButton"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
+import { Toggle } from "src/components/Toggle/Toggle"
 
 export default observer(function Recipe() {
   const {
@@ -129,11 +129,13 @@ export default observer(function Recipe() {
                     index === currentRecipe!.ingredients.length - 1 && $themedBorderBottom,
                   ]}
                 >
-                  <CustomListItem
-                    text={` - ${item?.name}`}
-                    index={index}
-                    lastIndex={currentRecipe!.ingredients.length - 1}
+                  <ListItem
+                    LeftComponent={<View style={{ marginTop: spacing.xxs, padding: spacing.xs }}><Checkbox /></View>}
+                    text={`${item?.name}`}
                     height={spacing.xl}
+                    bottomSeparator={index !== currentRecipe!.ingredients.length - 1}
+                    topSeparator={index !== 0}
+                    TextProps={{ size: "md" }}
                   />
                 </View>
               )
@@ -165,11 +167,12 @@ export default observer(function Recipe() {
                     index === currentRecipe!.directions.length - 1 && $themedBorderBottom,
                   ]}
                 >
-                  <CustomListItem
+                  <ListItem
                     text={`${item?.ordinal}. ${item?.text}`}
-                    index={index}
-                    lastIndex={currentRecipe!.directions.length - 1}
                     height={spacing.xl}
+                    bottomSeparator={index !== currentRecipe!.directions.length - 1}
+                    topSeparator={index !== 0}
+                    TextProps={{ size: "md" }}
                   />
                 </View>
               )
