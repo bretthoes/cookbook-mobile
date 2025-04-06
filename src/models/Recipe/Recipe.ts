@@ -25,6 +25,13 @@ export const RecipeModel = types
     directions: types.array(RecipeDirectionModel) ?? [],
     ingredients: types.array(RecipeIngredientModel) ?? [],
     images: types.array(RecipeImageModel) ?? [],
+    isVegetarian: types.maybeNull(types.boolean),
+    isVegan: types.maybeNull(types.boolean),
+    isGlutenFree: types.maybeNull(types.boolean),
+    isDairyFree: types.maybeNull(types.boolean),
+    isCheap: types.maybeNull(types.boolean),
+    isHealthy: types.maybeNull(types.boolean),
+    isLowFodmap: types.maybeNull(types.boolean),
   })
 .actions(withSetPropAction)
   .views((recipe) => ({
