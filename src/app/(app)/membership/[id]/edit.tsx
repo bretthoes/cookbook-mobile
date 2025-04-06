@@ -8,6 +8,7 @@ import { useStores } from "src/models/helpers/useStores"
 import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
+import { ItemNotFound } from "src/components/ItemNotFound"
 
 type MembershipProperty = "canAddRecipe" | "canUpdateRecipe" | "canDeleteRecipe" | "canSendInvite" | "canRemoveMember" | "canEditCookbookDetails"
 
@@ -48,7 +49,7 @@ export default observer(function MembershipEditScreen() {
     }
   })
 
-  if (!membership) return null
+  if (!membership) return <ItemNotFound message="Membership not found" />
 
   const data: DataItem[] = [
     { label: "Email", value: membership.email, type: "text" },

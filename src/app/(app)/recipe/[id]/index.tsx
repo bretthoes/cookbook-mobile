@@ -15,6 +15,7 @@ import { MoreButton } from "src/components/MoreButton"
 import { CustomBackButton } from "src/components/CustomBackButton"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
+import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function Recipe() {
   const {
@@ -92,6 +93,8 @@ export default observer(function Recipe() {
     }
     fetchData()
   }, [])
+
+  if (!currentRecipe) return <ItemNotFound message="Recipe not found" />
 
   return (
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">

@@ -23,6 +23,7 @@ import { useActionSheet } from "@expo/react-native-action-sheet"
 import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
+import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function Cookbook() {
   const {
@@ -169,7 +170,7 @@ export default observer(function Cookbook() {
     )
   }
 
-  if (!cookbook) return null
+    if (!cookbook) return <ItemNotFound message="Cookbook not found" />
 
   return (
     <Screen preset="scroll" style={$themedRoot}>

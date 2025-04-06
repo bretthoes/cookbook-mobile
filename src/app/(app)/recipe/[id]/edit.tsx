@@ -6,6 +6,7 @@ import { RecipeSnapshotIn } from "src/models/Recipe"
 import { Screen } from "src/components"
 import { router } from "expo-router"
 import { useForm } from "react-hook-form"
+import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function EditRecipe() {
   const {
@@ -89,6 +90,8 @@ export default observer(function EditRecipe() {
   const onError = (errors: any) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
+
+  if (!currentRecipe) return <ItemNotFound message="Recipe not found" />
 
   return (
     <Screen preset="scroll">
