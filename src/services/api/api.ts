@@ -12,7 +12,7 @@ import type { ApiConfig } from "./api.types"
 import * as SecureStore from "expo-secure-store"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookInvitationStatus } from "src/models/Invitation"
-import { CookbookSnapshotOut, CookbookToAddSnapshotIn } from "src/models/Cookbook"
+import { CookbookSnapshotOut, CookbookToAddSnapshotIn, CookbookSnapshotIn } from "src/models/Cookbook"
 import { AuthResultModel, AuthResultSnapshotIn } from "src/models/AuthResult"
 import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "src/models/Recipe"
 import {
@@ -892,6 +892,31 @@ export class Api {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
       }
+      return { kind: "bad-data" }
+    }
+  }
+
+  async updateCookbook(cookbook: CookbookSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    try {
+
+      const response = await this.authorizedRequest(
+        `Cookbooks/${cookbook.id}`,
+        "PUT",
+        {
+          Id: cookbook.id,
+          Title: cookbook.title,
+          Image: cookbook.image,
+        },
+      )
+      
+      if (!response.ok) {
+        const problem = getGeneralApiProblem(response)
+        if (problem) return problem
+      }
+      
+      return { kind: "ok" }
+    } catch (error) {
+      console.error("Error updating cookbook:", error)
       return { kind: "bad-data" }
     }
   }
