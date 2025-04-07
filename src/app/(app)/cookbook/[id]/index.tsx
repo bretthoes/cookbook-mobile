@@ -27,7 +27,7 @@ import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function Cookbook() {
   const {
-    cookbookStore,
+    cookbookStore: { currentCookbook, setCurrentCookbook, remove },
     recipeStore,
     membershipStore,
   } = useStores()
@@ -35,8 +35,8 @@ export default observer(function Cookbook() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  const cookbook = cookbookStore.cookbooks.find((c) => c.id === Number(id))
-  const isAuthor = cookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
+  setCurrentCookbook(Number(id))
+  const isAuthor = currentCookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -60,7 +60,7 @@ export default observer(function Cookbook() {
     setIsLoading(true)
     const fetchData = async () => {
       await membershipStore.fetchEmail()
-      await membershipStore.single(cookbook?.id ?? 0)
+      await membershipStore.single(currentCookbook?.id ?? 0)
       await recipeStore.fetch(Number(id))
     }
     
@@ -86,12 +86,12 @@ export default observer(function Cookbook() {
   }, [debouncedSearchQuery, recipeStore.fetch])
 
   useHeader({
-    title: cookbook?.title ?? "",
+    title: currentCookbook?.title ?? "",
     leftIcon: "back",
     onLeftPress: () => router.back(),
     rightIcon: "more",
     onRightPress: () => handlePressMore(),
-  })
+  }, [currentCookbook?.title])
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {
@@ -116,7 +116,7 @@ export default observer(function Cookbook() {
 
   const handlePressLeave = async () => {
     // TODO should refresh current cookbook here to ensure membersCount is up to date.
-    if (isAuthor && cookbook?.membersCount !== 1) {
+    if (isAuthor && currentCookbook?.membersCount !== 1) {
       Alert.alert("Leave Cookbook", "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).", [
         {
           text: "OK",
@@ -141,7 +141,7 @@ export default observer(function Cookbook() {
             if (!membershipStore.ownMembership?.id) return
               var result = await membershipStore.delete(membershipStore.ownMembership?.id)
               if (result) {
-                cookbookStore.remove(cookbook?.id ?? 0)
+                remove(currentCookbook?.id ?? 0)
                 router.back()
               } else {
                 Alert.alert("Error", "Failed to leave cookbook. Please try again.")
@@ -170,7 +170,7 @@ export default observer(function Cookbook() {
     )
   }
 
-    if (!cookbook) return <ItemNotFound message="Cookbook not found" />
+    if (!currentCookbook) return <ItemNotFound message="Cookbook not found" />
 
   return (
     <Screen preset="scroll" style={$themedRoot}>

@@ -23,8 +23,7 @@ export default observer(function EditCookbookScreen() {
   const { cookbookStore } = useStores()
   const [localImage, setLocalImage] = useState<string | null>(null)
   const [result, setResult] = useState<string>("")
-
-  const cookbook = cookbookStore.cookbooks.find((c) => c.id === Number(id))
+  cookbookStore.setCurrentCookbook(Number(id))
 
   const {
     control,
@@ -34,18 +33,18 @@ export default observer(function EditCookbookScreen() {
   } = useForm<CookbookFormInputs>({
     resolver: yupResolver(cookbookSchema),
     defaultValues: {
-      title: cookbook?.title || "",
-      image: cookbook?.image || null,
+      title: cookbookStore.currentCookbook?.title || "",
+      image: cookbookStore.currentCookbook?.image || null,
     },
   })
 
   useEffect(() => {
-    if (cookbook) {
-      setValue("title", cookbook.title)
-      setValue("image", cookbook.image)
-      setLocalImage(cookbook.image)
+    if (cookbookStore.currentCookbook) {
+      setValue("title", cookbookStore.currentCookbook.title)
+      setValue("image", cookbookStore.currentCookbook.image)
+      setLocalImage(cookbookStore.currentCookbook.image)
     }
-  }, [cookbook, setValue])
+  }, [cookbookStore.currentCookbook, setValue])
 
   useHeader({
     title: "Edit Cookbook",
@@ -71,23 +70,23 @@ export default observer(function EditCookbookScreen() {
   }
 
   const onPressSend = async (data: CookbookFormInputs) => {
-    if (!cookbook) return
+    if (!cookbookStore.currentCookbook) return
 
     // Check if there are any changes
-    if (data.title === cookbook.title && data.image === cookbook.image) {
+    if (data.title === cookbookStore.currentCookbook.title && data.image === cookbookStore.currentCookbook.image) {
       setResult("No changes to save")
       return
     }
 
     try {
       const success = await cookbookStore.update({
-        id: cookbook.id,
+        id: cookbookStore.currentCookbook.id,
         title: data.title,
         image: data.image,
-        author: cookbook.author,
-        authorEmail: cookbook.authorEmail,
-        membersCount: cookbook.membersCount,
-        recipeCount: cookbook.recipeCount,
+        author: cookbookStore.currentCookbook.author,
+        authorEmail: cookbookStore.currentCookbook.authorEmail,
+        membersCount: cookbookStore.currentCookbook.membersCount,
+        recipeCount: cookbookStore.currentCookbook.recipeCount,
       })
 
       if (success) {
@@ -104,7 +103,7 @@ export default observer(function EditCookbookScreen() {
     }
   }
 
-  if (!cookbook) {
+  if (!cookbookStore.currentCookbook) {
     return <ItemNotFound message="Cookbook not found" />
   }
 

@@ -31,11 +31,7 @@ export const CookbookStoreModel = types
       try {
         const response = yield api.updateCookbook(cookbook)
         if (response.kind === "ok") {
-          // Update the cookbook in the store
-          const cookbookToUpdate = self.cookbooks.find(c => c.id === cookbook.id)
-          if (cookbookToUpdate) {
-            cookbookToUpdate.update(cookbook)
-          }
+          if (self.currentCookbook) self.currentCookbook.update(cookbook)
           return true
         }
         return false
