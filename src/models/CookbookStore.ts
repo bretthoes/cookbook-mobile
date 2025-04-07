@@ -18,8 +18,6 @@ export const CookbookStoreModel = types
       self.cookbookToAdd = CookbookToAddModel.create(cookbook)
     },
     fetch: flow(function* (pageNumber = 1, pageSize = 100) {
-      // TODO need to handle a different user logging in and clearing the referenced favorites
-      //self.setProp("favorites", [])
       const response = yield api.getCookbooks(pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("cookbooks", response.cookbooks.items)
@@ -46,8 +44,9 @@ export const CookbookStoreModel = types
         self.currentCookbook = cookbook
       }
     },
-    remove (id: number){
-      self.setProp("cookbooks", self.cookbooks.filter(cookbook => cookbook.id !== id))
+    remove() {
+      destroy(self.currentCookbook)
+      self.setProp("currentCookbook", null)
     },
     clearCurrentCookbook() {
       self.currentCookbook = null

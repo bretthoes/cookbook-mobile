@@ -1,7 +1,8 @@
-import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
+import { getRoot, Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import Config from "src/config"
 import { translate } from "src/i18n"
+import { RootStore } from "./RootStore"
 
 /**
  * This represents a cookbook.
@@ -22,6 +23,10 @@ export const CookbookModel = types
     update(updatedCookbook: CookbookSnapshotIn) {
       self.setProp("title", updatedCookbook.title)
       self.setProp("image", updatedCookbook.image)
+    },
+    remove() {
+      const rootStore = getRoot(self) as RootStore
+      rootStore.cookbookStore.remove()
     },
   }))
   .views((cookbook) => ({

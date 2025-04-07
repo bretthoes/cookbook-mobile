@@ -111,11 +111,11 @@ export default observer(function Cookbook() {
 
   const handlePressEdit = () => {
     if (!isAuthor) return
-    router.push(`/cookbook/${id}/edit` as Href<`/cookbook/${string}/edit`>)
+    router.push(`/cookbook/${id}/edit`)
   }
 
   const handlePressLeave = async () => {
-    // TODO should refresh current cookbook here to ensure membersCount is up to date.
+    // TODO should refresh currentCookbook here to ensure membersCount is up to date.
     if (isAuthor && currentCookbook?.membersCount !== 1) {
       Alert.alert("Leave Cookbook", "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).", [
         {
@@ -141,8 +141,8 @@ export default observer(function Cookbook() {
             if (!membershipStore.ownMembership?.id) return
               var result = await membershipStore.delete(membershipStore.ownMembership?.id)
               if (result) {
-                remove(currentCookbook?.id ?? 0)
-                router.back()
+                remove()
+                //router.back()
               } else {
                 Alert.alert("Error", "Failed to leave cookbook. Please try again.")
               }
