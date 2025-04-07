@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { observer } from "mobx-react-lite"
 import { useStores } from "src/models/helpers/useStores"
-import { Text, TextField, Button, Screen } from "src/components"
+import { Text, TextField, Button, Screen, UseCase } from "src/components"
 import { colors, spacing } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
 import * as ImagePicker from "expo-image-picker"
@@ -117,7 +117,8 @@ export default observer(function EditCookbookScreen() {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["bottom"]}
     >
-      <View style={$container}>
+      <Text text="Edit the details for your cookbook." />
+      <UseCase name="">
         <Controller
           control={control}
           name="title"
@@ -154,7 +155,7 @@ export default observer(function EditCookbookScreen() {
             ]}
           />
         ) : null}
-      </View>
+      </UseCase>
     </Screen>
   )
 })
