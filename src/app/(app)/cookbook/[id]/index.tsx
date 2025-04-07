@@ -14,7 +14,7 @@ import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { Href, router, useLocalSearchParams } from "expo-router"
 import { delay } from "src/utils/delay"
-import { RecipeBrief } from "src/models/Recipe"
+import { Recipe, RecipeBrief } from "src/models/Recipe"
 import { isRTL, translate } from "src/i18n"
 import { useDebounce } from "src/models/helpers/useDebounce"
 import { RecipeListItem } from "src/components/Recipe/RecipeListItem"
@@ -35,7 +35,11 @@ export default observer(function Cookbook() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  setCurrentCookbook(Number(id))
+  // Update currentCookbook when id changes
+  useEffect(() => {
+    setCurrentCookbook(Number(id))
+  }, [id, setCurrentCookbook])
+
   const isAuthor = currentCookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
 
   const [refreshing, setRefreshing] = useState(false)
@@ -66,7 +70,7 @@ export default observer(function Cookbook() {
     
     fetchData()
     setIsLoading(false)
-  }, [recipeStore])
+  }, [recipeStore, currentCookbook, id])
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
@@ -91,7 +95,7 @@ export default observer(function Cookbook() {
     onLeftPress: () => router.back(),
     rightIcon: "more",
     onRightPress: () => handlePressMore(),
-  }, [currentCookbook?.title])
+  }, [currentCookbook?.title, id])
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {
