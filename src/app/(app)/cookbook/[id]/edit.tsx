@@ -46,12 +46,16 @@ export default observer(function EditCookbookScreen() {
     }
   }, [cookbookStore.currentCookbook, setValue])
 
+  const onError = (errors: any) => {
+    console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
+  }
+
   useHeader({
     title: "Edit Cookbook",
     leftIcon: "back",
     onLeftPress: () => router.back(),
     rightText: "Save",
-    onRightPress: () => handleSubmit(onPressSend),
+    onRightPress: () => handleSubmit(onPressSend, onError)(),
   }, [handleSubmit])
 
   const pickImage = async () => {
@@ -150,12 +154,6 @@ export default observer(function EditCookbookScreen() {
             ]}
           />
         ) : null}
-
-        <Button
-          text="Save Changes"
-          onPress={handleSubmit(onPressSend)}
-          style={$button}
-        />
       </View>
     </Screen>
   )
@@ -192,10 +190,6 @@ const $imagePlaceholder: ViewStyle = {
 
 const $imageButton: ViewStyle = {
   marginTop: spacing.sm,
-}
-
-const $button: ViewStyle = {
-  marginTop: spacing.xl,
 }
 
 const $result: TextStyle = {
