@@ -18,6 +18,12 @@ export const CookbookModel = types
     recipeCount: types.integer,
   })
   .actions(withSetPropAction)
+  .actions((self) => ({
+    update(updatedCookbook: CookbookSnapshotIn) {
+      self.setProp("title", updatedCookbook.title)
+      self.setProp("image", updatedCookbook.image)
+    },
+  }))
   .views((cookbook) => ({
     get parsedTitleAndSubtitle() {
       const defaultValue = { title: cookbook.title?.trim() }
