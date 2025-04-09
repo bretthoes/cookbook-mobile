@@ -120,7 +120,7 @@ export default observer(function SelectCookbookScreen() {
   }
 
   const handleSelectCookbook = (cookbook: Cookbook) => {
-    cookbookStore.setCurrentCookbook(cookbook.id)
+    cookbookStore.setCurrentCookbookById(cookbook.id)
 
     if (params.onSelect === "handleAddRecipeFromCamera") {
       handleAddRecipeFromCamera()

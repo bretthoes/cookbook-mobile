@@ -23,7 +23,7 @@ export default observer(function EditCookbookScreen() {
   const { cookbookStore } = useStores()
   const [localImage, setLocalImage] = useState<string | null>(null)
   const [result, setResult] = useState<string>("")
-  cookbookStore.setCurrentCookbook(Number(id))
+  cookbookStore.setCurrentCookbookById(Number(id))
 
   const {
     control,

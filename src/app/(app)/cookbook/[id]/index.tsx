@@ -4,17 +4,14 @@ import {
   ActivityIndicator,
   Alert,
   ImageStyle,
-  TextStyle,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native"
 import { Divider, EmptyState, ListView, Screen, SearchBar, Text } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
-import { colors, spacing } from "src/theme"
+import { spacing } from "src/theme"
 import { Href, router, useLocalSearchParams } from "expo-router"
 import { delay } from "src/utils/delay"
-import { Recipe, RecipeBrief } from "src/models/Recipe"
 import { isRTL, translate } from "src/i18n"
 import { useDebounce } from "src/models/helpers/useDebounce"
 import { RecipeListItem } from "src/components/Recipe/RecipeListItem"
@@ -24,10 +21,11 @@ import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
+import { Recipe } from "src/models/Recipe"
 
 export default observer(function Cookbook() {
   const {
-    cookbookStore: { currentCookbook, setCurrentCookbook, remove },
+    cookbookStore: { currentCookbook, setCurrentCookbookById, remove },
     recipeStore,
     membershipStore,
   } = useStores()
@@ -37,8 +35,8 @@ export default observer(function Cookbook() {
 
   // Update currentCookbook when id changes
   useEffect(() => {
-    setCurrentCookbook(Number(id))
-  }, [id, setCurrentCookbook])
+    setCurrentCookbookById(Number(id))
+  }, [id, setCurrentCookbookById])
 
   const isAuthor = currentCookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
 
@@ -48,14 +46,10 @@ export default observer(function Cookbook() {
   const debouncedSearchQuery = useDebounce(searchQuery)
 
   // Memoize themed styles
-  const $themedContainer = React.useMemo(() => themed($container), [themed])
-  const $themedTitle = React.useMemo(() => themed($title), [themed])
   const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
   const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
   const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
   const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
-  const $themedHeaderContainer = React.useMemo(() => themed($headerContainer), [themed])
-  const $themedRight = React.useMemo(() => themed($right), [themed])
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
   const $themedRoot = React.useMemo(() => themed($root), [themed])
 
@@ -64,8 +58,10 @@ export default observer(function Cookbook() {
     setIsLoading(true)
     const fetchData = async () => {
       await membershipStore.fetchEmail()
-      await membershipStore.single(currentCookbook?.id ?? 0)
-      await recipeStore.fetch(Number(id))
+      if (currentCookbook) {
+        await membershipStore.single(currentCookbook.id)
+        await recipeStore.fetch(Number(id))
+      }
     }
     
     fetchData()
@@ -94,7 +90,7 @@ export default observer(function Cookbook() {
     leftIcon: "back",
     onLeftPress: () => router.back(),
     rightIcon: "more",
-    onRightPress: () => handlePressMore(),
+    onRightPress: currentCookbook ? () => handlePressMore() : undefined,
   }, [currentCookbook?.title, id])
 
   const handleNextPage = async () => {
@@ -178,7 +174,7 @@ export default observer(function Cookbook() {
 
   return (
     <Screen preset="scroll" style={$themedRoot}>
-      <ListView<RecipeBrief>
+      <ListView<Recipe>
         data={recipeStore.recipes?.items?.slice() ?? []}
         estimatedItemSize={59}
         ListEmptyComponent={
@@ -245,15 +241,6 @@ export default observer(function Cookbook() {
   )
 })
 
-const $container: ThemedStyle<ViewStyle> = (theme) => ({
-  paddingHorizontal: theme.spacing.lg,
-  paddingTop: theme.spacing.xl,
-})
-
-const $title: ThemedStyle<ViewStyle> = (theme) => ({
-  marginBottom: theme.spacing.md,
-})
-
 const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
   marginTop: theme.spacing.xxl,
   paddingHorizontal: theme.spacing.md,
@@ -273,19 +260,6 @@ const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
   borderBottomLeftRadius: theme.spacing.xs,
   borderBottomRightRadius: theme.spacing.xs,
   paddingBottom: theme.spacing.lg,
-})
-
-const $headerContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingTop: theme.spacing.xl,
-  paddingHorizontal: theme.spacing.md,
-  marginBottom: theme.spacing.xl,
-})
-
-const $right: ThemedStyle<TextStyle> = (theme) => ({
-  textAlign: "right",
 })
 
 const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({

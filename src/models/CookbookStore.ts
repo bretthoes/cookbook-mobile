@@ -14,9 +14,32 @@ export const CookbookStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((self) => ({
-    setCookbookToAdd(cookbook: CookbookToAddSnapshotIn) {
-      self.cookbookToAdd = CookbookToAddModel.create(cookbook)
-    },
+    create: flow(function* () {
+      try {
+        if (!self.cookbookToAdd) return
+        const response = yield api.createCookbook(self.cookbookToAdd)
+        if (response.kind === "ok") {
+          const newCookbook = CookbookModel.create({
+            id: response.cookbookId,
+            title: self.cookbookToAdd.title,
+            image: self.cookbookToAdd.image,
+            author: response.author,
+            authorEmail: response.authorEmail,
+            membersCount: 1,
+            recipeCount: 0,
+          })
+          self.cookbooks.push(newCookbook)
+          self.currentCookbook = newCookbook
+          return true
+        } else {
+          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
+          return false
+        }
+      } catch (error) {
+        console.error(`Error creating cookbook: ${error}`)
+        return false
+      }
+    }),
     fetch: flow(function* (pageNumber = 1, pageSize = 100) {
       const response = yield api.getCookbooks(pageNumber, pageSize)
       if (response.kind === "ok") {
@@ -38,45 +61,20 @@ export const CookbookStoreModel = types
         return false
       }
     }),
-    setCurrentCookbook(id: number) {
-      const cookbook = self.cookbooks.find(cookbook => cookbook.id === id)
-      if (cookbook) {
-        self.currentCookbook = cookbook
-      }
-    },
     remove() {
       destroy(self.currentCookbook)
       self.setProp("currentCookbook", null)
     },
-    clearCurrentCookbook() {
-      self.currentCookbook = null
-      
+    setCurrentCookbookById(id: number) {
+      const cookbook = this.getById(id)
+      if (cookbook) self.currentCookbook = cookbook
     },
-    create: flow(function* () {
-      try {
-        if (!self.cookbookToAdd) return
-        self.currentCookbook = null
-        const response = yield api.createCookbook(self.cookbookToAdd)
-        if (response.kind === "ok") {
-          const newCookbook = CookbookModel.create({
-            id: response.cookbookId,
-            title: self.cookbookToAdd.title,
-            image: self.cookbookToAdd.image,
-            author: response.author,
-            authorEmail: response.authorEmail,
-            membersCount: 1,
-            recipeCount: 0,
-          })
-          self.cookbooks.push(newCookbook)
-          self.currentCookbook = newCookbook
-          return response
-        } else {
-          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
-        }
-      } catch (error) {
-        console.error(`Error creating cookbook: ${error}`)
-      }
-    }),
+    getById(id: number) {
+      return self.cookbooks.find((cookbook) => cookbook.id === id)
+    },
+    setCookbookToAdd(cookbook: CookbookToAddSnapshotIn) {
+      self.cookbookToAdd = CookbookToAddModel.create(cookbook)
+    },
     addFavorite(cookbook: Cookbook) {
       self.favorites.push(cookbook)
     },
