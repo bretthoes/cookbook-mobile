@@ -22,9 +22,9 @@ export const RecipeModel = types
     cookingTimeInMinutes: types.maybeNull(types.integer),
     bakingTimeInMinutes: types.maybeNull(types.integer),
     servings: types.maybeNull(types.integer),
-    directions: types.array(RecipeDirectionModel) ?? [],
-    ingredients: types.array(RecipeIngredientModel) ?? [],
-    images: types.array(RecipeImageModel) ?? [],
+    directions: types.optional(types.array(RecipeDirectionModel), []),
+    ingredients: types.optional(types.array(RecipeIngredientModel), []),
+    images: types.optional(types.array(RecipeImageModel), []),
     isVegetarian: types.maybeNull(types.boolean),
     isVegan: types.maybeNull(types.boolean),
     isGlutenFree: types.maybeNull(types.boolean),
@@ -64,6 +64,9 @@ export const RecipeModel = types
         }),
       }
     },
+    get isBrief() {
+      return !recipe.directions.length && !recipe.ingredients.length;
+    }
   }))
 
 export interface Recipe extends Instance<typeof RecipeModel> {}

@@ -1,8 +1,6 @@
 import { detach, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "src/services/api"
-import { Recipe } from "./Recipe"
-import { RecipeBriefModel } from "./RecipeBrief"
-import { RecipeModel } from "./Recipe"
+import { Recipe, RecipeModel } from "./Recipe"
 import { RecipeSnapshotIn } from "./Recipe"
 import { RecipeToAddModel } from "./RecipeToAdd"
 import { RecipeToAddSnapshotIn } from "./RecipeToAdd"
@@ -58,13 +56,9 @@ export const RecipeStoreModel = types
           ingredients: store.recipeToAdd.ingredients,
           images: store.recipeToAdd.images,
         })
-        const newRecipeBrief = RecipeBriefModel.create({
-          id: response.recipeId,
-          title: store.recipeToAdd.title,
-        })
 
         store.currentRecipe = newRecipe
-        store.recipes.items.push(newRecipeBrief)
+        store.recipes.items.push(newRecipe)
       } else {
         console.error(`Error creating recipe: ${JSON.stringify(response)}`)
       }
@@ -87,13 +81,9 @@ export const RecipeStoreModel = types
           ingredients: recipeToAdd.ingredients,
           images: recipeToAdd.images,
         })
-        const newRecipeBrief = RecipeBriefModel.create({
-          id: response.recipeId,
-          title: recipeToAdd.title,
-        })
 
         store.currentRecipe = newRecipe
-        store.recipes.items.push(newRecipeBrief)
+        store.recipes.items.push(newRecipe)
       } else {
         console.error(`Error creating recipe: ${JSON.stringify(response)}`)
       }
