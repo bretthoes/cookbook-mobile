@@ -11,7 +11,7 @@ import { router } from "expo-router"
 export default observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
   const {
-    recipeStore: { recipeToAdd, clearRecipeToAdd, createRecipe },
+    recipeStore: { recipeToAdd, clearRecipeToAdd, create },
     cookbookStore: { selected },
   } = useStores()
 
@@ -76,7 +76,7 @@ export default observer(function AddRecipeScreen() {
     }
 
     try {
-      await createRecipe(newRecipe)
+      await create(newRecipe)
       if (selected) router.replace(`/(app)/cookbook/${selected?.id}`)
       else alert("Failed to create recipe")
     } catch (e) {

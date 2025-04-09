@@ -10,7 +10,7 @@ import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function EditRecipe() {
   const {
-    recipeStore: { selected, updateRecipe },
+    recipeStore: { selected, update },
   } = useStores()
   const { handleSubmit } = useForm<RecipeFormInputs>()
 
@@ -71,7 +71,7 @@ export default observer(function EditRecipe() {
     }
 
     try {
-      await updateRecipe(updatedRecipe)
+      await update(updatedRecipe)
       router.back()
     } catch (e) {
       console.error("Update recipe failed:", e)

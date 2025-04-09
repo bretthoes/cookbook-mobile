@@ -21,7 +21,7 @@ import { IngredientItem } from "src/components/Recipe/IngredientItem"
 export default observer(function Recipe() {
   const {
     cookbookStore: { selected: cookbook },
-    recipeStore: { selected, deleteRecipe },
+    recipeStore: { selected, delete: deleteRecipe },
     membershipStore: { email, fetchEmail },
   } = useStores()
   const { showActionSheetWithOptions } = useActionSheet()

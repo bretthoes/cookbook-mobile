@@ -59,19 +59,7 @@ export const RecipeStoreModel = types
       console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
       return false
     }),
-    remove() {
-      destroy(self.selected)
-      self.setProp("selected", null)
-    },
-    async single(recipeId: number) {
-      const response = await api.getRecipe(recipeId)
-      if (response.kind === "ok") {
-        //store.setProp("selected", response.recipe)
-      } else {
-        console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
-      }
-    },
-    updateRecipe: flow(function* (updatedRecipe: RecipeSnapshotIn) {
+    update: flow(function* (updatedRecipe: RecipeSnapshotIn) {
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
         if (self.selected) {
@@ -98,7 +86,7 @@ export const RecipeStoreModel = types
         console.error(`Error updating recipe: ${JSON.stringify(response)}`)
       }
     }),
-    deleteRecipe: flow(function* () {
+    delete: flow(function* () {
       if (!self.selected) return
       const response = yield api.deleteRecipe(self.selected.id)
       if (response.kind === "ok") {
@@ -108,6 +96,18 @@ export const RecipeStoreModel = types
         console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
       }
     }),
+    remove() {
+      destroy(self.selected)
+      self.setProp("selected", null)
+    },
+    async single(recipeId: number) {
+      const response = await api.getRecipe(recipeId)
+      if (response.kind === "ok") {
+        //store.setProp("selected", response.recipe)
+      } else {
+        console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
+      }
+    },
     setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot)
       self.setProp("recipeToAdd", recipeToAddInstance)
