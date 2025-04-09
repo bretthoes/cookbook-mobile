@@ -24,7 +24,7 @@ interface CookbookFormInputs {
 export default observer(function AddCookbookScreen() {
   console.log("AddCookbookScreen")
   const {
-    cookbookStore: { create, selected, setCookbookToAdd },
+    cookbookStore: { create, selected },
   } = useStores()
 
   const {
@@ -74,8 +74,7 @@ export default observer(function AddCookbookScreen() {
       image: formData.image,
     }
     try {
-      setCookbookToAdd(newCookbook)
-      await create()
+      await create(newCookbook)
       if (selected)
         router.replace(`/(app)/cookbooks`)
       else alert("Failed to create cookbook")

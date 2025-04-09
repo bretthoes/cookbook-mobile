@@ -1,4 +1,4 @@
-import { detach, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import { destroy, detach, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "src/services/api"
 import { Recipe, RecipeModel } from "./Recipe"
 import { RecipeSnapshotIn } from "./Recipe"
@@ -16,7 +16,7 @@ export const RecipeStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    currentRecipe: types.maybeNull(RecipeModel),
+    currentRecipe: types.maybeNull(types.reference(RecipeModel)),
     recipeToAdd: types.maybeNull(RecipeToAddModel),
   })
   .actions(withSetPropAction)
@@ -30,10 +30,14 @@ export const RecipeStoreModel = types
         console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
       }
     },
+    remove() {
+      destroy(store.currentRecipe)
+      store.setProp("currentRecipe", null)
+    },
     async single(recipeId: number) {
       const response = await api.getRecipe(recipeId)
       if (response.kind === "ok") {
-        store.setProp("currentRecipe", response.recipe)
+        //store.setProp("currentRecipe", response.recipe)
       } else {
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
@@ -109,25 +113,22 @@ export const RecipeStoreModel = types
             images: updatedRecipe.images,
           })
           detach(store.currentRecipe)
-          store.setProp("currentRecipe", newRecipe)
+          //store.setProp("currentRecipe", newRecipe)
         }
       } else {
         console.error(`Error updating recipe: ${JSON.stringify(response)}`)
       }
     }),
-    async deleteRecipe() {
-      const recipeId = store.currentRecipe?.id
-      const response = await api.deleteRecipe(recipeId ?? -1)
+    deleteRecipe: flow(function* () {
+      if (!store.currentRecipe) return
+      const response = yield api.deleteRecipe(store.currentRecipe.id)
       if (response.kind === "ok") {
-        store.setProp("recipes", {
-          ...store.recipes,
-          items: store.recipes.items.filter(item => item.id !== recipeId)
-        })
-        this.clearCurrentRecipe()
+        destroy(store.currentRecipe)
+        store.setProp("currentRecipe", null)
       } else {
         console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
       }
-    },
+    }),
     setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot)
       store.setProp("recipeToAdd", recipeToAddInstance)

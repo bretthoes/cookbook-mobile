@@ -9,20 +9,18 @@ export const CookbookStoreModel = types
     cookbooks: types.array(CookbookModel),
     favorites: types.array(types.reference(CookbookModel)),
     selected: types.maybeNull(types.reference(CookbookModel)),
-    cookbookToAdd: types.maybeNull(CookbookToAddModel),
     favoritesOnly: false,
   })
   .actions(withSetPropAction)
   .actions((self) => ({
-    create: flow(function* () {
-      try {
-        if (!self.cookbookToAdd) return
-        const response = yield api.createCookbook(self.cookbookToAdd)
-        if (response.kind === "ok") {
-          const newCookbook = CookbookModel.create({
+    create: flow(function* (cookbookToAdd: CookbookToAddSnapshotIn) {
+      if (!cookbookToAdd) return false
+      const response = yield api.createCookbook(cookbookToAdd)
+      if (response.kind === "ok") {
+        const newCookbook = CookbookModel.create({
             id: response.cookbookId,
-            title: self.cookbookToAdd.title,
-            image: self.cookbookToAdd.image,
+            title: cookbookToAdd.title,
+            image: cookbookToAdd.image,
             author: response.author,
             authorEmail: response.authorEmail,
             membersCount: 1,
@@ -31,35 +29,27 @@ export const CookbookStoreModel = types
           self.cookbooks.push(newCookbook)
           self.selected = newCookbook
           return true
-        } else {
-          console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
-          return false
-        }
-      } catch (error) {
-        console.error(`Error creating cookbook: ${error}`)
-        return false
       }
+      else console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
+      return false
     }),
     fetch: flow(function* (pageNumber = 1, pageSize = 100) {
       const response = yield api.getCookbooks(pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("cookbooks", response.cookbooks.items)
-      } else {
-        console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
+        return true
       }
+      else console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
+      return false
     }),
     update: flow(function* (cookbook: CookbookSnapshotIn) {
-      try {
-        const response = yield api.updateCookbook(cookbook)
-        if (response.kind === "ok") {
-          if (self.selected) self.selected.update(cookbook)
-          return true
-        }
-        return false
-      } catch (e) {
-        console.error(`Error updating cookbook: ${e}`)
-        return false
+      const response = yield api.updateCookbook(cookbook)
+      if (response.kind === "ok") {
+        if (self.selected) self.selected.update(cookbook)
+        return true
       }
+      else console.error(`Error updating cookbook: ${JSON.stringify(response)}`)
+      return false
     }),
     remove() {
       destroy(self.selected)
@@ -71,11 +61,7 @@ export const CookbookStoreModel = types
     },
     getById(id: number) {
       return self.cookbooks.find((cookbook) => cookbook.id === id)
-    },
-    setCookbookToAdd(cookbook: CookbookToAddSnapshotIn) {
-      self.cookbookToAdd = CookbookToAddModel.create(cookbook)
-    },
-    addFavorite(cookbook: Cookbook) {
+    },    addFavorite(cookbook: Cookbook) {
       self.favorites.push(cookbook)
     },
     removeFavorite(cookbook: Cookbook) {
