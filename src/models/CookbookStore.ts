@@ -14,23 +14,22 @@ export const CookbookStoreModel = types
   .actions(withSetPropAction)
   .actions((self) => ({
     create: flow(function* (cookbookToAdd: CookbookToAddSnapshotIn) {
-      if (!cookbookToAdd) return false
       const response = yield api.createCookbook(cookbookToAdd)
       if (response.kind === "ok") {
         const newCookbook = CookbookModel.create({
-            id: response.cookbookId,
-            title: cookbookToAdd.title,
-            image: cookbookToAdd.image,
-            author: response.author,
-            authorEmail: response.authorEmail,
-            membersCount: 1,
-            recipeCount: 0,
-          })
-          self.cookbooks.push(newCookbook)
-          self.selected = newCookbook
-          return true
+          id: response.cookbookId,
+          title: cookbookToAdd.title,
+          image: cookbookToAdd.image,
+          author: response.author,
+          authorEmail: response.authorEmail,
+          membersCount: 1,
+          recipeCount: 0,
+        })
+        self.cookbooks.push(newCookbook)
+        self.selected = newCookbook
+        return true
       }
-      else console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
+      console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
       return false
     }),
     fetch: flow(function* (pageNumber = 1, pageSize = 100) {
