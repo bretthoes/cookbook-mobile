@@ -38,11 +38,11 @@ const $descriptionContainer: ThemedStyle<ViewStyle> = (theme) => ({
 
 export interface RecipeSummaryProps {
   recipe: Recipe
-  hasImages?: boolean
 }
 
-export function RecipeSummary({ recipe, hasImages }: RecipeSummaryProps) {
+export function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
+  const hasImages = !!recipe?.images[0]
   
   const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])

@@ -16,13 +16,13 @@ export const RecipeStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    currentRecipe: types.maybeNull(types.reference(RecipeModel)),
+    selected: types.maybeNull(types.reference(RecipeModel)),
     recipeToAdd: types.maybeNull(RecipeToAddModel),
   })
   .actions(withSetPropAction)
   .actions((store) => ({
     async fetch(cookbookId: number, search = "", pageNumber = 1, pageSize = 15) {
-      this.clearCurrentRecipe()
+      this.clearselected()
       const response = await api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
         store.setProp("recipes", response.recipes)
@@ -31,13 +31,13 @@ export const RecipeStoreModel = types
       }
     },
     remove() {
-      destroy(store.currentRecipe)
-      store.setProp("currentRecipe", null)
+      destroy(store.selected)
+      store.setProp("selected", null)
     },
     async single(recipeId: number) {
       const response = await api.getRecipe(recipeId)
       if (response.kind === "ok") {
-        //store.setProp("currentRecipe", response.recipe)
+        //store.setProp("selected", response.recipe)
       } else {
         console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       }
@@ -61,7 +61,7 @@ export const RecipeStoreModel = types
           images: store.recipeToAdd.images,
         })
 
-        store.currentRecipe = newRecipe
+        store.selected = newRecipe
         store.recipes.items.push(newRecipe)
       } else {
         console.error(`Error creating recipe: ${JSON.stringify(response)}`)
@@ -86,7 +86,7 @@ export const RecipeStoreModel = types
           images: recipeToAdd.images,
         })
 
-        store.currentRecipe = newRecipe
+        store.selected = newRecipe
         store.recipes.items.push(newRecipe)
       } else {
         console.error(`Error creating recipe: ${JSON.stringify(response)}`)
@@ -95,15 +95,15 @@ export const RecipeStoreModel = types
     updateRecipe: flow(function* (updatedRecipe: RecipeSnapshotIn) {
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
-        if (store.currentRecipe) {
+        if (store.selected) {
           const newRecipe = RecipeModel.create({
-            id: store.currentRecipe.id,
+            id: store.selected.id,
             title: updatedRecipe.title,
             summary: updatedRecipe.summary,
             thumbnail: updatedRecipe.thumbnail,
             videoPath: updatedRecipe.videoPath,
-            authorEmail: store.currentRecipe.authorEmail,
-            author: store.currentRecipe.author,
+            authorEmail: store.selected.authorEmail,
+            author: store.selected.author,
             preparationTimeInMinutes: updatedRecipe.preparationTimeInMinutes,
             cookingTimeInMinutes: updatedRecipe.cookingTimeInMinutes,
             bakingTimeInMinutes: updatedRecipe.bakingTimeInMinutes,
@@ -112,19 +112,19 @@ export const RecipeStoreModel = types
             ingredients: updatedRecipe.ingredients,
             images: updatedRecipe.images,
           })
-          detach(store.currentRecipe)
-          //store.setProp("currentRecipe", newRecipe)
+          detach(store.selected)
+          //store.setProp("selected", newRecipe)
         }
       } else {
         console.error(`Error updating recipe: ${JSON.stringify(response)}`)
       }
     }),
     deleteRecipe: flow(function* () {
-      if (!store.currentRecipe) return
-      const response = yield api.deleteRecipe(store.currentRecipe.id)
+      if (!store.selected) return
+      const response = yield api.deleteRecipe(store.selected.id)
       if (response.kind === "ok") {
-        destroy(store.currentRecipe)
-        store.setProp("currentRecipe", null)
+        destroy(store.selected)
+        store.setProp("selected", null)
       } else {
         console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
       }
@@ -136,11 +136,11 @@ export const RecipeStoreModel = types
     clearRecipeToAdd() {
       store.recipeToAdd = null
     },
-    setCurrentRecipe(recipe: Recipe) {
-      store.currentRecipe = recipe
+    setselected(recipe: Recipe) {
+      store.selected = recipe
     },
-    clearCurrentRecipe() {
-      store.currentRecipe = null
+    clearselected() {
+      store.selected = null
     },
   }))
 

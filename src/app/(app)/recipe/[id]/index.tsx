@@ -20,17 +20,17 @@ import { IngredientItem } from "src/components/Recipe/IngredientItem"
 
 export default observer(function Recipe() {
   const {
-    cookbookStore: { selected },
-    recipeStore: { currentRecipe, deleteRecipe },
+    cookbookStore: { selected: cookbook },
+    recipeStore: { selected, deleteRecipe },
     membershipStore: { email, fetchEmail },
   } = useStores()
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
   const isRecipeAuthor =
-    currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
-  const ownsCookbook = selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  const ownsCookbook = cookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
   const canEdit = isRecipeAuthor || ownsCookbook
-  const recipeHasImages = currentRecipe?.images[0]
+  const recipeHasImages = selected?.images[0]
 
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
   const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
@@ -39,7 +39,7 @@ export default observer(function Recipe() {
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
 
   const handlePressEdit = () => {
-    router.push(`/recipe/${currentRecipe?.id}/edit`)
+    router.push(`/recipe/${selected?.id}/edit`)
   }
 
   const handlePressDelete = async () => {
@@ -94,7 +94,7 @@ export default observer(function Recipe() {
     fetchData()
   }, [])
 
-  if (!currentRecipe) return <ItemNotFound message="Recipe not found" />
+  if (!selected) return <ItemNotFound message="Recipe not found" />
 
   return (
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
@@ -105,12 +105,12 @@ export default observer(function Recipe() {
       {canEdit && (
         <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
       )}
-      {currentRecipe?.images && <RecipeImages data={currentRecipe?.images} />}
-      {currentRecipe && (
-        <RecipeSummary recipe={currentRecipe} hasImages={!!currentRecipe?.images[0]} />
+      {selected?.images && <RecipeImages data={selected?.images} />}
+      {selected && (
+        <RecipeSummary recipe={selected} />
       )}
 
-      {currentRecipe && (
+      {selected && (
         <View style={{ minHeight: spacing.xxs }}>
           <ListView<RecipeIngredient>
             ListHeaderComponent={
@@ -126,11 +126,11 @@ export default observer(function Recipe() {
                   ingredient={item}
                   index={index}
                   isFirst={index === 0}
-                  isLast={index === currentRecipe!.ingredients.length - 1}
+                  isLast={index === selected!.ingredients.length - 1}
                 />
               )
             }
-            data={currentRecipe?.ingredients}
+            data={selected?.ingredients}
             estimatedItemSize={59}
             contentContainerStyle={$themedIngredientsContainer}
             ListEmptyComponent={<View />}
@@ -138,7 +138,7 @@ export default observer(function Recipe() {
         </View>
       )}
 
-      {currentRecipe && (
+      {selected && (
         <View style={{ minHeight: spacing.xxs }}>
           <ListView<RecipeDirection>
             ListHeaderComponent={
@@ -154,7 +154,7 @@ export default observer(function Recipe() {
                   style={[
                     $themedListItemStyle,
                     index === 0 && $themedBorderTop,
-                    index === currentRecipe!.directions.length - 1 && $themedBorderBottom,
+                    index === selected!.directions.length - 1 && $themedBorderBottom,
                   ]}
                 >
                   <ListItem
@@ -163,13 +163,13 @@ export default observer(function Recipe() {
                       <DirectionText ordinal={item?.ordinal} text={item?.text} />
                     }
                     height={spacing.xl}
-                    bottomSeparator={index !== currentRecipe!.directions.length - 1}
+                    bottomSeparator={index !== selected!.directions.length - 1}
                     topSeparator={index !== 0}
                   />
                 </View>
               )
             }
-            data={currentRecipe?.directions}
+            data={selected?.directions}
             estimatedItemSize={59}
             contentContainerStyle={$themedDirectionsContainer}
             ListEmptyComponent={<View />}

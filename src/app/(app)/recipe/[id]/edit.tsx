@@ -10,37 +10,37 @@ import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function EditRecipe() {
   const {
-    recipeStore: { currentRecipe, updateRecipe },
+    recipeStore: { selected, updateRecipe },
   } = useStores()
   const { handleSubmit } = useForm<RecipeFormInputs>()
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
-    if (!currentRecipe) return null
+    if (!selected) return null
     return {
-      title: currentRecipe.title,
-      summary: currentRecipe.summary,
-      preparationTimeInMinutes: currentRecipe.preparationTimeInMinutes,
-      cookingTimeInMinutes: currentRecipe.cookingTimeInMinutes,
-      bakingTimeInMinutes: currentRecipe.bakingTimeInMinutes,
-      servings: currentRecipe.servings,
+      title: selected.title,
+      summary: selected.summary,
+      preparationTimeInMinutes: selected.preparationTimeInMinutes,
+      cookingTimeInMinutes: selected.cookingTimeInMinutes,
+      bakingTimeInMinutes: selected.bakingTimeInMinutes,
+      servings: selected.servings,
       ingredients:
-        currentRecipe.ingredients?.map((ingredient) => ({
+        selected.ingredients?.map((ingredient) => ({
           name: ingredient.name,
           optional: ingredient.optional,
         })) ?? [],
       directions:
-        currentRecipe.directions?.map((direction) => ({
+        selected.directions?.map((direction) => ({
           text: direction.text,
           image: direction.image,
         })) ?? [],
-      images: currentRecipe.images?.map((image) => image.name) ?? [],
+      images: selected.images?.map((image) => image.name) ?? [],
     }
   }
 
   const onPressSend = async (formData: RecipeFormInputs) => {
     console.log("formData", formData)
     const updatedRecipe: RecipeSnapshotIn = {
-      id: currentRecipe?.id ?? 0,
+      id: selected?.id ?? 0,
       title: formData.title?.trim() ?? "",
       summary: formData.summary?.trim() ?? "",
       thumbnail: null, // TODO handle thumbnail logic
@@ -49,8 +49,8 @@ export default observer(function EditRecipe() {
       cookingTimeInMinutes: formData.cookingTimeInMinutes,
       bakingTimeInMinutes: formData.bakingTimeInMinutes,
       servings: formData.servings,
-      authorEmail: currentRecipe?.authorEmail,
-      author: currentRecipe?.author,
+      authorEmail: selected?.authorEmail,
+      author: selected?.author,
       directions: formData.directions.map((direction, index) => ({
         id: 0,
         text: direction.text?.trim() ?? "",
@@ -91,7 +91,7 @@ export default observer(function EditRecipe() {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
 
-  if (!currentRecipe) return <ItemNotFound message="Recipe not found" />
+  if (!selected) return <ItemNotFound message="Recipe not found" />
 
   return (
     <Screen preset="scroll">
