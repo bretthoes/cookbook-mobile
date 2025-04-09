@@ -16,7 +16,7 @@ import type { ThemedStyle } from "src/theme"
 
 export default observer(function Cookbook() {
   const { cookbookStore, recipeStore, membershipStore } = useStores()
-  const id = cookbookStore.currentCookbook?.id ?? 0
+  const id = cookbookStore.selected?.id ?? 0
   const { themed } = useAppTheme()
 
   const [refreshing, setRefreshing] = useState(false)

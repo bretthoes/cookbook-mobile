@@ -8,7 +8,7 @@ export const CookbookStoreModel = types
   .props({
     cookbooks: types.array(CookbookModel),
     favorites: types.array(types.reference(CookbookModel)),
-    currentCookbook: types.maybeNull(types.reference(CookbookModel)),
+    selected: types.maybeNull(types.reference(CookbookModel)),
     cookbookToAdd: types.maybeNull(CookbookToAddModel),
     favoritesOnly: false,
   })
@@ -29,7 +29,7 @@ export const CookbookStoreModel = types
             recipeCount: 0,
           })
           self.cookbooks.push(newCookbook)
-          self.currentCookbook = newCookbook
+          self.selected = newCookbook
           return true
         } else {
           console.error(`Error creating cookbook: ${JSON.stringify(response)}`)
@@ -52,7 +52,7 @@ export const CookbookStoreModel = types
       try {
         const response = yield api.updateCookbook(cookbook)
         if (response.kind === "ok") {
-          if (self.currentCookbook) self.currentCookbook.update(cookbook)
+          if (self.selected) self.selected.update(cookbook)
           return true
         }
         return false
@@ -62,12 +62,12 @@ export const CookbookStoreModel = types
       }
     }),
     remove() {
-      destroy(self.currentCookbook)
-      self.setProp("currentCookbook", null)
+      destroy(self.selected)
+      self.setProp("selected", null)
     },
-    setCurrentCookbookById(id: number) {
+    setSelectedById(id: number) {
       const cookbook = this.getById(id)
-      if (cookbook) self.currentCookbook = cookbook
+      if (cookbook) self.selected = cookbook
     },
     getById(id: number) {
       return self.cookbooks.find((cookbook) => cookbook.id === id)

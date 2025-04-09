@@ -23,7 +23,7 @@ export default observer(function EditCookbookScreen() {
   const { cookbookStore } = useStores()
   const [localImage, setLocalImage] = useState<string | null>(null)
   const [result, setResult] = useState<string>("")
-  cookbookStore.setCurrentCookbookById(Number(id))
+  cookbookStore.setSelectedById(Number(id))
 
   const {
     control,
@@ -33,18 +33,18 @@ export default observer(function EditCookbookScreen() {
   } = useForm<CookbookFormInputs>({
     resolver: yupResolver(cookbookSchema),
     defaultValues: {
-      title: cookbookStore.currentCookbook?.title || "",
-      image: cookbookStore.currentCookbook?.image || null,
+      title: cookbookStore.selected?.title || "",
+      image: cookbookStore.selected?.image || null,
     },
   })
 
   useEffect(() => {
-    if (cookbookStore.currentCookbook) {
-      setValue("title", cookbookStore.currentCookbook.title)
-      setValue("image", cookbookStore.currentCookbook.image)
-      setLocalImage(cookbookStore.currentCookbook.image)
+    if (cookbookStore.selected) {
+      setValue("title", cookbookStore.selected.title)
+      setValue("image", cookbookStore.selected.image)
+      setLocalImage(cookbookStore.selected.image)
     }
-  }, [cookbookStore.currentCookbook, setValue])
+  }, [cookbookStore.selected, setValue])
 
   const onError = (errors: any) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
@@ -74,23 +74,23 @@ export default observer(function EditCookbookScreen() {
   }
 
   const onPressSend = async (data: CookbookFormInputs) => {
-    if (!cookbookStore.currentCookbook) return
+    if (!cookbookStore.selected) return
 
     // Check if there are any changes
-    if (data.title === cookbookStore.currentCookbook.title && data.image === cookbookStore.currentCookbook.image) {
+    if (data.title === cookbookStore.selected.title && data.image === cookbookStore.selected.image) {
       setResult("No changes to save")
       return
     }
 
     try {
       const success = await cookbookStore.update({
-        id: cookbookStore.currentCookbook.id,
+        id: cookbookStore.selected.id,
         title: data.title,
         image: data.image,
-        author: cookbookStore.currentCookbook.author,
-        authorEmail: cookbookStore.currentCookbook.authorEmail,
-        membersCount: cookbookStore.currentCookbook.membersCount,
-        recipeCount: cookbookStore.currentCookbook.recipeCount,
+        author: cookbookStore.selected.author,
+        authorEmail: cookbookStore.selected.authorEmail,
+        membersCount: cookbookStore.selected.membersCount,
+        recipeCount: cookbookStore.selected.recipeCount,
       })
 
       if (success) {
@@ -107,7 +107,7 @@ export default observer(function EditCookbookScreen() {
     }
   }
 
-  if (!cookbookStore.currentCookbook) {
+  if (!cookbookStore.selected) {
     return <ItemNotFound message="Cookbook not found" />
   }
 

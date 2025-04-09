@@ -25,7 +25,7 @@ import { Recipe } from "src/models/Recipe"
 
 export default observer(function Cookbook() {
   const {
-    cookbookStore: { currentCookbook, setCurrentCookbookById, remove },
+    cookbookStore: { selected, setSelectedById, remove },
     recipeStore,
     membershipStore,
   } = useStores()
@@ -35,10 +35,10 @@ export default observer(function Cookbook() {
 
   // Update currentCookbook when id changes
   useEffect(() => {
-    setCurrentCookbookById(Number(id))
-  }, [id, setCurrentCookbookById])
+    setSelectedById(Number(id))
+  }, [id, setSelectedById])
 
-  const isAuthor = currentCookbook?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
+  const isAuthor = selected?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -58,15 +58,15 @@ export default observer(function Cookbook() {
     setIsLoading(true)
     const fetchData = async () => {
       await membershipStore.fetchEmail()
-      if (currentCookbook) {
-        await membershipStore.single(currentCookbook.id)
+      if (selected) {
+        await membershipStore.single(selected.id)
         await recipeStore.fetch(Number(id))
       }
     }
     
     fetchData()
     setIsLoading(false)
-  }, [recipeStore, currentCookbook, id])
+  }, [recipeStore, selected, id])
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
@@ -86,12 +86,12 @@ export default observer(function Cookbook() {
   }, [debouncedSearchQuery, recipeStore.fetch])
 
   useHeader({
-    title: currentCookbook?.title ?? "",
+    title: selected?.title ?? "",
     leftIcon: "back",
     onLeftPress: () => router.back(),
     rightIcon: "more",
-    onRightPress: currentCookbook ? () => handlePressMore() : undefined,
-  }, [currentCookbook?.title, id])
+    onRightPress: selected ? () => handlePressMore() : undefined,
+  }, [selected?.title, id])
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {
@@ -116,7 +116,7 @@ export default observer(function Cookbook() {
 
   const handlePressLeave = async () => {
     // TODO should refresh currentCookbook here to ensure membersCount is up to date.
-    if (isAuthor && currentCookbook?.membersCount !== 1) {
+    if (isAuthor && selected?.membersCount !== 1) {
       Alert.alert("Leave Cookbook", "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).", [
         {
           text: "OK",
@@ -170,7 +170,7 @@ export default observer(function Cookbook() {
     )
   }
 
-    if (!currentCookbook) return <ItemNotFound message="Cookbook not found" />
+  if (!selected) return <ItemNotFound message="Cookbook not found" />
 
   return (
     <Screen preset="scroll" style={$themedRoot}>

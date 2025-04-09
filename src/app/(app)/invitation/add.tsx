@@ -9,7 +9,7 @@ import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Invitations() {
   const { 
-    cookbookStore: { currentCookbook },
+    cookbookStore: { selected },
     invitationStore: { 
       invite,
     }
@@ -50,7 +50,7 @@ export default observer(function Invitations() {
       return
     }
     
-    const cookbookId = currentCookbook?.id ?? 0;
+    const cookbookId = selected?.id ?? 0;
     setResult(await invite(cookbookId, inviteEmail))
     setIsSubmitted(false)
     setInviteEmail("")
@@ -58,7 +58,7 @@ export default observer(function Invitations() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text text={`Invite a friend to join ${currentCookbook?.title ?? "your cookbook"}.`}
+      <Text text={`Invite a friend to join ${selected?.title ?? "your cookbook"}.`}
         style={{ paddingHorizontal: spacing.md }}
       />
       <UseCase>

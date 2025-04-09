@@ -20,7 +20,7 @@ import { IngredientItem } from "src/components/Recipe/IngredientItem"
 
 export default observer(function Recipe() {
   const {
-    cookbookStore: { currentCookbook },
+    cookbookStore: { selected },
     recipeStore: { currentRecipe, deleteRecipe },
     membershipStore: { email, fetchEmail },
   } = useStores()
@@ -28,7 +28,7 @@ export default observer(function Recipe() {
   const { themed } = useAppTheme()
   const isRecipeAuthor =
     currentRecipe?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
-  const ownsCookbook = currentCookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  const ownsCookbook = selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
   const canEdit = isRecipeAuthor || ownsCookbook
   const recipeHasImages = currentRecipe?.images[0]
 

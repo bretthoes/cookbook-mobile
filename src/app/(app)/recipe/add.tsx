@@ -12,7 +12,7 @@ export default observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
   const {
     recipeStore: { recipeToAdd, clearRecipeToAdd, createRecipe },
-    cookbookStore: { currentCookbook },
+    cookbookStore: { selected },
   } = useStores()
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default observer(function AddRecipeScreen() {
   const onPressSend = async (formData: RecipeFormInputs) => {
     const newRecipe: RecipeToAddSnapshotIn = {
       title: formData.title.trim(),
-      cookbookId: currentCookbook?.id ?? 0,
+      cookbookId: selected?.id ?? 0,
       summary: formData.summary?.trim() || null,
       thumbnail: null, // TODO handle thumbnail logic
       videoPath: null, // TODO handle videoPath logic
@@ -77,7 +77,7 @@ export default observer(function AddRecipeScreen() {
 
     try {
       await createRecipe(newRecipe)
-      if (currentCookbook) router.replace(`/(app)/cookbook/${currentCookbook?.id}`)
+      if (selected) router.replace(`/(app)/cookbook/${selected?.id}`)
       else alert("Failed to create recipe")
     } catch (e) {
       console.error("Add recipe failed:", e)
