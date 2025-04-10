@@ -72,6 +72,9 @@ export const MembershipStoreModel = types
           return false
         }
       }),
+      setEmail(email: string) {
+        self.setProp("email", email)
+      },
       setMembershipProperty(id: number, property: keyof typeof MembershipModel.properties, value: boolean) {
         const membership = self.memberships.items.find(m => m.id === id)
         if (!membership) return

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import { observer } from "mobx-react-lite"
-import { View, ViewStyle, Alert, TouchableOpacity } from "react-native"
+import { View, ViewStyle, Alert } from "react-native"
 import { spacing } from "src/theme"
 import { ListItem, ListView, Screen, Text } from "src/components"
 import { RecipeImages } from "src/components/Recipe/RecipeImages"
@@ -8,7 +8,7 @@ import { RecipeIngredient } from "src/models/Recipe"
 import { RecipeDirection } from "src/models/Recipe/RecipeDirection"
 import { RecipeSummary } from "src/components/Recipe/RecipeSummary"
 import { useStores } from "src/models/helpers/useStores"
-import { router } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { MoreButton } from "src/components/MoreButton"
 import { CustomBackButton } from "src/components/CustomBackButton"
@@ -17,13 +17,15 @@ import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
 import { DirectionText } from "src/components/Recipe/DirectionText"
 import { IngredientItem } from "src/components/Recipe/IngredientItem"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 export default observer(function Recipe() {
   const {
     cookbookStore: { selected: cookbook },
-    recipeStore: { selected, delete: deleteRecipe },
-    membershipStore: { email, fetchEmail },
+    recipeStore: { selected, delete: deleteRecipe, setSelectedById, single },
+    membershipStore: { email, fetchEmail, setEmail },
   } = useStores()
+  const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
   const isRecipeAuthor =
@@ -86,13 +88,16 @@ export default observer(function Recipe() {
     )
   }
 
-  // TODO instead of fetching this here, fetch it when we login and store email in secure storage
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchEmail()
+    const fetchRecipe = async () => {
+      var email = await AsyncStorage.getItem("email")
+      if (email) setEmail(email)
+      else await fetchEmail()
+      var success = await single(Number(id))
+      if (success) setSelectedById(Number(id))
     }
-    fetchData()
-  }, [])
+    fetchRecipe()
+  }, [id, setSelectedById, single])
 
   if (!selected) return <ItemNotFound message="Recipe not found" />
 

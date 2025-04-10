@@ -95,9 +95,6 @@ export default observer(function EditCookbookScreen() {
 
       if (success) {
         setResult("Cookbook updated successfully!")
-        // Force a refresh of the cookbooks list
-        await cookbookStore.fetch()
-        router.back()
       } else {
         setResult("Failed to update cookbook")
       }

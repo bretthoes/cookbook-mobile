@@ -57,10 +57,12 @@ export const CookbookStoreModel = types
     setSelectedById(id: number) {
       const cookbook = this.getById(id)
       if (cookbook) self.selected = cookbook
+      else self.selected = null
     },
     getById(id: number) {
       return self.cookbooks.find((cookbook) => cookbook.id === id)
-    },    addFavorite(cookbook: Cookbook) {
+    },
+    addFavorite(cookbook: Cookbook) {
       self.favorites.push(cookbook)
     },
     removeFavorite(cookbook: Cookbook) {

@@ -8,10 +8,10 @@ export const PaginatedListModel = <T extends IAnyModelType>(itemModel: T) =>
   types
     .model("PaginatedList")
     .props({
-      items: types.array(itemModel),
-      pageNumber: types.integer,
-      totalPages: types.integer,
-      totalCount: types.integer,
+      items: types.array(itemModel) ?? [],
+      pageNumber: types.integer ?? 1,
+      totalPages: types.integer ?? 1,
+      totalCount: types.integer ?? 0,
     })
     .actions(withSetPropAction)
     .views((self) => ({

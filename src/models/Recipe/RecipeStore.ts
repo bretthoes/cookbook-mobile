@@ -47,8 +47,13 @@ export const RecipeStoreModel = types
     }),
     single: flow(function* (id: number) {
       const response = yield api.getRecipe(id)
+      self.selected = null
       if (response.kind === "ok") {
-        self.setProp("selected", response.recipe)
+        const index = self.recipes.items.findIndex(r => r.id === id)
+        if (index >= 0) // replace existing
+          self.recipes.items[index] = response.recipe
+        else // add new
+          self.recipes.items.push(response.recipe)
         return true
       }
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
@@ -91,6 +96,14 @@ export const RecipeStoreModel = types
     remove() {
       destroy(self.selected)
       self.setProp("selected", null)
+    },
+    setSelectedById(id: number) {
+      const recipe = this.getById(id)
+      if (recipe) self.selected = recipe
+      else self.selected = null
+    },
+    getById(id: number) {
+      return self.recipes.items.find((recipe) => recipe.id === id)
     },
     setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot)
