@@ -33,7 +33,29 @@ export const RecipeModel = types
     isHealthy: types.maybeNull(types.boolean),
     isLowFodmap: types.maybeNull(types.boolean),
   })
-.actions(withSetPropAction)
+  .actions(withSetPropAction)
+  .actions((self) => ({
+    update(updatedRecipe: RecipeSnapshotIn) {
+      self.setProp("title", updatedRecipe.title)
+      self.setProp("summary", updatedRecipe.summary)
+      self.setProp("thumbnail", updatedRecipe.thumbnail)
+      self.setProp("videoPath", updatedRecipe.videoPath)
+      self.setProp("preparationTimeInMinutes", updatedRecipe.preparationTimeInMinutes)
+      self.setProp("cookingTimeInMinutes", updatedRecipe.cookingTimeInMinutes)
+      self.setProp("bakingTimeInMinutes", updatedRecipe.bakingTimeInMinutes)
+      self.setProp("servings", updatedRecipe.servings)
+      self.setProp("directions", updatedRecipe.directions)
+      self.setProp("ingredients", updatedRecipe.ingredients)
+      self.setProp("images", updatedRecipe.images)
+      self.setProp("isVegetarian", updatedRecipe.isVegetarian)
+      self.setProp("isVegan", updatedRecipe.isVegan)
+      self.setProp("isGlutenFree", updatedRecipe.isGlutenFree)
+      self.setProp("isDairyFree", updatedRecipe.isDairyFree)
+      self.setProp("isCheap", updatedRecipe.isCheap)
+      self.setProp("isHealthy", updatedRecipe.isHealthy)
+      self.setProp("isLowFodmap", updatedRecipe.isLowFodmap)
+    }
+  }))
   .views((recipe) => ({
     get parsedTitleAndSubtitle() {
       const defaultValue = { title: recipe.title?.trim() }

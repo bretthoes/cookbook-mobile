@@ -47,7 +47,7 @@ export const CookbookStoreModel = types
         if (self.selected) self.selected.update(cookbook)
         return true
       }
-      else console.error(`Error updating cookbook: ${JSON.stringify(response)}`)
+      console.error(`Error updating cookbook: ${JSON.stringify(response)}`)
       return false
     }),
     remove() {
@@ -69,9 +69,10 @@ export const CookbookStoreModel = types
   }))
   .views((store) => ({
     get cookbooksForList() {
-      return store.favoritesOnly ? store.favorites : store.cookbooks
+      return store.favoritesOnly
+        ? store.favorites
+        : store.cookbooks
     },
-
     hasFavorite(cookbook: Cookbook) {
       return store.favorites.includes(cookbook)
     },

@@ -45,6 +45,15 @@ export const RecipeStoreModel = types
       console.error(`Error creating recipe: ${JSON.stringify(response)}`)
       return false
     }),
+    single: flow(function* (id: number) {
+      const response = yield api.getRecipe(id)
+      if (response.kind === "ok") {
+        self.setProp("selected", response.recipe)
+        return true
+      }
+      console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
+      return false
+    }),
     fetch: flow(function* (
       cookbookId: number,
       search = "",
@@ -62,29 +71,11 @@ export const RecipeStoreModel = types
     update: flow(function* (updatedRecipe: RecipeSnapshotIn) {
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
-        if (self.selected) {
-          const newRecipe = RecipeModel.create({
-            id: self.selected.id,
-            title: updatedRecipe.title,
-            summary: updatedRecipe.summary,
-            thumbnail: updatedRecipe.thumbnail,
-            videoPath: updatedRecipe.videoPath,
-            authorEmail: self.selected.authorEmail,
-            author: self.selected.author,
-            preparationTimeInMinutes: updatedRecipe.preparationTimeInMinutes,
-            cookingTimeInMinutes: updatedRecipe.cookingTimeInMinutes,
-            bakingTimeInMinutes: updatedRecipe.bakingTimeInMinutes,
-            servings: updatedRecipe.servings,
-            directions: updatedRecipe.directions,
-            ingredients: updatedRecipe.ingredients,
-            images: updatedRecipe.images,
-          })
-          detach(self.selected)
-          //store.setProp("selected", newRecipe)
-        }
-      } else {
-        console.error(`Error updating recipe: ${JSON.stringify(response)}`)
+        if (self.selected) self.selected.update(updatedRecipe)
+        return true
       }
+      console.error(`Error updating recipe: ${JSON.stringify(response)}`)
+      return false
     }),
     delete: flow(function* () {
       if (!self.selected) return
@@ -92,21 +83,14 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         destroy(self.selected)
         self.setProp("selected", null)
-      } else {
-        console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
+        return true 
       }
+      console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
+      return false
     }),
     remove() {
       destroy(self.selected)
       self.setProp("selected", null)
-    },
-    async single(recipeId: number) {
-      const response = await api.getRecipe(recipeId)
-      if (response.kind === "ok") {
-        //store.setProp("selected", response.recipe)
-      } else {
-        console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
-      }
     },
     setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot)
