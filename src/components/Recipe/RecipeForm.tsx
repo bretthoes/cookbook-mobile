@@ -176,7 +176,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             <TextField
               value={value}
               onChangeText={onChange}
-              placeholder="Enter recipe title"
+              placeholder="Recipe title here..."
+              label="Title"
               status="error"
               helper={errors.title?.message ?? ""}
             />
@@ -193,7 +194,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               value={value ?? ""}
               onChangeText={onChange}
               helper={errors.summary?.message ?? ""}
-              placeholder="Enter summary (optional)"
+              placeholder="Recipe summary here..."
+              label="Summary (optional)"
               multiline
               maxLength={2048}
             />
@@ -210,7 +212,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               value={value ? String(value) : ""}
               onChangeText={onChange}
               helper={errors.preparationTimeInMinutes?.message ?? ""}
-              placeholder="Prep time in minutes (optional)"
+              placeholder="0"
+              label="Prep time minutes (optional)"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -227,7 +230,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               value={value ? String(value) : ""}
               onChangeText={onChange}
               helper={errors.cookingTimeInMinutes?.message ?? ""}
-              placeholder="Cook time in minutes (optional)"
+              placeholder="0"
+              label="Cook time minutes (optional)"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -244,7 +248,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               value={value ? String(value) : ""}
               onChangeText={onChange}
               helper={errors.bakingTimeInMinutes?.message ?? ""}
-              placeholder="Bake time in minutes (optional)"
+              placeholder="0"
+              label="Bake time minutes (optional)"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -261,7 +266,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               value={value ? String(value) : ""}
               onChangeText={onChange}
               helper={errors.servings?.message ?? ""}
-              placeholder="Servings (optional)"
+              placeholder="0"
+              label="Servings (optional)"
               inputMode="numeric"
               keyboardType="numeric"
             />

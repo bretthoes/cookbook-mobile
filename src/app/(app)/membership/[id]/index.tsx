@@ -64,7 +64,6 @@ export default observer(function MembershipScreen() {
                 onPress: async () => {
                   var result = await membershipStore.delete(parseInt(id)) 
                   if (result) {
-                    router.back()
                   }
                   else {
                     Alert.alert("Error", "Failed to delete membership")
