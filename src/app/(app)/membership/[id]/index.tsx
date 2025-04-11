@@ -34,21 +34,22 @@ export default observer(function MembershipScreen() {
   const $themedValue = React.useMemo(() => themed($value), [themed])
 
   const handlePressMore = () => {
-    const options = ["Edit membership", "Delete membership", "Cancel"]
-    const cancelButtonIndex = 2
+    const options = isOwner ? ["Edit membership", "Delete membership", "Cancel"] : ["Delete membership", "Cancel"]
+    const cancelButtonIndex = options.length - 1
+    const destructiveButtonIndex = options.indexOf("Delete membership")
 
     showActionSheetWithOptions(
       { 
         options,
         cancelButtonIndex,
-        destructiveButtonIndex: 1,
+        destructiveButtonIndex,
       },
       (selectedIndex) => {
-        if (selectedIndex === 0) {
-          // Edit
+        if (selectedIndex === undefined || selectedIndex === cancelButtonIndex) return
+
+        if (selectedIndex === 0 && isOwner) {
           router.push(`/membership/${id}/edit`)
-        } else if (selectedIndex === 1) {
-          // Delete
+        } else if (selectedIndex === (isOwner ? 1 : 0)) {
           Alert.alert(
             "Delete Member",
             "This will remove the member from this cookbook. Are you sure?",

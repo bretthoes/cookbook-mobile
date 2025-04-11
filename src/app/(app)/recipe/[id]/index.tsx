@@ -79,22 +79,22 @@ export default observer(function Recipe() {
   }
 
   const handlePressMore = () => {
-    const options = ["Edit Recipe", "Delete Recipe", "Cancel"]
-
+    const options = canEdit ? ["Edit Recipe", "Delete Recipe", "Cancel"] : ["Delete Recipe", "Cancel"]
     const cancelButtonIndex = options.length - 1
+    const destructiveButtonIndex = options.indexOf("Delete Recipe")
 
     showActionSheetWithOptions(
       {
         options,
         cancelButtonIndex,
-          destructiveButtonIndex: 1,
+        destructiveButtonIndex,
       },
       (buttonIndex) => {
         if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
 
-        if (buttonIndex === 0) {
+        if (buttonIndex === 0 && canEdit) {
           handlePressEdit()
-        } else if (buttonIndex === 1) {
+        } else if (buttonIndex === (canEdit ? 1 : 0)) {
           handlePressDelete()
         }
       },

@@ -99,7 +99,6 @@ export default observer(function Cookbook() {
               var result = await membershipStore.delete(membershipStore.ownMembership?.id)
               if (result) {
                 remove()
-                //router.back()
               } else {
                 Alert.alert("Error", "Failed to leave cookbook. Please try again.")
               }
@@ -110,16 +109,22 @@ export default observer(function Cookbook() {
   }
 
   const handlePressMore = () => {
+    const options = isAuthor ? ["Edit Cookbook", "Leave Cookbook", "Cancel"] : ["Leave Cookbook", "Cancel"]
+    const cancelButtonIndex = options.length - 1
+    const destructiveButtonIndex = options.indexOf("Leave Cookbook")
+
     showActionSheetWithOptions(
       {
-        options: ["Edit Cookbook", "Leave Cookbook", "Cancel"],
-        cancelButtonIndex: 3,
-        destructiveButtonIndex: 1,
+        options,
+        cancelButtonIndex,
+        destructiveButtonIndex,
       },
       (buttonIndex) => {
-        if (buttonIndex === 0) {
+        if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
+
+        if (buttonIndex === 0 && isAuthor) {
           handlePressEdit()
-        } else if (buttonIndex === 1) {
+        } else if (buttonIndex === (isAuthor ? 1 : 0)) {
           handlePressLeave()
         }
       },
