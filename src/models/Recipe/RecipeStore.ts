@@ -48,6 +48,11 @@ export const RecipeStoreModel = types
     single: flow(function* (id: number) {
       const response = yield api.getRecipe(id)
       if (response.kind === "ok") {
+        // TODO: Without this line, MST throws an error trying to
+        // set the selected recipe to the previous selected when 
+        // this is called with a different id than the previously
+        // selected recipe. This is a workaround that needs to be
+        // revisited.
         self.selected = null
         const index = self.recipes.items.findIndex(r => r.id === id)
         if (index >= 0)
