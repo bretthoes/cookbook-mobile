@@ -46,13 +46,14 @@ export const recipeSchema = yup.object({
       yup.object({
         name: yup
           .string()
-          .required("Ingredient is required")
-          .min(1, "Ingredient at least 1 character")
-          .max(255, "Ingredient at most 255 characters"),
+          .required("Ingredient name is required")
+          .min(1, "Ingredient name must be at least 1 character")
+          .max(255, "Ingredient name cannot exceed 255 characters"),
         optional: yup.bool().nullable().default(false),
       }),
     )
-    .min(1, "At least one ingredient is required"),
+    .min(1, "At least one ingredient is required")
+    .max(40, "Cannot have more than 40 ingredients"),
   directions: yup
     .array()
     .required()
@@ -60,12 +61,13 @@ export const recipeSchema = yup.object({
       yup.object({
         text: yup
           .string()
-          .required("Direction is required")
-          .min(1, "Direction at least 1 character")
-          .max(2048, "Direction at most 2048 characters"),
+          .required("Direction text is required")
+          .min(1, "Direction text must be at least 1 character")
+          .max(2048, "Direction text cannot exceed 2048 characters"),
         image: yup.string().nullable().default(null),
       }),
     )
-    .min(1, "At least one direction is required"),
+    .min(1, "At least one direction is required")
+    .max(20, "Cannot have more than 20 directions"),
   images: yup.array().required().of(yup.string().required()),
 }) as yup.ObjectSchema<RecipeFormInputs>
