@@ -1,41 +1,44 @@
 import * as yup from "yup"
+import { RecipeFormInputs } from "src/components/Recipe/RecipeForm"
 
-export const recipeSchema = yup.object().shape({
+export const recipeSchema = yup.object({
   title: yup
     .string()
     .required("Title is required")
-    .min(3, "Title at least 3 characters")
+    .min(1, "Title at least 1 characters")
     .max(255, "Title at most 255 characters"),
   summary: yup
     .string()
     .nullable()
-    .defined()
-    .min(3, "Summary at least 3 characters")
     .max(2048, "Summary at most 2048 characters"),
   preparationTimeInMinutes: yup
     .number()
     .nullable()
-    .defined()
+    .transform((value) => (value === "" ? null : value))
+    .typeError("Must be a number")
     .min(0, "Must be greater than 0")
     .max(999, "Cannot exceed 1k"),
   cookingTimeInMinutes: yup
     .number()
     .nullable()
-    .defined()
+    .transform((value) => (value === "" ? null : value))
+    .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 1k"),
+    .max(999, "Cannot exceed 999 minutes"),
   bakingTimeInMinutes: yup
     .number()
     .nullable()
-    .defined()
+    .transform((value) => (value === "" ? null : value))
+    .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 1k"),
+    .max(999, "Cannot exceed 999 minutes"),
   servings: yup
     .number()
     .nullable()
-    .defined()
+    .transform((value) => (value === "" ? null : value))
+    .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 1k"),
+    .max(999, "Cannot exceed 999 minutes"),
   ingredients: yup
     .array()
     .required()
@@ -44,9 +47,9 @@ export const recipeSchema = yup.object().shape({
         name: yup
           .string()
           .required("Ingredient is required")
-          .min(3, "Ingredient at least 3 characters")
+          .min(1, "Ingredient at least 1 character")
           .max(255, "Ingredient at most 255 characters"),
-        optional: yup.bool().nullable().defined().default(false),
+        optional: yup.bool().nullable().default(false),
       }),
     )
     .min(1, "At least one ingredient is required"),
@@ -58,11 +61,11 @@ export const recipeSchema = yup.object().shape({
         text: yup
           .string()
           .required("Direction is required")
-          .min(3, "Direction at least 3 characters")
+          .min(1, "Direction at least 1 character")
           .max(2048, "Direction at most 2048 characters"),
-        image: yup.string().nullable().defined().default(null),
+        image: yup.string().nullable().default(null),
       }),
     )
     .min(1, "At least one direction is required"),
   images: yup.array().required().of(yup.string().required()),
-})
+}) as yup.ObjectSchema<RecipeFormInputs>
