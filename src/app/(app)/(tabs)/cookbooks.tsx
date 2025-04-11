@@ -42,10 +42,13 @@ import type { ThemedStyle } from "src/theme"
 
 const ICON_SIZE = 14
 
-const rnrImage1 = require("assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("assets/images/demo/rnr-image-3.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
+const rnrImage1 = require("assets/images/cookbooks/blue.png")
+const rnrImage2 = require("assets/images/cookbooks/green.png")
+const rnrImage3 = require("assets/images/cookbooks/orange.png")
+const rnrImage4 = require("assets/images/cookbooks/purple.png")
+const rnrImage5 = require("assets/images/cookbooks/pink.png")
+const rnrImage6 = require("assets/images/cookbooks/yellow.png")
+const rnrImages = [rnrImage1, rnrImage2, rnrImage3, rnrImage4, rnrImage5, rnrImage6]
 
 export default observer(function DemoPodcastListScreen(_props) {
   const { cookbookStore } = useStores()
@@ -80,7 +83,7 @@ export default observer(function DemoPodcastListScreen(_props) {
         data={cookbookStore.cookbooksForList.slice()}
         extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
         refreshing={refreshing}
-        estimatedItemSize={177}
+        estimatedItemSize={233}
         onRefresh={manualRefresh}
         ListEmptyComponent={
           isLoading ? (
@@ -328,9 +331,16 @@ const $item: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
   marginTop: theme.spacing.sm,
-  height: 90,
+  height: 120,
   width: 90,
   alignSelf: "flex-start",
+  resizeMode: "cover",
+  borderRadius: 8,
+  shadowColor: theme.colors.text,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
+  elevation: 3,
 })
 
 const $toggle: ViewStyle = {

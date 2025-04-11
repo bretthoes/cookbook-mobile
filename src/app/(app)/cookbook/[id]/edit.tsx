@@ -62,7 +62,7 @@ export default observer(function EditCookbookScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [9, 16],
+      aspect: [3, 4],
       quality: 1,
     })
 
@@ -173,17 +173,25 @@ const $imageContainer: ViewStyle = {
 
 const $image: ImageStyle = {
   width: "100%",
-  height: 200,
+  height: 266,
   borderRadius: 8,
   marginBottom: spacing.sm,
+  shadowColor: colors.text,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
 }
 
 const $imagePlaceholder: ViewStyle = {
   width: "100%",
-  height: 200,
+  height: 266,
   backgroundColor: colors.palette.neutral300,
   borderRadius: 8,
   marginBottom: spacing.sm,
+  shadowColor: colors.text,
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.1,
+  shadowRadius: 4,
 }
 
 const $imageButton: ViewStyle = {

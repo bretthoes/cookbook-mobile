@@ -53,7 +53,7 @@ export default observer(function AddCookbookScreen() {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1, 1],
+      aspect: [3, 4],
     })
 
     if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -102,7 +102,7 @@ export default observer(function AddCookbookScreen() {
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
             <AutoImage
               source={{ uri: imageLocal }}
-              style={{ width: 300, height: 300, margin: 5 }} // TODO: update static dimensions
+              style={{ width: 200, height: 266, margin: 5, borderRadius: 8 }}
             />
           </View>
         )}
