@@ -30,7 +30,6 @@ export default observer(function EmailVerification() {
     // if the email has been verified, use password set in
     // secure storage to log in the user to the main app
     var result = await login((await SecureStore.getItemAsync("password")) ?? "", true)
-    console.log("checkEmailVerified", result)
     if (result) {
       router.replace("/log-in")
     } else {

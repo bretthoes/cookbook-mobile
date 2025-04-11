@@ -1,14 +1,13 @@
-import React, { useEffect } from "react"
+import React, { useEffect, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { View, ViewStyle, Alert } from "react-native"
+import { View, ViewStyle, Alert, ActivityIndicator } from "react-native"
 import { spacing } from "src/theme"
-import { ListItem, ListView, Screen, Text } from "src/components"
+import { Divider, ListItem, ListView, Screen, Text } from "src/components"
 import { RecipeImages } from "src/components/Recipe/RecipeImages"
 import { RecipeIngredient } from "src/models/Recipe"
 import { RecipeDirection } from "src/models/Recipe/RecipeDirection"
-import { RecipeSummary } from "src/components/Recipe/RecipeSummary"
 import { useStores } from "src/models/helpers/useStores"
-import { router, useLocalSearchParams } from "expo-router"
+import { router, useFocusEffect, useLocalSearchParams } from "expo-router"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { MoreButton } from "src/components/MoreButton"
 import { CustomBackButton } from "src/components/CustomBackButton"
@@ -18,6 +17,7 @@ import { ItemNotFound } from "src/components/ItemNotFound"
 import { DirectionText } from "src/components/Recipe/DirectionText"
 import { IngredientItem } from "src/components/Recipe/IngredientItem"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import RecipeSummary from "src/components/Recipe/RecipeSummary"
 
 export default observer(function Recipe() {
   const {
@@ -28,6 +28,7 @@ export default observer(function Recipe() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
+  const [isLoading, setIsLoading] = useState(false)
   const isRecipeAuthor =
   selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
   const ownsCookbook = cookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
@@ -39,6 +40,21 @@ export default observer(function Recipe() {
   const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
   const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
+
+  useEffect(() => {
+    setIsLoading(true)
+    const fetchData = async () => {
+      setSelectedById(Number(id))
+      if (selected) {
+        var email = await AsyncStorage.getItem("email")
+        if (email) setEmail(email)
+        else await fetchEmail()
+        await single(Number(id))
+      }
+    }
+    fetchData()
+    setIsLoading(false)
+  }, [id, setSelectedById, single, setEmail, fetchEmail])
 
   const handlePressEdit = () => {
     router.push(`/recipe/${selected?.id}/edit`)
@@ -58,7 +74,6 @@ export default observer(function Recipe() {
           style: "destructive",
           onPress: async () => {
             await deleteRecipe()
-            router.back()
           },
         },
       ],
@@ -88,20 +103,12 @@ export default observer(function Recipe() {
     )
   }
 
-  useEffect(() => {
-    const fetchRecipe = async () => {
-      var email = await AsyncStorage.getItem("email")
-      if (email) setEmail(email)
-      else await fetchEmail()
-      var success = await single(Number(id))
-      if (success) setSelectedById(Number(id))
-    }
-    fetchRecipe()
-  }, [id, setSelectedById, single])
-
-  if (!selected) return <ItemNotFound message="Recipe not found" />
+  if (!selected && !isLoading) return (<><Divider size={spacing.xxxl} /><ItemNotFound message="Recipe not found" /></>)
 
   return (
+    isLoading ? (
+      <ActivityIndicator />
+    ) :
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
       <CustomBackButton
         onPress={() => router.back()}

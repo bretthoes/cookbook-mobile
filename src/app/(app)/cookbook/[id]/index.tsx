@@ -33,10 +33,7 @@ export default observer(function Cookbook() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  // Update currentCookbook when id changes
-  useEffect(() => {
-    setSelectedById(Number(id))
-  }, [id, setSelectedById])
+  
 
   const isAuthor = selected?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
 
@@ -52,46 +49,6 @@ export default observer(function Cookbook() {
   const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
   const $themedRoot = React.useMemo(() => themed($root), [themed])
-
-  // initially, kick off a background refresh without the refreshing UI
-  useEffect(() => {
-    setIsLoading(true)
-    const fetchData = async () => {
-      await membershipStore.fetchEmail()
-      if (selected) {
-        await membershipStore.single(selected.id)
-        await recipeStore.fetch(Number(id))
-      }
-    }
-    
-    fetchData()
-    setIsLoading(false)
-  }, [recipeStore, selected, id])
-
-  // simulate a longer refresh, if the refresh is too fast for UX
-  async function manualRefresh() {
-    setRefreshing(true)
-    await Promise.all([recipeStore.fetch(Number(id), searchQuery), delay(750)])
-    setRefreshing(false)
-  }
-
-  // re-fetch recipes when the search query changes
-  useEffect(() => {
-    setIsLoading(true)
-    const fetchData = async () => {
-      await recipeStore.fetch(Number(id), searchQuery)
-    }
-    fetchData()
-    setIsLoading(false)
-  }, [debouncedSearchQuery, recipeStore.fetch])
-
-  useHeader({
-    title: selected?.title ?? "",
-    leftIcon: "back",
-    onLeftPress: () => router.back(),
-    rightIcon: "more",
-    onRightPress: selected ? () => handlePressMore() : undefined,
-  }, [selected?.title, id])
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {
@@ -153,7 +110,6 @@ export default observer(function Cookbook() {
   }
 
   const handlePressMore = () => {
-
     showActionSheetWithOptions(
       {
         options: ["Edit Cookbook", "Leave Cookbook", "Cancel"],
@@ -169,6 +125,46 @@ export default observer(function Cookbook() {
       },
     )
   }
+
+  // simulate a longer refresh, if the refresh is too fast for UX
+  async function manualRefresh() {
+    setRefreshing(true)
+    await Promise.all([recipeStore.fetch(Number(id), searchQuery), delay(750)])
+    setRefreshing(false)
+  }
+
+  // initially, kick off a background refresh without the refreshing UI
+  useEffect(() => {
+    setIsLoading(true)
+    const fetchData = async () => {
+      setSelectedById(Number(id))
+      if (selected) {
+        await membershipStore.fetchEmail()
+        await membershipStore.single(Number(id))
+        await recipeStore.fetch(Number(id))
+      }
+    }
+    fetchData()
+    setIsLoading(false)
+  }, [id, setSelectedById, membershipStore.fetchEmail, membershipStore.single, recipeStore.fetch])
+
+  // re-fetch recipes when the search query changes
+  useEffect(() => {
+    setIsLoading(true)
+    const fetchData = async () => {
+      await recipeStore.fetch(Number(id), searchQuery)
+    }
+    fetchData()
+    setIsLoading(false)
+  }, [debouncedSearchQuery, recipeStore.fetch])
+
+  useHeader({
+    title: selected?.title ?? "",
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+    rightIcon: "more",
+    onRightPress: selected ? () => handlePressMore() : undefined,
+  }, [selected?.title, id])
 
   if (!selected) return <ItemNotFound message="Cookbook not found" />
 

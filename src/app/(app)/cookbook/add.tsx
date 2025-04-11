@@ -22,7 +22,6 @@ interface CookbookFormInputs {
 }
 
 export default observer(function AddCookbookScreen() {
-  console.log("AddCookbookScreen")
   const {
     cookbookStore: { create, selected },
   } = useStores()

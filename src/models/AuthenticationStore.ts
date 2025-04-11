@@ -44,11 +44,8 @@ export const AuthenticationStoreModel = types
       store.setProp("displayName", value)
     },
     fetchDisplayName: flow(function* () {
-      console.log("fetchDisplayName", store.displayName)
       if (store.displayName) return
-      console.log("fetchDisplayName", store.displayName)
       const response = yield api.getDisplayName()
-      console.log("fetchDisplayName", response)
       if (response.kind === "ok") store.setProp("displayName", response.displayName)
       else console.error(`Error fetching display name: ${JSON.stringify(response)}`)
     }),

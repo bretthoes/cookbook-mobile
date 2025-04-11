@@ -5,6 +5,7 @@ import { spacing, colors } from "src/theme"
 import { Recipe } from "src/models/Recipe"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
+import { observer } from "mobx-react-lite"
 
 const $titleContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
@@ -40,7 +41,7 @@ export interface RecipeSummaryProps {
   recipe: Recipe
 }
 
-export function RecipeSummary({ recipe }: RecipeSummaryProps) {
+export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
   const hasImages = !!recipe?.images[0]
   
@@ -102,4 +103,4 @@ export function RecipeSummary({ recipe }: RecipeSummaryProps) {
       )}
     </View>
   )
-}
+})

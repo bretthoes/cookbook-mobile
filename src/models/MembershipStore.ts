@@ -61,7 +61,6 @@ export const MembershipStoreModel = types
       delete: flow(function* (id: number) {
         const response = yield api.deleteMembership(id)
         if (response.kind === "ok") {
-          console.log("Membership deleted", response)
           self.setProp("memberships", {
             ...self.memberships,
             items: self.memberships.items.filter(item => item.id !== id)

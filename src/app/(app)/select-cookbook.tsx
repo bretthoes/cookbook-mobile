@@ -59,18 +59,15 @@ export default observer(function SelectCookbookScreen() {
   const [isLoading, setIsLoading] = React.useState(false)
 
   const handleAddRecipeFromCamera = async () => {
-    console.log("handleAddRecipeFromCamera")
     // Request permission for accessing the media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
       alert("Please allow camera roll access in settings.")
       return
     }
-    console.log("handleAddRecipeFromCamera 2")
 
     const options = ["Take a Photo", "Select from Camera Roll", "Cancel"]
     const cancelButtonIndex = 2
-    console.log("handleAddRecipeFromCamera 3")
     // Display the action sheet and get the user's choice
     showActionSheetWithOptions(
       {
@@ -78,7 +75,6 @@ export default observer(function SelectCookbookScreen() {
         cancelButtonIndex,
       },
       async (buttonIndex) => {
-        console.log("handleAddRecipeFromCamera 4")
         if (buttonIndex === 0) {
           // "Take a Photo" option was selected
           const result = await ImagePicker.launchCameraAsync({

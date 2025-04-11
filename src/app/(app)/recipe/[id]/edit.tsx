@@ -4,15 +4,12 @@ import { useStores } from "src/models/helpers/useStores"
 import { RecipeForm, RecipeFormInputs } from "src/components/Recipe/RecipeForm"
 import { RecipeSnapshotIn } from "src/models/Recipe"
 import { Screen } from "src/components"
-import { router } from "expo-router"
-import { useForm } from "react-hook-form"
 import { ItemNotFound } from "src/components/ItemNotFound"
 
 export default observer(function EditRecipe() {
   const {
     recipeStore: { selected, update },
   } = useStores()
-  const { handleSubmit } = useForm<RecipeFormInputs>()
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
     if (!selected) return null
@@ -38,7 +35,6 @@ export default observer(function EditRecipe() {
   }
 
   const onPressSend = async (formData: RecipeFormInputs) => {
-    console.log("formData", formData)
     const updatedRecipe: RecipeSnapshotIn = {
       id: selected?.id ?? 0,
       title: formData.title?.trim() ?? "",
@@ -71,18 +67,14 @@ export default observer(function EditRecipe() {
     }
 
     try {
-      await update(updatedRecipe)
-      router.back()
-    } catch (e) {
-      console.error("Update recipe failed:", e)
-
-      if (e instanceof Error) {
-        console.error("Error message:", e.message)
-        console.error("Stack trace:", e.stack)
+      var success = await update(updatedRecipe)
+      if (success) {
+        alert("Recipe updated successfully!")
       } else {
-        console.error("Non-standard error:", JSON.stringify(e, null, 2))
+        alert("Update recipe failed")
       }
-
+    } catch (error) {
+      console.error("Update recipe failed:", error)
       alert("Update recipe failed")
     }
   }

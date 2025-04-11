@@ -1,4 +1,4 @@
-import { destroy, detach, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import { destroy, detach, flow, Instance, SnapshotOut, types, resolveIdentifier } from "mobx-state-tree"
 import { api } from "src/services/api"
 import { Recipe, RecipeModel } from "./Recipe"
 import { RecipeSnapshotIn } from "./Recipe"
@@ -47,7 +47,6 @@ export const RecipeStoreModel = types
     }),
     single: flow(function* (id: number) {
       const response = yield api.getRecipe(id)
-      self.selected = null
       if (response.kind === "ok") {
         const index = self.recipes.items.findIndex(r => r.id === id)
         if (index >= 0) // replace existing
@@ -77,6 +76,7 @@ export const RecipeStoreModel = types
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
         if (self.selected) self.selected.update(updatedRecipe)
+        else console.error(`Error updating recipe: ${JSON.stringify(response)}`)
         return true
       }
       console.error(`Error updating recipe: ${JSON.stringify(response)}`)
