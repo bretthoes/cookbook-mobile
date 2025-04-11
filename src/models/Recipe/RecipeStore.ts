@@ -48,11 +48,10 @@ export const RecipeStoreModel = types
     single: flow(function* (id: number) {
       const response = yield api.getRecipe(id)
       if (response.kind === "ok") {
+        self.selected = null
         const index = self.recipes.items.findIndex(r => r.id === id)
-        if (index >= 0) // replace existing
-          self.recipes.items[index] = response.recipe
-        else // add new
-          self.recipes.items.push(response.recipe)
+        if (index >= 0)
+          self.recipes.items[index].update(response.recipe)
         return true
       }
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)

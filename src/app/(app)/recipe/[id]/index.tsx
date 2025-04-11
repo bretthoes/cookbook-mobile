@@ -42,18 +42,16 @@ export default observer(function Recipe() {
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
 
   useEffect(() => {
-    setIsLoading(true)
     const fetchData = async () => {
+      setIsLoading(true)
+      var email = await AsyncStorage.getItem("email")
+      if (email) setEmail(email)
+      else await fetchEmail()
+      await single(Number(id))
       setSelectedById(Number(id))
-      if (selected) {
-        var email = await AsyncStorage.getItem("email")
-        if (email) setEmail(email)
-        else await fetchEmail()
-        await single(Number(id))
-      }
+      setIsLoading(false)
     }
     fetchData()
-    setIsLoading(false)
   }, [id, setSelectedById, single, setEmail, fetchEmail])
 
   const handlePressEdit = () => {
