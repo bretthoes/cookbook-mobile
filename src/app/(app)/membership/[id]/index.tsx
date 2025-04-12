@@ -20,26 +20,31 @@ type DataItem = {
 export default observer(function MembershipScreen() {
   const { membershipStore } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
-  const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
+  const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
   const { showActionSheetWithOptions } = useActionSheet()
   const [email, setEmail] = useState<string | null>(null)
   const [isOwner, setIsOwner] = useState<boolean>(false)
   const { themed } = useAppTheme()
 
   // Memoize themed styles
-  const $themedScreenContentContainer = React.useMemo(() => themed($screenContentContainer), [themed])
+  const $themedScreenContentContainer = React.useMemo(
+    () => themed($screenContentContainer),
+    [themed],
+  )
   const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
   const $themedItem = React.useMemo(() => themed($item), [themed])
   const $themedLabel = React.useMemo(() => themed($label), [themed])
   const $themedValue = React.useMemo(() => themed($value), [themed])
 
   const handlePressMore = () => {
-    const options = isOwner ? ["Edit membership", "Delete membership", "Cancel"] : ["Delete membership", "Cancel"]
+    const options = isOwner
+      ? ["Edit membership", "Delete membership", "Cancel"]
+      : ["Delete membership", "Cancel"]
     const cancelButtonIndex = options.length - 1
     const destructiveButtonIndex = options.indexOf("Delete membership")
 
     showActionSheetWithOptions(
-      { 
+      {
         options,
         cancelButtonIndex,
         destructiveButtonIndex,
@@ -56,27 +61,26 @@ export default observer(function MembershipScreen() {
             [
               {
                 text: "Cancel",
-                style: "cancel"
+                style: "cancel",
               },
               {
                 text: "Delete",
                 style: "destructive",
                 onPress: async () => {
-                  var result = await membershipStore.delete(parseInt(id)) 
+                  const result = await membershipStore.delete(parseInt(id))
                   if (result) {
-                  }
-                  else {
+                  } else {
                     Alert.alert("Error", "Failed to delete membership")
                   }
-                }
-              }
-            ]
+                },
+              },
+            ],
           )
         }
       },
     )
   }
-  
+
   const permissions = [
     { label: "Name", value: membership?.name ?? "" },
     { label: "Cookbook Owner", value: membership?.isCreator },
@@ -97,19 +101,22 @@ export default observer(function MembershipScreen() {
   useEffect(() => {
     if (email && membershipStore.memberships?.items) {
       const userMembership = membershipStore.memberships.items.find(
-        (m) => m.email === email && m.isCreator
+        (m) => m.email === email && m.isCreator,
       )
       setIsOwner(!!userMembership)
     }
   }, [email, membershipStore.memberships?.items])
 
-  useHeader({
-    leftIcon: "back",
-    title: "Membership Details",
-    onLeftPress: () => router.back(),
-    rightIcon: isOwner ? "more" : undefined,
-    onRightPress: isOwner ? handlePressMore : undefined,
-  }, [isOwner])
+  useHeader(
+    {
+      leftIcon: "back",
+      title: "Membership Details",
+      onLeftPress: () => router.back(),
+      rightIcon: isOwner ? "more" : undefined,
+      onRightPress: isOwner ? handlePressMore : undefined,
+    },
+    [isOwner],
+  )
 
   if (!membership) {
     return <ItemNotFound message="Membership not found" />
@@ -172,4 +179,3 @@ const $value: ThemedStyle<TextStyle> = (theme) => ({
   fontSize: 16,
   fontWeight: "500",
 })
-

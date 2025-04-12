@@ -65,8 +65,7 @@ export default observer(function DemoPodcastListScreen(_props) {
     }
     setIsLoading(true)
     fetchData()
-      .catch(console.error)
-      setIsLoading(false)
+    setIsLoading(false)
   }, [cookbookStore])
 
   // simulate a longer refresh, if the refresh is too fast for UX

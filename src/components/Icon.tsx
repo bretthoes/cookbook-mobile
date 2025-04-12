@@ -54,7 +54,14 @@ interface IconProps extends TouchableOpacityProps {
  * @returns {JSX.Element} The rendered `Icon` component.
  */
 export function Icon(props: IconProps) {
-  const { icon, color, size, style: $imageStyleOverride, containerStyle: $containerStyleOverride, onPress } = props
+  const {
+    icon,
+    color,
+    size,
+    style: $imageStyleOverride,
+    containerStyle: $containerStyleOverride,
+    onPress,
+  } = props
   const { themed } = useAppTheme()
 
   const $themedContainer = useMemo(() => themed($container), [themed])
@@ -64,10 +71,7 @@ export function Icon(props: IconProps) {
 
   if (onPress) {
     return (
-      <TouchableOpacity
-        style={[$themedContainer, $containerStyleOverride]}
-        onPress={onPress}
-      >
+      <TouchableOpacity style={[$themedContainer, $containerStyleOverride]} onPress={onPress}>
         <Image
           source={iconRegistry[icon]}
           style={[

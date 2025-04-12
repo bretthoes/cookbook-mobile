@@ -12,7 +12,11 @@ import type { ApiConfig } from "./api.types"
 import * as SecureStore from "expo-secure-store"
 import { ImagePickerAsset } from "expo-image-picker"
 import { CookbookInvitationStatus } from "src/models/Invitation"
-import { CookbookSnapshotOut, CookbookToAddSnapshotIn, CookbookSnapshotIn } from "src/models/Cookbook"
+import {
+  CookbookSnapshotOut,
+  CookbookToAddSnapshotIn,
+  CookbookSnapshotIn,
+} from "src/models/Cookbook"
 import { AuthResultModel, AuthResultSnapshotIn } from "src/models/AuthResult"
 import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "src/models/Recipe"
 import {
@@ -442,7 +446,9 @@ export class Api {
     id: number,
     accepted: boolean,
   ): Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
-    var newStatus = accepted ? CookbookInvitationStatus.Accepted : CookbookInvitationStatus.Rejected
+    const newStatus = accepted
+      ? CookbookInvitationStatus.Accepted
+      : CookbookInvitationStatus.Rejected
 
     const response: ApiResponse<number> = await this.authorizedRequest(`Invitations/${id}`, "PUT", {
       Id: id,
@@ -845,7 +851,7 @@ export class Api {
     const response: ApiResponse<MembershipSnapshotOut> = await this.authorizedRequest(
       `Memberships/${membershipId}`,
       "PUT",
-      { 
+      {
         Id: membershipId,
         IsCreator: membership.isCreator,
         CanAddRecipe: membership.canAddRecipe,
@@ -898,22 +904,17 @@ export class Api {
 
   async updateCookbook(cookbook: CookbookSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
     try {
+      const response = await this.authorizedRequest(`Cookbooks/${cookbook.id}`, "PUT", {
+        Id: cookbook.id,
+        Title: cookbook.title,
+        Image: cookbook.image,
+      })
 
-      const response = await this.authorizedRequest(
-        `Cookbooks/${cookbook.id}`,
-        "PUT",
-        {
-          Id: cookbook.id,
-          Title: cookbook.title,
-          Image: cookbook.image,
-        },
-      )
-      
       if (!response.ok) {
         const problem = getGeneralApiProblem(response)
         if (problem) return problem
       }
-      
+
       return { kind: "ok" }
     } catch (error) {
       console.error("Error updating cookbook:", error)

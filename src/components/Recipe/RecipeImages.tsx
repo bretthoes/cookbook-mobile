@@ -54,7 +54,10 @@ export function RecipeImages(props: RecipeImagesProps) {
       {shouldShowPagination && (
         <View style={$themedDotContainer}>
           {data.map((_, index) => (
-            <View key={index} style={[$themedDot, index === activeIndex ? $themedActiveDot : $themedInactiveDot]} />
+            <View
+              key={index}
+              style={[$themedDot, index === activeIndex ? $themedActiveDot : $themedInactiveDot]}
+            />
           ))}
         </View>
       )}

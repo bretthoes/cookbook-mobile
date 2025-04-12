@@ -9,7 +9,7 @@ import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
 
 export default observer(function RecipeUrlScreen() {
-  const { 
+  const {
     recipeStore: { setRecipeToAdd },
   } = useStores()
 
@@ -19,8 +19,7 @@ export default observer(function RecipeUrlScreen() {
 
   const getValidationError = (url: string) => {
     if (url.length === 0) return "can't be blank"
-    if (!isValidUrl(url))
-      return "must be a valid URL"
+    if (!isValidUrl(url)) return "must be a valid URL"
     return ""
   }
 
@@ -29,9 +28,10 @@ export default observer(function RecipeUrlScreen() {
     return regex.test(input)
   }
 
-  const validationError = useMemo(() => 
-    isSubmitted ? getValidationError(url) : ""
-  , [isSubmitted, url])
+  const validationError = useMemo(
+    () => (isSubmitted ? getValidationError(url) : ""),
+    [isSubmitted, url],
+  )
 
   useEffect(() => {
     setUrl("")
@@ -53,17 +53,23 @@ export default observer(function RecipeUrlScreen() {
     setIsSubmitted(false)
   }
 
-  useHeader({
-    title: "Add Recipe",
-    onLeftPress: () => router.back(),
-    leftIcon: "back",
-    onRightPress: handleNext,
-    rightText: "Next",
-  }, [url])
+  useHeader(
+    {
+      title: "Add Recipe",
+      onLeftPress: () => router.back(),
+      leftIcon: "back",
+      onRightPress: handleNext,
+      rightText: "Next",
+    },
+    [url],
+  )
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text text="Enter a valid link and we'll extract the recipe for you." style={{paddingHorizontal: spacing.md}} />
+      <Text
+        text="Enter a valid link and we'll extract the recipe for you."
+        style={{ paddingHorizontal: spacing.md }}
+      />
       <UseCase name="">
         <TextField
           value={url}

@@ -50,13 +50,16 @@ export default observer(function EditCookbookScreen() {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
 
-  useHeader({
-    title: "Edit Cookbook",
-    leftIcon: "back",
-    onLeftPress: () => router.back(),
-    rightText: "Save",
-    onRightPress: () => handleSubmit(onPressSend, onError)(),
-  }, [handleSubmit])
+  useHeader(
+    {
+      title: "Edit Cookbook",
+      leftIcon: "back",
+      onLeftPress: () => router.back(),
+      rightText: "Save",
+      onRightPress: () => handleSubmit(onPressSend, onError)(),
+    },
+    [handleSubmit],
+  )
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -77,7 +80,10 @@ export default observer(function EditCookbookScreen() {
     if (!cookbookStore.selected) return
 
     // Check if there are any changes
-    if (data.title === cookbookStore.selected.title && data.image === cookbookStore.selected.image) {
+    if (
+      data.title === cookbookStore.selected.title &&
+      data.image === cookbookStore.selected.image
+    ) {
       setResult("No changes to save")
       return
     }
@@ -136,11 +142,7 @@ export default observer(function EditCookbookScreen() {
           ) : (
             <View style={$imagePlaceholder} />
           )}
-          <Button
-            text="Change Cover Photo"
-            onPress={pickImage}
-            style={$imageButton}
-          />
+          <Button text="Change Cover Photo" onPress={pickImage} style={$imageButton} />
         </View>
 
         {result ? (
@@ -148,7 +150,11 @@ export default observer(function EditCookbookScreen() {
             text={result}
             style={[
               $result,
-              { color: result.includes("successfully") ? colors.palette.primary500 : colors.palette.angry500 },
+              {
+                color: result.includes("successfully")
+                  ? colors.palette.primary500
+                  : colors.palette.angry500,
+              },
             ]}
           />
         ) : null}

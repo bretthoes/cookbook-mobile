@@ -64,7 +64,10 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const { themed } = useAppTheme()
 
   const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])
-  const $themedDirectionItemContainer = React.useMemo(() => themed($directionItemContainer), [themed])
+  const $themedDirectionItemContainer = React.useMemo(
+    () => themed($directionItemContainer),
+    [themed],
+  )
   const $themedDirectionIndex = React.useMemo(() => themed($directionIndex), [themed])
   const $themedTextFieldContainer = React.useMemo(() => themed($textFieldContainer), [themed])
 
@@ -334,9 +337,9 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                   />
                 </View>
                 {errors.ingredients?.[index]?.name?.message && (
-                  <Text 
-                    text={errors.ingredients[index].name.message} 
-                    style={[$errorText, { marginLeft: spacing.xl }]} 
+                  <Text
+                    text={errors.ingredients[index].name.message}
+                    style={[$errorText, { marginLeft: spacing.xl }]}
                   />
                 )}
               </View>
@@ -396,9 +399,9 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                   />
                 </View>
                 {errors.directions?.[index]?.text?.message && (
-                  <Text 
-                    text={errors.directions[index].text.message} 
-                    style={[$errorText, { marginLeft: spacing.xl }]} 
+                  <Text
+                    text={errors.directions[index].text.message}
+                    style={[$errorText, { marginLeft: spacing.xl }]}
                   />
                 )}
               </View>

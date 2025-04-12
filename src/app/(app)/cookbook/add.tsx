@@ -74,8 +74,7 @@ export default observer(function AddCookbookScreen() {
     }
     try {
       await create(newCookbook)
-      if (selected)
-        router.replace(`/(app)/cookbooks`)
+      if (selected) router.replace(`/(app)/cookbooks`)
       else alert("Failed to create cookbook")
     } catch (e) {
       alert("Add cookbook failed")

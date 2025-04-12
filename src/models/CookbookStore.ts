@@ -1,6 +1,12 @@
 import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import { Cookbook, CookbookModel, CookbookSnapshotIn, CookbookToAddModel, CookbookToAddSnapshotIn } from "./Cookbook"
+import {
+  Cookbook,
+  CookbookModel,
+  CookbookSnapshotIn,
+  CookbookToAddModel,
+  CookbookToAddSnapshotIn,
+} from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 
 export const CookbookStoreModel = types
@@ -37,8 +43,7 @@ export const CookbookStoreModel = types
       if (response.kind === "ok") {
         self.setProp("cookbooks", response.cookbooks.items)
         return true
-      }
-      else console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
+      } else console.error(`Error fetching cookbooks: ${JSON.stringify(response)}`)
       return false
     }),
     update: flow(function* (cookbook: CookbookSnapshotIn) {
@@ -67,13 +72,11 @@ export const CookbookStoreModel = types
     },
     removeFavorite(cookbook: Cookbook) {
       self.favorites.remove(cookbook)
-    }
+    },
   }))
   .views((store) => ({
     get cookbooksForList() {
-      return store.favoritesOnly
-        ? store.favorites
-        : store.cookbooks
+      return store.favoritesOnly ? store.favorites : store.cookbooks
     },
     hasFavorite(cookbook: Cookbook) {
       return store.favorites.includes(cookbook)

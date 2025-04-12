@@ -36,10 +36,7 @@ export function PaginationControls(props: PaginationControlsProps) {
         onPress={onPreviousPage}
         disabled={!hasPreviousPage}
         RightAccessory={() => (
-          <Icon
-            icon="caretLeft"
-            color={hasPreviousPage ? colors.text : colors.separator}
-          />
+          <Icon icon="caretLeft" color={hasPreviousPage ? colors.text : colors.separator} />
         )}
       ></Button>
       <Text style={$text}>
@@ -49,10 +46,7 @@ export function PaginationControls(props: PaginationControlsProps) {
         onPress={onNextPage}
         disabled={!hasNextPage}
         RightAccessory={() => (
-          <Icon
-            icon="caretRight"
-            color={hasNextPage ? colors.text : colors.separator}
-          />
+          <Icon icon="caretRight" color={hasNextPage ? colors.text : colors.separator} />
         )}
       />
     </View>

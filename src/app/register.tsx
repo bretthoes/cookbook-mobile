@@ -1,6 +1,15 @@
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
-import { Button, Divider, Icon, Screen, Text, TextField, TextFieldAccessoryProps, UseCase } from "src/components"
+import {
+  Button,
+  Divider,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+  TextFieldAccessoryProps,
+  UseCase,
+} from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { useNavigation } from "@react-navigation/native"
 import { colors, spacing } from "src/theme"
@@ -70,11 +79,7 @@ export default observer(function Register() {
   )
 
   return (
-    <Screen
-      preset="auto"
-      style={$root}
-      safeAreaEdges={["top", "bottom"]}
-    >
+    <Screen preset="auto" style={$root} safeAreaEdges={["top", "bottom"]}>
       <View style={$content}>
         <Text testID="login-heading" text="Register" preset="heading" />
         <Text
@@ -124,12 +129,12 @@ export default observer(function Register() {
           style={$tapButton}
           preset="reversed"
           onPress={authenticate}
-      />
+        />
 
-      <Text
-        text="Already have an account? Login"
-        style={$register}
-        onPress={() => router.push("/log-in")}
+        <Text
+          text="Already have an account? Login"
+          style={$register}
+          onPress={() => router.push("/log-in")}
         />
       </View>
     </Screen>

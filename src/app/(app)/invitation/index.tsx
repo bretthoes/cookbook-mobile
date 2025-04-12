@@ -1,15 +1,42 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useState } from "react"
-import { ImageStyle, TextStyle, ViewStyle, View, ActivityIndicator, ImageSourcePropType, Platform, Image, StyleSheet, Switch, AccessibilityProps } from "react-native"
-import { Screen, Text, Button, ListItem, Card, ButtonAccessoryProps, Icon, ListView } from "src/components"
+import {
+  ImageStyle,
+  TextStyle,
+  ViewStyle,
+  View,
+  ActivityIndicator,
+  ImageSourcePropType,
+  Platform,
+  Image,
+  StyleSheet,
+  Switch,
+  AccessibilityProps,
+} from "react-native"
+import {
+  Screen,
+  Text,
+  Button,
+  ListItem,
+  Card,
+  ButtonAccessoryProps,
+  Icon,
+  ListView,
+} from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { delay } from "src/utils/delay"
 import { isRTL, translate } from "src/i18n"
 import { EmptyState } from "src/components/EmptyState"
 import { Invitation } from "src/models"
-import { Extrapolate, interpolate, useSharedValue, withSpring, useAnimatedStyle } from "react-native-reanimated"
-import Animated from "react-native-reanimated"
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useSharedValue,
+  withSpring,
+  useAnimatedStyle,
+} from "react-native-reanimated"
+
 import { ContentStyle } from "@shopify/flash-list"
 import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
@@ -58,15 +85,12 @@ export default observer(function Invitations() {
   }
 
   return (
-    <Screen
-      preset="scroll"
-      style={$root}
-    >
+    <Screen preset="scroll" style={$root}>
       <Text
         text="Manage your cookbook invitations."
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
-        
+
       <ListView<Invitation>
         contentContainerStyle={$listContentContainer}
         data={invitationStore.invitations.items.slice()}
@@ -189,10 +213,6 @@ const InvitationCard = observer(function InvitationCard({
     onPressFavorite()
   }
 
-  const handlePressCard = () => {
-    //router.push(`/(app)/cookbook/${cookbook.id}`)
-  }
-
   // Grey checkmark
   const animatedAcceptButtonStyles = useAnimatedStyle(() => {
     return {
@@ -249,11 +269,7 @@ const InvitationCard = observer(function InvitationCard({
             <Animated.View
               style={[themed($iconContainer), StyleSheet.absoluteFill, animatedAcceptButtonStyles]}
             >
-              <Icon
-                icon="check"
-                size={ICON_SIZE}
-                color={isDark ? colors.textDim : colors.text}
-              />
+              <Icon icon="check" size={ICON_SIZE} color={isDark ? colors.textDim : colors.text} />
             </Animated.View>
             <Animated.View style={[themed($iconContainer), animatedAcceptPressedStyles]}>
               <Icon icon="check" size={ICON_SIZE} color={colors.tint} />
@@ -272,11 +288,7 @@ const InvitationCard = observer(function InvitationCard({
             <Animated.View
               style={[themed($iconContainer), StyleSheet.absoluteFill, animatedRejectButtonStyles]}
             >
-              <Icon
-                icon="x"
-                size={ICON_SIZE}
-                color={isDark ? colors.textDim : colors.text}
-              />
+              <Icon icon="x" size={ICON_SIZE} color={isDark ? colors.textDim : colors.text} />
             </Animated.View>
             <Animated.View style={[themed($iconContainer), animatedRejectPressedStyles]}>
               <Icon icon="x" size={ICON_SIZE} color={colors.error} />
@@ -306,7 +318,6 @@ const InvitationCard = observer(function InvitationCard({
           },
         ]}
         verticalAlignment="force-footer-bottom"
-        onPress={handlePressCard}
         HeadingComponent={
           <View style={$themedMetadata}>
             <Text
@@ -316,11 +327,7 @@ const InvitationCard = observer(function InvitationCard({
             >
               {invitation.getSenderInfo}
             </Text>
-            <Text
-              style={$themedMetadataText}
-              size="xxs"
-              accessibilityLabel={invitation.getTimeAgo}
-            >
+            <Text style={$themedMetadataText} size="xxs" accessibilityLabel={invitation.getTimeAgo}>
               {invitation.getTimeAgo}
             </Text>
           </View>
@@ -336,11 +343,7 @@ const InvitationCard = observer(function InvitationCard({
               accessibilityLabel={translate("pendingInvitationScreen:accept")}
               LeftAccessory={AcceptButtonLeftAccessory}
             >
-              <Text
-                size="xxs"
-                weight="medium"
-                text={translate("pendingInvitationScreen:accept")}
-              />
+              <Text size="xxs" weight="medium" text={translate("pendingInvitationScreen:accept")} />
             </Button>
             <Button
               onPress={() => handleRespond(false)}
@@ -348,11 +351,7 @@ const InvitationCard = observer(function InvitationCard({
               accessibilityLabel={translate("pendingInvitationScreen:reject")}
               LeftAccessory={RejectButtonLeftAccessory}
             >
-              <Text
-                size="xxs"
-                weight="medium"
-                text={translate("pendingInvitationScreen:reject")}
-              />
+              <Text size="xxs" weight="medium" text={translate("pendingInvitationScreen:reject")} />
             </Button>
           </View>
         }

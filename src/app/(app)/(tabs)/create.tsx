@@ -29,7 +29,10 @@ export default observer(function CreateScreen() {
       <Text preset="heading" tx="createScreen:title" style={$themedTitle} />
 
       <View style={$themedListContainer}>
-        <TouchableOpacity style={$themedItemContainer} onPress={() => router.push("/(app)/cookbook/add")}>
+        <TouchableOpacity
+          style={$themedItemContainer}
+          onPress={() => router.push("/(app)/cookbook/add")}
+        >
           <View style={$themedIconContainer}>
             <Ionicons name="book-outline" size={32} color={colors.tint} />
           </View>
@@ -116,7 +119,11 @@ export default observer(function CreateScreen() {
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe from a Website" style={$themedItemTitle} />
-            <Text preset="formHelper" text="Import a recipe from a URL" style={$themedItemDescription} />
+            <Text
+              preset="formHelper"
+              text="Import a recipe from a URL"
+              style={$themedItemDescription}
+            />
           </View>
           <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
@@ -139,7 +146,11 @@ export default observer(function CreateScreen() {
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Invitation to a Friend" style={$themedItemTitle} />
-            <Text preset="formHelper" text="Send a link to your friend" style={$themedItemDescription} />
+            <Text
+              preset="formHelper"
+              text="Send a link to your friend"
+              style={$themedItemDescription}
+            />
           </View>
           <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>

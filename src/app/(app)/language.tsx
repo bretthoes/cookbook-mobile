@@ -19,12 +19,11 @@ export default function LanguageScreen() {
   useHeader({
     leftIcon: "back",
     title: "Select Language",
-    
     onLeftPress: () => router.back(),
   })
 
   useEffect(() => {
-    const fetchLanguage = async () => { 
+    const fetchLanguage = async () => {
       const value = await AsyncStorage.getItem("language")
       if (value !== null) {
         setCurrentLanguage(value)
@@ -42,22 +41,23 @@ export default function LanguageScreen() {
   return (
     <Screen preset="scroll" style={$root}>
       <Text
-        text={"If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab."}
+        text={
+          "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab."
+        }
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
       <UseCase name="Languages">
-      {languages.map((language) => (
-        <ListItem
-          key={language.code}
-          text={language.name}
-          bottomSeparator
-          topSeparator
-          onPress={() => handleLanguageSelect(language.code)}
-          rightIcon={currentLanguage === language.code ? "check" : undefined}
-        />
-      ))}
+        {languages.map((language) => (
+          <ListItem
+            key={language.code}
+            text={language.name}
+            bottomSeparator
+            topSeparator
+            onPress={() => handleLanguageSelect(language.code)}
+            rightIcon={currentLanguage === language.code ? "check" : undefined}
+          />
+        ))}
       </UseCase>
-      
     </Screen>
   )
 }

@@ -10,7 +10,13 @@ import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
 
-type MembershipProperty = "canAddRecipe" | "canUpdateRecipe" | "canDeleteRecipe" | "canSendInvite" | "canRemoveMember" | "canEditCookbookDetails"
+type MembershipProperty =
+  | "canAddRecipe"
+  | "canUpdateRecipe"
+  | "canDeleteRecipe"
+  | "canSendInvite"
+  | "canRemoveMember"
+  | "canEditCookbookDetails"
 
 type DataItem = {
   label: string
@@ -22,12 +28,15 @@ type DataItem = {
 export default observer(function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const { membershipStore } = useStores()
-  const membership = membershipStore.memberships.items.find(m => m.id === parseInt(id))
+  const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
   const [resultMessage, setResultMessage] = useState<string | null>(null)
   const { themed } = useAppTheme()
 
   // Memoize themed styles
-  const $themedScreenContentContainer = React.useMemo(() => themed($screenContentContainer), [themed])
+  const $themedScreenContentContainer = React.useMemo(
+    () => themed($screenContentContainer),
+    [themed],
+  )
   const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
   const $themedItem = React.useMemo(() => themed($item), [themed])
   const $themedResultMessage = React.useMemo(() => themed($resultMessage), [themed])
@@ -46,7 +55,7 @@ export default observer(function MembershipEditScreen() {
       } else {
         setResultMessage("Failed to update membership. Please try again.")
       }
-    }
+    },
   })
 
   if (!membership) return <ItemNotFound message="Membership not found" />
@@ -54,12 +63,37 @@ export default observer(function MembershipEditScreen() {
   const data: DataItem[] = [
     { label: "Email", value: membership.email, type: "text" },
     { label: "Name", value: membership.name, type: "text" },
-    { label: "Can Add Recipe", value: membership.canAddRecipe, type: "switch", key: "canAddRecipe" },
-    { label: "Can Update Recipe", value: membership.canUpdateRecipe, type: "switch", key: "canUpdateRecipe" },
-    { label: "Can Delete Recipe", value: membership.canDeleteRecipe, type: "switch", key: "canDeleteRecipe" },
+    {
+      label: "Can Add Recipe",
+      value: membership.canAddRecipe,
+      type: "switch",
+      key: "canAddRecipe",
+    },
+    {
+      label: "Can Update Recipe",
+      value: membership.canUpdateRecipe,
+      type: "switch",
+      key: "canUpdateRecipe",
+    },
+    {
+      label: "Can Delete Recipe",
+      value: membership.canDeleteRecipe,
+      type: "switch",
+      key: "canDeleteRecipe",
+    },
     { label: "Can Invite", value: membership.canSendInvite, type: "switch", key: "canSendInvite" },
-    { label: "Can Manage Members", value: membership.canRemoveMember, type: "switch", key: "canRemoveMember" },
-    { label: "Can Edit Cookbook Details", value: membership.canEditCookbookDetails, type: "switch", key: "canEditCookbookDetails" },
+    {
+      label: "Can Manage Members",
+      value: membership.canRemoveMember,
+      type: "switch",
+      key: "canRemoveMember",
+    },
+    {
+      label: "Can Edit Cookbook Details",
+      value: membership.canEditCookbookDetails,
+      type: "switch",
+      key: "canEditCookbookDetails",
+    },
   ]
 
   const renderItem = ({ item }: { item: DataItem }) => (
@@ -89,12 +123,12 @@ export default observer(function MembershipEditScreen() {
         contentContainerStyle={$themedListContentContainer}
       />
       {resultMessage && (
-        <Text 
-          text={resultMessage} 
+        <Text
+          text={resultMessage}
           style={[
             $themedResultMessage,
-            resultMessage.includes("successfully") ? $themedSuccessMessage : $themedErrorMessage
-          ]} 
+            resultMessage.includes("successfully") ? $themedSuccessMessage : $themedErrorMessage,
+          ]}
         />
       )}
     </Screen>

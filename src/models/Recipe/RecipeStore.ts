@@ -1,9 +1,17 @@
-import { destroy, detach, flow, Instance, SnapshotOut, types, resolveIdentifier } from "mobx-state-tree"
+import {
+  destroy,
+  detach,
+  flow,
+  Instance,
+  SnapshotOut,
+  types,
+  resolveIdentifier,
+} from "mobx-state-tree"
 import { api } from "src/services/api"
-import { Recipe, RecipeModel } from "./Recipe"
-import { RecipeSnapshotIn } from "./Recipe"
-import { RecipeToAddModel } from "./RecipeToAdd"
-import { RecipeToAddSnapshotIn } from "./RecipeToAdd"
+import { Recipe, RecipeModel, RecipeSnapshotIn } from "./Recipe"
+
+import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
+
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { RecipeListModel } from "src/models/generics"
 
@@ -49,25 +57,19 @@ export const RecipeStoreModel = types
       const response = yield api.getRecipe(id)
       if (response.kind === "ok") {
         // TODO: Without this line, MST throws an error trying to
-        // set the selected recipe to the previous selected when 
+        // set the selected recipe to the previous selected when
         // this is called with a different id than the previously
         // selected recipe. This is a workaround that needs to be
         // revisited.
         self.selected = null
-        const index = self.recipes.items.findIndex(r => r.id === id)
-        if (index >= 0)
-          self.recipes.items[index].update(response.recipe)
+        const index = self.recipes.items.findIndex((r) => r.id === id)
+        if (index >= 0) self.recipes.items[index].update(response.recipe)
         return true
       }
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       return false
     }),
-    fetch: flow(function* (
-      cookbookId: number,
-      search = "",
-      pageNumber = 1,
-      pageSize = 15
-    ) {
+    fetch: flow(function* (cookbookId: number, search = "", pageNumber = 1, pageSize = 15) {
       const response = yield api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("recipes", response.recipes)
@@ -92,7 +94,7 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         destroy(self.selected)
         self.setProp("selected", null)
-        return true 
+        return true
       }
       console.error(`Error deleting recipe: ${JSON.stringify(response)}`)
       return false

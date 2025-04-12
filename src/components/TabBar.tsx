@@ -19,8 +19,8 @@ export function TabBar(props: BottomTabBarProps) {
           options.tabBarLabel !== undefined
             ? options.tabBarLabel
             : options.title !== undefined
-            ? options.title
-            : route.name
+              ? options.title
+              : route.name
 
         if (["_sitemap", "+not-found"].includes(route.name)) return null
 
@@ -68,11 +68,9 @@ export function TabBar(props: BottomTabBarProps) {
             <View style={$tabBarItemContent}>
               {Icon}
               <Text
-                style={[
-                  {
-                    color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
-                  },
-                ]}
+                style={{
+                  color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
+                }}
                 text={label.toString()}
               />
             </View>

@@ -43,7 +43,6 @@ export default observer(function Cookbook() {
     }
     setIsLoading(true)
     fetchData()
-      .catch(console.error)
     setIsLoading(false)
   }, [membershipStore])
 

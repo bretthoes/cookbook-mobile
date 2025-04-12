@@ -1,12 +1,6 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
-import {
-  ActivityIndicator,
-  Alert,
-  ImageStyle,
-  View,
-  ViewStyle,
-} from "react-native"
+import { ActivityIndicator, Alert, ImageStyle, View, ViewStyle } from "react-native"
 import { Divider, EmptyState, ListView, Screen, SearchBar, Text } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { spacing } from "src/theme"
@@ -33,9 +27,9 @@ export default observer(function Cookbook() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  
-
-  const isAuthor = selected?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() && !!membershipStore.email
+  const isAuthor =
+    selected?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() &&
+    !!membershipStore.email
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -74,12 +68,16 @@ export default observer(function Cookbook() {
   const handlePressLeave = async () => {
     // TODO should refresh currentCookbook here to ensure membersCount is up to date.
     if (isAuthor && selected?.membersCount !== 1) {
-      Alert.alert("Leave Cookbook", "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).", [
-        {
-          text: "OK",
-          style: "cancel",
-        },
-      ])
+      Alert.alert(
+        "Leave Cookbook",
+        "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+        [
+          {
+            text: "OK",
+            style: "cancel",
+          },
+        ],
+      )
       return
     }
 
@@ -96,12 +94,12 @@ export default observer(function Cookbook() {
           style: "destructive",
           onPress: async () => {
             if (!membershipStore.ownMembership?.id) return
-              var result = await membershipStore.delete(membershipStore.ownMembership?.id)
-              if (result) {
-                remove()
-              } else {
-                Alert.alert("Error", "Failed to leave cookbook. Please try again.")
-              }
+            const result = await membershipStore.delete(membershipStore.ownMembership?.id)
+            if (result) {
+              remove()
+            } else {
+              Alert.alert("Error", "Failed to leave cookbook. Please try again.")
+            }
           },
         },
       ],
@@ -109,7 +107,9 @@ export default observer(function Cookbook() {
   }
 
   const handlePressMore = () => {
-    const options = isAuthor ? ["Edit Cookbook", "Leave Cookbook", "Cancel"] : ["Leave Cookbook", "Cancel"]
+    const options = isAuthor
+      ? ["Edit Cookbook", "Leave Cookbook", "Cancel"]
+      : ["Leave Cookbook", "Cancel"]
     const cancelButtonIndex = options.length - 1
     const destructiveButtonIndex = options.indexOf("Leave Cookbook")
 
@@ -163,13 +163,16 @@ export default observer(function Cookbook() {
     setIsLoading(false)
   }, [debouncedSearchQuery, recipeStore.fetch])
 
-  useHeader({
-    title: selected?.title ?? "",
-    leftIcon: "back",
-    onLeftPress: () => router.back(),
-    rightIcon: "more",
-    onRightPress: selected ? () => handlePressMore() : undefined,
-  }, [selected?.title, id])
+  useHeader(
+    {
+      title: selected?.title ?? "",
+      leftIcon: "back",
+      onLeftPress: () => router.back(),
+      rightIcon: "more",
+      onRightPress: selected ? () => handlePressMore() : undefined,
+    },
+    [selected?.title, id],
+  )
 
   if (!selected) return <ItemNotFound message="Cookbook not found" />
 

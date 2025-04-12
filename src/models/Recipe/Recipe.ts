@@ -54,7 +54,7 @@ export const RecipeModel = types
       self.setProp("isCheap", updatedRecipe.isCheap)
       self.setProp("isHealthy", updatedRecipe.isHealthy)
       self.setProp("isLowFodmap", updatedRecipe.isLowFodmap)
-    }
+    },
   }))
   .views((recipe) => ({
     get parsedTitleAndSubtitle() {
@@ -87,8 +87,8 @@ export const RecipeModel = types
       }
     },
     get isBrief() {
-      return !recipe.directions.length && !recipe.ingredients.length;
-    }
+      return !recipe.directions.length && !recipe.ingredients.length
+    },
   }))
 
 export interface Recipe extends Instance<typeof RecipeModel> {}

@@ -29,7 +29,7 @@ export default observer(function EmailVerification() {
 
     // if the email has been verified, use password set in
     // secure storage to log in the user to the main app
-    var result = await login((await SecureStore.getItemAsync("password")) ?? "", true)
+    const result = await login((await SecureStore.getItemAsync("password")) ?? "", true)
     if (result) {
       router.replace("/log-in")
     } else {
@@ -61,39 +61,33 @@ export default observer(function EmailVerification() {
   return (
     <Screen style={$root} preset="scroll">
       <Header
-          leftIcon="back"
-          onLeftPress={() => router.back()}
-          rightText="Next"
-          onRightPress={checkEmailVerified}
-        />
-      <Text text="Confirm your account" preset="subheading" style={{paddingHorizontal: spacing.md}} />
+        leftIcon="back"
+        onLeftPress={() => router.back()}
+        rightText="Next"
+        onRightPress={checkEmailVerified}
+      />
+      <Text
+        text="Confirm your account"
+        preset="subheading"
+        style={{ paddingHorizontal: spacing.md }}
+      />
       <UseCase>
-      <Text>We've sent a confirmation email to</Text>
-      <Text weight="bold">{authEmail}</Text>
-      <Divider />
-      <Text>Please check your inbox and click the verification link.</Text>
+        <Text>We've sent a confirmation email to</Text>
+        <Text weight="bold">{authEmail}</Text>
+        <Divider />
+        <Text>Please check your inbox and click the verification link.</Text>
 
-      <Text text={`${result}`} preset="formHelper" style={$formHelper} />
+        <Text text={`${result}`} preset="formHelper" style={$formHelper} />
 
-      {isVerifying && <ActivityIndicator />}
-      {errorMessage ? <Text style={{ color: "red" }}>{errorMessage}</Text> : null}
+        {isVerifying && <ActivityIndicator />}
+        {errorMessage ? <Text style={{ color: "red" }}>{errorMessage}</Text> : null}
       </UseCase>
 
-      <TouchableOpacity 
-        onPress={handleResendEmail} 
-        disabled={isCooldown}
-        style={$resendContainer}
-      >
-        <Text 
-          style={[
-            $resendText,
-            isCooldown && { color: colors.border }
-          ]}
-        >
-          {isCooldown 
+      <TouchableOpacity onPress={handleResendEmail} disabled={isCooldown} style={$resendContainer}>
+        <Text style={[$resendText, isCooldown && { color: colors.border }]}>
+          {isCooldown
             ? `Didn't get the email? Click here to resend (${cooldownTime}s)`
-            : "Didn't get the email? Click here to resend"
-          }
+            : "Didn't get the email? Click here to resend"}
         </Text>
       </TouchableOpacity>
     </Screen>

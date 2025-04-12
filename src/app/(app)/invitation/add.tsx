@@ -8,27 +8,25 @@ import { colors, spacing } from "src/theme"
 import { useHeader } from "src/utils/useHeader"
 
 export default observer(function Invitations() {
-  const { 
+  const {
     cookbookStore: { selected },
-    invitationStore: { 
-      invite,
-    }
+    invitationStore: { invite },
   } = useStores()
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [result, setResult] = useState("")
   const [inviteEmail, setInviteEmail] = useState("")
-  
+
   const getValidationError = (email: string) => {
     if (email.length === 0) return "can't be blank"
     if (email.length < 6) return "must be at least 6 characters"
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
-      return "must be a valid email address"
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "must be a valid email address"
     return ""
   }
-  
-  const validationError = useMemo(() => 
-    isSubmitted ? getValidationError(inviteEmail) : ""
-  , [isSubmitted, inviteEmail])
+
+  const validationError = useMemo(
+    () => (isSubmitted ? getValidationError(inviteEmail) : ""),
+    [isSubmitted, inviteEmail],
+  )
 
   useHeader({
     title: "Invite a Friend",
@@ -43,14 +41,14 @@ export default observer(function Invitations() {
 
   async function send() {
     setIsSubmitted(true)
-    
+
     // Directly check for validation errors
     const error = getValidationError(inviteEmail)
     if (error) {
       return
     }
-    
-    const cookbookId = selected?.id ?? 0;
+
+    const cookbookId = selected?.id ?? 0
     setResult(await invite(cookbookId, inviteEmail))
     setIsSubmitted(false)
     setInviteEmail("")
@@ -58,7 +56,8 @@ export default observer(function Invitations() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text text={`Invite a friend to join ${selected?.title ?? "your cookbook"}.`}
+      <Text
+        text={`Invite a friend to join ${selected?.title ?? "your cookbook"}.`}
         style={{ paddingHorizontal: spacing.md }}
       />
       <UseCase>
@@ -80,11 +79,7 @@ export default observer(function Invitations() {
           status={validationError ? "error" : undefined}
         />
         <Text text={`${result}`} preset="formHelper" />
-        <Button
-          text="Send Invitation"
-          onPress={send}
-          style={{ marginTop: spacing.md }}
-        />
+        <Button text="Send Invitation" onPress={send} style={{ marginTop: spacing.md }} />
       </UseCase>
     </Screen>
   )
@@ -97,4 +92,3 @@ const $root: ViewStyle = {
 const $hint: TextStyle = {
   color: colors.tint,
 }
-

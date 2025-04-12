@@ -30,8 +30,9 @@ export default observer(function Recipe() {
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
   const isRecipeAuthor =
-  selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
-  const ownsCookbook = cookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+    selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
+  const ownsCookbook =
+    cookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
   const canEdit = isRecipeAuthor || ownsCookbook
   const recipeHasImages = selected?.images[0]
 
@@ -44,7 +45,7 @@ export default observer(function Recipe() {
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true)
-      var email = await AsyncStorage.getItem("email")
+      const email = await AsyncStorage.getItem("email")
       if (email) setEmail(email)
       else await fetchEmail()
       await single(Number(id))
@@ -79,7 +80,9 @@ export default observer(function Recipe() {
   }
 
   const handlePressMore = () => {
-    const options = canEdit ? ["Edit Recipe", "Delete Recipe", "Cancel"] : ["Delete Recipe", "Cancel"]
+    const options = canEdit
+      ? ["Edit Recipe", "Delete Recipe", "Cancel"]
+      : ["Delete Recipe", "Cancel"]
     const cancelButtonIndex = options.length - 1
     const destructiveButtonIndex = options.indexOf("Delete Recipe")
 
@@ -101,12 +104,17 @@ export default observer(function Recipe() {
     )
   }
 
-  if (!selected && !isLoading) return (<><Divider size={spacing.xxxl} /><ItemNotFound message="Recipe not found" /></>)
+  if (!selected && !isLoading)
+    return (
+      <>
+        <Divider size={spacing.xxxl} />
+        <ItemNotFound message="Recipe not found" />
+      </>
+    )
 
-  return (
-    isLoading ? (
-      <ActivityIndicator />
-    ) :
+  return isLoading ? (
+    <ActivityIndicator />
+  ) : (
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
       <CustomBackButton
         onPress={() => router.back()}
@@ -116,9 +124,7 @@ export default observer(function Recipe() {
         <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
       )}
       {selected?.images && <RecipeImages data={selected?.images} />}
-      {selected && (
-        <RecipeSummary recipe={selected} />
-      )}
+      {selected && <RecipeSummary recipe={selected} />}
 
       {selected && (
         <View style={{ minHeight: spacing.xxs }}>
@@ -169,9 +175,7 @@ export default observer(function Recipe() {
                 >
                   <ListItem
                     style={{ padding: spacing.sm }}
-                    LeftComponent={
-                      <DirectionText ordinal={item?.ordinal} text={item?.text} />
-                    }
+                    LeftComponent={<DirectionText ordinal={item?.ordinal} text={item?.text} />}
                     height={spacing.xl}
                     bottomSeparator={index !== selected!.directions.length - 1}
                     topSeparator={index !== 0}

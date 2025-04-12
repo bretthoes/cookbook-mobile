@@ -51,9 +51,8 @@ export default observer(function SelectCookbookScreen() {
     }
     // call the function
     setIsLoading(true)
-    fetchData()
-      .catch(console.error)
-      setIsLoading(false)
+    fetchData().catch(console.error)
+    setIsLoading(false)
   }, [cookbookStore])
 
   const [isLoading, setIsLoading] = React.useState(false)

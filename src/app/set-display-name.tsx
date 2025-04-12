@@ -36,37 +36,37 @@ export default observer(function SetDisplayName() {
 
   return (
     <Screen style={$root} preset="scroll">
-        <Header
-          leftIcon="back"
-          onLeftPress={() => router.back()}
-          rightText="Next"
-          onRightPress={forward}
+      <Header
+        leftIcon="back"
+        onLeftPress={() => router.back()}
+        rightText="Next"
+        onRightPress={forward}
+      />
+      <Text
+        testID="set-display-name-heading"
+        text="Set a display name"
+        preset="subheading"
+        style={$content}
+      />
+      <Text
+        testID="set-display-name-description"
+        text="This is optional, but you can set a display name. This is how others will see you, instead of your email. You can change this any time in the app."
+        style={$content}
+      />
+      <UseCase>
+        {<Text text="No special characters, please!" size="sm" weight="light" style={$hint} />}
+        <TextField
+          value={displayName}
+          onChangeText={setDisplayName}
+          helper={error}
+          status={error ? "error" : undefined}
+          autoCapitalize="none"
+          autoComplete="name"
+          autoCorrect={false}
+          label="Display name (optional)"
+          placeholder="Bob"
+          onSubmitEditing={forward}
         />
-        <Text
-          testID="set-display-name-heading"
-          text="Set a display name"
-          preset="subheading"
-          style={$content}
-        />
-        <Text
-          testID="set-display-name-description"
-          text="This is optional, but you can set a display name. This is how others will see you, instead of your email. You can change this any time in the app."
-          style={$content}
-        />
-        <UseCase>
-          {<Text text="No special characters, please!" size="sm" weight="light" style={$hint} />}
-          <TextField
-            value={displayName}
-            onChangeText={setDisplayName}
-            helper={error}
-            status={error ? "error" : undefined}
-            autoCapitalize="none"
-            autoComplete="name"
-            autoCorrect={false}
-            label="Display name (optional)"
-            placeholder="Bob"
-            onSubmitEditing={forward}
-          />
       </UseCase>
     </Screen>
   )
@@ -84,4 +84,3 @@ const $hint: TextStyle = {
   color: colors.tint,
   paddingBottom: spacing.md,
 }
-

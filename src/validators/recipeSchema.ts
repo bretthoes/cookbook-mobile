@@ -7,10 +7,7 @@ export const recipeSchema = yup.object({
     .required("Title is required")
     .min(1, "Title at least 1 characters")
     .max(255, "Title at most 255 characters"),
-  summary: yup
-    .string()
-    .nullable()
-    .max(2048, "Summary at most 2048 characters"),
+  summary: yup.string().nullable().max(2048, "Summary at most 2048 characters"),
   preparationTimeInMinutes: yup
     .number()
     .nullable()

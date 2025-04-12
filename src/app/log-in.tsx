@@ -1,7 +1,16 @@
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { Button, Divider, Icon, Screen, Text, TextField, TextFieldAccessoryProps, UseCase } from "../components"
+import {
+  Button,
+  Divider,
+  Icon,
+  Screen,
+  Text,
+  TextField,
+  TextFieldAccessoryProps,
+  UseCase,
+} from "../components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "../theme"
 import { router } from "expo-router"
@@ -77,11 +86,7 @@ export default observer(function Login(_props) {
   )
 
   return (
-    <Screen
-      preset="scroll"
-      style={$root}
-      safeAreaEdges={["top", "bottom"]}
-    >
+    <Screen preset="scroll" style={$root} safeAreaEdges={["top", "bottom"]}>
       <View style={$content}>
         <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" />
         <Text tx="loginScreen:enterDetails" preset="subheading" style={$enterDetails} />
@@ -104,7 +109,9 @@ export default observer(function Login(_props) {
         />
         <Divider style={{ marginVertical: spacing.xxs }} />
 
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+        <View
+          style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
+        >
           <Text text="Password" preset="formLabel" />
           <Text
             text="Forgot Password?"

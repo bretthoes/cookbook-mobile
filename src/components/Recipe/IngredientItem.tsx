@@ -13,15 +13,10 @@ interface IngredientItemProps {
   isLast: boolean
 }
 
-export const IngredientItem = ({
-  ingredient,
-  index,
-  isFirst,
-  isLast,
-}: IngredientItemProps) => {
+export const IngredientItem = ({ ingredient, index, isFirst, isLast }: IngredientItemProps) => {
   const [isChecked, setIsChecked] = useState(false)
   const { themed } = useAppTheme()
-  
+
   const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedCheckboxContainer = useMemo(() => themed($checkboxContainer), [themed])
   const $themedTextContainer = useMemo(() => themed($textContainer), [themed])
@@ -29,25 +24,16 @@ export const IngredientItem = ({
   const $themedBorderTop = useMemo(() => themed($borderTop), [themed])
   const $themedBorderBottom = useMemo(() => themed($borderBottom), [themed])
   const $themedSeparator = useMemo(() => themed($separator), [themed])
-  
+
   const handleValueChange = (value: boolean) => {
     setIsChecked(value)
   }
-  
+
   return (
-    <View
-      style={[
-        $themedItemStyle,
-        isFirst && $themedBorderTop,
-        isLast && $themedBorderBottom,
-      ]}
-    >
+    <View style={[$themedItemStyle, isFirst && $themedBorderTop, isLast && $themedBorderBottom]}>
       <View style={$themedContainer}>
         <View style={$themedCheckboxContainer}>
-          <Checkbox
-            value={isChecked}
-            onValueChange={handleValueChange}
-          />
+          <Checkbox value={isChecked} onValueChange={handleValueChange} />
         </View>
         <View style={$themedTextContainer}>
           <Text size="md">{ingredient.name}</Text>
@@ -65,8 +51,8 @@ const $itemStyle: ThemedStyle<ViewStyle> = (theme) => ({
 })
 
 const $container: ThemedStyle<ViewStyle> = (theme) => ({
-  flexDirection: 'row',
-  alignItems: 'center',
+  flexDirection: "row",
+  alignItems: "center",
   paddingHorizontal: theme.spacing.sm,
   paddingVertical: theme.spacing.xs,
 })
@@ -93,4 +79,4 @@ const $separator: ThemedStyle<ViewStyle> = (theme) => ({
   height: 1,
   backgroundColor: theme.colors.border,
   marginHorizontal: theme.spacing.sm,
-}) 
+})

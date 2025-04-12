@@ -44,11 +44,7 @@ export function ItemNotFound({
     <Screen preset="scroll" style={[$themedRoot, style]}>
       <View style={$themedContainer}>
         <Text text={message} style={$themedMessage} />
-        <Button
-          text={buttonText}
-          onPress={onButtonPress}
-          style={$themedButton}
-        />
+        <Button text={buttonText} onPress={onButtonPress} style={$themedButton} />
       </View>
     </Screen>
   )
@@ -73,4 +69,4 @@ const $message: ThemedStyle<TextStyle> = (theme) => ({
 
 const $button: ThemedStyle<ViewStyle> = (theme) => ({
   marginTop: theme.spacing.md,
-}) 
+})

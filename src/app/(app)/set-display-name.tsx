@@ -12,12 +12,7 @@ export default observer(function SetDisplayName() {
   const [localDisplayName, setLocalDisplayName] = useState("")
   const [result, setResult] = useState("")
   const {
-    authenticationStore: {
-      displayName,
-      setDisplayName,
-      updateDisplayName,
-      fetchDisplayName,
-    },
+    authenticationStore: { displayName, setDisplayName, updateDisplayName, fetchDisplayName },
   } = useStores()
 
   const getValidationError = (name: string) => {
@@ -33,16 +28,17 @@ export default observer(function SetDisplayName() {
     return regex.test(input)
   }
 
-  const validationError = useMemo(() => 
-    isSubmitted ? getValidationError(localDisplayName) : ""
-  , [isSubmitted, localDisplayName])
+  const validationError = useMemo(
+    () => (isSubmitted ? getValidationError(localDisplayName) : ""),
+    [isSubmitted, localDisplayName],
+  )
 
   useEffect(() => {
     // Reset state when component mounts
     setLocalDisplayName("")
     setIsSubmitted(false)
     setResult("")
-    
+
     // Fetch the current display name
     const load = async () => {
       await fetchDisplayName()
@@ -50,7 +46,7 @@ export default observer(function SetDisplayName() {
       setLocalDisplayName(displayName)
     }
     load()
-    
+
     return () => {
       setResult("")
     }
@@ -71,7 +67,7 @@ export default observer(function SetDisplayName() {
 
     // Update the store's display name with the local value
     setDisplayName(localDisplayName)
-    
+
     // Call the update function
     const success = await updateDisplayName()
     if (success) {
@@ -82,13 +78,16 @@ export default observer(function SetDisplayName() {
     setIsSubmitted(false)
   }
 
-  useHeader({
-    title: "Set a display name",
-    leftIcon: "back",
-    rightText: "Save",
-    onLeftPress: () => router.back(),
-    onRightPress: handleSave,
-  }, [localDisplayName])
+  useHeader(
+    {
+      title: "Set a display name",
+      leftIcon: "back",
+      rightText: "Save",
+      onLeftPress: () => router.back(),
+      onRightPress: handleSave,
+    },
+    [localDisplayName],
+  )
 
   return (
     <Screen style={$root} preset="scroll">
@@ -108,10 +107,7 @@ export default observer(function SetDisplayName() {
           label="Display name"
           placeholder=""
         />
-        <Text 
-          text={`${result}`} 
-          preset="formHelper" 
-        />
+        <Text text={`${result}`} preset="formHelper" />
       </UseCase>
     </Screen>
   )

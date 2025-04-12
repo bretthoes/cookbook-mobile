@@ -16,7 +16,7 @@ export const RecipeListItem = observer(function RecipeListItem({
   onPress: () => void
 }) {
   const { themed } = useAppTheme()
-  
+
   // No styles to theme in this component, but we're adding the hook for consistency
   // and in case styles are added in the future
 

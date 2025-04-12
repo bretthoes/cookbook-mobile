@@ -44,7 +44,7 @@ export interface RecipeSummaryProps {
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
   const hasImages = !!recipe?.images[0]
-  
+
   const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
   const $themedDetailsContainer = React.useMemo(() => themed($detailsContainer), [themed])

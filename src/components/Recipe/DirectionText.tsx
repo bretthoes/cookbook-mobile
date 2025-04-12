@@ -10,9 +10,11 @@ interface DirectionTextProps {
 
 export const DirectionText = ({ ordinal, text }: DirectionTextProps) => {
   return (
-    <View style={{ flexDirection: 'row' }}>
+    <View style={{ flexDirection: "row" }}>
       <Text size="xl" style={{ marginRight: spacing.sm }}>{`${ordinal}.`}</Text>
-      <Text style={{ flex: 1 }} size="md">{text}</Text>
+      <Text style={{ flex: 1 }} size="md">
+        {text}
+      </Text>
     </View>
   )
-} 
+}

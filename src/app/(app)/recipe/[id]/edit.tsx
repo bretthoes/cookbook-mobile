@@ -67,7 +67,7 @@ export default observer(function EditRecipe() {
     }
 
     try {
-      var success = await update(updatedRecipe)
+      const success = await update(updatedRecipe)
       if (success) {
         alert("Recipe updated successfully!")
       } else {
@@ -96,4 +96,3 @@ export default observer(function EditRecipe() {
     </Screen>
   )
 })
-

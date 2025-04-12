@@ -18,7 +18,7 @@ import { useAppTheme } from "src/utils/useAppTheme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useRouter } from "expo-router"
 import config from "src/config/config.dev"
-import Feather from '@expo/vector-icons/Feather';
+import Feather from "@expo/vector-icons/Feather"
 import { AntDesign, MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons"
 
 const reactNativeNewsletterLogo = require("assets/images/demo/rnn-logo.png")
@@ -124,10 +124,7 @@ export default function Profile() {
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
             <View style={$iconContainer}>
-              <MaterialCommunityIcons
-                name="bookshelf"
-                size={24}
-              />
+              <MaterialCommunityIcons name="bookshelf" size={24} />
             </View>
           }
           onPress={() =>
@@ -152,20 +149,18 @@ export default function Profile() {
               <MaterialIcons name="dark-mode" size={24} color="black" />
             </View>
           }
-          RightComponent={
-            <Switch value={themeContext === "dark"} onValueChange={toggleTheme} />
-          }
+          RightComponent={<Switch value={themeContext === "dark"} onValueChange={toggleTheme} />}
         />
-        {/*<View style={$themeRow}> // TODO disabled for now; need to fix padding when floating tab bar is disabled
+        {/* <View style={$themeRow}> // TODO disabled for now; need to fix padding when floating tab bar is disabled
         <Text text="Floating Tab Bar" />
         <Switch
           value={useFloatingTabBar}
           onValueChange={toggleFloatingTabBar}
         />
-      </View>*/}
+      </View> */}
         <ListItem
           text="Choose your preferred language"
-          //leftIcon="components"
+          // leftIcon="components"
           LeftComponent={
             <View style={$iconContainer}>
               <FontAwesome name="language" size={24} color="black" />
