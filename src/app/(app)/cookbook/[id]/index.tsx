@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { ActivityIndicator, Alert, ImageStyle, View, ViewStyle } from "react-native"
-import { Divider, EmptyState, ListView, Screen, SearchBar, Text } from "src/components"
+import { Divider, EmptyState, ListView, Screen, SearchBar } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { spacing } from "src/theme"
 import { Href, router, useLocalSearchParams } from "expo-router"
@@ -37,12 +37,12 @@ export default observer(function Cookbook() {
   const debouncedSearchQuery = useDebounce(searchQuery)
 
   // Memoize themed styles
-  const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
-  const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
-  const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
-  const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
-  const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
-  const $themedRoot = React.useMemo(() => themed($root), [themed])
+  const $themedEmptyState = useMemo(() => themed($emptyState), [themed])
+  const $themedEmptyStateImage = useMemo(() => themed($emptyStateImage), [themed])
+  const $themedBorderTop = useMemo(() => themed($borderTop), [themed])
+  const $themedBorderBottom = useMemo(() => themed($borderBottom), [themed])
+  const $themedListItemStyle = useMemo(() => themed($listItemStyle), [themed])
+  const $themedRoot = useMemo(() => themed($root), [themed])
 
   const handleNextPage = async () => {
     if (recipeStore.recipes?.hasNextPage) {

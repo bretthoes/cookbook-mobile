@@ -183,10 +183,6 @@ const $screenContentContainer: ViewStyle = {
   paddingHorizontal: spacing.lg,
 }
 
-const $container: ViewStyle = {
-  padding: spacing.lg,
-}
-
 const $imageContainer: ViewStyle = {
   marginTop: spacing.lg,
   alignItems: "center",
