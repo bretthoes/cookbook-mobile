@@ -34,7 +34,7 @@ export default observer(function WelcomeScreen() {
         <Text tx="welcomeScreen:postscript" size="md" />
         <Button
           text="Continue"
-          preset="filled"
+          preset="reversed"
           onPress={() => router.push("/log-in")}
           style={$loginButton}
         />

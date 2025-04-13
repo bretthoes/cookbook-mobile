@@ -16,7 +16,7 @@ const welcomeFace = require("assets/images/welcome-face.png")
 
 export default observer(function WelcomeScreen() {
   const {
-    authenticationStore: { logout },
+    authenticationStore: { logout, displayName },
   } = useStores()
   const { themed } = useAppTheme()
 
@@ -50,7 +50,7 @@ export default observer(function WelcomeScreen() {
           tx="welcomeScreen:readyForLaunch"
           preset="heading"
         />
-        <Text tx="welcomeScreen:exciting" preset="subheading" />
+        <Text text={`Welcome back, ${displayName}`} preset="subheading" />
         <Image style={$welcomeFace} source={welcomeFace} resizeMode="contain" />
       </View>
 
