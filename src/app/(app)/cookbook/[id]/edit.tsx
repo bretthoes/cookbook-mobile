@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { View, Image, ViewStyle, ImageStyle, TextStyle, ActivityIndicator } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useForm, Controller } from "react-hook-form"
@@ -165,7 +165,11 @@ export default observer(function EditCookbookScreen() {
             text={result}
             style={[
               $result,
-              { color: result.includes("successfully") ? colors.palette.primary500 : colors.palette.angry500 },
+              {
+                color: result.includes("successfully")
+                  ? colors.palette.primary500
+                  : colors.palette.angry500,
+              },
             ]}
           />
         ) : null}

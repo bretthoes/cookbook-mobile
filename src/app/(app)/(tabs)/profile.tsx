@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import * as Application from "expo-application"
 import {
   LayoutAnimation,
@@ -7,7 +7,6 @@ import {
   TextStyle,
   View,
   ViewStyle,
-  Image,
   ImageStyle,
 } from "react-native"
 import { Button, ListItem, Screen, Switch, Text, UseCase } from "src/components"
@@ -20,8 +19,6 @@ import { useRouter } from "expo-router"
 import config from "src/config/config.dev"
 import Feather from "@expo/vector-icons/Feather"
 import { AntDesign, MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons"
-
-const reactNativeNewsletterLogo = require("assets/images/demo/rnn-logo.png")
 
 // TODO i18n
 function openLinkInBrowser(url: string) {
@@ -46,11 +43,12 @@ export default function Profile() {
     })
   }, [])
 
-  const toggleFloatingTabBar = async () => {
-    const newValue = !useFloatingTabBar
-    setUseFloatingTabBar(newValue)
-    await AsyncStorage.setItem("useFloatingTabBar", String(newValue))
-  }
+  // TODO: enable this; disabled for now. Need to fix padding when floating tab bar is disabled
+  // const toggleFloatingTabBar = async () => {
+  //   const newValue = !useFloatingTabBar
+  //   setUseFloatingTabBar(newValue)
+  //   await AsyncStorage.setItem("useFloatingTabBar", String(newValue))
+  // }
 
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
@@ -64,7 +62,7 @@ export default function Profile() {
         setThemeContextOverride(value as "light" | "dark")
       }
     })
-  }, [])
+  }, [setThemeContextOverride])
 
   const toggleTheme = async () => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
@@ -73,7 +71,7 @@ export default function Profile() {
     await AsyncStorage.setItem("themeContext", newTheme)
   }
 
-  const demoReactotron = React.useMemo(
+  const demoReactotron = useMemo(
     () => async () => {
       if (__DEV__) {
         console.tron.display({
@@ -89,7 +87,7 @@ export default function Profile() {
         })
       }
     },
-    [],
+    [usingHermes],
   )
 
   return (
@@ -151,7 +149,7 @@ export default function Profile() {
           }
           RightComponent={<Switch value={themeContext === "dark"} onValueChange={toggleTheme} />}
         />
-        {/* <View style={$themeRow}> // TODO disabled for now; need to fix padding when floating tab bar is disabled
+        {/* <View style={$themeRow}> // TODO see above
         <Text text="Floating Tab Bar" />
         <Switch
           value={useFloatingTabBar}
@@ -273,18 +271,6 @@ const $hint: TextStyle = {
   fontSize: 12,
   lineHeight: 15,
   paddingBottom: spacing.lg,
-}
-
-const $logoContainer: ViewStyle = {
-  marginEnd: spacing.md,
-  flexDirection: "row",
-  flexWrap: "wrap",
-  alignContent: "center",
-}
-
-const $logo: ImageStyle = {
-  height: 38,
-  width: 38,
 }
 
 const $iconContainer: ViewStyle = {

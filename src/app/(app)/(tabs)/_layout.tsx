@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { Tabs } from "expo-router/tabs"
 import { observer } from "mobx-react-lite"
-import { Icon } from "src/components"
 import { translate } from "src/i18n"
 import { colors, spacing, typography } from "src/theme"
 import { TextStyle, ViewStyle } from "react-native"

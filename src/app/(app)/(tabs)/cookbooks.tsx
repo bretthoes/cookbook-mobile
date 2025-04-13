@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, useEffect, useMemo } from "react"
+import { ComponentType, useEffect, useMemo, useState } from "react"
 import {
   AccessibilityProps,
   ActivityIndicator,
@@ -55,8 +55,8 @@ export default observer(function DemoPodcastListScreen(_props) {
   const { themeContext } = useAppTheme()
   const isDark = themeContext === "dark"
 
-  const [refreshing, setRefreshing] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [refreshing, setRefreshing] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -160,7 +160,7 @@ const CookbookCard = observer(function CookbookCard({
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)]
     }
-  }, [cookbook.image])
+  }, [cookbook.image, cookbook.getImage])
 
   // Grey heart
   const animatedLikeButtonStyles = useAnimatedStyle(() => {
@@ -185,6 +185,11 @@ const CookbookCard = observer(function CookbookCard({
       opacity: liked.value,
     }
   })
+
+  const handlePressFavorite = () => {
+    onPressFavorite()
+    liked.value = withSpring(liked.value ? 0 : 1)
+  }
 
   /**
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.
@@ -214,13 +219,8 @@ const CookbookCard = observer(function CookbookCard({
           },
         },
       }),
-    [cookbook, isFavorite],
+    [cookbook, isFavorite, handlePressFavorite],
   )
-
-  const handlePressFavorite = () => {
-    onPressFavorite()
-    liked.value = withSpring(liked.value ? 0 : 1)
-  }
 
   const handlePressCard = () => {
     router.push(`/(app)/cookbook/${cookbook.id}`)
@@ -242,7 +242,7 @@ const CookbookCard = observer(function CookbookCard({
           </View>
         )
       },
-    [isDark, themed],
+    [isDark, themed, animatedLikeButtonStyles, animatedUnlikeButtonStyles],
   )
 
   const $themedItem = useMemo(() => themed($item), [themed])

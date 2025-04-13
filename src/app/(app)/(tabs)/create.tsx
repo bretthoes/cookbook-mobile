@@ -1,8 +1,8 @@
 import { observer } from "mobx-react-lite"
-import React from "react"
+import { useMemo } from "react"
 import { ViewStyle, TouchableOpacity, View, TextStyle } from "react-native"
 import { Screen, Text } from "src/components"
-import { colors, spacing } from "src/theme"
+import { colors } from "src/theme"
 import { router } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
 import { useAppTheme } from "src/utils/useAppTheme"
@@ -13,16 +13,14 @@ export default observer(function CreateScreen() {
   const isDark = themeContext === "dark"
 
   // Memoize themed styles
-  const $themedContainer = React.useMemo(() => themed($container), [themed])
-  const $themedTitle = React.useMemo(() => themed($title), [themed])
-  const $themedListContainer = React.useMemo(() => themed($listContainer), [themed])
-  const $themedItemContainer = React.useMemo(() => themed($itemContainer), [themed])
-  const $themedFirstItem = React.useMemo(() => themed($firstItem), [themed])
-  const $themedLastItem = React.useMemo(() => themed($lastItem), [themed])
-  const $themedIconContainer = React.useMemo(() => themed($iconContainer), [themed])
-  const $themedTextContainer = React.useMemo(() => themed($textContainer), [themed])
-  const $themedItemTitle = React.useMemo(() => themed($itemTitle), [themed])
-  const $themedItemDescription = React.useMemo(() => themed($itemDescription), [themed])
+  const $themedContainer = useMemo(() => themed($container), [themed])
+  const $themedTitle = useMemo(() => themed($title), [themed])
+  const $themedListContainer = useMemo(() => themed($listContainer), [themed])
+  const $themedItemContainer = useMemo(() => themed($itemContainer), [themed])
+  const $themedIconContainer = useMemo(() => themed($iconContainer), [themed])
+  const $themedTextContainer = useMemo(() => themed($textContainer), [themed])
+  const $themedItemTitle = useMemo(() => themed($itemTitle), [themed])
+  const $themedItemDescription = useMemo(() => themed($itemDescription), [themed])
 
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
