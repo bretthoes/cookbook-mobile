@@ -9,7 +9,7 @@ import {
   ViewStyle,
   ImageStyle,
 } from "react-native"
-import { Button, ListItem, Screen, Switch, Text, UseCase } from "src/components"
+import { Button, ListItem, Screen, Switch, Text, UseCase, Badge } from "src/components"
 import { colors, spacing } from "src/theme"
 import { isRTL } from "src/i18n"
 import { useStores } from "src/models/helpers/useStores"
@@ -19,36 +19,33 @@ import { useRouter } from "expo-router"
 import config from "src/config/config.dev"
 import Feather from "@expo/vector-icons/Feather"
 import { AntDesign, MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons"
+import { observer } from "mobx-react-lite"
+import React from "react"
+import type { ThemedStyle } from "src/theme"
 
 // TODO i18n
 function openLinkInBrowser(url: string) {
   Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
 }
 
-export default function Profile() {
+export default observer(function ProfileScreen() {
   const {
     authenticationStore: { logout },
     membershipStore: { email },
+    invitationStore,
   } = useStores()
-
-  const [useFloatingTabBar, setUseFloatingTabBar] = useState(true)
 
   const router = useRouter()
 
-  useEffect(() => {
-    AsyncStorage.getItem("useFloatingTabBar").then((value) => {
-      if (value !== null) {
-        setUseFloatingTabBar(value === "true")
-      }
-    })
-  }, [])
+  const { themed } = useAppTheme()
 
-  // TODO: enable this; disabled for now. Need to fix padding when floating tab bar is disabled
-  // const toggleFloatingTabBar = async () => {
-  //   const newValue = !useFloatingTabBar
-  //   setUseFloatingTabBar(newValue)
-  //   await AsyncStorage.setItem("useFloatingTabBar", String(newValue))
-  // }
+  // Fetch invitations when the profile tab is focused
+  useEffect(() => {
+    const fetchInvitations = async () => {
+      await invitationStore.fetch()
+    }
+    fetchInvitations()
+  }, [invitationStore])
 
   const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
   // @ts-expect-error
@@ -90,8 +87,10 @@ export default function Profile() {
     [usingHermes],
   )
 
+  const $themedRoot = React.useMemo(() => themed($root), [themed])
+
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]}>
+    <Screen preset="scroll" style={$themedRoot}>
       <View style={$titleContainer}>
         <Text
           style={$reportBugsLink}
@@ -112,6 +111,11 @@ export default function Profile() {
           LeftComponent={
             <View style={$iconContainer}>
               <Feather name="mail" size={24} color="black" />
+            </View>
+          }
+          RightComponent={
+            <View style={$badgeContainer}>
+              <Badge count={invitationStore.invitations.totalCount} />
             </View>
           }
           onPress={() => router.push("/(app)/invitation")}
@@ -239,7 +243,7 @@ export default function Profile() {
       </View>
     </Screen>
   )
-}
+})
 
 const $titleContainer: ViewStyle = {
   paddingHorizontal: spacing.md,
@@ -281,3 +285,14 @@ const $iconContainer: ViewStyle = {
   width: 38,
   height: 38,
 }
+
+const $badgeContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  marginRight: spacing.xs,
+}
+
+const $root: ThemedStyle<ViewStyle> = (theme) => ({
+  flex: 1,
+  backgroundColor: theme.colors.background,
+})

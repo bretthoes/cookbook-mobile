@@ -1,6 +1,6 @@
 import { api } from "src/services/api"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { InvitationListModel } from "./generics/PaginatedListTypes"
 
 export const InvitationStoreModel = types
@@ -26,10 +26,15 @@ export const InvitationStoreModel = types
     respond: flow(function* (id: number, accepted: boolean) {
       const response = yield api.updateInvite(id, accepted)
       if (response.kind === "ok") {
-        const updatedItems = self.invitations.items.filter((invitation) => invitation.id !== id)
-        self.invitations.items.replace(updatedItems)
+        const invitationToRemove = self.invitations.items.find((invitation) => invitation.id === id)
+        if (invitationToRemove) {
+          destroy(invitationToRemove)
+        }
+        self.invitations.totalCount = Math.max(0, self.invitations.totalCount - 1)
+        return true
       } else {
         console.error(`Error updating invitations: ${JSON.stringify(response)}`)
+        return false
       }
     }),
     invite: flow(function* (cookbookId: number, email: string) {

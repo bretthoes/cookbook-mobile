@@ -15,13 +15,13 @@ export default observer(function Layout() {
   const { bottom } = useSafeAreaInsets()
   const [useFloatingTabBar, setUseFloatingTabBar] = useState(true)
 
-  useEffect(() => {
-    AsyncStorage.getItem("useFloatingTabBar").then((value) => {
-      if (value !== null) {
-        setUseFloatingTabBar(value === "true")
-      }
-    })
-  }, [])
+  //useEffect(() => {
+  //  AsyncStorage.getItem("useFloatingTabBar").then((value) => {
+  //    if (value !== null) {
+  //      setUseFloatingTabBar(value === "true")
+  //    }
+  //  })
+  //}, [])
 
   return (
     <Tabs

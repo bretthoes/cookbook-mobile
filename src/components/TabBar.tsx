@@ -4,10 +4,14 @@ import { Text } from "src/components"
 import { View, TouchableOpacity, ViewStyle, TextStyle } from "react-native"
 import { colors, spacing } from "src/theme"
 import { useAppTheme } from "src/utils/useAppTheme"
+import { useStores } from "src/models/helpers/useStores"
+import { observer } from "mobx-react-lite"
+import { Badge } from "./Badge"
 
-export function TabBar(props: BottomTabBarProps) {
+export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
   const { themeContext } = useAppTheme()
+  const { invitationStore } = useStores()
 
   const isDark = themeContext === "dark"
 
@@ -54,6 +58,8 @@ export function TabBar(props: BottomTabBarProps) {
           })
         }
 
+        const showBadge = route.name === "profile" && invitationStore.invitations.totalCount > 0
+
         return (
           <TouchableOpacity
             key={index}
@@ -73,13 +79,19 @@ export function TabBar(props: BottomTabBarProps) {
                 }}
                 text={label.toString()}
               />
+              {showBadge && (
+                <Badge
+                  count={invitationStore.invitations.totalCount}
+                  style={$badge}
+                />
+              )}
             </View>
           </TouchableOpacity>
         )
       })}
     </View>
   )
-}
+})
 
 const $tabBar: ViewStyle = {
   flexDirection: "row",
@@ -115,4 +127,10 @@ const $tabBarItem: ViewStyle = {
 const $tabBarItemContent: ViewStyle = {
   alignItems: "center",
   justifyContent: "center",
+}
+
+const $badge: ViewStyle = {
+  position: "absolute",
+  top: -8,
+  right: -8,
 }
