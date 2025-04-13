@@ -32,6 +32,7 @@ export const RecipeStoreModel = types
     create: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
       const response = yield api.createRecipe(recipeToAdd)
       if (response.kind === "ok") {
+        self.selected = null
         const newRecipe = RecipeModel.create({
           id: response.recipeId,
           title: recipeToAdd.title,

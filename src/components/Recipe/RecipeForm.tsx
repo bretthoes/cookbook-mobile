@@ -1,5 +1,5 @@
 import * as React from "react"
-import { View, ViewStyle, TextStyle } from "react-native"
+import { View, ViewStyle, TextStyle, ActivityIndicator } from "react-native"
 import { useForm, Controller, useFieldArray } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { observer } from "mobx-react-lite"
@@ -62,6 +62,8 @@ export interface RecipeFormProps {
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const { onSubmit, onError, formValues = defaultForm, isEdit = false } = props
   const { themed } = useAppTheme()
+  const [isLoading, setIsLoading] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
 
   const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])
   const $themedDirectionItemContainer = React.useMemo(
@@ -122,24 +124,38 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
       return
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsMultipleSelection: true, // NOTE: This can not be used with option that allows cropping (allowsEditing)
-      aspect: [1, 1],
-    })
+    setIsUploading(true)
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsMultipleSelection: true,
+        aspect: [1, 1],
+      })
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const newImages = result.assets.map((x) => x.uri)
-      const combinedImages = [...newImages].slice(0, 6) // Replace existing with new images (up to 6)
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const newImages = result.assets.map((x) => x.uri)
+        const combinedImages = [...newImages].slice(0, 6)
 
-      setImagesLocal(combinedImages) // Update local state for display
+        setImagesLocal(combinedImages)
 
-      const uploadResponse = await api.uploadImage(result.assets)
-      if (uploadResponse.kind === "ok") {
-        setValue("images", uploadResponse.keys.slice(0, 6)) // Only set new images, discarding old ones
-      } else {
-        alert("Image upload failed")
+        const uploadResponse = await api.uploadImage(result.assets)
+        if (uploadResponse.kind === "ok") {
+          setValue("images", uploadResponse.keys.slice(0, 6))
+        } else {
+          alert("Image upload failed")
+        }
       }
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handleFormSubmit = async (data: RecipeFormInputs) => {
+    setIsLoading(true)
+    try {
+      await onSubmit(data)
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -153,6 +169,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             : "Fill out the details for your new recipe."
         }
       >
+        {isUploading && <ActivityIndicator />}
         {imagesLocal.length > 0 && (
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
             {imagesLocal.map((imageUri, index) => (
@@ -168,6 +185,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         <Button
           text={isEdit ? "Replace existing photos (max of 6)" : "Add photos (max of 6)"}
           onPress={pickImage}
+          disabled={isUploading}
         />
 
         <Divider size={spacing.lg} />
@@ -409,6 +427,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             ItemSeparatorComponent={() => <Divider size={spacing.sm} />}
           />
         </View>
+
+        {isLoading && <ActivityIndicator />}
       </UseCase>
     </View>
   )

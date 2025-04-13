@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { View, Image, ViewStyle, ImageStyle, TextStyle } from "react-native"
+import { View, Image, ViewStyle, ImageStyle, TextStyle, ActivityIndicator } from "react-native"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useForm, Controller } from "react-hook-form"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -23,6 +23,7 @@ export default observer(function EditCookbookScreen() {
   const { cookbookStore } = useStores()
   const [localImage, setLocalImage] = useState<string | null>(null)
   const [result, setResult] = useState<string>("")
+  const [isLoading, setIsLoading] = useState(false)
   cookbookStore.setSelectedById(Number(id))
 
   const {
@@ -62,17 +63,22 @@ export default observer(function EditCookbookScreen() {
   )
 
   const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [3, 4],
-      quality: 1,
-    })
+    setIsLoading(true)
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [3, 4],
+        quality: 1,
+      })
 
-    if (!result.canceled) {
-      const imageUri = result.assets[0].uri
-      setLocalImage(imageUri)
-      setValue("image", imageUri)
+      if (!result.canceled) {
+        const imageUri = result.assets[0].uri
+        setLocalImage(imageUri)
+        setValue("image", imageUri)
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -88,6 +94,7 @@ export default observer(function EditCookbookScreen() {
       return
     }
 
+    setIsLoading(true)
     try {
       const success = await cookbookStore.update({
         id: cookbookStore.selected.id,
@@ -107,6 +114,8 @@ export default observer(function EditCookbookScreen() {
     } catch (error) {
       console.error("Error updating cookbook:", error)
       setResult("An error occurred while updating the cookbook")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -142,19 +151,21 @@ export default observer(function EditCookbookScreen() {
           ) : (
             <View style={$imagePlaceholder} />
           )}
-          <Button text="Change Cover Photo" onPress={pickImage} style={$imageButton} />
+          <Button
+            text="Change Cover Photo"
+            onPress={pickImage}
+            style={$imageButton}
+            disabled={isLoading}
+          />
         </View>
 
+        {isLoading && <ActivityIndicator />}
         {result ? (
           <Text
             text={result}
             style={[
               $result,
-              {
-                color: result.includes("successfully")
-                  ? colors.palette.primary500
-                  : colors.palette.angry500,
-              },
+              { color: result.includes("successfully") ? colors.palette.primary500 : colors.palette.angry500 },
             ]}
           />
         ) : null}
