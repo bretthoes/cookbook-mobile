@@ -128,7 +128,7 @@ export default observer(function SelectCookbookScreen() {
     if (cookbook.image) {
       return (
         <Image
-          source={{ uri: cookbook.getImage }}
+          source={{ uri: cookbook.image }}
           style={$themedCookbookImage}
           defaultSource={require("assets/images/logo.png")}
         />

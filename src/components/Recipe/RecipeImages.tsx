@@ -47,7 +47,7 @@ export function RecipeImages(props: RecipeImagesProps) {
       >
         {data.map((image, index) => (
           <View key={index} style={{ width: viewportWidth }}>
-            <AutoImage source={{ uri: image.getImage }} maxWidth={viewportWidth} />
+            <AutoImage source={{ uri: image.name }} maxWidth={viewportWidth} />
           </View>
         ))}
       </ScrollView>

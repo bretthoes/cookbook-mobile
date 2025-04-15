@@ -43,10 +43,13 @@ import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 
-const rnrImage1 = require("assets/images/demo/rnr-image-1.png")
-const rnrImage2 = require("assets/images/demo/rnr-image-2.png")
-const rnrImage3 = require("assets/images/demo/rnr-image-3.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3]
+const rnrImage1 = require("assets/images/cookbooks/blue.png")
+const rnrImage2 = require("assets/images/cookbooks/green.png")
+const rnrImage3 = require("assets/images/cookbooks/orange.png")
+const rnrImage4 = require("assets/images/cookbooks/purple.png")
+const rnrImage5 = require("assets/images/cookbooks/pink.png")
+const rnrImage6 = require("assets/images/cookbooks/yellow.png")
+const rnrImages = [rnrImage1, rnrImage2, rnrImage3, rnrImage4, rnrImage5, rnrImage6]
 
 const ICON_SIZE = 14
 
@@ -172,7 +175,7 @@ const InvitationCard = observer(function InvitationCard({
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (invitation.cookbookImage) {
-      return { uri: `${invitation.getImage}` }
+      return { uri: `${invitation.cookbookImage}` }
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)]
     }
@@ -369,10 +372,6 @@ const $listContentContainer: ContentStyle = {
   paddingBottom: spacing.xxl,
 }
 
-const $heading: ViewStyle = {
-  marginBottom: spacing.md,
-}
-
 const $item: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
   marginTop: theme.spacing.md,
@@ -423,7 +422,7 @@ const $actionButton: ThemedStyle<ViewStyle> = (theme) => ({
 })
 
 const $acceptButton: ThemedStyle<ViewStyle> = (theme) => ({
-  backgroundColor: theme.colors.tint,
+  backgroundColor: theme.colors.backgroundDim,
   borderColor: theme.colors.tint,
 })
 

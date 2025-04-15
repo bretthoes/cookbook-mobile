@@ -61,9 +61,6 @@ export const CookbookModel = types
         accessibilityLabel: translate("demoPodcastListScreen:accessibility.durationLabel", {}),
       }
     },
-    get getImage() {
-      return cookbook.image ? `${Config.S3_URL}/${cookbook.image}` : ""
-    },
   }))
 
 export interface Cookbook extends Instance<typeof CookbookModel> {}

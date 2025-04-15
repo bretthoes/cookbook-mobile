@@ -156,11 +156,11 @@ const CookbookCard = observer(function CookbookCard({
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (cookbook.image) {
-      return { uri: `${cookbook.getImage}` }
+      return { uri: `${cookbook.image}` }
     } else {
       return rnrImages[Math.floor(Math.random() * rnrImages.length)]
     }
-  }, [cookbook.image, cookbook.getImage])
+  }, [cookbook.image])
 
   // Grey heart
   const animatedLikeButtonStyles = useAnimatedStyle(() => {

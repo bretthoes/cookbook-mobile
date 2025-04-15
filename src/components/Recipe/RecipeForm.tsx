@@ -104,16 +104,10 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     remove: removeDirection,
   } = useFieldArray({ control, name: "directions" })
 
-  // Ugly way around conditionally displaying remote or local images
-  const [imagesLocal, setImagesLocal] = useState(
-    formValues.images?.map((img) => (img.startsWith("http") ? img : `${Config.S3_URL}/${img}`)) ||
-      [],
-  )
+  // Remove the S3_URL mapping since server provides full URLs
+  const [imagesLocal, setImagesLocal] = useState(formValues.images || [])
   useEffect(() => {
-    setImagesLocal(
-      formValues.images?.map((img) => (img.startsWith("http") ? img : `${Config.S3_URL}/${img}`)) ||
-        [],
-    )
+    setImagesLocal(formValues.images || [])
   }, [formValues.images])
 
   // Image picker function

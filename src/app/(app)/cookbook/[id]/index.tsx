@@ -174,6 +174,10 @@ export default observer(function Cookbook() {
     [selected?.title, id],
   )
 
+  const handlePressRecipe = (recipeId: number) => {
+    router.push(`/(app)/recipe/${recipeId}`)
+  }
+
   if (!selected) return <ItemNotFound message="Cookbook not found" />
 
   return (
@@ -218,10 +222,7 @@ export default observer(function Cookbook() {
               text={item.title}
               index={index}
               lastIndex={recipeStore.recipes?.items?.length - 1}
-              onPress={async () => {
-                await recipeStore.single(item.id)
-                router.push(`(app)/recipe/${item.id}` as Href<`(app)/recipe/${number}`>)
-              }}
+              onPress={() => handlePressRecipe(item.id)}
             />
           </View>
         )}

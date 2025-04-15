@@ -32,9 +32,6 @@ export const InvitationModel = types
         ? `${senderInfo} invited you to join "${title}".`
         : `You have been invited to join "${title}".`
     },
-    get getImage() {
-      return invitation.cookbookImage ? `${Config.S3_URL}/${invitation.cookbookImage}` : ""
-    },
   }))
 
 export interface Invitation extends Instance<typeof InvitationModel> {}
