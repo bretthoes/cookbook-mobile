@@ -14,7 +14,7 @@ export const CookbookStoreModel = types
   .props({
     cookbooks: types.array(CookbookModel),
     favorites: types.array(types.reference(CookbookModel)),
-    selected: types.maybeNull(types.reference(CookbookModel)),
+    selected: types.maybeNull(types.safeReference(CookbookModel)),
     favoritesOnly: false,
   })
   .actions(withSetPropAction)

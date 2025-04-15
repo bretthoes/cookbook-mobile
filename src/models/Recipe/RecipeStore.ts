@@ -24,7 +24,7 @@ export const RecipeStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    selected: types.maybeNull(types.reference(RecipeModel)),
+    selected: types.maybeNull(types.safeReference(RecipeModel)),
     recipeToAdd: types.maybeNull(RecipeToAddModel),
   })
   .actions(withSetPropAction)
@@ -105,9 +105,9 @@ export const RecipeStoreModel = types
       self.setProp("selected", null)
     },
     setSelectedById(id: number) {
-      const recipe = this.getById(id)
+      self.setProp("selected", null)
+      const recipe = self.recipes.items.find((recipe) => recipe.id === id)//this.getById(id)
       if (recipe) self.selected = recipe
-      else self.selected = null
     },
     getById(id: number) {
       return self.recipes.items.find((recipe) => recipe.id === id)
