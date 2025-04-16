@@ -46,7 +46,7 @@ export default observer(function RecipeUrlScreen() {
     const uploadResponse = await api.extractRecipeFromUrl(url)
     if (uploadResponse.kind === "ok") {
       setRecipeToAdd(uploadResponse.recipe)
-      router.push("/(app)/recipe/add")
+      router.replace("/(app)/recipe/add")
     } else {
       setResult("Failed to add recipe, please try again.")
     }

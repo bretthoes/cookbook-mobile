@@ -76,9 +76,12 @@ export default observer(function AddRecipeScreen() {
     }
 
     try {
-      await create(newRecipe)
-      if (selected) router.replace(`/(app)/cookbook/${selected?.id}`)
-      else alert("Failed to create recipe")
+      var success = await create(newRecipe)
+      if (success) {
+        router.replace(`/(app)/cookbook/${selected?.id}`)
+      } else {
+        alert("Failed to create recipe")
+      }
     } catch (e) {
       console.error("Add recipe failed:", e)
 
