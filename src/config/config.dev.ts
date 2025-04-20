@@ -7,6 +7,5 @@
  */
 export default {
   API_URL: "CHANGEME",
-  S3_URL: "CHANGEME",
   SUPPORT_EMAIL: "CHANGEME",
 }
