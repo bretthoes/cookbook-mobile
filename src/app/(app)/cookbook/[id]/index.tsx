@@ -19,7 +19,7 @@ import { Recipe } from "src/models/Recipe"
 
 export default observer(function Cookbook() {
   const {
-    cookbookStore: { selected, setSelectedById, remove },
+    cookbookStore: { selected, setSelectedById, remove, hasFavorite },
     recipeStore,
     membershipStore,
   } = useStores()
@@ -66,6 +66,21 @@ export default observer(function Cookbook() {
   }
 
   const handlePressLeave = async () => {
+    // Check if cookbook is in favorites
+    if (selected && hasFavorite(selected)) {
+      Alert.alert(
+        "Cannot Leave Cookbook",
+        "Please remove this cookbook from your favorites before leaving.",
+        [
+          {
+            text: "OK",
+            style: "cancel",
+          },
+        ],
+      )
+      return
+    }
+
     // TODO should refresh currentCookbook here to ensure membersCount is up to date.
     if (isAuthor && selected?.membersCount !== 1) {
       Alert.alert(
