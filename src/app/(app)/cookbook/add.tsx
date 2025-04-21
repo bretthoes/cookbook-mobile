@@ -15,15 +15,6 @@ import { router } from "expo-router"
 import { cookbookSchema } from "src/validators/cookbookSchema"
 import { useHeader } from "src/utils/useHeader"
 
-const rnrImages = [
-  "assets/images/cookbooks/blue.png",
-  "assets/images/cookbooks/green.png",
-  "assets/images/cookbooks/orange.png",
-  "assets/images/cookbooks/purple.png",
-  "assets/images/cookbooks/pink.png",
-  "assets/images/cookbooks/yellow.png",
-]
-
 interface CookbookFormInputs {
   title: string
   image: string | null
@@ -78,7 +69,7 @@ export default observer(function AddCookbookScreen() {
   const onPressSend = async (formData: CookbookFormInputs) => {
     const newCookbook: CookbookToAddSnapshotIn = {
       title: formData.title.trim(),
-      image: formData.image || rnrImages[Math.floor(Math.random() * rnrImages.length)],
+      image: formData.image,
     }
     try {
       await create(newCookbook)

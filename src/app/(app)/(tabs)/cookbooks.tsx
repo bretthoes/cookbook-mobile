@@ -42,13 +42,39 @@ import type { ThemedStyle } from "src/theme"
 
 const ICON_SIZE = 14
 
-const rnrImage1 = require("assets/images/cookbooks/blue.png")
-const rnrImage2 = require("assets/images/cookbooks/green.png")
-const rnrImage3 = require("assets/images/cookbooks/orange.png")
-const rnrImage4 = require("assets/images/cookbooks/purple.png")
-const rnrImage5 = require("assets/images/cookbooks/pink.png")
-const rnrImage6 = require("assets/images/cookbooks/yellow.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3, rnrImage4, rnrImage5, rnrImage6]
+const missingCookbookImage = require("assets/images/cookbooks/missing.png")
+const orangeCookbookImage = require("assets/images/cookbooks/orange.png")
+const yellowCookbookImage = require("assets/images/cookbooks/yellow.png")
+const blueCookbookImage = require("assets/images/cookbooks/blue.png")
+const purpleCookbookImage = require("assets/images/cookbooks/purple.png")
+const greenCookbookImage = require("assets/images/cookbooks/green.png")
+const pinkCookbookImage = require("assets/images/cookbooks/pink.png")
+
+// Map the last digit of cookbook ID to specific images to persist
+const getCookbookImage = (cookbookId: number) => {
+  const lastDigit = cookbookId % 10
+  
+  switch (lastDigit) {
+    case 0:
+    case 1:
+      return orangeCookbookImage
+    case 2:
+    case 3:
+      return yellowCookbookImage
+    case 4:
+    case 5:
+      return blueCookbookImage
+    case 6:
+    case 7:
+      return purpleCookbookImage
+    case 8:
+      return greenCookbookImage
+    case 9:
+      return pinkCookbookImage
+    default:
+      return missingCookbookImage
+  }
+}
 
 export default observer(function DemoPodcastListScreen(_props) {
   const { cookbookStore } = useStores()
@@ -156,11 +182,10 @@ const CookbookCard = observer(function CookbookCard({
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (cookbook.image) {
-      return { uri: `${cookbook.image}` }
-    } else {
-      return rnrImages[Math.floor(Math.random() * rnrImages.length)]
+      return { uri: cookbook.image }
     }
-  }, [cookbook.image])
+    return getCookbookImage(cookbook.id)
+  }, [cookbook.id, cookbook.image])
 
   // Grey heart
   const animatedLikeButtonStyles = useAnimatedStyle(() => {
