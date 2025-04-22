@@ -5,7 +5,7 @@ import { Text, TextProps } from "./Text"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 
-const sadFace = require("../../assets/images/sad-face.png")
+const empty = require("../../assets/images/empty.png")
 
 interface EmptyStateProps {
   /**
@@ -123,7 +123,7 @@ export function EmptyState(props: EmptyStateProps) {
 
   const EmptyStatePresets = {
     generic: {
-      imageSource: sadFace,
+      imageSource: empty,
       heading: translate("emptyStateComponent:generic.heading"),
       content: translate("emptyStateComponent:generic.content"),
       button: translate("emptyStateComponent:generic.button"),
