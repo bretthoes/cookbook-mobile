@@ -4,7 +4,6 @@ import { ViewStyle, TouchableOpacity, View, TextStyle } from "react-native"
 import { Icon, Screen, Text } from "src/components"
 import { colors } from "src/theme"
 import { router } from "expo-router"
-import Ionicons from "@expo/vector-icons/Ionicons"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 
@@ -42,7 +41,7 @@ export default observer(function CreateScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -58,7 +57,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="restaurant-outline" size={32} color={colors.tint} />
+            <Icon icon="addRecipe" size={44} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe" style={$themedItemTitle} />
@@ -68,7 +67,7 @@ export default observer(function CreateScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -86,7 +85,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="camera-outline" size={32} color={colors.tint} />
+            <Icon icon="camera" size={44} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe from an Image" style={$themedItemTitle} />
@@ -96,7 +95,7 @@ export default observer(function CreateScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -113,7 +112,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="globe-outline" size={32} color={colors.tint} />
+            <Icon icon="link" size={44} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe from a Website" style={$themedItemTitle} />
@@ -123,7 +122,7 @@ export default observer(function CreateScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -140,7 +139,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="people-outline" size={32} color={colors.tint} />
+            <Icon icon="invite" size={44} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Invitation to a Friend" style={$themedItemTitle} />
@@ -150,7 +149,7 @@ export default observer(function CreateScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
       </View>
     </Screen>
