@@ -57,7 +57,6 @@ export const CookbookStoreModel = types
     }),
     remove() {
       destroy(self.selected)
-      self.setProp("selected", null)
     },
     setSelectedById(id: number) {
       const cookbook = this.getById(id)

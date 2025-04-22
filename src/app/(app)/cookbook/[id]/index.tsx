@@ -27,9 +27,7 @@ export default observer(function Cookbook() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  const isAuthor =
-    selected?.authorEmail?.toLowerCase() === membershipStore.email?.toLowerCase() &&
-    !!membershipStore.email
+  const isAuthor = membershipStore.ownMembership?.isCreator
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -85,7 +83,7 @@ export default observer(function Cookbook() {
     if (isAuthor && selected?.membersCount !== 1) {
       Alert.alert(
         "Leave Cookbook",
-        "Please transfer cookbook ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+        "Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
         [
           {
             text: "OK",
@@ -164,11 +162,7 @@ export default observer(function Cookbook() {
     setIsLoading(true)
     const fetchData = async () => {
       setSelectedById(Number(id))
-      if (selected) {
-        await membershipStore.fetchEmail()
-        await membershipStore.single(Number(id))
-        await recipeStore.fetch(Number(id))
-      }
+      await membershipStore.single(Number(id))
     }
     fetchData()
     setIsLoading(false)
