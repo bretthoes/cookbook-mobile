@@ -42,13 +42,7 @@ import { router } from "expo-router"
 import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
-
-const rnrImage1 = require("assets/images/cookbooks/blue.png")
-const rnrImage2 = require("assets/images/cookbooks/green.png")
-const rnrImage3 = require("assets/images/cookbooks/orange.png")
-const rnrImage4 = require("assets/images/cookbooks/purple.png")
-const rnrImage6 = require("assets/images/cookbooks/yellow.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3, rnrImage4, rnrImage6]
+import { getCookbookImage } from "src/utils/cookbookImages"
 
 const ICON_SIZE = 14
 
@@ -174,11 +168,10 @@ const InvitationCard = observer(function InvitationCard({
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
     if (invitation.cookbookImage) {
-      return { uri: `${invitation.cookbookImage}` }
-    } else {
-      return rnrImages[Math.floor(Math.random() * rnrImages.length)]
+      return { uri: invitation.cookbookImage }
     }
-  }, [invitation.cookbookImage])
+    return getCookbookImage(invitation.id)
+  }, [invitation.cookbookImage, invitation.id])
 
   /**
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.

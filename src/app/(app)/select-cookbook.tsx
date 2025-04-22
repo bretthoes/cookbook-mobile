@@ -13,6 +13,7 @@ import { useActionSheet } from "@expo/react-native-action-sheet"
 import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
+import { getCookbookImage } from "src/utils/cookbookImages"
 
 // TODO i18n
 export default observer(function SelectCookbookScreen() {
@@ -130,11 +131,11 @@ export default observer(function SelectCookbookScreen() {
         <Image
           source={{ uri: cookbook.image }}
           style={$themedCookbookImage}
-          defaultSource={require("assets/images/logo.png")}
+          defaultSource={getCookbookImage(cookbook.id) as any}
         />
       )
     }
-    return <Ionicons name="book" size={32} color={colors.tint} />
+    return <Image source={getCookbookImage(cookbook.id) as any} style={$themedCookbookImage} />
   }
 
   return (
