@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import * as Application from "expo-application"
 import {
   LayoutAnimation,
@@ -9,7 +9,7 @@ import {
   ViewStyle,
   ImageStyle,
 } from "react-native"
-import { Button, ListItem, Screen, Switch, Text, UseCase, Badge } from "src/components"
+import { Button, ListItem, Screen, Switch, Text, UseCase, Badge, Icon } from "src/components"
 import { colors, spacing } from "src/theme"
 import { isRTL } from "src/i18n"
 import { useStores } from "src/models/helpers/useStores"
@@ -17,8 +17,6 @@ import { useAppTheme } from "src/utils/useAppTheme"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useRouter } from "expo-router"
 import config from "src/config/config.dev"
-import Feather from "@expo/vector-icons/Feather"
-import { AntDesign, MaterialCommunityIcons, FontAwesome, MaterialIcons } from "@expo/vector-icons"
 import { observer } from "mobx-react-lite"
 import React from "react"
 import type { ThemedStyle } from "src/theme"
@@ -110,7 +108,10 @@ export default observer(function ProfileScreen() {
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
             <View style={$iconContainer}>
-              <Feather name="mail" size={24} color="black" />
+              <Icon 
+                icon="mail"
+                size={40}
+              />
             </View>
           }
           RightComponent={
@@ -126,7 +127,10 @@ export default observer(function ProfileScreen() {
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
             <View style={$iconContainer}>
-              <MaterialCommunityIcons name="bookshelf" size={24} />
+              <Icon 
+                icon="cookbooks"
+                size={40}
+              />
             </View>
           }
           onPress={() =>
@@ -148,7 +152,10 @@ export default observer(function ProfileScreen() {
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
             <View style={$iconContainer}>
-              <MaterialIcons name="dark-mode" size={24} color="black" />
+              <Icon 
+                icon="darkMode"
+                size={40}
+              />
             </View>
           }
           RightComponent={<Switch value={themeContext === "dark"} onValueChange={toggleTheme} />}
@@ -165,7 +172,10 @@ export default observer(function ProfileScreen() {
           // leftIcon="components"
           LeftComponent={
             <View style={$iconContainer}>
-              <FontAwesome name="language" size={24} color="black" />
+              <Icon 
+                icon="languages"
+                size={44}
+              />
             </View>
           }
           onPress={() => router.push("/(app)/language")}
@@ -178,7 +188,10 @@ export default observer(function ProfileScreen() {
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           LeftComponent={
             <View style={$iconContainer}>
-              <AntDesign name="user" color="black" size={24} />
+              <Icon 
+                icon="user"
+                size={40}
+              />
             </View>
           }
           onPress={() => router.push("/(app)/set-display-name")}

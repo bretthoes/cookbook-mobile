@@ -1,15 +1,12 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Tabs } from "expo-router/tabs"
 import { observer } from "mobx-react-lite"
 import { translate } from "src/i18n"
 import { colors, spacing, typography } from "src/theme"
 import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import Ionicons from "@expo/vector-icons/Ionicons"
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons"
-import AntDesign from "@expo/vector-icons/AntDesign"
 import { TabBar } from "src/components/TabBar"
-import AsyncStorage from "@react-native-async-storage/async-storage"
+import { Icon } from "src/components"
 
 export default observer(function Layout() {
   const { bottom } = useSafeAreaInsets()
@@ -44,10 +41,10 @@ export default observer(function Layout() {
           tabBarAccessibilityLabel: translate("demoNavigator:cookbookListTab"),
           tabBarLabel: translate("demoNavigator:cookbookListTab"),
           tabBarIcon: ({ focused }) => (
-            <MaterialCommunityIcons
-              name="bookshelf"
-              color={focused ? colors.tint : undefined}
-              size={30}
+            <Icon 
+              icon="cookbooks"
+              size={40}
+              color={focused ? colors.border : undefined}
             />
           ),
         }}
@@ -59,10 +56,10 @@ export default observer(function Layout() {
           headerShown: false,
           tabBarLabel: translate("demoNavigator:createTab"),
           tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="add-circle-outline"
-              color={focused ? colors.tint : undefined}
-              size={30}
+            <Icon 
+              icon="create"
+              size={40}
+              color={focused ? colors.border : undefined}
             />
           ),
         }}
@@ -74,7 +71,11 @@ export default observer(function Layout() {
           headerShown: false,
           tabBarLabel: translate("demoNavigator:profileTab"),
           tabBarIcon: ({ focused }) => (
-            <AntDesign name="user" color={focused ? colors.tint : undefined} size={30} />
+            <Icon 
+              icon="user"
+              size={40}
+              color={focused ? colors.border : undefined}
+            />
           ),
         }}
       />
