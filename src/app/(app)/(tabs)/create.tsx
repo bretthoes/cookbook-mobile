@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { ViewStyle, TouchableOpacity, View, TextStyle } from "react-native"
-import { Screen, Text } from "src/components"
+import { Icon, Screen, Text } from "src/components"
 import { colors } from "src/theme"
 import { router } from "expo-router"
 import Ionicons from "@expo/vector-icons/Ionicons"
@@ -32,7 +32,7 @@ export default observer(function CreateScreen() {
           onPress={() => router.push("/(app)/cookbook/add")}
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="book-outline" size={32} color={colors.tint} />
+            <Icon icon="cookbook" size={44}  />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Cookbook" style={$themedItemTitle} />

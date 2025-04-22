@@ -47,9 +47,8 @@ const rnrImage1 = require("assets/images/cookbooks/blue.png")
 const rnrImage2 = require("assets/images/cookbooks/green.png")
 const rnrImage3 = require("assets/images/cookbooks/orange.png")
 const rnrImage4 = require("assets/images/cookbooks/purple.png")
-const rnrImage5 = require("assets/images/cookbooks/pink.png")
 const rnrImage6 = require("assets/images/cookbooks/yellow.png")
-const rnrImages = [rnrImage1, rnrImage2, rnrImage3, rnrImage4, rnrImage5, rnrImage6]
+const rnrImages = [rnrImage1, rnrImage2, rnrImage3, rnrImage4, rnrImage6]
 
 const ICON_SIZE = 14
 
