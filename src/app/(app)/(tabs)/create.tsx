@@ -12,7 +12,6 @@ export default observer(function CreateScreen() {
   const isDark = themeContext === "dark"
 
   // Memoize themed styles
-  const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedTitle = useMemo(() => themed($title), [themed])
   const $themedListContainer = useMemo(() => themed($listContainer), [themed])
   const $themedItemContainer = useMemo(() => themed($itemContainer), [themed])
@@ -22,7 +21,7 @@ export default observer(function CreateScreen() {
   const $themedItemDescription = useMemo(() => themed($itemDescription), [themed])
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
+    <Screen preset="scroll" safeAreaEdges={["top"]}>
       <Text preset="heading" tx="createScreen:title" style={$themedTitle} />
 
       <View style={$themedListContainer}>
@@ -156,13 +155,10 @@ export default observer(function CreateScreen() {
   )
 })
 
-const $container: ThemedStyle<ViewStyle> = (theme) => ({
-  paddingTop: theme.spacing.xl,
-})
-
 const $title: ThemedStyle<ViewStyle> = (theme) => ({
   marginBottom: theme.spacing.lg,
   paddingHorizontal: theme.spacing.lg,
+  paddingTop: theme.spacing.lg + theme.spacing.xl,
 })
 
 const $listContainer: ThemedStyle<ViewStyle> = (theme) => ({

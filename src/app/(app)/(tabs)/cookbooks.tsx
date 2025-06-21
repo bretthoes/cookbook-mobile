@@ -305,12 +305,12 @@ const $screenContentContainer: ViewStyle = {
 
 const $listContentContainer: ContentStyle = {
   paddingHorizontal: spacing.lg,
-  paddingTop: spacing.lg + spacing.xl,
   paddingBottom: spacing.xxxl + spacing.xxl,
 }
 
 const $heading: ViewStyle = {
   marginBottom: spacing.md,
+  paddingTop: spacing.lg + spacing.xl,
 }
 
 const $item: ThemedStyle<ViewStyle> = (theme) => ({

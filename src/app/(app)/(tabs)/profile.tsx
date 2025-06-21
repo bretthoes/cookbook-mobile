@@ -261,6 +261,7 @@ export default observer(function ProfileScreen() {
 const $titleContainer: ViewStyle = {
   paddingHorizontal: spacing.md,
   paddingBottom: spacing.lg,
+  paddingTop: spacing.xl + spacing.lg
 }
 
 const $reportBugsLink: TextStyle = {
