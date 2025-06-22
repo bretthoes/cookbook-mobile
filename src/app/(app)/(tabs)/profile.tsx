@@ -132,7 +132,7 @@ export default observer(function ProfileScreen() {
           LeftComponent={
             <View style={$iconContainer}>
               <Icon 
-                icon="cookbooks"
+                icon="membership"
                 size={30}
                 color={isDark ? colors.border : colors.text}
               />
