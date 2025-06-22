@@ -110,7 +110,7 @@ export default observer(function ProfileScreen() {
             <View style={$iconContainer}>
               <Icon 
                 icon="mail"
-                size={40}
+                size={30}
               />
             </View>
           }
@@ -129,7 +129,7 @@ export default observer(function ProfileScreen() {
             <View style={$iconContainer}>
               <Icon 
                 icon="cookbooks"
-                size={40}
+                size={30}
               />
             </View>
           }
@@ -154,7 +154,7 @@ export default observer(function ProfileScreen() {
             <View style={$iconContainer}>
               <Icon 
                 icon="darkMode"
-                size={40}
+                size={30}
               />
             </View>
           }
@@ -174,7 +174,7 @@ export default observer(function ProfileScreen() {
             <View style={$iconContainer}>
               <Icon 
                 icon="languages"
-                size={44}
+                size={30}
               />
             </View>
           }
@@ -190,7 +190,7 @@ export default observer(function ProfileScreen() {
             <View style={$iconContainer}>
               <Icon 
                 icon="user"
-                size={40}
+                size={30}
               />
             </View>
           }

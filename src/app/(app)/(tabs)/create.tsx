@@ -30,7 +30,7 @@ export default observer(function CreateScreen() {
           onPress={() => router.push("/(app)/cookbook/add")}
         >
           <View style={$themedIconContainer}>
-            <Icon icon="cookbook" size={44}  />
+            <Icon icon="cookbook" size={50}  />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Cookbook" style={$themedItemTitle} />
@@ -56,7 +56,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Icon icon="addRecipe" size={44} />
+            <Icon icon="addRecipe" size={50} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe" style={$themedItemTitle} />
@@ -84,7 +84,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Icon icon="camera" size={44} />
+            <Icon icon="camera" size={50} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe from an Image" style={$themedItemTitle} />
@@ -111,7 +111,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Icon icon="link" size={44} />
+            <Icon icon="link" size={50} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe from a Website" style={$themedItemTitle} />
@@ -138,7 +138,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Icon icon="invite" size={44} />
+            <Icon icon="invite" size={50} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Invitation to a Friend" style={$themedItemTitle} />

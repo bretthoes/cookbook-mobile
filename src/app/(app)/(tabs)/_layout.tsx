@@ -43,7 +43,7 @@ export default observer(function Layout() {
           tabBarIcon: ({ focused }) => (
             <Icon 
               icon="cookbooks"
-              size={40}
+              size={30}
               color={focused ? colors.border : undefined}
             />
           ),
@@ -58,7 +58,7 @@ export default observer(function Layout() {
           tabBarIcon: ({ focused }) => (
             <Icon 
               icon="create"
-              size={40}
+              size={30}
               color={focused ? colors.border : undefined}
             />
           ),
@@ -73,7 +73,7 @@ export default observer(function Layout() {
           tabBarIcon: ({ focused }) => (
             <Icon 
               icon="user"
-              size={40}
+              size={28}
               color={focused ? colors.border : undefined}
             />
           ),
