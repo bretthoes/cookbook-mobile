@@ -44,7 +44,7 @@ export default observer(function Layout() {
             <Icon 
               icon="cookbooks"
               size={30}
-              color={focused ? colors.border : undefined}
+              color={focused ? colors.tint : undefined}
             />
           ),
         }}
@@ -59,7 +59,7 @@ export default observer(function Layout() {
             <Icon 
               icon="create"
               size={30}
-              color={focused ? colors.border : undefined}
+              color={focused ? colors.tint : undefined}
             />
           ),
         }}
@@ -74,7 +74,7 @@ export default observer(function Layout() {
             <Icon 
               icon="user"
               size={28}
-              color={focused ? colors.border : undefined}
+              color={focused ? colors.tint : undefined}
             />
           ),
         }}

@@ -270,6 +270,7 @@ const CookbookCard = observer(function CookbookCard({
         </View>
       }
       content={cookbook.parsedTitleAndSubtitle.title}
+      contentStyle={$themedMetadataText}
       {...accessibilityHintProps}
       RightComponent={<Image source={imageUri} style={$themedItemThumbnail} />}
       FooterComponent={
