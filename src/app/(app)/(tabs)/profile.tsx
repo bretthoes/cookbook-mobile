@@ -36,6 +36,8 @@ export default observer(function ProfileScreen() {
   const router = useRouter()
 
   const { themed } = useAppTheme()
+  const { themeContext, setThemeContextOverride } = useAppTheme()
+  const isDark = themeContext === "dark"
 
   // Fetch invitations when the profile tab is focused
   useEffect(() => {
@@ -49,7 +51,6 @@ export default observer(function ProfileScreen() {
   // @ts-expect-error
   const usingFabric = global.nativeFabricUIManager != null
 
-  const { themeContext, setThemeContextOverride } = useAppTheme()
 
   useEffect(() => {
     AsyncStorage.getItem("themeContext").then((value) => {
@@ -106,11 +107,13 @@ export default observer(function ProfileScreen() {
           text="View your pending invitations"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
               <Icon 
                 icon="mail"
                 size={30}
+                color={isDark ? colors.border : colors.text}
               />
             </View>
           }
@@ -125,11 +128,13 @@ export default observer(function ProfileScreen() {
           text="Manage your cookbook memberships"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
               <Icon 
                 icon="cookbooks"
                 size={30}
+                color={isDark ? colors.border : colors.text}
               />
             </View>
           }
@@ -150,11 +155,13 @@ export default observer(function ProfileScreen() {
           text="Dark Mode"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
               <Icon 
                 icon="darkMode"
                 size={30}
+                color={isDark ? colors.border : colors.text}
               />
             </View>
           }
@@ -175,22 +182,26 @@ export default observer(function ProfileScreen() {
               <Icon 
                 icon="languages"
                 size={30}
+                color={isDark ? colors.border : colors.text}
               />
             </View>
           }
           onPress={() => router.push("/(app)/language")}
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          rightIconColor={isDark ? colors.border : colors.text}
           bottomSeparator
         />
         <ListItem
           text="Set your display name"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
               <Icon 
                 icon="user"
                 size={30}
+                color={isDark ? colors.border : colors.text}
               />
             </View>
           }
