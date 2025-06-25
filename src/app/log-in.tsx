@@ -38,8 +38,8 @@ export default observer(function Login(_props) {
     // Here is where you could fetch credentials from keychain or storage
     // and pre-fill the form fields.
     setResult("")
-    setAuthEmail("bretthoes@gmail.com")
-    setAuthPassword("Admin123!")
+    setAuthEmail("")
+    setAuthPassword("")
 
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
@@ -53,7 +53,7 @@ export default observer(function Login(_props) {
   useEffect(() => {
     if (isAuthenticated) {
       setIsSubmitted(false)
-      router.replace("/(app)")
+      router.replace("/cookbooks")
     }
   }, [isAuthenticated])
 
