@@ -194,6 +194,12 @@ const ko: Translations = {
         content:
           "아직 즐겨찾기가 없습니다. 항목의 하트를 눌러 즐겨찾기에 추가해보세요!",
       },
+      cookbookCard: {
+        membersLabel: "회원 {{count}}명",
+        membersLabel_plural: "회원 {{count}}명",
+        recipesLabel: "레시피 {{count}}개",
+        recipesLabel_plural: "레시피 {{count}}개",
+      },
     },
     recipeDetailsScreen: {
       directions: "조리 방법",

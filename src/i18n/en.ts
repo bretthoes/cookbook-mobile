@@ -194,6 +194,12 @@ const en = {
         content:
           "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
       },
+      cookbookCard: {
+        membersLabel: "{{count}} member",
+        membersLabel_plural: "{{count}} members",
+        recipesLabel: "{{count}} recipe",
+        recipesLabel_plural: "{{count}} recipes",
+      },
     },
     recipeDetailsScreen: {
       directions: "Directions",
