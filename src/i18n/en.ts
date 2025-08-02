@@ -262,6 +262,11 @@ const en = {
         "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
     },
   },
+  // Settings related translations
+  languageScreen: {
+    support: "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab.",
+    note: "Note: You may need to log out and back in for the changes to take effect."
+  },
 
   ...demoEn,
 }

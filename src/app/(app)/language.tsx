@@ -41,15 +41,11 @@ export default function LanguageScreen() {
   return (
     <Screen preset="scroll" style={$root}>
       <Text
-        text={
-          "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab."
-        }
+        tx="languageScreen:support"
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
       <Text
-        text={
-          "Note: You may need to log out and back in for the changes to take effect."
-        }
+        tx="languageScreen:note"
         preset="formLabel"
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
