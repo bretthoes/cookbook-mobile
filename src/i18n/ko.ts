@@ -29,12 +29,12 @@ const ko: Translations = {
       button: "다시 시도해봅시다",
     },
   },
-
   errors: {
     invalidEmail: "잘못된 이메일 주소 입니다.",
   },
   loginScreen: {
     logIn: "로그인",
+    signIn: "로그인",
     enterDetails:
       "일급비밀 정보를 해제하기 위해 상세 정보를 입력하세요. 무엇이 기다리고 있는지 절대 모를겁니다. 혹은 알 수 있을지도 모르겠군요. 엄청 복잡한 뭔가는 아닙니다.",
     emailFieldLabel: "이메일",
@@ -42,13 +42,17 @@ const ko: Translations = {
     emailFieldPlaceholder: "이메일을 입력하세요",
     passwordFieldPlaceholder: "엄청 비밀스러운 암호를 입력하세요",
     tapToLogIn: "눌러서 로그인 하기!",
+    tapToSignIn: "눌러서 로그인 하기!",
     hint: "힌트: 가장 좋아하는 암호와 아무런 아무 이메일 주소나 사용할 수 있어요 :)",
   },
   demoNavigator: {
     componentsTab: "컴포넌트",
     debugTab: "디버그",
+    createTab: "창조하다",
     communityTab: "커뮤니티",
     podcastListTab: "팟캐스트",
+    cookbookListTab: "요리 책",
+    profileTab: "윤곽",
   },
   demoCommunityScreen: {
     title: "커뮤니티와 함께해요",
@@ -81,6 +85,12 @@ const ko: Translations = {
     demoViaTxProp: "`tx` Prop 을 통해",
     demoViaSpecifiedTxProp: "`{{prop}}Tx` Prop 을 통해",
   },
+  pendingInvitationScreen: {
+    title: "초대장",
+    subtitle: "승인 대기 중",
+    accept: "받아들이다",
+    reject: "거절하다",
+  },
   demoDebugScreen: {
     howTo: "사용방법",
     title: "디버그",
@@ -101,8 +111,28 @@ const ko: Translations = {
     windowsReactotronHint:
       "만약에 동작하지 않는 경우, Reactotron 데스크탑 앱이 실행중인지 확인 후 앱을 다시 실행해보세요.",
   },
+  profileScreen: {
+    howTo: "HOW TO",
+    title: "Profile",
+    tagLine:
+      "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
+    reactotron: "Send to Reactotron",
+    reportBugs: "Report Bugs",
+    demoList: "Demo List",
+    demoPodcastList: "Demo Podcast List",
+    androidReactotronHint:
+      "If this doesn't work, ensure the Reactotron desktop app is running, run adb reverse tcp:9090 tcp:9090 from your terminal, and reload the app.",
+    iosReactotronHint:
+      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+    macosReactotronHint:
+      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+    webReactotronHint:
+      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+    windowsReactotronHint:
+      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+  },
   demoPodcastListScreen: {
-    title: "React Native 라디오 에피소드",
+    title: "책장",
     onlyFavorites: "즐겨찾기만 보기",
     favoriteButton: "즐겨찾기",
     unfavoriteButton: "즐겨찾기 해제",
@@ -119,6 +149,117 @@ const ko: Translations = {
     noFavoritesEmptyState: {
       heading: "조금 텅 비어 있네요.",
       content: "즐겨찾기가 없습니다. 에피소드에 있는 하트를 눌러서 즐겨찾기에 추가하세요.",
+    },
+    invitationListScreen: {
+      title: "My Invitations",
+      onlyFavorites: "Only Show Favorites",
+      favoriteButton: "Favorite",
+      unfavoriteButton: "Unfavorite",
+      accessibility: {
+        cardHint:
+          "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
+        switch: "Switch on to only show favorites",
+        favoriteAction: "Toggle Favorite",
+        favoriteIcon: "Cookbook not favorited",
+        unfavoriteIcon: "Cookbook favorited",
+        publishLabel: "Published {{date}}",
+        durationLabel: "Duration: {{hours}} hours {{minutes}} minutes {{seconds}} seconds",
+      },
+      noFavoritesEmptyState: {
+        heading: "This looks a bit empty",
+        content:
+          "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
+      },
+    },
+    cookbookListScreen: {
+      title: "My Cookbooks",
+      onlyFavorites: "Only Show Favorites",
+      favoriteButton: "Favorite",
+      unfavoriteButton: "Unfavorite",
+      add: "Create new cookbook",
+      accessibility: {
+        cardHint:
+          "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
+        switch: "Switch on to only show favorites",
+        favoriteAction: "Toggle Favorite",
+        favoriteIcon: "Cookbook not favorited",
+        unfavoriteIcon: "Cookbook favorited",
+        publishLabel: "Published {{date}}",
+        durationLabel: "Duration: {{hours}} hours {{minutes}} minutes {{seconds}} seconds",
+      },
+      noFavoritesEmptyState: {
+        heading: "This looks a bit empty",
+        content:
+          "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
+      },
+    },
+    recipeDetailsScreen: {
+      directions: "Directions",
+      ingredients: "Ingredients",
+      servings: "Servings",
+      cook: "Cook Time",
+      prep: "Prep Time",
+      bake: "Bake Time",
+      summary: "Summary",
+      edit: "Edit",
+    },
+    recipeListScreen: {
+      title: "Recipes",
+      searchPlaceholder: "Search",
+      add: "Create new recipe",
+      edit: "Update this recipe",
+      invite: "Invite someone else",
+      leave: "Leave cookbook",
+    },
+    recipeAddScreen: {
+      title: "Add Recipe",
+      titleHelper: "The title for the new recipe",
+      titlePlacehoder: "Title",
+    },
+  },
+
+  createScreen: {
+    title: "What do you want to create?",
+  },
+
+  // Recipe related translations
+  recipeListScreen: {
+    title: "Recipes",
+    searchPlaceholder: "Search",
+    add: "Create new recipe",
+    edit: "Update this recipe",
+    invite: "Invite someone else",
+    leave: "Leave cookbook",
+  },
+  recipeDetailsScreen: {
+    directions: "Directions",
+    ingredients: "Ingredients",
+    servings: "Servings",
+    cook: "Cook Time",
+    prep: "Prep Time",
+    bake: "Bake Time",
+    summary: "Summary",
+    edit: "Edit",
+  },
+  cookbookListScreen: {
+    title: "Your shelf",
+    onlyFavorites: "Only Show Favorites",
+    favoriteButton: "Favorite",
+    unfavoriteButton: "Unfavorite",
+    add: "Create new cookbook",
+    accessibility: {
+      cardHint: "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
+      switch: "Switch on to only show favorites",
+      favoriteAction: "Toggle Favorite",
+      favoriteIcon: "Cookbook not favorited",
+      unfavoriteIcon: "Cookbook favorited",
+      publishLabel: "Published {{date}}",
+      durationLabel: "Duration: {{hours}} hours {{minutes}} minutes {{seconds}} seconds",
+    },
+    noFavoritesEmptyState: {
+      heading: "This looks a bit empty",
+      content:
+        "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
     },
   },
 

@@ -46,6 +46,13 @@ export default function LanguageScreen() {
         }
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
+      <Text
+        text={
+          "Note: You may need to log out and back in for the changes to take effect."
+        }
+        preset="formLabel"
+        style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
+      />
       <UseCase name="Languages">
         {languages.map((language) => (
           <ListItem
