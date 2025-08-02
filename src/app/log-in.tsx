@@ -112,9 +112,9 @@ export default observer(function Login(_props) {
         <View
           style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}
         >
-          <Text text="Password" preset="formLabel" />
+          <Text tx="loginScreen:passwordFieldLabel" preset="formLabel" />
           <Text
-            text="Forgot Password?"
+            tx="loginScreen:passwordForgot"
             style={$forgotPasswordInline}
             onPress={() => router.push("/forgot-password")}
           />
@@ -146,7 +146,7 @@ export default observer(function Login(_props) {
         />
 
         <Text
-          text="No account? Register"
+          tx="loginScreen:register"
           style={$register}
           onPress={() => router.push("/register")}
         />

@@ -38,11 +38,13 @@ const en = {
       "Enter your details below to get started. Save your favorite recipes with your family and friends.",
     emailFieldLabel: "Email",
     passwordFieldLabel: "Password",
+    passwordForgot: "Forgot Password?",
     emailFieldPlaceholder: "Enter your email address",
     passwordFieldPlaceholder: "Super secret password here",
     tapToLogIn: "Tap to log in!",
     tapToSignIn: "Tap to sign in!",
     hint: "Hint: you can use any email address and your favorite password :)",
+    register: "No account? Register",
   },
   demoNavigator: {
     componentsTab: "Components",
@@ -240,27 +242,6 @@ const en = {
     bake: "Bake Time",
     summary: "Summary",
     edit: "Edit",
-  },
-  cookbookListScreen: {
-    title: "Your shelf",
-    onlyFavorites: "Only Show Favorites",
-    favoriteButton: "Favorite",
-    unfavoriteButton: "Unfavorite",
-    add: "Create new cookbook",
-    accessibility: {
-      cardHint: "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
-      switch: "Switch on to only show favorites",
-      favoriteAction: "Toggle Favorite",
-      favoriteIcon: "Cookbook not favorited",
-      unfavoriteIcon: "Cookbook favorited",
-      publishLabel: "Published {{date}}",
-      durationLabel: "Duration: {{hours}} hours {{minutes}} minutes {{seconds}} seconds",
-    },
-    noFavoritesEmptyState: {
-      heading: "This looks a bit empty",
-      content:
-        "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
-    },
   },
   // Settings related translations
   languageScreen: {

@@ -39,11 +39,13 @@ const ko: Translations = {
       "일급비밀 정보를 해제하기 위해 상세 정보를 입력하세요. 무엇이 기다리고 있는지 절대 모를겁니다. 혹은 알 수 있을지도 모르겠군요. 엄청 복잡한 뭔가는 아닙니다.",
     emailFieldLabel: "이메일",
     passwordFieldLabel: "비밀번호",
+    passwordForgot: "비밀번호를 잊으셨나요?",
     emailFieldPlaceholder: "이메일을 입력하세요",
     passwordFieldPlaceholder: "엄청 비밀스러운 암호를 입력하세요",
     tapToLogIn: "눌러서 로그인 하기!",
     tapToSignIn: "눌러서 로그인 하기!",
     hint: "힌트: 가장 좋아하는 암호와 아무런 아무 이메일 주소나 사용할 수 있어요 :)",
+    register: "계정이 없나요? 등록기",
   },
   demoNavigator: {
     componentsTab: "컴포넌트",
@@ -240,27 +242,6 @@ const ko: Translations = {
     bake: "Bake Time",
     summary: "Summary",
     edit: "Edit",
-  },
-  cookbookListScreen: {
-    title: "Your shelf",
-    onlyFavorites: "Only Show Favorites",
-    favoriteButton: "Favorite",
-    unfavoriteButton: "Unfavorite",
-    add: "Create new cookbook",
-    accessibility: {
-      cardHint: "Double tap to open the cookbook. Double tap and hold to {{action}} this cookbook.",
-      switch: "Switch on to only show favorites",
-      favoriteAction: "Toggle Favorite",
-      favoriteIcon: "Cookbook not favorited",
-      unfavoriteIcon: "Cookbook favorited",
-      publishLabel: "Published {{date}}",
-      durationLabel: "Duration: {{hours}} hours {{minutes}} minutes {{seconds}} seconds",
-    },
-    noFavoritesEmptyState: {
-      heading: "This looks a bit empty",
-      content:
-        "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
-    },
   },
   // Settings related translations
   languageScreen: {
