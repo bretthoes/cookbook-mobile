@@ -26,12 +26,12 @@ export const InvitationStoreModel = types
     respond: flow(function* (id: number, accepted: boolean) {
       const response = yield api.updateInvite(id, accepted)
       if (response.kind === "ok") {
-        const invitationToRemove = self.invitations.items.find((invitation) => invitation.id === id)
-        if (invitationToRemove) {
-          destroy(invitationToRemove)
-        }
+      const idx = self.invitations.items.findIndex(inv => inv.id === id)
+      if (idx >= 0) {
+        self.invitations.items.splice(idx, 1)
         self.invitations.totalCount = Math.max(0, self.invitations.totalCount - 1)
-        return true
+      }
+      return true
       } else {
         console.error(`Error updating invitations: ${JSON.stringify(response)}`)
         return false

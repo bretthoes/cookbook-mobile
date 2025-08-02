@@ -12,6 +12,8 @@ import {
   StyleSheet,
   Switch,
   AccessibilityProps,
+  UIManager,
+  LayoutAnimation,
 } from "react-native"
 import {
   Screen,
@@ -90,6 +92,7 @@ export default observer(function Invitations() {
       <ListView<Invitation>
         contentContainerStyle={$listContentContainer}
         data={invitationStore.invitations.items.slice()}
+        keyExtractor={item => item.id.toString()}
         extraData={invitationStore.invitations.items.length}
         refreshing={refreshing}
         estimatedItemSize={382}
@@ -148,16 +151,23 @@ const InvitationCard = observer(function InvitationCard({
   const rejectPressed = useSharedValue(0)
   const cardOpacity = useSharedValue(1)
 
+  // enable on Android
+  if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true)
+  }
+
   const handleRespond = (accepted: boolean) => {
-    if (accepted) {
-      acceptPressed.value = withSpring(1)
-    } else {
-      rejectPressed.value = withSpring(1)
-    }
-    cardOpacity.value = withSpring(0, { duration: 1000 })
+    // first, fade out
+    if (accepted) acceptPressed.value = withSpring(1)
+    else rejectPressed.value = withSpring(1)
+    cardOpacity.value = withSpring(0)
+
+    // once opacity anim is done, trigger layout animation + remove item
     setTimeout(() => {
+      // animate the list collapsing
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
       invitationStore.respond(invitation.id, accepted)
-    }, 1000)
+    }, 500) // match your spring duration
   }
 
   const animatedCardStyle = useAnimatedStyle(() => {
@@ -368,7 +378,7 @@ const $item: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
   marginTop: theme.spacing.md,
   minHeight: 120,
-  backgroundColor: theme.colors.background,
+  backgroundColor: theme.colors.backgroundDim,
 })
 
 const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
