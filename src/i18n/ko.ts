@@ -114,24 +114,33 @@ const ko: Translations = {
       "만약에 동작하지 않는 경우, Reactotron 데스크탑 앱이 실행중인지 확인 후 앱을 다시 실행해보세요.",
   },
   profileScreen: {
-    howTo: "HOW TO",
-    title: "Profile",
+    howTo: "사용 방법",
+    title: "프로필",
+    actions: "작업",
+    manageInfo: "내 정보 관리",
+    pendingInvites: "보류 중인 초대 보기",
+    manageMemberships: "내 요리책 멤버십 관리",
+    preferences: "환경 설정",
+    customize: "사용자 경험 맞춤 설정",
+    darkMode: "다크 모드",
+    preferredLanguage: "선호하는 언어 선택",
+    setName: "표시 이름 설정",
     tagLine:
-      "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
-    reactotron: "Send to Reactotron",
-    reportBugs: "Report Bugs",
-    demoList: "Demo List",
-    demoPodcastList: "Demo Podcast List",
+      "축하합니다! 고급 React Native 앱 템플릿을 가지고 계시네요. 이 보일러플레이트를 최대한 활용하세요!",
+    reactotron: "Reactotron으로 전송",
+    reportBugs: "버그 신고",
+    demoList: "데모 목록",
+    demoPodcastList: "데모 팟캐스트 목록",
     androidReactotronHint:
-      "If this doesn't work, ensure the Reactotron desktop app is running, run adb reverse tcp:9090 tcp:9090 from your terminal, and reload the app.",
+      "작동하지 않는다면 Reactotron 데스크톱 앱이 실행 중인지 확인하고, 터미널에서 'adb reverse tcp:9090 tcp:9090'을 실행한 후 앱을 다시 로드하세요.",
     iosReactotronHint:
-      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+      "작동하지 않는다면 Reactotron 데스크톱 앱이 실행 중인지 확인하고 앱을 다시 로드하세요.",
     macosReactotronHint:
-      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+      "작동하지 않는다면 Reactotron 데스크톱 앱이 실행 중인지 확인하고 앱을 다시 로드하세요.",
     webReactotronHint:
-      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+      "작동하지 않는다면 Reactotron 데스크톱 앱이 실행 중인지 확인하고 앱을 다시 로드하세요.",
     windowsReactotronHint:
-      "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+      "작동하지 않는다면 Reactotron 데스크톱 앱이 실행 중인지 확인하고 앱을 다시 로드하세요.",
   },
   demoPodcastListScreen: {
     title: "책장",

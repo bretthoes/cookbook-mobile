@@ -114,7 +114,16 @@ const en = {
   },
   profileScreen: {
     howTo: "HOW TO",
+    actions: "Actions",
+    manageInfo: "Manage your info.",
     title: "Profile",
+    pendingInvites: "View your pending invitations",
+    manageMemberships: "Manage your cookbook memberships",
+    preferences: "Preferences",
+    customize: "Customize your experience.",
+    darkMode: "Dark Mode",
+    preferredLanguage: "Choose your preferred language",
+    setName: "Set your display name",
     tagLine:
       "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
     reactotron: "Send to Reactotron",

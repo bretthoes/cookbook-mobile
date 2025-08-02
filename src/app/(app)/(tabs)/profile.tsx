@@ -101,10 +101,10 @@ export default observer(function ProfileScreen() {
         <Text preset="heading" tx="profileScreen:title" />
         {email && <Text preset="default" text={email} />}
       </View>
-      <UseCase name="Actions">
-        <Text text="Manage your info." style={$description} />
+      <UseCase tx="profileScreen:actions">
+        <Text tx="profileScreen:manageInfo" style={$description} />
         <ListItem
-          text="View your pending invitations"
+          tx="profileScreen:pendingInvites"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
@@ -125,7 +125,7 @@ export default observer(function ProfileScreen() {
           onPress={() => router.push("/(app)/invitation")}
         />
         <ListItem
-          text="Manage your cookbook memberships"
+          tx="profileScreen:manageMemberships"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
@@ -149,10 +149,10 @@ export default observer(function ProfileScreen() {
           }
         />
       </UseCase>
-      <UseCase name="Preferences">
-        <Text text="Customize your experience." style={$description} />
+      <UseCase tx="profileScreen:preferences">
+        <Text tx="profileScreen:customize" style={$description} />
         <ListItem
-          text="Dark Mode"
+          tx="profileScreen:darkMode"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
@@ -175,7 +175,7 @@ export default observer(function ProfileScreen() {
         />
       </View> */}
         <ListItem
-          text="Choose your preferred language"
+          tx="profileScreen:preferredLanguage"
           // leftIcon="components"
           LeftComponent={
             <View style={$iconContainer}>
@@ -192,7 +192,7 @@ export default observer(function ProfileScreen() {
           bottomSeparator
         />
         <ListItem
-          text="Set your display name"
+          tx="profileScreen:setName"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
@@ -211,7 +211,7 @@ export default observer(function ProfileScreen() {
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />
       </View>
-      <UseCase name="Debug">
+      <UseCase tx="demoDebugScreen:title">
         <ListItem
           LeftComponent={
             <View>

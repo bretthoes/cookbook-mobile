@@ -4,9 +4,10 @@ import { Text } from "."
 import { colors, spacing, typography } from "../theme"
 import { useAppTheme } from "../utils/useAppTheme"
 import type { ThemedStyle } from "../theme"
+import { TxKeyPath } from "src/i18n"
 
 interface UseCaseProps {
-  name?: string
+  tx: TxKeyPath
   description?: string
   layout?: "column" | "row"
   children: ReactNode
@@ -17,7 +18,7 @@ interface UseCaseProps {
  * @returns {JSX.Element} The rendered `UseCase` component.
  */
 export function UseCase(props: UseCaseProps) {
-  const { name, description, children, layout = "column" } = props
+  const { tx, description, children, layout = "column" } = props
   const { themed } = useAppTheme()
 
   const $themedContainer = useMemo(() => themed($container), [themed])
@@ -27,9 +28,7 @@ export function UseCase(props: UseCaseProps) {
 
   return (
     <View style={$themedContainer}>
-      <Text preset="subheading" style={$themedName}>
-        {name}
-      </Text>
+      <Text preset="subheading" style={$themedName} tx={tx} />
 
       {description && <Text style={$themedDescription}>{description}</Text>}
 
