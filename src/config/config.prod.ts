@@ -7,5 +7,6 @@
  */
 export default {
   API_URL: "CHANGEME",
+  INVITE_BASE_URL: "CHANGEME",
   SUPPORT_EMAIL: "CHANGEME",
 }

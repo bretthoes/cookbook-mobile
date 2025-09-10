@@ -420,8 +420,8 @@ export class Api {
   async createInvite(
     cookbookId: number,
     email: string,
-  ): Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
-    const response: ApiResponse<number> = await this.authorizedRequest("Invitations", "POST", {
+  ): Promise<{ kind: "ok"; token: string } | GeneralApiProblem> {
+    const response: ApiResponse<string> = await this.authorizedRequest("Invitations", "POST", {
       email,
       cookbookId,
     })
@@ -432,8 +432,8 @@ export class Api {
     }
 
     try {
-      const invitationId = response.data!
-      return { kind: "ok", invitationId }
+      const token = response.data!
+      return { kind: "ok", token: token }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
         console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
