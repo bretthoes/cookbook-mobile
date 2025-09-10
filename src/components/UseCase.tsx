@@ -7,7 +7,7 @@ import type { ThemedStyle } from "../theme"
 import { TxKeyPath } from "src/i18n"
 
 interface UseCaseProps {
-  tx: TxKeyPath
+  tx?: TxKeyPath
   description?: string
   layout?: "column" | "row"
   children: ReactNode
