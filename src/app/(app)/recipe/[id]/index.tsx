@@ -22,7 +22,7 @@ import RecipeSummary from "src/components/Recipe/RecipeSummary"
 export default observer(function Recipe() {
   const {
     cookbookStore: { selected: cookbook },
-    recipeStore: { selected, delete: deleteRecipe, setSelectedById, single },
+    recipeStore: { selected, delete: deleteRecipe, single },
     membershipStore: { email, fetchEmail, setEmail },
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -45,7 +45,7 @@ export default observer(function Recipe() {
   useEffect(() => {
     setIsLoading(true)
     const fetchData = async () => {
-      setSelectedById(Number(id))
+      await single(Number(id))
       if (selected) {
         const email = await AsyncStorage.getItem("email")
         if (email) setEmail(email)
@@ -53,7 +53,7 @@ export default observer(function Recipe() {
     }
     fetchData()
     setIsLoading(false)
-  }, [id, setSelectedById, setEmail, fetchEmail])
+  }, [id, setEmail, fetchEmail])
 
   const handlePressEdit = () => {
     router.push(`/recipe/${selected?.id}/edit`)

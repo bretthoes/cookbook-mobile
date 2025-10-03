@@ -130,7 +130,7 @@ export default observer(function EditCookbookScreen() {
       safeAreaEdges={["bottom"]}
     >
       <Text text="Edit the details for your cookbook." />
-      <UseCase name="">
+      <UseCase>
         <Controller
           control={control}
           name="title"

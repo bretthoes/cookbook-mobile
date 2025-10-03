@@ -1,13 +1,13 @@
 import { Instance, SnapshotIn, SnapshotOut } from "mobx-state-tree"
 import { PaginatedListModel } from "./PaginatedList"
 import { CookbookModel } from "../Cookbook"
-import { RecipeModel } from "../Recipe/Recipe"
+import { RecipeBriefModel } from "../Recipe/Recipe"
 import { InvitationModel } from "../Invitation"
 import { MembershipModel } from "../Membership"
 
 // Instantiate PaginatedListModel with specific item models
 export const CookbookListModel = PaginatedListModel(CookbookModel)
-export const RecipeListModel = PaginatedListModel(RecipeModel)
+export const RecipeListModel = PaginatedListModel(RecipeBriefModel)
 export const InvitationListModel = PaginatedListModel(InvitationModel)
 export const MembershipListModel = PaginatedListModel(MembershipModel)
 

@@ -15,7 +15,7 @@ import { useHeader } from "src/utils/useHeader"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
-import { Recipe } from "src/models/Recipe"
+import { RecipeBrief } from "src/models/Recipe"
 
 export default observer(function Cookbook() {
   const {
@@ -197,7 +197,7 @@ export default observer(function Cookbook() {
 
   return (
     <Screen preset="scroll" style={$themedRoot}>
-      <ListView<Recipe>
+      <ListView<RecipeBrief>
         data={recipeStore.recipes?.items?.slice() ?? []}
         estimatedItemSize={59}
         ListEmptyComponent={

@@ -5,10 +5,9 @@ import {
   Instance,
   SnapshotOut,
   types,
-  resolveIdentifier,
 } from "mobx-state-tree"
 import { api } from "src/services/api"
-import { Recipe, RecipeModel, RecipeSnapshotIn } from "./Recipe"
+import { Recipe, RecipeBriefModel, RecipeModel, RecipeSnapshotIn } from "./Recipe"
 
 import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
 
@@ -24,7 +23,7 @@ export const RecipeStoreModel = types
       totalPages: 1,
       totalCount: 0,
     }),
-    selected: types.maybeNull(types.safeReference(RecipeModel)),
+    selected: types.maybeNull(RecipeModel),
     recipeToAdd: types.maybeNull(RecipeToAddModel),
   })
   .actions(withSetPropAction)
@@ -47,7 +46,7 @@ export const RecipeStoreModel = types
           ingredients: recipeToAdd.ingredients,
           images: recipeToAdd.images,
         })
-        self.recipes.items.push(newRecipe)
+        self.recipes.items.push(RecipeBriefModel.create({id: response.recipeId, title: recipeToAdd.title}))
         self.selected = newRecipe
         return true
       }
@@ -55,16 +54,12 @@ export const RecipeStoreModel = types
       return false
     }),
     single: flow(function* (id: number) {
+      // TODO pick one
+      self.setProp("selected", null);
+      self.selected = null
       const response = yield api.getRecipe(id)
       if (response.kind === "ok") {
-        // TODO: Without this line, MST throws an error trying to
-        // set the selected recipe to the previous selected when
-        // this is called with a different id than the previously
-        // selected recipe. This is a workaround that needs to be
-        // revisited.
-        self.selected = null
-        const index = self.recipes.items.findIndex((r) => r.id === id)
-        if (index >= 0) self.recipes.items[index].update(response.recipe)
+        self.setProp("selected", response.recipe);
         return true
       }
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
@@ -84,6 +79,9 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         if (self.selected) self.selected.update(updatedRecipe)
         else console.error(`Error updating recipe: ${JSON.stringify(response)}`)
+        var brief = self.recipes.items.find((recipe) => recipe.id === updatedRecipe.id)
+        brief?.update(updatedRecipe.title)
+
         return true
       }
       console.error(`Error updating recipe: ${JSON.stringify(response)}`)
@@ -103,11 +101,6 @@ export const RecipeStoreModel = types
     remove() {
       destroy(self.selected)
       self.setProp("selected", null)
-    },
-    setSelectedById(id: number) {
-      self.setProp("selected", null)
-      const recipe = self.recipes.items.find((recipe) => recipe.id === id)//this.getById(id)
-      if (recipe) self.selected = recipe
     },
     getById(id: number) {
       return self.recipes.items.find((recipe) => recipe.id === id)

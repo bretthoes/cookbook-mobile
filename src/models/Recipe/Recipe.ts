@@ -57,17 +57,6 @@ export const RecipeModel = types
     },
   }))
   .views((recipe) => ({
-    get parsedTitleAndSubtitle() {
-      const defaultValue = { title: recipe.title?.trim() }
-
-      if (!defaultValue.title) return defaultValue
-
-      const titleMatches = defaultValue.title.match(/^(RNR.*\d)(?: - )(.*$)/)
-
-      if (!titleMatches || titleMatches.length !== 3) return defaultValue
-
-      return { title: titleMatches[1], subtitle: titleMatches[2] }
-    },
     get duration() {
       const seconds = Number(recipe.preparationTimeInMinutes)
       const h = Math.floor(seconds / 3600)
@@ -86,11 +75,30 @@ export const RecipeModel = types
         }),
       }
     },
-    get isBrief() {
-      return !recipe.directions.length && !recipe.ingredients.length
-    },
   }))
 
 export interface Recipe extends Instance<typeof RecipeModel> {}
 export interface RecipeSnapshotOut extends SnapshotOut<typeof RecipeModel> {}
 export interface RecipeSnapshotIn extends SnapshotIn<typeof RecipeModel> {}
+
+
+
+/**
+ * This represents a brief recipe.
+ */
+export const RecipeBriefModel = types
+  .model("RecipeBrief")
+  .props({
+    id: types.identifierNumber,
+    title: types.string,
+  })
+  .actions(withSetPropAction)
+  .actions((self) => ({
+    update(title: string) {
+      self.setProp("title", title)
+    },
+  }))
+
+export interface RecipeBrief extends Instance<typeof RecipeBriefModel> {}
+export interface RecipeBriefSnapshotOut extends SnapshotOut<typeof RecipeBriefModel> {}
+export interface RecipeBriefSnapshotIn extends SnapshotIn<typeof RecipeBriefModel> {}
