@@ -32,7 +32,7 @@ export default observer(function Cookbook() {
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const debouncedSearchQuery = useDebounce(searchQuery)
+  //const debouncedSearchQuery = useDebounce(searchQuery)
 
   // Memoize themed styles
   const $themedEmptyState = useMemo(() => themed($emptyState), [themed])
@@ -42,21 +42,10 @@ export default observer(function Cookbook() {
   const $themedListItemStyle = useMemo(() => themed($listItemStyle), [themed])
   const $themedRoot = useMemo(() => themed($root), [themed])
 
-  const handleNextPage = async () => {
-    if (recipeStore.recipes?.hasNextPage) {
-      setIsLoading(true)
-      await recipeStore.fetch(Number(id), searchQuery, recipeStore.recipes?.pageNumber + 1)
-      setIsLoading(false)
-    }
-  }
-
-  const handlePreviousPage = async () => {
-    if (recipeStore.recipes?.hasPreviousPage) {
-      setIsLoading(true)
-      await recipeStore.fetch(Number(id), searchQuery, recipeStore.recipes?.pageNumber - 1)
-      setIsLoading(false)
-    }
-  }
+const q = searchQuery.trim().toLowerCase()
+const filteredItems = q
+  ? recipeStore.recipes.filter(r => r.title.toLowerCase().includes(q)).slice()
+  : recipeStore.recipes.slice()
 
   const handlePressEdit = () => {
     if (!isAuthor) return
@@ -153,30 +142,39 @@ export default observer(function Cookbook() {
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
     setRefreshing(true)
-    await Promise.all([recipeStore.fetch(Number(id), searchQuery), delay(750)])
+    await Promise.all([recipeStore.fetch(Number(id)), delay(750)])
     setRefreshing(false)
   }
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    setIsLoading(true)
-    const fetchData = async () => {
+    let alive = true
+    ;(async () => {
+      setIsLoading(true)
+
+      // clear old list so UI doesn't show previous cookbook
+      recipeStore.clear()
+
       setSelectedById(Number(id))
-      await membershipStore.single(Number(id))
-    }
-    fetchData()
-    setIsLoading(false)
-  }, [id, setSelectedById, membershipStore.fetchEmail, membershipStore.single, recipeStore.fetch])
+      await Promise.all([
+        recipeStore.fetch(Number(id)),
+        membershipStore.single(Number(id)),
+      ])
+
+      if (alive) setIsLoading(false)
+    })()
+    return () => { alive = false }
+  }, [id])
 
   // re-fetch recipes when the search query changes
-  useEffect(() => {
-    setIsLoading(true)
-    const fetchData = async () => {
-      await recipeStore.fetch(Number(id), searchQuery)
-    }
-    fetchData()
-    setIsLoading(false)
-  }, [debouncedSearchQuery, recipeStore.fetch])
+  // useEffect(() => {
+  //   setIsLoading(true)
+  //   const fetchData = async () => {
+  //     await recipeStore.fetch(Number(id), searchQuery)
+  //   }
+  //   fetchData()
+  //   setIsLoading(false)
+  // }, [debouncedSearchQuery, recipeStore.fetch])
 
   useHeader(
     {
@@ -198,7 +196,7 @@ export default observer(function Cookbook() {
   return (
     <Screen preset="scroll" style={$themedRoot}>
       <ListView<RecipeBrief>
-        data={recipeStore.recipes?.items?.slice() ?? []}
+        data={filteredItems}
         estimatedItemSize={59}
         ListEmptyComponent={
           isLoading ? (
@@ -230,32 +228,17 @@ export default observer(function Cookbook() {
             style={[
               $themedListItemStyle,
               index === 0 && $themedBorderTop,
-              index === recipeStore.recipes?.items?.length - 1 && $themedBorderBottom,
+              index === recipeStore.recipes?.length - 1 && $themedBorderBottom,
             ]}
           >
             <RecipeListItem
               text={item.title}
               index={index}
-              lastIndex={recipeStore.recipes?.items?.length - 1}
+              lastIndex={filteredItems.length - 1}
               onPress={() => handlePressRecipe(item.id)}
             />
           </View>
         )}
-        ListFooterComponent={
-          <>
-            {recipeStore.recipes?.hasMultiplePages && (
-              <PaginationControls
-                currentPage={recipeStore.recipes.pageNumber}
-                totalPages={recipeStore.recipes.totalPages}
-                totalCount={recipeStore.recipes.totalCount}
-                hasNextPage={recipeStore.recipes.hasNextPage}
-                hasPreviousPage={recipeStore.recipes.hasPreviousPage}
-                onNextPage={handleNextPage}
-                onPreviousPage={handlePreviousPage}
-              />
-            )}
-          </>
-        }
       />
     </Screen>
   )

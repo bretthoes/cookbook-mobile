@@ -17,17 +17,15 @@ import { RecipeListModel } from "src/models/generics"
 export const RecipeStoreModel = types
   .model("RecipeStore")
   .props({
-    recipes: types.optional(RecipeListModel, {
-      items: [],
-      pageNumber: 1,
-      totalPages: 1,
-      totalCount: 0,
-    }),
+    recipes: types.array(RecipeBriefModel),
     selected: types.maybeNull(RecipeModel),
     recipeToAdd: types.maybeNull(RecipeToAddModel),
   })
   .actions(withSetPropAction)
   .actions((self) => ({
+    clear() {
+      self.recipes.clear()
+    },
     create: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
       const response = yield api.createRecipe(recipeToAdd)
       if (response.kind === "ok") {
@@ -46,7 +44,7 @@ export const RecipeStoreModel = types
           ingredients: recipeToAdd.ingredients,
           images: recipeToAdd.images,
         })
-        self.recipes.items.push(RecipeBriefModel.create({id: response.recipeId, title: recipeToAdd.title}))
+        self.recipes.push(RecipeBriefModel.create({id: response.recipeId, title: recipeToAdd.title}))
         self.selected = newRecipe
         return true
       }
@@ -68,7 +66,7 @@ export const RecipeStoreModel = types
     fetch: flow(function* (cookbookId: number, search = "", pageNumber = 1, pageSize = 999) {
       const response = yield api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
-        self.setProp("recipes", response.recipes)
+        self.recipes.replace(response.recipes.items)
         return true
       }
       console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
@@ -79,7 +77,7 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         if (self.selected) self.selected.update(updatedRecipe)
         else console.error(`Error updating recipe: ${JSON.stringify(response)}`)
-        var brief = self.recipes.items.find((recipe) => recipe.id === updatedRecipe.id)
+        var brief = self.recipes.find((recipe) => recipe.id === updatedRecipe.id)
         brief?.update(updatedRecipe.title)
 
         return true
@@ -103,7 +101,7 @@ export const RecipeStoreModel = types
       self.setProp("selected", null)
     },
     getById(id: number) {
-      return self.recipes.items.find((recipe) => recipe.id === id)
+      return self.recipes.find((recipe) => recipe.id === id)
     },
     setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot)
