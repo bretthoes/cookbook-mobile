@@ -233,7 +233,7 @@ export class Api {
   async GetInvitations(
     pageNumber: number,
     pageSize: number,
-    status: string = "Sent",
+    status: string = "Active",
   ): Promise<{ kind: "ok"; invitations: InvitationListSnapshotIn } | GeneralApiProblem> {
     // prepare query parameters
     const params = { PageNumber: pageNumber, PageSize: pageSize, Status: status }

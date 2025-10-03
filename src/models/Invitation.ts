@@ -39,8 +39,9 @@ export interface InvitationSnapshotOut extends SnapshotOut<typeof InvitationMode
 export interface InvitationSnapshotIn extends SnapshotIn<typeof InvitationModel> {}
 
 export enum CookbookInvitationStatus {
-  Unknown = 0,
-  Sent = 1,
+  Error = 0,
+  Active = 1,
   Accepted = 2,
   Rejected = 3,
+  Revoked = 4,
 }

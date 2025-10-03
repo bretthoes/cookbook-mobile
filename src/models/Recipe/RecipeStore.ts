@@ -70,7 +70,7 @@ export const RecipeStoreModel = types
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
       return false
     }),
-    fetch: flow(function* (cookbookId: number, search = "", pageNumber = 1, pageSize = 15) {
+    fetch: flow(function* (cookbookId: number, search = "", pageNumber = 1, pageSize = 999) {
       const response = yield api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
         self.setProp("recipes", response.recipes)
