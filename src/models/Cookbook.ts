@@ -43,13 +43,17 @@ export const CookbookModel = types
     },
     get members() {
       return {
-        textLabel: translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.membersLabel", { count: cookbook.membersCount }),
+        textLabel: cookbook.membersCount == 1 
+          ? translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.membersLabel", { count: cookbook.membersCount }) 
+          : translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.membersLabel_plural", { count: cookbook.membersCount }),
         accessibilityLabel: translate("demoPodcastListScreen:accessibility.durationLabel", {}),
       }
     },
     get recipes() {
       return {
-        textLabel: translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.recipesLabel", { count: cookbook.recipeCount }),
+        textLabel: cookbook.recipeCount == 1 
+        ? translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.recipesLabel", { count: cookbook.recipeCount })
+        : translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.recipesLabel_plural", { count: cookbook.recipeCount }),
         accessibilityLabel: translate("demoPodcastListScreen:accessibility.durationLabel", {}),
       }
     },
