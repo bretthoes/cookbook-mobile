@@ -853,7 +853,7 @@ export class Api {
       "PUT",
       {
         Id: membershipId,
-        IsCreator: membership.isCreator,
+        isOwner: membership.isOwner,
         CanAddRecipe: membership.canAddRecipe,
         CanUpdateRecipe: membership.canUpdateRecipe,
         CanDeleteRecipe: membership.canDeleteRecipe,

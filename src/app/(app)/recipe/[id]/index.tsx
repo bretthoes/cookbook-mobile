@@ -118,7 +118,7 @@ export default observer(function Recipe() {
     <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
       <CustomBackButton
         onPress={() => router.back()}
-        top={recipeHasImages ? spacing.xl : spacing.sm}
+        top={recipeHasImages ? spacing.xl : spacing.sm} // TODO check both recipeHasImages AND the image loaded properly... We get warnings when there's a size issue (image loaded from URL but is way too big) or its found but the file is 0kb etc
       />
       {canEdit && (
         <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />

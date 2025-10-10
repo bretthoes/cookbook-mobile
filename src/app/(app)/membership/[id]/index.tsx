@@ -83,7 +83,7 @@ export default observer(function MembershipScreen() {
 
   const permissions = [
     { label: "Name", value: membership?.name ?? "" },
-    { label: "Cookbook Owner", value: membership?.isCreator },
+    { label: "Cookbook Owner", value: membership?.isOwner },
     { label: "Can Add Recipe", value: membership?.canAddRecipe },
     { label: "Can Update Recipe", value: membership?.canUpdateRecipe },
     { label: "Can Delete Recipe", value: membership?.canDeleteRecipe },
@@ -101,7 +101,7 @@ export default observer(function MembershipScreen() {
   useEffect(() => {
     if (email && membershipStore.memberships?.items) {
       const userMembership = membershipStore.memberships.items.find(
-        (m) => m.email === email && m.isCreator,
+        (m) => m.email === email && m.isOwner,
       )
       setIsOwner(!!userMembership)
     }

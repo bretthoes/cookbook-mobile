@@ -27,7 +27,7 @@ export default observer(function Cookbook() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  const isAuthor = membershipStore.ownMembership?.isCreator
+  const isAuthor = membershipStore.ownMembership?.isOwner
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)

@@ -11,7 +11,7 @@ export const MembershipModel = types
     id: types.identifierNumber,
     name: types.maybeNull(types.string),
     email: types.maybeNull(types.string),
-    isCreator: types.boolean,
+    isOwner: types.boolean,
     canAddRecipe: types.boolean,
     canUpdateRecipe: types.boolean,
     canDeleteRecipe: types.boolean,
