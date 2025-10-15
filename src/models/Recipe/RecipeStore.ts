@@ -1,6 +1,5 @@
 import {
   destroy,
-  detach,
   flow,
   Instance,
   SnapshotOut,
@@ -12,7 +11,6 @@ import { Recipe, RecipeBriefModel, RecipeModel, RecipeSnapshotIn } from "./Recip
 import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
 
 import { withSetPropAction } from "../helpers/withSetPropAction"
-import { RecipeListModel } from "src/models/generics"
 
 export const RecipeStoreModel = types
   .model("RecipeStore")
