@@ -7,7 +7,7 @@ import { RecipeImages } from "src/components/Recipe/RecipeImages"
 import { RecipeIngredient } from "src/models/Recipe"
 import { RecipeDirection } from "src/models/Recipe/RecipeDirection"
 import { useStores } from "src/models/helpers/useStores"
-import { router, useFocusEffect, useLocalSearchParams } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { MoreButton } from "src/components/MoreButton"
 import { CustomBackButton } from "src/components/CustomBackButton"
@@ -16,24 +16,20 @@ import type { ThemedStyle } from "src/theme"
 import { ItemNotFound } from "src/components/ItemNotFound"
 import { DirectionText } from "src/components/Recipe/DirectionText"
 import { IngredientItem } from "src/components/Recipe/IngredientItem"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import RecipeSummary from "src/components/Recipe/RecipeSummary"
 
 export default observer(function Recipe() {
   const {
-    cookbookStore: { selected: cookbook },
     recipeStore: { selected, delete: deleteRecipe, single },
-    membershipStore: { email, fetchEmail, setEmail },
+    membershipStore: { ownMembership },
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
-  const isRecipeAuthor =
-    selected?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
-  const ownsCookbook =
-    cookbook?.authorEmail?.toLowerCase() === (email && email?.toLowerCase()) && !!email
-  const canEdit = isRecipeAuthor || ownsCookbook
+  const isRecipeAuthor = ownMembership?.email?.toLowerCase() === (selected?.authorEmail?.toLowerCase()) && !!ownMembership?.email
+  const canEdit = isRecipeAuthor || ownMembership?.isOwner || ownMembership?.canUpdateRecipe
+  const canDelete = ownMembership?.canDeleteRecipe
   const recipeHasImages = selected?.images[0]
 
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
@@ -46,14 +42,10 @@ export default observer(function Recipe() {
     setIsLoading(true)
     const fetchData = async () => {
       await single(Number(id))
-      if (selected) {
-        const email = await AsyncStorage.getItem("email")
-        if (email) setEmail(email)
-      }
     }
     fetchData()
     setIsLoading(false)
-  }, [id, setEmail, fetchEmail])
+  }, [id, single])
 
   const handlePressEdit = () => {
     router.push(`/recipe/${selected?.id}/edit`)
@@ -97,7 +89,7 @@ export default observer(function Recipe() {
 
         if (buttonIndex === 0 && canEdit) {
           handlePressEdit()
-        } else if (buttonIndex === (canEdit ? 1 : 0)) {
+        } else if (buttonIndex === (canDelete ? 1 : 0)) {
           handlePressDelete()
         }
       },
