@@ -266,6 +266,39 @@ export class Api {
   }
 
   /**
+   * Gets a count of invitations.
+   */
+  async GetInvitationCount(): Promise<{ kind: "ok"; count: number } | GeneralApiProblem> {
+    // prepare query parameters
+    const params = {}
+
+    // use the authorizedRequest method to make the API call with query parameters
+    const response: ApiResponse<number> = await this.authorizedRequest(
+      "Invitations/count",
+      "GET",
+      params,
+    )
+
+    // handle any errors
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    // transform the data into the format we are expecting
+    try {
+      const count = response.data ?? 0
+
+      return { kind: "ok", count }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
    * Gets a list of recipes matching a cookbookId with pagination.
    */
   async getRecipes(

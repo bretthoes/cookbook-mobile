@@ -23,6 +23,14 @@ export const InvitationStoreModel = types
         console.error(`Error fetching invitations: ${JSON.stringify(response)}`)
       }
     }),
+    count: flow(function* () {
+      const response = yield api.GetInvitationCount()
+      if (response.kind === "ok") {
+        self.setProp("invitations", response.invitations.totalCount)
+      } else {
+        console.error(`Error fetching invitations: ${JSON.stringify(response)}`)
+      }
+    }),
     respond: flow(function* (id: number, accepted: boolean) {
       const response = yield api.updateInvite(id, accepted)
       if (response.kind === "ok") {
