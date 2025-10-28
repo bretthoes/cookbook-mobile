@@ -19,7 +19,6 @@ import {
   Screen,
   Text,
   Button,
-  ListItem,
   Card,
   ButtonAccessoryProps,
   Icon,

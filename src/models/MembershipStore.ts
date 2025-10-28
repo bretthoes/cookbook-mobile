@@ -26,7 +26,7 @@ export const MembershipStoreModel = types
         console.error(`Error fetching memberships: ${JSON.stringify(response)}`)
       }
     }),
-    single: flow(function* (id: number) {
+    singleByCookbookId: flow(function* (id: number) {
       const response = yield api.getMembership(id)
       if (response.kind == "ok") {
         self.setProp("ownMembership", response.membership)

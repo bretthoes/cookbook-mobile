@@ -158,7 +158,7 @@ const filteredItems = q
       setSelectedById(Number(id))
       await Promise.all([
         recipeStore.fetch(Number(id)),
-        membershipStore.single(Number(id)),
+        membershipStore.singleByCookbookId(Number(id)),
       ])
 
       if (alive) setIsLoading(false)
