@@ -59,7 +59,7 @@ const Invitations = observer(() => {
     setIsMinting(true)
     try {
       const cookbookId = selected?.id ?? 0
-      const res = await link(cookbookId, "")
+      const res = await link(cookbookId)
       if (res?.message) {
         setLinkMsg(res?.message ?? "Failed to create link.")
         return null

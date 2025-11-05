@@ -58,8 +58,8 @@ export const InvitationStoreModel = types
           return "Something went wrong, please try again later."
       }
     }),
-    link: flow(function* (cookbookId: number, email: string) {
-      const response = yield api.createInvite(cookbookId, email)
+    link: flow(function* (cookbookId: number) {
+      const response = yield api.createInviteToken(cookbookId)
       if (response.kind === "ok") return { token: response.token }
       return { message: "Error creating link." }
     }),

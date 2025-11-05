@@ -475,6 +475,29 @@ export class Api {
     }
   }
 
+  async createInviteToken(
+    cookbookId: number,
+  ): Promise<{ kind: "ok"; token: string } | GeneralApiProblem> {
+    const response: ApiResponse<string> = await this.authorizedRequest("InvitationTokens", "POST", {
+      cookbookId,
+    })
+
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      const token = response.data!
+      return { kind: "ok", token: token }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
   async updateInvite(
     id: number,
     accepted: boolean,
