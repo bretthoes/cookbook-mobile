@@ -17,6 +17,7 @@ import {
   CookbookToAddSnapshotIn,
   CookbookSnapshotIn,
 } from "src/models/Cookbook"
+import { InvitationSnapshotOut } from "src/models/Invitation"
 import { AuthResultModel, AuthResultSnapshotIn } from "src/models/AuthResult"
 import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "src/models/Recipe"
 import {
@@ -218,6 +219,30 @@ export class Api {
       const membership = response.data
 
       if (membership) return { kind: "ok", membership }
+      else return { kind: "not-found" }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
+   * Gets a single invitation token by its token.
+   */
+  async GetInvitationToken(token: string): Promise<{ kind: "ok"; invitation: InvitationSnapshotOut } | GeneralApiProblem> {
+    const response: ApiResponse<InvitationSnapshotOut> = await this.authorizedRequest(
+      `InvitationTokens/${token}`,
+      "GET",
+    )
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+    try {
+      const invitation = response.data
+      if (invitation) return { kind: "ok", invitation }
       else return { kind: "not-found" }
     } catch (e) {
       if (__DEV__ && e instanceof Error) {
