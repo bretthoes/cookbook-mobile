@@ -1,6 +1,5 @@
 import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import Config from "src/config"
 import { formatDistanceToNow } from "date-fns/formatDistanceToNow"
 import { parseISO } from "date-fns/parseISO"
 

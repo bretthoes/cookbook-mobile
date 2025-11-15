@@ -2,10 +2,12 @@ import { api } from "src/services/api"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { InvitationListModel } from "./generics/PaginatedListTypes"
+import { InvitationModel } from "./Invitation"
 
 export const InvitationStoreModel = types
   .model("InvitationStore")
   .props({
+    invitation: types.maybeNull(InvitationModel),
     invitations: types.optional(InvitationListModel, {
       items: [],
       pageNumber: 1,
@@ -15,6 +17,14 @@ export const InvitationStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((self) => ({
+    single : flow(function* (token: string) {
+      const response = yield api.GetInvitationToken(token)
+      if (response.kind === "ok") {
+        self.setProp("invitation", response.invitation)
+      } else {
+        console.error(`Error fetching invitation: ${JSON.stringify(response)}`)
+      }
+    }),
     fetch: flow(function* (pageNumber = 1, pageSize = 10) {
       const response = yield api.GetInvitations(pageNumber, pageSize)
       if (response.kind === "ok") {
