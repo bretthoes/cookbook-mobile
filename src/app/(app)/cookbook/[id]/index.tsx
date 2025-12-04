@@ -178,7 +178,7 @@ const filteredItems = q
     {
       title: selected?.title ?? "",
       leftIcon: "back",
-      onLeftPress: () => router.back(),
+      onLeftPress: () => router.replace("/(app)/cookbooks"),
       rightIcon: "more",
       onRightPress: selected ? () => handlePressMore() : undefined,
     },
