@@ -90,7 +90,7 @@ export default observer(function AddRecipeScreen() {
         console.error("Stack trace:", e.stack)
       } else console.error("Non-standard error:", JSON.stringify(e, null, 2))
 
-      alert("Add recipe failed")
+      alert("Failed to create recipe")
     }
   }
 
