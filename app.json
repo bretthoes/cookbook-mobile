@@ -1,10 +1,10 @@
 {
-  "name": "cookbook-app",
-  "displayName": "cookbook-app",
+  "name": "cookbook-mobile",
+  "displayName": "cookbook-mobile",
   "expo": {
-    "name": "cookbook-app",
-    "slug": "cookbook-app",
-    "scheme": "cookbook-app",
+    "name": "cookbook-mobile",
+    "slug": "cookbook-mobile",
+    "scheme": "cookbook-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
@@ -23,7 +23,21 @@
     ],
     "android": {
       "icon": "./assets/images/app-icon-android-legacy.png",
-      "package": "com.cookbookapp",
+      "package": "com.cookbookmobile",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "sharedcookbook.com",
+              "pathPrefix": "/i"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
         "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
@@ -37,7 +51,8 @@
     "ios": {
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
-      "bundleIdentifier": "com.cookbookapp",
+      "bundleIdentifier": "com.cookbookmobile",
+      "associatedDomains": ["applinks:sharedcookbook.com"],
       "splash": {
         "image": "./assets/images/splash-logo-ios-mobile.png",
         "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
