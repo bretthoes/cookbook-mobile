@@ -35,7 +35,10 @@
               "pathPrefix": "/i"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "adaptiveIcon": {
@@ -52,7 +55,9 @@
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
-      "associatedDomains": ["applinks:sharedcookbook.com"],
+      "associatedDomains": [
+        "applinks:sharedcookbook.com"
+      ],
       "splash": {
         "image": "./assets/images/splash-logo-ios-mobile.png",
         "tabletImage": "./assets/images/splash-logo-ios-tablet.png",
@@ -85,11 +90,18 @@
       "expo-font",
       "expo-router",
       "expo-secure-store"
-
     ],
     "experiments": {
       "tsconfigPaths": true,
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2f55c6d4-b2da-423c-b6d5-00a6b21c35e0"
+      }
     }
   },
   "ignite": {

@@ -2,11 +2,11 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useMemo, useState, useEffect } from "react"
 import { ViewStyle, Share, View } from "react-native"
+import * as Linking from "expo-linking"
 import { Screen, Text, Button, TextField, UseCase, Divider } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { spacing } from "src/theme"
 import { useHeader } from "src/utils/useHeader"
-import Config from "src/config"
 
 const Invitations = observer(() => {
   const {
@@ -25,7 +25,9 @@ const Invitations = observer(() => {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [emailMsg, setEmailMsg] = useState("")
 
-  const toInviteUrl = (token: string) => new URL(`/i/${token}`, Config.INVITE_BASE_URL).toString()
+  const toInviteUrl = (token: string) => {
+    return Linking.createURL(`/i/${token}`)
+  }
 
   const getValidationError = (email: string) => {
     if (email.length === 0) return "can't be blank"
