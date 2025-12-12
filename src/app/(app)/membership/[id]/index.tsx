@@ -136,7 +136,11 @@ export default observer(function MembershipScreen() {
   const renderItem = ({ item }: { item: DataItem }) => (
     <View style={$themedItem}>
       <Text text={item.label} style={$themedLabel} />
-      <Text text={item.value?.toString() || "-"} style={$themedValue} />
+      {typeof item.value === "boolean" ? (
+        <Icon icon={item.value ? "check" : "x"} size={20} />
+      ) : (
+        <Text text={item.value?.toString() || "-"} style={$themedValue} />
+      )}
     </View>
   )
 

@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite"
 import React, { useState } from "react"
 import { Alert, View, ViewStyle, TextStyle } from "react-native"
-import { ListView, Screen, Text, Switch } from "src/components"
+import { ListView, Screen, Text, Switch, Icon } from "src/components"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
 import { useStores } from "src/models/helpers/useStores"
@@ -108,6 +108,8 @@ export default observer(function MembershipEditScreen() {
             }
           }}
         />
+      ) : typeof item.value === "boolean" ? (
+        <Icon icon={item.value ? "check" : "x"} size={20} />
       ) : (
         <Text text={item.value?.toString() || "-"} size="sm" />
       )}
