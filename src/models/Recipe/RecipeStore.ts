@@ -89,6 +89,7 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         destroy(self.selected)
         self.setProp("selected", null)
+        // TODO remove from list?
         return true
       }
       console.error(`Error deleting recipe: ${JSON.stringify(response)}`)

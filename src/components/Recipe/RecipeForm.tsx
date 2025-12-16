@@ -156,7 +156,6 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   return (
     <View>
       <UseCase
-        name=""
         description={
           isEdit
             ? "Swipe back to exit without saving."
