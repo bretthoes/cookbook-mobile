@@ -14,57 +14,49 @@ export const recipeSchema = yup.object({
     .transform((value) => (value === "" ? null : value))
     .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 1k"),
+    .max(10080, "Cannot exceed 10080 minutes (1 week)"),
   cookingTimeInMinutes: yup
     .number()
     .nullable()
     .transform((value) => (value === "" ? null : value))
     .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 999 minutes"),
+    .max(10080, "Cannot exceed 10080 minutes (1 week)"),
   bakingTimeInMinutes: yup
     .number()
     .nullable()
     .transform((value) => (value === "" ? null : value))
     .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 999 minutes"),
+    .max(10080, "Cannot exceed 10080 minutes (1 week)"),
   servings: yup
     .number()
     .nullable()
     .transform((value) => (value === "" ? null : value))
     .typeError("Must be a number")
     .min(0, "Must be greater than 0")
-    .max(999, "Cannot exceed 999 minutes"),
+    .max(10080, "Cannot exceed 10080 minutes (1 week)"),
   ingredients: yup
     .array()
-    .required()
     .of(
       yup.object({
         name: yup
           .string()
-          .required("Ingredient name is required")
-          .min(1, "Ingredient name must be at least 1 character")
           .max(255, "Ingredient name cannot exceed 255 characters"),
         optional: yup.bool().nullable().default(false),
       }),
     )
-    .min(1, "At least one ingredient is required")
     .max(40, "Cannot have more than 40 ingredients"),
   directions: yup
     .array()
-    .required()
     .of(
       yup.object({
         text: yup
           .string()
-          .required("Direction text is required")
-          .min(1, "Direction text must be at least 1 character")
           .max(2048, "Direction text cannot exceed 2048 characters"),
         image: yup.string().nullable().default(null),
       }),
     )
-    .min(1, "At least one direction is required")
-    .max(20, "Cannot have more than 20 directions"),
-  images: yup.array().required().of(yup.string().required()),
+    .max(40, "Cannot have more than 40 directions"),
+  images: yup.array().of(yup.string().required()).max(6, "Cannot have more than 6 images"),
 }) as yup.ObjectSchema<RecipeFormInputs>
