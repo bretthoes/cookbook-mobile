@@ -27,6 +27,9 @@ export const RecipeStoreModel = types
     create: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
       const response = yield api.createRecipe(recipeToAdd)
       if (response.kind === "ok") {
+        if (self.selected) {
+          destroy(self.selected)
+        }
         self.selected = null
         const newRecipe = RecipeModel.create({
           id: response.recipeId,
@@ -50,7 +53,9 @@ export const RecipeStoreModel = types
       return false
     }),
     single: flow(function* (id: number) {
-      // TODO pick one
+      if (self.selected) {
+        destroy(self.selected)
+      }
       self.setProp("selected", null);
       self.selected = null
       const response = yield api.getRecipe(id)
