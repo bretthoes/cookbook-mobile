@@ -70,7 +70,7 @@ export default observer(function RecipeUrlScreen() {
         text="Enter a valid link and we'll extract the recipe for you."
         style={{ paddingHorizontal: spacing.md }}
       />
-      <UseCase name="">
+      <UseCase>
         <TextField
           value={url}
           onChangeText={(text) => {

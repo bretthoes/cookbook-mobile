@@ -49,7 +49,7 @@ export default function LanguageScreen() {
         preset="formLabel"
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
-      <UseCase name="Languages">
+      <UseCase>
         {languages.map((language) => (
           <ListItem
             key={language.code}

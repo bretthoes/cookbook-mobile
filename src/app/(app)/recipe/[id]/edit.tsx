@@ -5,10 +5,12 @@ import { RecipeForm, RecipeFormInputs } from "src/components/Recipe/RecipeForm"
 import { RecipeSnapshotIn } from "src/models/Recipe"
 import { Screen } from "src/components"
 import { ItemNotFound } from "src/components/ItemNotFound"
+import { router } from "expo-router"
 
 export default observer(function EditRecipe() {
   const {
     recipeStore: { selected, update },
+    cookbookStore: { selected: cookbook },
   } = useStores()
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
@@ -69,7 +71,7 @@ export default observer(function EditRecipe() {
     try {
       const success = await update(updatedRecipe)
       if (success) {
-        alert("Recipe updated successfully!")
+        router.replace(`/(app)/cookbook/${cookbook?.id}`)
       } else {
         alert("Update recipe failed")
       }
