@@ -45,15 +45,7 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={$themedItemContainer}
-          onPress={() =>
-            router.push({
-              pathname: "/(app)/select-cookbook",
-              params: {
-                nextRoute: "/(app)/recipe/add",
-                action: "Select the cookbook where you would like to add a new recipe.",
-              },
-            } as any)
-          }
+          onPress={() => router.push("/(app)/recipe/add-options")}
         >
           <View style={$themedIconContainer}>
             <Icon icon="addRecipe" size={50} />
@@ -63,61 +55,6 @@ export default observer(function CreateScreen() {
             <Text
               preset="formHelper"
               text="Add a recipe to one of your cookbooks"
-              style={$themedItemDescription}
-            />
-          </View>
-          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={$themedItemContainer}
-          onPress={() =>
-            router.push({
-              pathname: "/(app)/select-cookbook",
-              params: {
-                nextRoute: "/(app)/recipe/add",
-                action:
-                  "Select the cookbook where you would like to add a new recipe from an image.",
-                onSelect: "handleAddRecipeFromCamera",
-              },
-            } as any)
-          }
-        >
-          <View style={$themedIconContainer}>
-            <Icon icon="camera" size={50} />
-          </View>
-          <View style={$themedTextContainer}>
-            <Text preset="subheading" text="A New Recipe from an Image" style={$themedItemTitle} />
-            <Text
-              preset="formHelper"
-              text="Import a recipe from a photo of your favorite recipe"
-              style={$themedItemDescription}
-            />
-          </View>
-          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={$themedItemContainer}
-          onPress={() =>
-            router.push({
-              pathname: "/(app)/select-cookbook",
-              params: {
-                nextRoute: "/(app)/recipe/select-url",
-                action:
-                  "Select the cookbook where you would like to add a new recipe from a website.",
-              },
-            } as any)
-          }
-        >
-          <View style={$themedIconContainer}>
-            <Icon icon="link" size={50} />
-          </View>
-          <View style={$themedTextContainer}>
-            <Text preset="subheading" text="A New Recipe from a Website" style={$themedItemTitle} />
-            <Text
-              preset="formHelper"
-              text="Import a recipe from a URL"
               style={$themedItemDescription}
             />
           </View>
