@@ -1,26 +1,43 @@
-import { spacing } from "src/theme"
-import { ViewStyle } from "react-native"
 import { RecipeToAddSnapshotIn } from "src/models/Recipe"
 import { useStores } from "src/models/helpers/useStores"
 import { observer } from "mobx-react-lite"
-import { useEffect } from "react"
+import { useEffect, useState, useCallback, useRef } from "react"
 import { Screen } from "src/components"
 import { RecipeForm, RecipeFormInputs } from "src/components/Recipe/RecipeForm"
+import { CookbookDropdown } from "src/components/CookbookDropdown"
 import { router } from "expo-router"
+import { Cookbook } from "src/models"
 
 export default observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
   const {
     recipeStore: { recipeToAdd, clearRecipeToAdd, create },
-    cookbookStore: { selected },
+    cookbookStore,
   } = useStores()
+  const [selectedCookbook, setSelectedCookbook] = useState<Cookbook | null>(null)
+  const selectedCookbookRef = useRef<Cookbook | null>(null)
+  const [_, setIsLoadingCookbooks] = useState(false)
+  const [showCookbookError, setShowCookbookError] = useState(false)
+
+  // Keep ref in sync with state
+  useEffect(() => {
+    selectedCookbookRef.current = selectedCookbook
+  }, [selectedCookbook])
 
   useEffect(() => {
+    // Fetch cookbooks on mount
+    const fetchCookbooks = async () => {
+      setIsLoadingCookbooks(true)
+      await cookbookStore.fetch()
+      setIsLoadingCookbooks(false)
+    }
+    fetchCookbooks()
+
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
       clearRecipeToAdd()
     }
-  }, [clearRecipeToAdd])
+  }, [clearRecipeToAdd, cookbookStore])
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
     if (!recipeToAdd) return null
@@ -45,10 +62,44 @@ export default observer(function AddRecipeScreen() {
     }
   }
 
-  const onPressSend = async (formData: RecipeFormInputs) => {
+  const onPressSend = useCallback(async (formData: RecipeFormInputs) => {
+    const currentCookbook = selectedCookbookRef.current
+    if (!currentCookbook) {
+      setShowCookbookError(true)
+      return
+    }
+    setShowCookbookError(false)
+
+    // Filter out empty directions and ingredients, then map to recipe format
+    const validDirections = formData.directions
+      .filter((direction) => direction.text?.trim())
+      .map((direction, index) => ({
+        id: 0,
+        text: direction.text.trim(),
+        ordinal: index + 1,
+        image: null,
+      }))
+
+    const validIngredients = formData.ingredients
+      .filter((ingredient) => ingredient.name?.trim())
+      .map((ingredient, index) => ({
+        id: 0,
+        name: ingredient.name.trim(),
+        optional: false,
+        ordinal: index + 1,
+      }))
+
+    const validImages = formData.images
+      .filter((image) => image?.trim())
+      .map((image, index) => ({
+        id: 0,
+        name: image.trim(),
+        ordinal: index + 1,
+      }))
+
     const newRecipe: RecipeToAddSnapshotIn = {
       title: formData.title.trim(),
-      cookbookId: selected?.id ?? 0,
+      cookbookId: currentCookbook.id,
       summary: formData.summary?.trim() || null,
       thumbnail: null, // TODO handle thumbnail logic
       videoPath: null, // TODO handle videoPath logic
@@ -56,29 +107,15 @@ export default observer(function AddRecipeScreen() {
       cookingTimeInMinutes: formData.cookingTimeInMinutes,
       bakingTimeInMinutes: formData.bakingTimeInMinutes,
       servings: formData.servings,
-      directions: formData.directions.map((direction, index) => ({
-        id: 0,
-        text: direction.text.trim(),
-        ordinal: index + 1,
-        image: null,
-      })),
-      ingredients: formData.ingredients.map((ingredient, index) => ({
-        id: 0,
-        name: ingredient.name.trim(),
-        optional: false,
-        ordinal: index + 1,
-      })),
-      images: formData.images.map((image, index) => ({
-        id: 0,
-        name: image.trim(),
-        ordinal: index + 1,
-      })),
+      directions: validDirections,
+      ingredients: validIngredients,
+      images: validImages,
     }
 
     try {
       var success = await create(newRecipe)
       if (success) {
-        router.replace(`/(app)/cookbook/${selected?.id}`)
+        router.replace(`/(app)/cookbook/${currentCookbook.id}`)
       } else {
         alert("Failed to create recipe")
       }
@@ -92,7 +129,7 @@ export default observer(function AddRecipeScreen() {
 
       alert("Failed to create recipe")
     }
-  }
+  }, [create])
 
   const onError = (errors: any) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
@@ -100,6 +137,16 @@ export default observer(function AddRecipeScreen() {
 
   return (
     <Screen preset="scroll">
+      <CookbookDropdown
+        cookbooks={cookbookStore.cookbooks.slice()}
+        selectedCookbook={selectedCookbook}
+        onSelect={(cookbook) => {
+          setSelectedCookbook(cookbook)
+          setShowCookbookError(false)
+        }}
+        error={showCookbookError ? "Please select a cookbook" : undefined}
+      />
+
       <RecipeForm
         onSubmit={onPressSend}
         formValues={mapRecipeToFormInputs() ?? undefined}
