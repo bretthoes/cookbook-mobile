@@ -295,9 +295,6 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
         <Divider size={spacing.xxl} line />
 
-        <Text text="Hint: You cannot leave ingredients or directions empty!" preset="formHelper" />
-        <Divider size={spacing.xxl} line />
-
         {/* Ingredients Section */}
         <View style={{ minHeight: spacing.xxs }}>
           <ListView

@@ -75,7 +75,7 @@ export default observer(function EmailVerification() {
         <Text>We've sent a confirmation email to</Text>
         <Text weight="bold">{authEmail}</Text>
         <Divider />
-        <Text>Please check your inbox and click the verification link.</Text>
+        <Text>Please check your inbox, and spam folder, and click the verification link.</Text>
 
         <Text text={`${result}`} preset="formHelper" style={$formHelper} />
 
