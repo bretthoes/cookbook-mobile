@@ -92,6 +92,7 @@ const ko: Translations = {
     subtitle: "승인 대기 중",
     accept: "받아들이다",
     reject: "거절하다",
+    emptyState: "아직 보류 중인 초대가 없습니다. 나중에 다시 확인하세요.",
   },
   demoDebugScreen: {
     howTo: "사용방법",

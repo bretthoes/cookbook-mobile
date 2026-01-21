@@ -110,7 +110,7 @@ export default observer(function Invitations() {
               }
               contentTx={
                 invitationStore.invitations.items.length === 0
-                  ? "demoPodcastListScreen:noFavoritesEmptyState.content"
+                  ? "pendingInvitationScreen:emptyState"
                   : undefined
               }
               button={invitationStore.invitations.items.length === 0 ? "" : undefined}

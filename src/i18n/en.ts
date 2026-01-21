@@ -91,6 +91,7 @@ const en = {
     subtitle: "These invitations are pending approval.",
     accept: "Accept",
     reject: "Reject",
+    emptyState: "No pending invitations at the moment. Check back later.",
   },
   demoDebugScreen: {
     howTo: "HOW TO",
