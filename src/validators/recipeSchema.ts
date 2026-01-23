@@ -40,9 +40,7 @@ export const recipeSchema = yup.object({
     .array()
     .of(
       yup.object({
-        name: yup
-          .string()
-          .max(255, "Ingredient name cannot exceed 255 characters"),
+        name: yup.string().max(255, "Ingredient name cannot exceed 255 characters"),
         optional: yup.bool().nullable().default(false),
       }),
     )
@@ -51,9 +49,7 @@ export const recipeSchema = yup.object({
     .array()
     .of(
       yup.object({
-        text: yup
-          .string()
-          .max(2048, "Direction text cannot exceed 2048 characters"),
+        text: yup.string().max(2048, "Direction text cannot exceed 2048 characters"),
         image: yup.string().nullable().default(null),
       }),
     )

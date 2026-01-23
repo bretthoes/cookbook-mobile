@@ -119,7 +119,11 @@ const Invitations = observer(() => {
             style={{ marginTop: spacing.md }}
           />
           {!!linkMsg && (
-            <Text text={linkMsg} preset="formHelper" style={{ paddingHorizontal: spacing.sm, marginTop: spacing.sm }} />
+            <Text
+              text={linkMsg}
+              preset="formHelper"
+              style={{ paddingHorizontal: spacing.sm, marginTop: spacing.sm }}
+            />
           )}
         </UseCase>
       </View>
@@ -148,9 +152,17 @@ const Invitations = observer(() => {
               helper={validationError}
               status={validationError ? "error" : undefined}
             />
-            <Button text="Send Email Invite" onPress={onSendEmail} style={{ marginTop: spacing.md }} />
+            <Button
+              text="Send Email Invite"
+              onPress={onSendEmail}
+              style={{ marginTop: spacing.md }}
+            />
             {!!emailMsg && (
-              <Text text={emailMsg} preset="formHelper" style={{ paddingHorizontal: spacing.sm, marginTop: spacing.sm }} />
+              <Text
+                text={emailMsg}
+                preset="formHelper"
+                style={{ paddingHorizontal: spacing.sm, marginTop: spacing.sm }}
+              />
             )}
           </UseCase>
         </View>

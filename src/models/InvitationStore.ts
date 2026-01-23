@@ -17,7 +17,7 @@ export const InvitationStoreModel = types
   })
   .actions(withSetPropAction)
   .actions((self) => ({
-    single : flow(function* (token: string) {
+    single: flow(function* (token: string) {
       const response = yield api.GetInvitationToken(token)
       if (response.kind === "ok") {
         self.setProp("invitation", response.invitation)
@@ -44,12 +44,12 @@ export const InvitationStoreModel = types
     respond: flow(function* (id: number, accepted: boolean) {
       const response = yield api.updateInvite(id, accepted)
       if (response.kind === "ok") {
-      const idx = self.invitations.items.findIndex(inv => inv.id === id)
-      if (idx >= 0) {
-        self.invitations.items.splice(idx, 1)
-        self.invitations.totalCount = Math.max(0, self.invitations.totalCount - 1)
-      }
-      return true
+        const idx = self.invitations.items.findIndex((inv) => inv.id === id)
+        if (idx >= 0) {
+          self.invitations.items.splice(idx, 1)
+          self.invitations.totalCount = Math.max(0, self.invitations.totalCount - 1)
+        }
+        return true
       } else {
         console.error(`Error updating invitations: ${JSON.stringify(response)}`)
         return false

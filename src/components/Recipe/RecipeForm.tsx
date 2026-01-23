@@ -340,9 +340,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                           status="error"
                           helper={errors.ingredients?.[index]?.name?.message ?? ""}
                           maxLength={255}
-                          RightAccessory={() => (
-                            <Icon icon="x" onPress={handleRemove} />
-                          )}
+                          RightAccessory={() => <Icon icon="x" onPress={handleRemove} />}
                         />
                       )}
                     />
@@ -406,9 +404,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                           status="error"
                           maxLength={2048}
                           multiline
-                          RightAccessory={() => (
-                            <Icon icon="x" onPress={handleRemove} />
-                          )}
+                          RightAccessory={() => <Icon icon="x" onPress={handleRemove} />}
                         />
                       )}
                     />

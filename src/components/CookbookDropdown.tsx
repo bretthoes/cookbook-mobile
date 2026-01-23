@@ -34,18 +34,13 @@ export interface CookbookDropdownProps {
 const PLACEHOLDER = "Select a cookbook"
 const DESCRIPTION = "Select the cookbook where you would like to add this recipe."
 
-export const CookbookDropdown = observer(function CookbookDropdown(
-  props: CookbookDropdownProps,
-) {
+export const CookbookDropdown = observer(function CookbookDropdown(props: CookbookDropdownProps) {
   const { cookbooks, selectedCookbook, onSelect, error } = props
 
   const { themed } = useAppTheme()
   const [isDropdownVisible, setIsDropdownVisible] = useState(false)
 
-  const $themedDropdownButton = useMemo(
-    () => themed($dropdownButton(error)),
-    [themed, error],
-  )
+  const $themedDropdownButton = useMemo(() => themed($dropdownButton(error)), [themed, error])
   const $themedDropdownText = useMemo(() => themed($dropdownText), [themed])
   const $themedDropdownList = useMemo(() => themed($dropdownList), [themed])
   const $themedDropdownItem = useMemo(() => themed($dropdownItem), [themed])
@@ -74,9 +69,7 @@ export const CookbookDropdown = observer(function CookbookDropdown(
         />
       </TouchableOpacity>
 
-      {error && (
-        <Text text={error} preset="formHelper" style={$themedErrorText} />
-      )}
+      {error && <Text text={error} preset="formHelper" style={$themedErrorText} />}
 
       {isDropdownVisible && cookbooks.length > 0 && (
         <ScrollView style={$themedDropdownList} nestedScrollEnabled>
@@ -98,17 +91,19 @@ export const CookbookDropdown = observer(function CookbookDropdown(
   )
 })
 
-const $dropdownButton = (error?: string): ThemedStyle<ViewStyle> => (theme) => ({
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: theme.spacing.md,
-  backgroundColor: theme.colors.backgroundDim,
-  borderRadius: theme.spacing.xs,
-  borderWidth: 1,
-  borderColor: error ? theme.colors.error : theme.colors.border,
-  minHeight: 50,
-})
+const $dropdownButton =
+  (error?: string): ThemedStyle<ViewStyle> =>
+  (theme) => ({
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.backgroundDim,
+    borderRadius: theme.spacing.xs,
+    borderWidth: 1,
+    borderColor: error ? theme.colors.error : theme.colors.border,
+    minHeight: 50,
+  })
 
 const $dropdownText: ThemedStyle<TextStyle> = (theme) => ({
   flex: 1,
@@ -145,4 +140,3 @@ const $errorText: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.error,
   marginTop: theme.spacing.xs,
 })
-

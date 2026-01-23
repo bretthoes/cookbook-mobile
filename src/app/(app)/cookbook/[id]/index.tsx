@@ -40,10 +40,10 @@ export default observer(function Cookbook() {
   const $themedListItemStyle = useMemo(() => themed($listItemStyle), [themed])
   const $themedRoot = useMemo(() => themed($root), [themed])
 
-const q = searchQuery.trim().toLowerCase()
-const filteredItems = q
-  ? recipeStore.recipes.filter(r => r.title.toLowerCase().includes(q)).slice()
-  : recipeStore.recipes.slice()
+  const q = searchQuery.trim().toLowerCase()
+  const filteredItems = q
+    ? recipeStore.recipes.filter((r) => r.title.toLowerCase().includes(q)).slice()
+    : recipeStore.recipes.slice()
 
   const handlePressEdit = () => {
     if (!isAuthor) return
@@ -161,7 +161,9 @@ const filteredItems = q
 
       if (alive) setIsLoading(false)
     })()
-    return () => { alive = false }
+    return () => {
+      alive = false
+    }
   }, [id])
 
   // re-fetch recipes when the search query changes

@@ -30,7 +30,7 @@ export default observer(function CreateScreen() {
           onPress={() => router.push("/(app)/cookbook/add")}
         >
           <View style={$themedIconContainer}>
-            <Icon icon="cookbook" size={50}  />
+            <Icon icon="cookbook" size={50} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Cookbook" style={$themedItemTitle} />

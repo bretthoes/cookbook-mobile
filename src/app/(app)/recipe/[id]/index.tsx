@@ -27,7 +27,9 @@ export default observer(function Recipe() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
-  const isRecipeAuthor = ownMembership?.email?.toLowerCase() === (selected?.authorEmail?.toLowerCase()) && !!ownMembership?.email
+  const isRecipeAuthor =
+    ownMembership?.email?.toLowerCase() === selected?.authorEmail?.toLowerCase() &&
+    !!ownMembership?.email
   const canEdit = isRecipeAuthor || ownMembership?.isOwner || ownMembership?.canUpdateRecipe
   const canDelete = ownMembership?.canDeleteRecipe
   const recipeHasImages = selected?.images[0]

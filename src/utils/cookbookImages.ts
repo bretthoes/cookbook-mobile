@@ -18,7 +18,7 @@ const tealCookbookImage = require("assets/images/cookbooks/teal.png")
  */
 export const getCookbookImage = (id: number): ImageSourcePropType => {
   const lastDigit = id % 10
-  
+
   switch (lastDigit) {
     case 0:
       return redCookbookImage
@@ -43,4 +43,4 @@ export const getCookbookImage = (id: number): ImageSourcePropType => {
     default:
       return missingCookbookImage
   }
-} 
+}

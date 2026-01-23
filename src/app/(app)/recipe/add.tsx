@@ -62,74 +62,77 @@ export default observer(function AddRecipeScreen() {
     }
   }
 
-  const onPressSend = useCallback(async (formData: RecipeFormInputs) => {
-    const currentCookbook = selectedCookbookRef.current
-    if (!currentCookbook) {
-      setShowCookbookError(true)
-      return
-    }
-    setShowCookbookError(false)
+  const onPressSend = useCallback(
+    async (formData: RecipeFormInputs) => {
+      const currentCookbook = selectedCookbookRef.current
+      if (!currentCookbook) {
+        setShowCookbookError(true)
+        return
+      }
+      setShowCookbookError(false)
 
-    // Filter out empty directions and ingredients, then map to recipe format
-    const validDirections = formData.directions
-      .filter((direction) => direction.text?.trim())
-      .map((direction, index) => ({
-        id: 0,
-        text: direction.text.trim(),
-        ordinal: index + 1,
-        image: null,
-      }))
+      // Filter out empty directions and ingredients, then map to recipe format
+      const validDirections = formData.directions
+        .filter((direction) => direction.text?.trim())
+        .map((direction, index) => ({
+          id: 0,
+          text: direction.text.trim(),
+          ordinal: index + 1,
+          image: null,
+        }))
 
-    const validIngredients = formData.ingredients
-      .filter((ingredient) => ingredient.name?.trim())
-      .map((ingredient, index) => ({
-        id: 0,
-        name: ingredient.name.trim(),
-        optional: false,
-        ordinal: index + 1,
-      }))
+      const validIngredients = formData.ingredients
+        .filter((ingredient) => ingredient.name?.trim())
+        .map((ingredient, index) => ({
+          id: 0,
+          name: ingredient.name.trim(),
+          optional: false,
+          ordinal: index + 1,
+        }))
 
-    const validImages = formData.images
-      .filter((image) => image?.trim())
-      .map((image, index) => ({
-        id: 0,
-        name: image.trim(),
-        ordinal: index + 1,
-      }))
+      const validImages = formData.images
+        .filter((image) => image?.trim())
+        .map((image, index) => ({
+          id: 0,
+          name: image.trim(),
+          ordinal: index + 1,
+        }))
 
-    const newRecipe: RecipeToAddSnapshotIn = {
-      title: formData.title.trim(),
-      cookbookId: currentCookbook.id,
-      summary: formData.summary?.trim() || null,
-      thumbnail: null, // TODO handle thumbnail logic
-      videoPath: null, // TODO handle videoPath logic
-      preparationTimeInMinutes: formData.preparationTimeInMinutes,
-      cookingTimeInMinutes: formData.cookingTimeInMinutes,
-      bakingTimeInMinutes: formData.bakingTimeInMinutes,
-      servings: formData.servings,
-      directions: validDirections,
-      ingredients: validIngredients,
-      images: validImages,
-    }
+      const newRecipe: RecipeToAddSnapshotIn = {
+        title: formData.title.trim(),
+        cookbookId: currentCookbook.id,
+        summary: formData.summary?.trim() || null,
+        thumbnail: null, // TODO handle thumbnail logic
+        videoPath: null, // TODO handle videoPath logic
+        preparationTimeInMinutes: formData.preparationTimeInMinutes,
+        cookingTimeInMinutes: formData.cookingTimeInMinutes,
+        bakingTimeInMinutes: formData.bakingTimeInMinutes,
+        servings: formData.servings,
+        directions: validDirections,
+        ingredients: validIngredients,
+        images: validImages,
+      }
 
-    try {
-      var success = await create(newRecipe)
-      if (success) {
-        router.replace(`/(app)/cookbook/${currentCookbook.id}`)
-      } else {
+      try {
+        var success = await create(newRecipe)
+        if (success) {
+          router.replace(`/(app)/cookbook/${currentCookbook.id}`)
+        } else {
+          alert("Failed to create recipe")
+        }
+      } catch (e) {
+        console.error("Add recipe failed:", e)
+
+        if (e instanceof Error) {
+          console.error("Error message:", e.message)
+          console.error("Stack trace:", e.stack)
+        } else console.error("Non-standard error:", JSON.stringify(e, null, 2))
+
         alert("Failed to create recipe")
       }
-    } catch (e) {
-      console.error("Add recipe failed:", e)
-
-      if (e instanceof Error) {
-        console.error("Error message:", e.message)
-        console.error("Stack trace:", e.stack)
-      } else console.error("Non-standard error:", JSON.stringify(e, null, 2))
-
-      alert("Failed to create recipe")
-    }
-  }, [create])
+    },
+    [create],
+  )
 
   const onError = (errors: any) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))

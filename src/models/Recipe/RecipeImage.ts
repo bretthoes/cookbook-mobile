@@ -13,8 +13,7 @@ export const RecipeImageModel = types
     ordinal: types.integer,
   })
   .actions(withSetPropAction)
-  .views((image) => ({
-  }))
+  .views((image) => ({}))
 
 export interface RecipeImage extends Instance<typeof RecipeImageModel> {}
 export interface RecipeImageSnapshotOut extends SnapshotOut<typeof RecipeImageModel> {}

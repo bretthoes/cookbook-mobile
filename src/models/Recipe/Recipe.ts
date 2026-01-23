@@ -81,8 +81,6 @@ export interface Recipe extends Instance<typeof RecipeModel> {}
 export interface RecipeSnapshotOut extends SnapshotOut<typeof RecipeModel> {}
 export interface RecipeSnapshotIn extends SnapshotIn<typeof RecipeModel> {}
 
-
-
 /**
  * This represents a brief recipe.
  */

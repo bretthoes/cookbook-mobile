@@ -168,8 +168,7 @@ const ko: Translations = {
       favoriteButton: "즐겨찾기",
       unfavoriteButton: "즐겨찾기 해제",
       accessibility: {
-        cardHint:
-          "요리책을 열려면 두 번 탭하세요. {{action}} 하려면 길게 탭하세요.",
+        cardHint: "요리책을 열려면 두 번 탭하세요. {{action}} 하려면 길게 탭하세요.",
         switch: "즐겨찾기만 보려면 스위치를 켜세요",
         favoriteAction: "즐겨찾기 전환",
         favoriteIcon: "즐겨찾기되지 않은 요리책",
@@ -179,8 +178,7 @@ const ko: Translations = {
       },
       noFavoritesEmptyState: {
         heading: "여긴 좀 비어 보이네요",
-        content:
-          "아직 즐겨찾기가 없습니다. 항목의 하트를 눌러 즐겨찾기에 추가해보세요!",
+        content: "아직 즐겨찾기가 없습니다. 항목의 하트를 눌러 즐겨찾기에 추가해보세요!",
       },
     },
     cookbookListScreen: {
@@ -190,8 +188,7 @@ const ko: Translations = {
       unfavoriteButton: "즐겨찾기 해제",
       add: "새 요리책 만들기",
       accessibility: {
-        cardHint:
-          "요리책을 열려면 두 번 탭하세요. {{action}} 하려면 길게 탭하세요.",
+        cardHint: "요리책을 열려면 두 번 탭하세요. {{action}} 하려면 길게 탭하세요.",
         switch: "즐겨찾기만 보려면 스위치를 켜세요",
         favoriteAction: "즐겨찾기 전환",
         favoriteIcon: "즐겨찾기되지 않은 요리책",
@@ -201,8 +198,7 @@ const ko: Translations = {
       },
       noFavoritesEmptyState: {
         heading: "여긴 좀 비어 보이네요",
-        content:
-          "아직 즐겨찾기가 없습니다. 항목의 하트를 눌러 즐겨찾기에 추가해보세요!",
+        content: "아직 즐겨찾기가 없습니다. 항목의 하트를 눌러 즐겨찾기에 추가해보세요!",
       },
       cookbookCard: {
         membersLabel: "회원 {{count}}명",
@@ -261,8 +257,9 @@ const ko: Translations = {
   },
   // Settings related translations
   languageScreen: {
-    support: "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
-    note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다."
+    support:
+      "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
+    note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
   },
 
   ...demoKo,

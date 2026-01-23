@@ -41,11 +41,7 @@ export default observer(function Layout() {
           tabBarAccessibilityLabel: translate("demoNavigator:cookbookListTab"),
           tabBarLabel: translate("demoNavigator:cookbookListTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon 
-              icon="cookbooks"
-              size={30}
-              color={focused ? colors.tint : undefined}
-            />
+            <Icon icon="cookbooks" size={30} color={focused ? colors.tint : undefined} />
           ),
         }}
       />
@@ -56,11 +52,7 @@ export default observer(function Layout() {
           headerShown: false,
           tabBarLabel: translate("demoNavigator:createTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon 
-              icon="create"
-              size={30}
-              color={focused ? colors.tint : undefined}
-            />
+            <Icon icon="create" size={30} color={focused ? colors.tint : undefined} />
           ),
         }}
       />
@@ -71,11 +63,7 @@ export default observer(function Layout() {
           headerShown: false,
           tabBarLabel: translate("demoNavigator:profileTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon 
-              icon="user"
-              size={28}
-              color={focused ? colors.tint : undefined}
-            />
+            <Icon icon="user" size={28} color={focused ? colors.tint : undefined} />
           ),
         }}
       />

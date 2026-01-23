@@ -71,14 +71,16 @@ export default observer(function AddRecipeOptionsScreen() {
 
         <TouchableOpacity
           style={$themedItemContainer}
-          onPress={() => router.replace({
-            pathname: "/(app)/select-cookbook",
-            params: {
-              nextRoute: "/(app)/recipe/add",
-              action: "Select a cookbook to add the recipe to.",
-              onSelect: "handleAddRecipeFromCamera"
-            }
-          })}
+          onPress={() =>
+            router.replace({
+              pathname: "/(app)/select-cookbook",
+              params: {
+                nextRoute: "/(app)/recipe/add",
+                action: "Select a cookbook to add the recipe to.",
+                onSelect: "handleAddRecipeFromCamera",
+              },
+            })
+          }
         >
           <View style={$themedIconContainer}>
             <Ionicons name="camera-outline" size={32} color={colors.tint} />
@@ -140,4 +142,4 @@ const $itemTitle: ThemedStyle<TextStyle> = (theme) => ({
 const $itemDescription: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
   fontSize: 14,
-}) 
+})

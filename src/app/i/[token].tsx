@@ -60,17 +60,13 @@ export default observer(function InvitationTokenScreen() {
 
   const handleAccept = async () => {
     if (!isAuthenticated) {
-      Alert.alert(
-        "Login Required",
-        "Please log in to accept this invitation.",
-        [
-          { text: "Cancel", style: "cancel" },
-          {
-            text: "Log In",
-            onPress: () => router.push("/log-in"),
-          },
-        ],
-      )
+      Alert.alert("Login Required", "Please log in to accept this invitation.", [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Log In",
+          onPress: () => router.push("/log-in"),
+        },
+      ])
       return
     }
 
@@ -95,23 +91,19 @@ export default observer(function InvitationTokenScreen() {
   const handleReject = async () => {
     if (!invitation) return
 
-    Alert.alert(
-      "Decline Invitation",
-      "Are you sure you want to decline this invitation?",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Decline",
-          style: "destructive",
-          onPress: async () => {
-            setIsLoading(true)
-            await invitationStore.respond(invitation.id, false)
-            setIsLoading(false)
-            router.back()
-          },
+    Alert.alert("Decline Invitation", "Are you sure you want to decline this invitation?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Decline",
+        style: "destructive",
+        onPress: async () => {
+          setIsLoading(true)
+          await invitationStore.respond(invitation.id, false)
+          setIsLoading(false)
+          router.back()
         },
-      ],
-    )
+      },
+    ])
   }
 
   if (isLoading) {
@@ -126,7 +118,11 @@ export default observer(function InvitationTokenScreen() {
   if (error) {
     return (
       <Screen style={$root} preset="fixed">
-        <Text text={error} preset="heading" style={{ marginTop: spacing.xxl, textAlign: "center" }} />
+        <Text
+          text={error}
+          preset="heading"
+          style={{ marginTop: spacing.xxl, textAlign: "center" }}
+        />
         <Button text="Go Back" onPress={() => router.back()} style={{ marginTop: spacing.lg }} />
       </Screen>
     )
@@ -135,7 +131,11 @@ export default observer(function InvitationTokenScreen() {
   if (!invitation && !isAuthenticated) {
     return (
       <Screen style={$root} preset="fixed">
-        <Text text="Invitation Link" preset="heading" style={{ marginTop: spacing.xxl, textAlign: "center" }} />
+        <Text
+          text="Invitation Link"
+          preset="heading"
+          style={{ marginTop: spacing.xxl, textAlign: "center" }}
+        />
         <Text
           text="Please log in to view and accept this invitation."
           style={{ marginTop: spacing.md, paddingHorizontal: spacing.md, textAlign: "center" }}
@@ -166,7 +166,11 @@ export default observer(function InvitationTokenScreen() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text text="You've been invited!" preset="heading" style={{ marginTop: spacing.lg, textAlign: "center" }} />
+      <Text
+        text="You've been invited!"
+        preset="heading"
+        style={{ marginTop: spacing.lg, textAlign: "center" }}
+      />
       <Text
         text={`You've been invited to join "${invitation.cookbookTitle || "a cookbook"}"`}
         style={{ marginTop: spacing.md, paddingHorizontal: spacing.md, textAlign: "center" }}
@@ -202,4 +206,3 @@ const $root: ViewStyle = {
   flex: 1,
   paddingHorizontal: spacing.md,
 }
-

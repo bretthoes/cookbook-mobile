@@ -1,10 +1,4 @@
-import {
-  destroy,
-  flow,
-  Instance,
-  SnapshotOut,
-  types,
-} from "mobx-state-tree"
+import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "src/services/api"
 import { Recipe, RecipeBriefModel, RecipeModel, RecipeSnapshotIn } from "./Recipe"
 
@@ -45,7 +39,9 @@ export const RecipeStoreModel = types
           ingredients: recipeToAdd.ingredients,
           images: recipeToAdd.images,
         })
-        self.recipes.push(RecipeBriefModel.create({id: response.recipeId, title: recipeToAdd.title}))
+        self.recipes.push(
+          RecipeBriefModel.create({ id: response.recipeId, title: recipeToAdd.title }),
+        )
         self.selected = newRecipe
         return true
       }
@@ -56,11 +52,11 @@ export const RecipeStoreModel = types
       if (self.selected) {
         destroy(self.selected)
       }
-      self.setProp("selected", null);
+      self.setProp("selected", null)
       self.selected = null
       const response = yield api.getRecipe(id)
       if (response.kind === "ok") {
-        self.setProp("selected", response.recipe);
+        self.setProp("selected", response.recipe)
         return true
       }
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)

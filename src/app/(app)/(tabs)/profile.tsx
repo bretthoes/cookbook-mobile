@@ -51,7 +51,6 @@ export default observer(function ProfileScreen() {
   // @ts-expect-error
   const usingFabric = global.nativeFabricUIManager != null
 
-
   useEffect(() => {
     AsyncStorage.getItem("themeContext").then((value) => {
       if (value !== null) {
@@ -110,11 +109,7 @@ export default observer(function ProfileScreen() {
           rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
-              <Icon 
-                icon="mail"
-                size={30}
-                color={isDark ? colors.border : colors.text}
-              />
+              <Icon icon="mail" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
           RightComponent={
@@ -131,11 +126,7 @@ export default observer(function ProfileScreen() {
           rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
-              <Icon 
-                icon="membership"
-                size={30}
-                color={isDark ? colors.border : colors.text}
-              />
+              <Icon icon="membership" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
           onPress={() =>
@@ -158,11 +149,7 @@ export default observer(function ProfileScreen() {
           rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
-              <Icon 
-                icon="darkMode"
-                size={30}
-                color={isDark ? colors.border : colors.text}
-              />
+              <Icon icon="darkMode" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
           RightComponent={<Switch value={themeContext === "dark"} onValueChange={toggleTheme} />}
@@ -179,11 +166,7 @@ export default observer(function ProfileScreen() {
           // leftIcon="components"
           LeftComponent={
             <View style={$iconContainer}>
-              <Icon 
-                icon="languages"
-                size={30}
-                color={isDark ? colors.border : colors.text}
-              />
+              <Icon icon="languages" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
           onPress={() => router.push("/(app)/language")}
@@ -198,11 +181,7 @@ export default observer(function ProfileScreen() {
           rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
             <View style={$iconContainer}>
-              <Icon 
-                icon="user"
-                size={30}
-                color={isDark ? colors.border : colors.text}
-              />
+              <Icon icon="user" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
           onPress={() => router.push("/(app)/set-display-name")}
@@ -272,7 +251,7 @@ export default observer(function ProfileScreen() {
 const $titleContainer: ViewStyle = {
   paddingHorizontal: spacing.md,
   paddingBottom: spacing.lg,
-  paddingTop: spacing.xl + spacing.lg
+  paddingTop: spacing.xl + spacing.lg,
 }
 
 const $reportBugsLink: TextStyle = {

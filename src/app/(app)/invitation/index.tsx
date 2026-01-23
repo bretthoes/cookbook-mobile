@@ -15,15 +15,7 @@ import {
   UIManager,
   LayoutAnimation,
 } from "react-native"
-import {
-  Screen,
-  Text,
-  Button,
-  Card,
-  ButtonAccessoryProps,
-  Icon,
-  ListView,
-} from "src/components"
+import { Screen, Text, Button, Card, ButtonAccessoryProps, Icon, ListView } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
 import { delay } from "src/utils/delay"
@@ -91,7 +83,7 @@ export default observer(function Invitations() {
       <ListView<Invitation>
         contentContainerStyle={$listContentContainer}
         data={invitationStore.invitations.items.slice()}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         extraData={invitationStore.invitations.items.length}
         refreshing={refreshing}
         estimatedItemSize={382}

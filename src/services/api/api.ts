@@ -231,7 +231,9 @@ export class Api {
   /**
    * Gets a single invitation token by its token.
    */
-  async GetInvitationToken(token: string): Promise<{ kind: "ok"; invitation: InvitationSnapshotOut } | GeneralApiProblem> {
+  async GetInvitationToken(
+    token: string,
+  ): Promise<{ kind: "ok"; invitation: InvitationSnapshotOut } | GeneralApiProblem> {
     const response: ApiResponse<InvitationSnapshotOut> = await this.authorizedRequest(
       `InvitationTokens/${token}`,
       "GET",

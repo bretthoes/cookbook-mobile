@@ -79,12 +79,7 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
                 }}
                 text={label.toString()}
               />
-              {showBadge && (
-                <Badge
-                  count={invitationStore.invitations.totalCount}
-                  style={$badge}
-                />
-              )}
+              {showBadge && <Badge count={invitationStore.invitations.totalCount} style={$badge} />}
             </View>
           </TouchableOpacity>
         )

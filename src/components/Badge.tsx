@@ -14,11 +14,7 @@ export function Badge({ count, style, textStyle }: BadgeProps) {
 
   return (
     <View style={[$badge, style]}>
-      <Text
-        text={count.toString()}
-        style={[$badgeText, textStyle]}
-        size="xxs"
-      />
+      <Text text={count.toString()} style={[$badgeText, textStyle]} size="xxs" />
     </View>
   )
 }
@@ -36,4 +32,4 @@ const $badge: ViewStyle = {
 const $badgeText: TextStyle = {
   color: colors.background,
   fontWeight: "bold",
-} 
+}
