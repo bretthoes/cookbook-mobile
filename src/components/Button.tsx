@@ -231,7 +231,7 @@ const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
   reversed: ({ colors }) => ({ backgroundColor: colors.icon }),
 }
 
-const $pressedTextPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
+const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
   default: () => ({ opacity: 0.9 }),
   filled: () => ({ opacity: 0.9 }),
   reversed: () => ({ opacity: 0.9 }),
