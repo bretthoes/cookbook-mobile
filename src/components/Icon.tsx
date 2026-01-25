@@ -107,6 +107,8 @@ export const iconRegistry = {
   camera: require("../../assets/icons/camera.png"),
   caretLeft: require("../../assets/icons/caretLeft.png"),
   caretRight: require("../../assets/icons/caretRight.png"),
+  caretUp: require("../../assets/icons/caretUp.png"),
+  caretDown: require("../../assets/icons/caretDown.png"),
   check: require("../../assets/icons/check.png"),
   clap: require("../../assets/icons/demo/clap.png"),
   community: require("../../assets/icons/demo/community.png"),

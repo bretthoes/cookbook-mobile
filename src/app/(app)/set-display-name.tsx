@@ -95,7 +95,7 @@ export default observer(function SetDisplayName() {
         text="This is how others will see you in the app, instead of your email."
         style={{ paddingBottom: spacing.md, paddingHorizontal: spacing.md }}
       />
-      <UseCase name="">
+      <UseCase>
         <TextField
           value={localDisplayName}
           onChangeText={setLocalDisplayName}

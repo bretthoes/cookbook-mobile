@@ -1,12 +1,11 @@
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
 import { ViewStyle, TouchableOpacity, View, TextStyle, Image, ImageStyle } from "react-native"
-import { Screen, Text } from "src/components"
+import { Icon, Screen, Text } from "src/components"
 import { colors, spacing } from "src/theme"
 import { router, useLocalSearchParams } from "expo-router"
 import { useStores } from "src/models/helpers/useStores"
 import { Cookbook } from "src/models"
-import Ionicons from "@expo/vector-icons/Ionicons"
 import * as ImagePicker from "expo-image-picker"
 import { api } from "src/services/api"
 import { useActionSheet } from "@expo/react-native-action-sheet"
@@ -165,7 +164,7 @@ export default observer(function SelectCookbookScreen() {
                 style={$themedItemDescription}
               />
             </View>
-            <Ionicons name="chevron-forward" size={24} color={colors.text} />
+            <Icon icon="caretRight" size={24} color={colors.text} />
           </TouchableOpacity>
         ))}
       </View>

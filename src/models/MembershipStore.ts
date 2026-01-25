@@ -1,6 +1,6 @@
 import { flow, Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { Membership, MembershipModel } from "./Membership"
+import { MembershipModel } from "./Membership"
 import { api } from "src/services/api"
 import { MembershipListModel } from "./generics/PaginatedListTypes"
 

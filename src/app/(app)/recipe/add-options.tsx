@@ -1,10 +1,9 @@
 import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { ViewStyle, TouchableOpacity, View, TextStyle } from "react-native"
-import { Screen, Text } from "src/components"
-import { colors, spacing } from "src/theme"
-import { router, useLocalSearchParams } from "expo-router"
-import Ionicons from "@expo/vector-icons/Ionicons"
+import { Icon, Screen, Text } from "src/components"
+import { colors } from "src/theme"
+import { router } from "expo-router"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { useHeader } from "src/utils/useHeader"
@@ -38,7 +37,7 @@ export default observer(function AddRecipeOptionsScreen() {
           onPress={() => router.replace(`/(app)/recipe/add`)}
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="create-outline" size={32} color={colors.tint} />
+            <Icon icon="create" size={32} color={colors.tint} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Add Recipe Manually" style={$themedItemTitle} />
@@ -48,7 +47,7 @@ export default observer(function AddRecipeOptionsScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -56,7 +55,7 @@ export default observer(function AddRecipeOptionsScreen() {
           onPress={() => router.replace(`/(app)/recipe/select-url`)}
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="globe-outline" size={32} color={colors.tint} />
+            <Icon icon="link" size={32} color={colors.tint} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Add Recipe from URL" style={$themedItemTitle} />
@@ -66,7 +65,7 @@ export default observer(function AddRecipeOptionsScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -83,7 +82,7 @@ export default observer(function AddRecipeOptionsScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Ionicons name="camera-outline" size={32} color={colors.tint} />
+            <Icon icon="camera" size={32} color={colors.tint} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Add Recipe from Photo" style={$themedItemTitle} />
@@ -93,7 +92,7 @@ export default observer(function AddRecipeOptionsScreen() {
               style={$themedItemDescription}
             />
           </View>
-          <Ionicons name="chevron-forward" size={24} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
       </View>
     </Screen>

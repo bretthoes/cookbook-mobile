@@ -1,8 +1,8 @@
 import React from "react"
 import { TouchableOpacity, ViewStyle } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { colors, spacing } from "src/theme"
 import { useAppTheme } from "src/utils/useAppTheme"
+import { Icon } from "./Icon"
 
 interface CustomBackButtonProps {
   onPress: () => void
@@ -16,7 +16,7 @@ export function CustomBackButton({ onPress, style, top = spacing.xl }: CustomBac
 
   return (
     <TouchableOpacity style={[$moreButton, { top }, style]} onPress={onPress}>
-      <Ionicons name="arrow-back" size={24} color={isDark ? colors.background : colors.text} />
+      <Icon icon="back" size={24} color={isDark ? colors.background : colors.text} />
     </TouchableOpacity>
   )
 }

@@ -6,7 +6,6 @@ import { Cookbook } from "src/models"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 import { colors } from "src/theme"
-import Ionicons from "@expo/vector-icons/Ionicons"
 
 export interface CookbookDropdownProps {
   /**
@@ -62,8 +61,8 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
           text={selectedCookbook ? selectedCookbook.title : PLACEHOLDER}
           style={$themedDropdownText}
         />
-        <Ionicons
-          name={isDropdownVisible ? "chevron-up" : "chevron-down"}
+        <Icon
+          icon={isDropdownVisible ? "caretUp" : "caretDown"}
           size={20}
           color={colors.textDim}
         />

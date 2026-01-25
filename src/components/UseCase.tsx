@@ -1,7 +1,6 @@
 import React, { ReactNode, useMemo } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { Text } from "."
-import { colors, spacing, typography } from "../theme"
 import { useAppTheme } from "../utils/useAppTheme"
 import type { ThemedStyle } from "../theme"
 import { TxKeyPath } from "src/i18n"

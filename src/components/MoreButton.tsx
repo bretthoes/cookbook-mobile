@@ -1,8 +1,8 @@
 import React from "react"
 import { TouchableOpacity, ViewStyle } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
 import { colors, spacing } from "src/theme"
 import { useAppTheme } from "src/utils/useAppTheme"
+import { Icon } from "./Icon"
 
 interface MoreButtonProps {
   onPress: () => void
@@ -16,8 +16,8 @@ export function MoreButton({ onPress, style, top = spacing.xl }: MoreButtonProps
 
   return (
     <TouchableOpacity style={[$moreButton, { top }, style]} onPress={onPress}>
-      <Ionicons
-        name="ellipsis-vertical"
+      <Icon
+        icon="more"
         size={24}
         color={isDark ? colors.background : colors.text}
       />
