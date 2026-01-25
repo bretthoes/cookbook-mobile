@@ -13,17 +13,14 @@ To run the app locally, follow these steps:
 5. Install dependencies by running:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 6. Run the app on Android using:
 
 ```bash
-yarn android
+pnpm android
 ```
-
-## Troubleshooting
-- If you run into issues accessing the local API from a mobile device emulator, try using a tunneling service like [ngrok](https://ngrok.com/) to make the local URL publicly accessible, and point to this base URL instead for Step 4 above.
 
 ## Acknowledgement
 

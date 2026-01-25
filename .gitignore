@@ -36,7 +36,7 @@ local.properties
 #
 node_modules/
 npm-debug.log
-yarn-error.log
+pnpm-debug.log
 
 # BUCK
 buck-out/
@@ -88,5 +88,3 @@ web-build/
 
 /coverage
 
-# Yarn
-.yarn/*
