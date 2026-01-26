@@ -6,11 +6,6 @@
   "orientation": "portrait",
   "userInterfaceStyle": "automatic",
   "icon": "./assets/images/app-icon-all.png",
-  "splash": {
-    "image": "./assets/images/splash-logo-all.png",
-    "resizeMode": "contain",
-    "backgroundColor": "#191015"
-  },
   "updates": {
     "fallbackToCacheTimeout": 0
   },
@@ -41,11 +36,6 @@
     "adaptiveIcon": {
       "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
       "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png"
-    },
-    "splash": {
-      "image": "./assets/images/splash-logo-android-universal.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#191015"
     }
   },
   "ios": {
