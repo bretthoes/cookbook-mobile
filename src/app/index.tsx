@@ -6,7 +6,6 @@ import { isRTL } from "src/i18n"
 import { colors, spacing } from "src/theme"
 import { useSafeAreaInsetsStyle } from "src/utils/useSafeAreaInsetsStyle"
 import { useRouter } from "expo-router"
-import { useAppTheme } from "src/utils/useAppTheme"
 
 const welcomeLogo = require("../../assets/images/logo.png")
 const welcomeFace = require("../../assets/images/welcome-face.png")
