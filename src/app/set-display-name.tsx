@@ -76,7 +76,7 @@ const $root: ViewStyle = {
   flex: 1,
 }
 
-const $content: ViewStyle = {
+const $content: TextStyle = {
   paddingHorizontal: spacing.md,
 }
 

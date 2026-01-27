@@ -1,10 +1,13 @@
-import { TOptions } from "i18next"
+import { ReactNode, forwardRef, ForwardedRef } from "react"
+// eslint-disable-next-line no-restricted-imports
 import { StyleProp, Text as RNText, TextProps as RNTextProps, TextStyle } from "react-native"
-import { isRTL, translate, TxKeyPath } from "../i18n"
+import { TOptions } from "i18next"
+
+import { isRTL, TxKeyPath } from "src/i18n"
+import { translate } from "src/i18n/translate"
 import type { ThemedStyle, ThemedStyleArray } from "src/theme"
 import { useAppTheme } from "src/utils/useAppTheme"
 import { typography } from "src/theme/typography"
-import { ReactNode } from "react"
 
 type Sizes = keyof typeof $sizeStyles
 type Weights = keyof typeof typography.primary
@@ -49,11 +52,11 @@ export interface TextProps extends RNTextProps {
 /**
  * For your text displaying needs.
  * This component is a HOC over the built-in React Native one.
- * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/components/Text/}
+ * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/app/components/Text/}
  * @param {TextProps} props - The props for the `Text` component.
  * @returns {JSX.Element} The rendered `Text` component.
  */
-export function Text(props: TextProps) {
+export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<RNText>) {
   const { weight, size, tx, txOptions, text, children, style: $styleOverride, ...rest } = props
   const { themed } = useAppTheme()
 
@@ -70,14 +73,14 @@ export function Text(props: TextProps) {
   ]
 
   return (
-    <RNText {...rest} style={$styles}>
+    <RNText {...rest} style={$styles} ref={ref}>
       {content}
     </RNText>
   )
-}
+})
 
 const $sizeStyles = {
-  xxl: { fontSize: 32, lineHeight: 40 } satisfies TextStyle,
+  xxl: { fontSize: 36, lineHeight: 44 } satisfies TextStyle,
   xl: { fontSize: 24, lineHeight: 34 } satisfies TextStyle,
   lg: { fontSize: 20, lineHeight: 32 } satisfies TextStyle,
   md: { fontSize: 18, lineHeight: 26 } satisfies TextStyle,

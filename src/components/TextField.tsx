@@ -9,11 +9,14 @@ import {
   View,
   ViewStyle,
 } from "react-native"
-import { isRTL, translate } from "../i18n"
+
+import { isRTL } from "src/i18n"
+import { translate } from "src/i18n/translate"
 import type { ThemedStyle, ThemedStyleArray } from "src/theme"
-import { $styles } from "../theme"
-import { Text, TextProps } from "./Text"
 import { useAppTheme } from "src/utils/useAppTheme"
+import { $styles } from "src/theme/styles"
+
+import { Text, TextProps } from "./Text"
 
 export interface TextFieldAccessoryProps {
   style: StyleProp<ViewStyle | TextStyle | ImageStyle>
@@ -102,7 +105,7 @@ export interface TextFieldProps extends Omit<TextInputProps, "ref"> {
 
 /**
  * A component that allows for the entering and editing of text.
- * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/components/TextField/}
+ * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/app/components/TextField/}
  * @param {TextFieldProps} props - The props for the `TextField` component.
  * @returns {JSX.Element} The rendered `TextField` component.
  */
@@ -250,12 +253,12 @@ const $inputWrapperStyle: ThemedStyle<ViewStyle> = ({ colors }) => ({
   alignItems: "flex-start",
   borderWidth: 1,
   borderRadius: 4,
-  backgroundColor: colors.background,
-  borderColor: colors.border,
+  backgroundColor: colors.palette.neutral200,
+  borderColor: colors.palette.neutral400,
   overflow: "hidden",
 })
 
-const $inputStyle: ThemedStyle<ViewStyle> = ({ colors, typography, spacing }) => ({
+const $inputStyle: ThemedStyle<TextStyle> = ({ colors, typography, spacing }) => ({
   flex: 1,
   alignSelf: "stretch",
   fontFamily: typography.primary.normal,

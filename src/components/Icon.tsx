@@ -1,4 +1,3 @@
-import { ComponentType, useMemo } from "react"
 import {
   Image,
   ImageStyle,
@@ -9,12 +8,12 @@ import {
   ViewProps,
   ViewStyle,
 } from "react-native"
+
 import { useAppTheme } from "src/utils/useAppTheme"
-import type { ThemedStyle } from "src/theme"
 
 export type IconTypes = keyof typeof iconRegistry
 
-interface IconProps extends TouchableOpacityProps {
+type BaseIconProps = {
   /**
    * The name of the icon
    */
@@ -39,17 +38,48 @@ interface IconProps extends TouchableOpacityProps {
    * Style overrides for the icon container
    */
   containerStyle?: StyleProp<ViewStyle>
+}
 
-  /**
-   * An optional function to be called when the icon is pressed
-   */
-  onPress?: TouchableOpacityProps["onPress"]
+type PressableIconProps = Omit<TouchableOpacityProps, "style"> & BaseIconProps
+type IconProps = Omit<ViewProps, "style"> & BaseIconProps
+
+/**
+ * A component to render a registered icon.
+ * It is wrapped in a <TouchableOpacity />
+ * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/app/components/Icon/}
+ * @param {PressableIconProps} props - The props for the `PressableIcon` component.
+ * @returns {JSX.Element} The rendered `PressableIcon` component.
+ */
+export function PressableIcon(props: PressableIconProps) {
+  const {
+    icon,
+    color,
+    size,
+    style: $imageStyleOverride,
+    containerStyle: $containerStyleOverride,
+    ...pressableProps
+  } = props
+
+  const { theme } = useAppTheme()
+
+  const $imageStyle: StyleProp<ImageStyle> = [
+    $imageStyleBase,
+    { tintColor: color ?? theme.colors.text },
+    size !== undefined && { width: size, height: size },
+    $imageStyleOverride,
+  ]
+
+  return (
+    <TouchableOpacity {...pressableProps} style={$containerStyleOverride}>
+      <Image style={$imageStyle} source={iconRegistry[icon]} />
+    </TouchableOpacity>
+  )
 }
 
 /**
  * A component to render a registered icon.
- * It is wrapped in a <TouchableOpacity /> if `onPress` is provided, otherwise a <View />.
- * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/components/Icon/}
+ * It is wrapped in a <View />, use `PressableIcon` if you want to react to input
+ * @see [Documentation and Examples]{@link https://docs.infinite.red/ignite-cli/boilerplate/app/components/Icon/}
  * @param {IconProps} props - The props for the `Icon` component.
  * @returns {JSX.Element} The rendered `Icon` component.
  */
@@ -60,42 +90,21 @@ export function Icon(props: IconProps) {
     size,
     style: $imageStyleOverride,
     containerStyle: $containerStyleOverride,
-    onPress,
+    ...viewProps
   } = props
-  const { themed } = useAppTheme()
 
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedImage = useMemo(() => themed($image), [themed])
+  const { theme } = useAppTheme()
 
-  const Container = onPress ? TouchableOpacity : View
-
-  if (onPress) {
-    return (
-      <TouchableOpacity style={[$themedContainer, $containerStyleOverride]} onPress={onPress}>
-        <Image
-          source={iconRegistry[icon]}
-          style={[
-            $themedImage,
-            size ? { width: size, height: size } : undefined,
-            color ? { tintColor: color } : undefined,
-            $imageStyleOverride,
-          ]}
-        />
-      </TouchableOpacity>
-    )
-  }
+  const $imageStyle: StyleProp<ImageStyle> = [
+    $imageStyleBase,
+    { tintColor: color ?? theme.colors.text },
+    size !== undefined && { width: size, height: size },
+    $imageStyleOverride,
+  ]
 
   return (
-    <View style={[$themedContainer, $containerStyleOverride]}>
-      <Image
-        source={iconRegistry[icon]}
-        style={[
-          $themedImage,
-          size ? { width: size, height: size } : undefined,
-          color ? { tintColor: color } : undefined,
-          $imageStyleOverride,
-        ]}
-      />
+    <View {...viewProps} style={$containerStyleOverride}>
+      <Image style={$imageStyle} source={iconRegistry[icon]} />
     </View>
   )
 }
@@ -141,13 +150,6 @@ export const iconRegistry = {
   x: require("../../assets/icons/x.png"),
 }
 
-const $container: ThemedStyle<ViewStyle> = () => ({
-  alignItems: "center",
-  justifyContent: "center",
-})
-
-const $image: ThemedStyle<ImageStyle> = () => ({
-  width: 24,
-  height: 24,
+const $imageStyleBase: ImageStyle = {
   resizeMode: "contain",
-})
+}
