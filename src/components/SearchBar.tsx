@@ -1,8 +1,8 @@
 import * as React from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { observer } from "mobx-react-lite"
-import { colors, spacing } from "src/theme"
-import Feather from "@expo/vector-icons/Feather"
+import { colors } from "src/theme"
+import { Icon } from "./Icon"
 import { useAppTheme } from "src/utils/useAppTheme"
 import type { ThemedStyle } from "src/theme"
 
@@ -31,7 +31,7 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
         onChangeText={onChangeText}
         placeholderTextColor={colors.border}
       />
-      <Feather name="search" size={20} color={colors.textDim} />
+      <Icon icon="search" size={20} color={colors.textDim} />
     </View>
   )
 })
