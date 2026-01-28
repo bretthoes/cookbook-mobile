@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite"
 import {
   Button,
   Divider,
-  Icon,
+  PressableIcon,
   Screen,
   Text,
   TextField,
@@ -66,10 +66,10 @@ export default observer(function Register() {
     () =>
       function PasswordRightAccessory(props: TextFieldAccessoryProps) {
         return (
-          <Icon
+          <PressableIcon
             icon={isPasswordHidden ? "view" : "hidden"}
             color={colors.text}
-            containerStyle={props.style}
+            containerStyle={props.style as ViewStyle}
             size={20}
             onPress={() => setIsPasswordHidden(!isPasswordHidden)}
           />

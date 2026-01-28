@@ -1,10 +1,9 @@
 import React, { ComponentType, FC, useEffect, useMemo, useRef, useState } from "react"
 import { observer } from "mobx-react-lite"
 import { TextInput, View, ViewStyle } from "react-native"
-import { Button, Icon, Screen, Text, TextField, TextFieldAccessoryProps } from "src/components"
+import { Button, PressableIcon, Screen, Text, TextField, TextFieldAccessoryProps } from "src/components"
 import { useStores } from "src/models/helpers/useStores"
 import { colors, spacing } from "src/theme"
-import { useNavigation } from "@react-navigation/native"
 import { router } from "expo-router"
 
 export default observer(function ResetPassword() {
@@ -54,10 +53,10 @@ export default observer(function ResetPassword() {
     () =>
       function PasswordRightAccessory(props: TextFieldAccessoryProps) {
         return (
-          <Icon
+          <PressableIcon
             icon={isPasswordHidden ? "view" : "hidden"}
             color={colors.text}
-            containerStyle={props.style}
+            containerStyle={props.style as ViewStyle}
             size={20}
             onPress={() => setIsPasswordHidden(!isPasswordHidden)}
           />
