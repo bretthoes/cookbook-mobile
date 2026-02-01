@@ -115,17 +115,6 @@ const $itemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   minHeight: 80,
 })
 
-const $firstItem: ThemedStyle<ViewStyle> = (theme) => ({
-  borderTopLeftRadius: theme.spacing.md,
-  borderTopRightRadius: theme.spacing.md,
-})
-
-const $lastItem: ThemedStyle<ViewStyle> = (theme) => ({
-  borderBottomWidth: 0,
-  borderBottomLeftRadius: theme.spacing.md,
-  borderBottomRightRadius: theme.spacing.md,
-})
-
 const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   width: 48,
   height: 48,

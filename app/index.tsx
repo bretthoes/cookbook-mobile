@@ -90,10 +90,3 @@ const $welcomeHeading: TextStyle = {
 const $loginButton: ViewStyle = {
   marginTop: spacing.md,
 }
-
-const $themeRow: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "space-between",
-  paddingVertical: spacing.xs,
-}

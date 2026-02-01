@@ -51,7 +51,7 @@ export default observer(function ResetPassword() {
       setResult("")
       setPassword("")
     }
-  }, [setAuthEmail])
+  }, [setAuthEmail, setResult])
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
     () =>
@@ -76,7 +76,7 @@ export default observer(function ResetPassword() {
     <Screen contentContainerStyle={$root} preset="auto" safeAreaEdges={["top", "bottom"]}>
       <View style={$contentContainer}>
         <Text text="Reset your password" preset="heading" />
-        <Text>We've sent a reset link to</Text>
+        <Text>We&apos;ve sent a reset link to</Text>
         <Text weight="bold">{authEmail}</Text>
         <Text>Please check your inbox and fill out the form below.</Text>
 

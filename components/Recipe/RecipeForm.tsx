@@ -60,7 +60,7 @@ export interface RecipeFormProps {
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const { onSubmit, onError, formValues = defaultForm, isEdit = false } = props
   const { themed } = useAppTheme()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, _] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
 
   const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])

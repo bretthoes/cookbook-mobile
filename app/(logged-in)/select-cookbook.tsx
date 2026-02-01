@@ -28,7 +28,6 @@ export default observer(function SelectCookbookScreen() {
 
   // Memoize themed styles
   const $themedRoot = React.useMemo(() => themed($root), [themed])
-  const $themedTitle = React.useMemo(() => themed($title), [themed])
   const $themedListContainer = React.useMemo(() => themed($listContainer), [themed])
   const $themedItemContainer = React.useMemo(() => themed($itemContainer), [themed])
   const $themedFirstItem = React.useMemo(() => themed($firstItem), [themed])

@@ -82,17 +82,6 @@ export default observer(function MembershipScreen() {
     )
   }
 
-  const permissions = [
-    { label: "Name", value: membership?.name ?? "" },
-    { label: "Cookbook Owner", value: membership?.isOwner },
-    { label: "Can Add Recipe", value: membership?.canAddRecipe },
-    { label: "Can Update Recipe", value: membership?.canUpdateRecipe },
-    { label: "Can Delete Recipe", value: membership?.canDeleteRecipe },
-    { label: "Can Send Invite", value: membership?.canSendInvite },
-    { label: "Can Remove Member", value: membership?.canRemoveMember },
-    { label: "Can Edit Cookbook Details", value: membership?.canEditCookbookDetails },
-  ]
-
   useEffect(() => {
     SecureStore.getItemAsync("email").then((result) => {
       setEmail(result)

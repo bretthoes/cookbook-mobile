@@ -249,13 +249,6 @@ const $description: TextStyle = {
   marginBottom: spacing.lg,
 }
 
-const $hint: TextStyle = {
-  color: colors.textDim,
-  fontSize: 12,
-  lineHeight: 15,
-  paddingBottom: spacing.lg,
-}
-
 const $iconContainer: ViewStyle = {
   marginEnd: spacing.md,
   marginTop: spacing.xs,
