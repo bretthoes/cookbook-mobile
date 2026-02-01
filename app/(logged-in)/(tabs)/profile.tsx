@@ -84,6 +84,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           tx="profileScreen:pendingInvites"
           bottomSeparator
+          topSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
@@ -96,7 +97,7 @@ export default observer(function ProfileScreen() {
               <Badge count={invitationStore.invitations.totalCount} />
             </View>
           }
-          onPress={() => router.push("./invitation")}
+          onPress={() => router.push("../invitation")}
         />
         <ListItem
           tx="profileScreen:manageMemberships"
@@ -110,7 +111,7 @@ export default observer(function ProfileScreen() {
           }
           onPress={() =>
             router.push({
-              pathname: "./select-cookbook",
+              pathname: "../select-cookbook",
               params: {
                 nextRoute: "/(logged-in)/(tabs)/membership/list",
                 action: "Select a cookbook to view its members.",
@@ -124,6 +125,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           tx="profileScreen:darkMode"
           bottomSeparator
+          topSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
           LeftComponent={
@@ -131,7 +133,7 @@ export default observer(function ProfileScreen() {
               <Icon icon="darkMode" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
-          RightComponent={<Switch value={themeContext === "dark"} onValueChange={toggleTheme} />}
+          RightComponent={<View style={$iconContainer}><Switch value={themeContext === "dark"} onValueChange={toggleTheme} /></View>}
         />
         {/* <View style={$themeRow}> // TODO see above
         <Text text="Floating Tab Bar" />
@@ -148,7 +150,7 @@ export default observer(function ProfileScreen() {
               <Icon icon="languages" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
-          onPress={() => router.push("./language")}
+          onPress={() => router.push("../language")}
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
           bottomSeparator
@@ -163,7 +165,7 @@ export default observer(function ProfileScreen() {
               <Icon icon="user" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
-          onPress={() => router.push("./set-display-name")}
+          onPress={() => router.push("../set-display-name")}
         />
       </UseCase>
       <View style={$buttonContainer}>

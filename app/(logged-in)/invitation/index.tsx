@@ -77,13 +77,14 @@ export default observer(function Invitations() {
   }
 
   return (
-    <Screen preset="scroll" style={$root}>
-      <Text
-        text="Manage your cookbook invitations."
-        style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
-      />
-
+    <Screen preset="fixed" style={$root}>
       <FlatList<Invitation>
+        ListHeaderComponent={
+          <Text
+            text="Manage your cookbook invitations."
+            style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
+          />
+        }
         contentContainerStyle={$listContentContainer}
         data={invitationStore.invitations.items.slice()}
         keyExtractor={(item) => item.id.toString()}
