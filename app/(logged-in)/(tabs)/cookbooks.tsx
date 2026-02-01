@@ -210,7 +210,7 @@ const CookbookCard = observer(function CookbookCard({
   )
 
   const handlePressCard = () => {
-    router.push(`./cookbook/${cookbook.id}`)
+    router.push(`../cookbook/${cookbook.id}`)
   }
 
   const ButtonLeftAccessory: ComponentType<ButtonAccessoryProps> = useMemo(

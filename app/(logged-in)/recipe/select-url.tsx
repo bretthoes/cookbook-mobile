@@ -33,7 +33,7 @@ export default observer(function RecipeUrlScreen() {
 
   const validationError = useMemo(
     () => (isSubmitted ? getValidationError(url) : ""),
-    [isSubmitted, url],
+    [isSubmitted, url, getValidationError],
   )
 
   useEffect(() => {

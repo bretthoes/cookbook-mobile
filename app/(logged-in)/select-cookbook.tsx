@@ -177,11 +177,6 @@ const $root: ThemedStyle<ViewStyle> = () => ({
   flex: 1,
 })
 
-const $title: ThemedStyle<ViewStyle> = (theme) => ({
-  marginBottom: theme.spacing.lg,
-  paddingHorizontal: theme.spacing.lg,
-})
-
 const $listContainer: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.backgroundDim,
   marginHorizontal: theme.spacing.lg,

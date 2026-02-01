@@ -44,7 +44,7 @@ export default observer(function Login(_props) {
       setAuthPassword("")
       setAuthEmail("")
     }
-  }, [setAuthEmail])
+  }, [setAuthEmail, setResult])
 
   // Add effect to handle authentication state changes
   useEffect(() => {

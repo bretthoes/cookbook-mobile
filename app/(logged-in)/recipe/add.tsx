@@ -114,7 +114,7 @@ export default observer(function AddRecipeScreen() {
       }
 
       try {
-        var success = await create(newRecipe)
+        const success = await create(newRecipe)
         if (success) {
           router.replace(`../../cookbook/${currentCookbook.id}`)
         } else {

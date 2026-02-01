@@ -40,7 +40,7 @@ export default observer(function Register() {
       setResult("")
       setPassword("")
     }
-  }, [setAuthEmail])
+  }, [setAuthEmail, setResult])
 
   const error = isSubmitted ? validationError : ""
   const passwordError = isSubmitted ? passwordValidationError : ""

@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default observer(function Layout() {
   const { bottom } = useSafeAreaInsets()
-  const [useFloatingTabBar, setUseFloatingTabBar] = useState(true)
+  const [useFloatingTabBar, _] = useState(true)
 
   //useEffect(() => {
   //  AsyncStorage.getItem("useFloatingTabBar").then((value) => {

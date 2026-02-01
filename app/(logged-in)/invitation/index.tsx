@@ -67,7 +67,7 @@ export default observer(function Invitations() {
     ;(async function reload() {
       await invitationStore.fetch()
     })()
-  }, [invitationStore.fetch])
+  }, [invitationStore])
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
@@ -176,6 +176,10 @@ const InvitationCard = observer(function InvitationCard({
     return getCookbookImage(invitation.id)
   }, [invitation.cookbookImage, invitation.id])
 
+  const handlePressFavorite = () => {
+    onPressFavorite()
+  }
+
   /**
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.
    * @see https://reactnative.dev/docs/accessibility#accessibilityactions
@@ -204,12 +208,8 @@ const InvitationCard = observer(function InvitationCard({
           },
         },
       }),
-    [invitation, isFavorite],
+    [invitation, isFavorite, handlePressFavorite],
   )
-
-  const handlePressFavorite = () => {
-    onPressFavorite()
-  }
 
   // Grey checkmark
   const animatedAcceptButtonStyles = useAnimatedStyle(() => {

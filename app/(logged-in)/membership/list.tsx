@@ -17,7 +17,7 @@ import React, { useEffect, useState } from "react"
 import { ActivityIndicator, FlatList, ImageStyle, View, ViewStyle } from "react-native"
 
 export default observer(function Cookbook() {
-  const { cookbookStore, recipeStore, membershipStore } = useStores()
+  const { cookbookStore, membershipStore } = useStores()
   const id = cookbookStore.selected?.id ?? 0
   const { themed } = useAppTheme()
 
@@ -46,7 +46,7 @@ export default observer(function Cookbook() {
     setIsLoading(true)
     fetchData()
     setIsLoading(false)
-  }, [membershipStore])
+  }, [membershipStore, id])
 
   useEffect(() => {
     setIsLoading(true)
@@ -55,7 +55,7 @@ export default observer(function Cookbook() {
     }
     reload()
     setIsLoading(false)
-  }, [membershipStore.fetch])
+  }, [membershipStore.fetch, id])
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
