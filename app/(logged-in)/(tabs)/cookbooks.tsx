@@ -323,11 +323,6 @@ const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
   alignSelf: "flex-start",
   resizeMode: "cover",
   borderRadius: 8,
-  shadowColor: theme.colors.text,
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-  elevation: 3,
 })
 
 const $toggle: ViewStyle = {

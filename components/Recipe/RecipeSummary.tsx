@@ -44,6 +44,11 @@ export interface RecipeSummaryProps {
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
   const hasImages = !!recipe?.images[0]
+  const hasTimeOrServings =
+    !!recipe.servings ||
+    !!recipe.preparationTimeInMinutes ||
+    !!recipe.bakingTimeInMinutes ||
+    !!recipe.cookingTimeInMinutes
 
   const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
@@ -65,35 +70,37 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
         <Text preset="subheading" weight="light" text={recipe.author ?? ""} />
       </View>
 
-      <View style={$themedDetailsContainer}>
-        {!!recipe.servings && (
-          <View>
-            <Text weight="light" tx={"recipeDetailsScreen:servings"} />
-            <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
-          </View>
-        )}
+      {hasTimeOrServings && (
+        <View style={$themedDetailsContainer}>
+          {!!recipe.servings && (
+            <View>
+              <Text weight="light" tx={"recipeDetailsScreen:servings"} />
+              <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
+            </View>
+          )}
 
-        {!!recipe.bakingTimeInMinutes && (
-          <View>
-            <Text weight="light" tx={"recipeDetailsScreen:bake"} />
-            <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
-          </View>
-        )}
+          {!!recipe.bakingTimeInMinutes && (
+            <View>
+              <Text weight="light" tx={"recipeDetailsScreen:bake"} />
+              <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
+            </View>
+          )}
 
-        {!!recipe.preparationTimeInMinutes && (
-          <View>
-            <Text weight="light" tx={"recipeDetailsScreen:prep"} />
-            <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
-          </View>
-        )}
+          {!!recipe.preparationTimeInMinutes && (
+            <View>
+              <Text weight="light" tx={"recipeDetailsScreen:prep"} />
+              <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
+            </View>
+          )}
 
-        {!!recipe.cookingTimeInMinutes && (
-          <View>
-            <Text weight="light" tx={"recipeDetailsScreen:cook"} />
-            <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
-          </View>
-        )}
-      </View>
+          {!!recipe.cookingTimeInMinutes && (
+            <View>
+              <Text weight="light" tx={"recipeDetailsScreen:cook"} />
+              <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
+            </View>
+          )}
+        </View>
+      )}
 
       {!!recipe.summary && (
         <View style={$themedDescriptionContainer}>
