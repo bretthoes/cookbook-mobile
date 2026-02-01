@@ -1,4 +1,4 @@
-import { Button, } from "@/components/Button"
+import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useStores } from "@/models/helpers/useStores"

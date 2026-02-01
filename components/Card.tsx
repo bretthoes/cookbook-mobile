@@ -2,13 +2,13 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { ComponentType, Fragment, ReactElement } from "react"
 import {
-    StyleProp,
-    TextStyle,
-    TouchableOpacity,
-    TouchableOpacityProps,
-    View,
-    ViewProps,
-    ViewStyle,
+  StyleProp,
+  TextStyle,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+  ViewProps,
+  ViewStyle,
 } from "react-native"
 import { $styles } from "../theme"
 import { Text, TextProps } from "./Text"

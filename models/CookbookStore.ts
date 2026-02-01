@@ -1,11 +1,6 @@
 import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 import { api } from "../services/api"
-import {
-  Cookbook,
-  CookbookModel,
-  CookbookSnapshotIn,
-  CookbookToAddSnapshotIn,
-} from "./Cookbook"
+import { Cookbook, CookbookModel, CookbookSnapshotIn, CookbookToAddSnapshotIn } from "./Cookbook"
 import { withSetPropAction } from "./helpers/withSetPropAction"
 
 export const CookbookStoreModel = types

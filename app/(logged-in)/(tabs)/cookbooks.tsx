@@ -1,7 +1,4 @@
-import {
-  Button,
-  ButtonAccessoryProps
-} from "@/components/Button"
+import { Button, ButtonAccessoryProps } from "@/components/Button"
 import { Card } from "@/components/Card"
 import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
@@ -30,7 +27,7 @@ import {
   StyleSheet,
   TextStyle,
   View,
-  ViewStyle
+  ViewStyle,
 } from "react-native"
 import Animated, {
   Extrapolate,

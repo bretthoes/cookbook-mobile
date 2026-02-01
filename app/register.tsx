@@ -53,7 +53,7 @@ export default observer(function Register() {
     const success = await register(password)
     if (success) {
       setPassword("")
-      router.push('/set-display-name')
+      router.push("/set-display-name")
     }
     setIsSubmitted(false)
   }

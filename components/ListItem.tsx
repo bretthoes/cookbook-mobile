@@ -2,12 +2,12 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { forwardRef, ReactElement } from "react"
 import {
-    StyleProp,
-    TextStyle,
-    TouchableOpacity,
-    TouchableOpacityProps,
-    View,
-    ViewStyle,
+  StyleProp,
+  TextStyle,
+  TouchableOpacity,
+  TouchableOpacityProps,
+  View,
+  ViewStyle,
 } from "react-native"
 import { $styles } from "../theme"
 import { Icon, IconTypes } from "./Icon"

@@ -24,7 +24,7 @@ import {
   TextStyle,
   UIManager,
   View,
-  ViewStyle
+  ViewStyle,
 } from "react-native"
 import Animated, {
   Extrapolate,

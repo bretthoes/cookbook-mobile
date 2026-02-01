@@ -1,13 +1,13 @@
 import { ComponentType, forwardRef, Ref, useImperativeHandle, useRef } from "react"
 import {
-    ImageStyle,
-    StyleProp,
-    TextInput,
-    TextInputProps,
-    TextStyle,
-    TouchableOpacity,
-    View,
-    ViewStyle,
+  ImageStyle,
+  StyleProp,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
 } from "react-native"
 
 import { isRTL } from "@/i18n"

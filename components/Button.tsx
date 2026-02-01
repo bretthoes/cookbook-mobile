@@ -2,12 +2,12 @@ import type { ThemedStyle, ThemedStyleArray } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { ComponentType } from "react"
 import {
-    Pressable,
-    PressableProps,
-    PressableStateCallbackType,
-    StyleProp,
-    TextStyle,
-    ViewStyle,
+  Pressable,
+  PressableProps,
+  PressableStateCallbackType,
+  StyleProp,
+  TextStyle,
+  ViewStyle,
 } from "react-native"
 import { $styles } from "../theme"
 import { Text, TextProps } from "./Text"

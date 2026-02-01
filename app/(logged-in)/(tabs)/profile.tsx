@@ -17,13 +17,7 @@ import * as Application from "expo-application"
 import { useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
-import {
-  LayoutAnimation,
-  Linking,
-  TextStyle,
-  View,
-  ViewStyle
-} from "react-native"
+import { LayoutAnimation, Linking, TextStyle, View, ViewStyle } from "react-native"
 
 // TODO i18n
 function openLinkInBrowser(url: string) {
@@ -169,7 +163,7 @@ export default observer(function ProfileScreen() {
               <Icon icon="user" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
-          onPress={() => router.push('./set-display-name')}
+          onPress={() => router.push("./set-display-name")}
         />
       </UseCase>
       <View style={$buttonContainer}>

@@ -63,11 +63,7 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
           text={selectedCookbook ? selectedCookbook.title : PLACEHOLDER}
           style={$themedDropdownText}
         />
-        <Icon
-          icon={isDropdownVisible ? "caretUp" : "caretDown"}
-          size={20}
-          color={colors.textDim}
-        />
+        <Icon icon={isDropdownVisible ? "caretUp" : "caretDown"} size={20} color={colors.textDim} />
       </TouchableOpacity>
 
       {error && <Text text={error} preset="formHelper" style={$themedErrorText} />}

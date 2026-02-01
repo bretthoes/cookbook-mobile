@@ -7,11 +7,7 @@
  */
 import Config from "@/config"
 import { AuthResultModel, AuthResultSnapshotIn } from "@/models/AuthResult"
-import {
-  CookbookSnapshotIn,
-  CookbookSnapshotOut,
-  CookbookToAddSnapshotIn,
-} from "@/models/Cookbook"
+import { CookbookSnapshotIn, CookbookSnapshotOut, CookbookToAddSnapshotIn } from "@/models/Cookbook"
 import {
   CookbookListSnapshotIn,
   InvitationListSnapshotIn,

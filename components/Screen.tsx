@@ -3,15 +3,15 @@ import { useScrollToTop } from "@react-navigation/native"
 import { StatusBar, StatusBarProps, StatusBarStyle } from "expo-status-bar"
 import { ReactNode, useRef, useState } from "react"
 import {
-    KeyboardAvoidingView,
-    KeyboardAvoidingViewProps,
-    LayoutChangeEvent,
-    Platform,
-    ScrollView,
-    ScrollViewProps,
-    StyleProp,
-    View,
-    ViewStyle,
+  KeyboardAvoidingView,
+  KeyboardAvoidingViewProps,
+  LayoutChangeEvent,
+  Platform,
+  ScrollView,
+  ScrollViewProps,
+  StyleProp,
+  View,
+  ViewStyle,
 } from "react-native"
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller"
 import { $styles } from "../theme"

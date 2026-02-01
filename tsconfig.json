@@ -11,26 +11,13 @@
     "moduleResolution": "bundler",
     "sourceMap": true,
     "target": "esnext",
-    "lib": [
-      "esnext",
-      "dom"
-    ],
+    "lib": ["esnext", "dom"],
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "test/**/*"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+  "exclude": ["node_modules", "test/**/*"]
 }

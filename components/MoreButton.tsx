@@ -16,11 +16,7 @@ export function MoreButton({ onPress, style, top = spacing.xl }: MoreButtonProps
 
   return (
     <TouchableOpacity style={[$moreButton, { top }, style]} onPress={onPress}>
-      <Icon
-        icon="more"
-        size={24}
-        color={isDark ? colors.background : colors.text}
-      />
+      <Icon icon="more" size={24} color={isDark ? colors.background : colors.text} />
     </TouchableOpacity>
   )
 }

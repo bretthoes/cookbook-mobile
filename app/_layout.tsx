@@ -48,7 +48,7 @@ export default function Root() {
 
   return (
     <GestureHandlerRootView style={$root}>
-       <ThemeProvider>
+      <ThemeProvider>
         <ActionSheetProvider>
           <KeyboardProvider>
             <Slot />
