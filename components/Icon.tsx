@@ -110,7 +110,6 @@ export function Icon(props: IconProps) {
 }
 
 export const iconRegistry = {
-  addRecipe: require("../assets/icons/addRecipe.png"),
   back: require("../assets/icons/back.png"),
   bell: require("../assets/icons/bell.png"),
   camera: require("../assets/icons/camera.png"),
@@ -120,14 +119,11 @@ export const iconRegistry = {
   caretDown: require("../assets/icons/caretDown.png"),
   check: require("../assets/icons/check.png"),
   copy: require("../assets/icons/copy.png"),
-  cookbook: require("../assets/icons/cookbook.png"),
   cookbooks: require("../assets/icons/cookbooks.png"),
   create: require("../assets/icons/create.png"),
   darkMode: require("../assets/icons/darkMode.png"),
   heart: require("../assets/icons/heart.png"),
   hidden: require("../assets/icons/hidden.png"),
-  invite: require("../assets/icons/invite.png"),
-  ladybug: require("../assets/icons/ladybug.png"),
   languages: require("../assets/icons/languages.png"),
   link: require("../assets/icons/link.png"),
   lock: require("../assets/icons/lock.png"),

@@ -7,7 +7,11 @@ import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
-import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Image, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+
+const cookbook = require("../../../assets/images/cookbook.png")
+const addRecipe = require("../../../assets/images/addRecipe.png")
+const invite = require("../../../assets/images/invite.png")
 
 export default observer(function CreateScreen() {
   const { themeContext, themed } = useAppTheme()
@@ -32,7 +36,7 @@ export default observer(function CreateScreen() {
           onPress={() => router.push("../cookbook/add")}
         >
           <View style={$themedIconContainer}>
-            <Icon icon="cookbook" size={50} />
+            <Image source={cookbook} style={{ width: 50, height: 50 }} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Cookbook" style={$themedItemTitle} />
@@ -50,7 +54,7 @@ export default observer(function CreateScreen() {
           onPress={() => router.push("../../recipe/add-options")}
         >
           <View style={$themedIconContainer}>
-            <Icon icon="addRecipe" size={50} />
+            <Image source={addRecipe} style={{ width: 50, height: 50 }} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="A New Recipe" style={$themedItemTitle} />
@@ -77,7 +81,7 @@ export default observer(function CreateScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Icon icon="invite" size={50} />
+            <Image source={invite} style={{ width: 50, height: 50 }} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Invitation to a Friend" style={$themedItemTitle} />
