@@ -71,9 +71,9 @@ export default observer(function CreateScreen() {
           style={$themedItemContainer}
           onPress={() =>
             router.push({
-              pathname: "/(logged-in)/(tabs)/select-cookbook",
+              pathname: "../select-cookbook",
               params: {
-                nextRoute: "/(logged-in)/(tabs)/invitation/add",
+                nextRoute: "../invitation/add",
                 action:
                   "Select the cookbook where you would like to send an invitation to a friend.",
               },
