@@ -1,12 +1,15 @@
-import { CookbookDropdown } from "@/components/CookbookDropdown"
 import { RecipeForm, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
-import { Cookbook } from "@/models/Cookbook"
+import { Text } from "@/components/Text"
 import { RecipeToAddSnapshotIn } from "@/models/Recipe"
 import { useStores } from "@/models/helpers/useStores"
+import type { ThemedStyle } from "@/theme"
+import { useAppTheme } from "@/theme/context"
+import { getCookbookImage } from "@/utils/cookbookImages"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo } from "react"
+import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export default observer(function AddRecipeScreen() {
   // Pull in one of our MST stores
@@ -14,30 +17,32 @@ export default observer(function AddRecipeScreen() {
     recipeStore: { recipeToAdd, clearRecipeToAdd, create },
     cookbookStore,
   } = useStores()
-  const [selectedCookbook, setSelectedCookbook] = useState<Cookbook | null>(null)
-  const selectedCookbookRef = useRef<Cookbook | null>(null)
-  const [_, setIsLoadingCookbooks] = useState(false)
-  const [showCookbookError, setShowCookbookError] = useState(false)
+  const { themed } = useAppTheme()
 
-  // Keep ref in sync with state
-  useEffect(() => {
-    selectedCookbookRef.current = selectedCookbook
+  // The selected cookbook comes from cookbookStore (set by select-cookbook screen)
+  const selectedCookbook = cookbookStore.selected
+
+  // Memoize themed styles
+  const $themedCookbookLabel = useMemo(() => themed($cookbookLabel), [themed])
+  const $themedCookbookHeader = useMemo(() => themed($cookbookHeader), [themed])
+  const $themedCookbookImage = useMemo(() => themed($cookbookImage), [themed])
+  const $themedCookbookTitle = useMemo(() => themed($cookbookTitle), [themed])
+
+  // Get cookbook image source
+  const cookbookImageSource = useMemo(() => {
+    if (!selectedCookbook) return null
+    if (selectedCookbook.image) {
+      return { uri: selectedCookbook.image }
+    }
+    return getCookbookImage(selectedCookbook.id)
   }, [selectedCookbook])
 
   useEffect(() => {
-    // Fetch cookbooks on mount
-    const fetchCookbooks = async () => {
-      setIsLoadingCookbooks(true)
-      await cookbookStore.fetch()
-      setIsLoadingCookbooks(false)
-    }
-    fetchCookbooks()
-
     // Return a "cleanup" function that React will run when the component unmounts
     return () => {
       clearRecipeToAdd()
     }
-  }, [clearRecipeToAdd, cookbookStore])
+  }, [clearRecipeToAdd])
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
     if (!recipeToAdd) return null
@@ -64,12 +69,10 @@ export default observer(function AddRecipeScreen() {
 
   const onPressSend = useCallback(
     async (formData: RecipeFormInputs) => {
-      const currentCookbook = selectedCookbookRef.current
-      if (!currentCookbook) {
-        setShowCookbookError(true)
+      if (!selectedCookbook) {
+        alert("No cookbook selected")
         return
       }
-      setShowCookbookError(false)
 
       // Filter out empty directions and ingredients, then map to recipe format
       const validDirections = formData.directions
@@ -100,7 +103,7 @@ export default observer(function AddRecipeScreen() {
 
       const newRecipe: RecipeToAddSnapshotIn = {
         title: formData.title.trim(),
-        cookbookId: currentCookbook.id,
+        cookbookId: selectedCookbook.id,
         summary: formData.summary?.trim() || null,
         thumbnail: null, // TODO handle thumbnail logic
         videoPath: null, // TODO handle videoPath logic
@@ -116,7 +119,7 @@ export default observer(function AddRecipeScreen() {
       try {
         const success = await create(newRecipe)
         if (success) {
-          router.replace(`../../cookbook/${currentCookbook.id}`)
+          router.replace(`../../cookbook/${selectedCookbook.id}`)
         } else {
           alert("Failed to create recipe")
         }
@@ -131,7 +134,7 @@ export default observer(function AddRecipeScreen() {
         alert("Failed to create recipe")
       }
     },
-    [create],
+    [create, selectedCookbook],
   )
 
   const onError = (errors: any) => {
@@ -140,16 +143,15 @@ export default observer(function AddRecipeScreen() {
 
   return (
     <Screen preset="scroll">
-      <CookbookDropdown
-        cookbooks={cookbookStore.cookbooks.slice()}
-        selectedCookbook={selectedCookbook}
-        onSelect={(cookbook) => {
-          setSelectedCookbook(cookbook)
-          setShowCookbookError(false)
-        }}
-        error={showCookbookError ? "Please select a cookbook" : undefined}
-      />
-
+      {selectedCookbook && cookbookImageSource && (
+        <>
+          <Text text="Adding recipe to:" style={$themedCookbookLabel} />
+          <View style={$themedCookbookHeader}>
+            <Image source={cookbookImageSource} style={$themedCookbookImage} />
+            <Text preset="bold" text={selectedCookbook.title} style={$themedCookbookTitle} />
+          </View>
+        </>
+      )}
       <RecipeForm
         onSubmit={onPressSend}
         formValues={mapRecipeToFormInputs() ?? undefined}
@@ -157,4 +159,32 @@ export default observer(function AddRecipeScreen() {
       />
     </Screen>
   )
+})
+
+const $cookbookLabel: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  marginHorizontal: theme.spacing.md,
+  marginBottom: theme.spacing.xs,
+})
+
+const $cookbookHeader: ThemedStyle<ViewStyle> = (theme) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  paddingHorizontal: theme.spacing.md,
+  paddingVertical: theme.spacing.sm,
+  backgroundColor: theme.colors.backgroundDim,
+  marginHorizontal: theme.spacing.md,
+  marginBottom: theme.spacing.xs,
+  borderRadius: theme.spacing.sm,
+})
+
+const $cookbookImage: ThemedStyle<ImageStyle> = () => ({
+  width: 64,
+  height: 64,
+  borderRadius: 32,
+})
+
+const $cookbookTitle: ThemedStyle<TextStyle> = (theme) => ({
+  marginLeft: theme.spacing.sm,
+  flex: 1,
 })

@@ -51,7 +51,15 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={$themedItemContainer}
-          onPress={() => router.push("../../recipe/add-options")}
+          onPress={() =>
+            router.push({
+              pathname: "../select-cookbook",
+              params: {
+                nextRoute: "../../recipe/add-options",
+                action: "Select the cookbook where you would like to add a new recipe.",
+              },
+            } as any)
+          }
         >
           <View style={$themedIconContainer}>
             <Image source={addRecipe} style={{ width: 50, height: 50 }} />
