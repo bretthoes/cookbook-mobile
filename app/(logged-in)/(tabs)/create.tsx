@@ -47,7 +47,7 @@ export default observer(function CreateScreen() {
 
         <TouchableOpacity
           style={$themedItemContainer}
-          onPress={() => router.push("./recipe/add-options")}
+          onPress={() => router.push("../../recipe/add-options")}
         >
           <View style={$themedIconContainer}>
             <Icon icon="addRecipe" size={50} />

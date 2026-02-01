@@ -50,7 +50,7 @@ export default observer(function Cookbook() {
 
   const handlePressEdit = () => {
     if (!isAuthor) return
-    router.push(`./cookbook/${id}/edit`)
+    router.push(`./${id}/edit`)
   }
 
   const handlePressLeave = async () => {
