@@ -76,7 +76,7 @@ export default observer(function EmailVerification() {
         style={{ paddingHorizontal: spacing.md }}
       />
       <UseCase>
-        <Text>We've sent a confirmation email to</Text>
+        <Text>We&apos;ve sent a confirmation email to</Text>
         <Text weight="bold">{authEmail}</Text>
         <Divider />
         <Text>Please check your inbox, and spam folder, and click the verification link.</Text>
@@ -90,8 +90,8 @@ export default observer(function EmailVerification() {
       <TouchableOpacity onPress={handleResendEmail} disabled={isCooldown} style={$resendContainer}>
         <Text style={[$resendText, isCooldown && { color: colors.border }]}>
           {isCooldown
-            ? `Didn't get the email? Click here to resend (${cooldownTime}s)`
-            : "Didn't get the email? Click here to resend"}
+            ? `Didn&apos;t get the email? Click here to resend (${cooldownTime}s)`
+            : "Didn&apos;t get the email? Click here to resend"}
         </Text>
       </TouchableOpacity>
     </Screen>

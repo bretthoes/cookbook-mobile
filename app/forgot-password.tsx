@@ -29,7 +29,7 @@ export default observer(function ForgotPassword() {
   return (
     <Screen style={$root} preset="auto" safeAreaEdges={["top", "bottom"]}>
       <Text text="Enter your email" preset="heading" />
-      <Text>We'll send a message with instructions to reset your password.</Text>
+      <Text>We&apos;ll send a message with instructions to reset your password.</Text>
 
       <TextField
         value={authEmail}
