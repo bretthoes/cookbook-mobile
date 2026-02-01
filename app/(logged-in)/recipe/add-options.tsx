@@ -8,7 +8,10 @@ import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
-import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Image, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+
+const link = require("../../../assets/images/link.png")
+const camera = require("../../../assets/images/camera.png")
 
 export default observer(function AddRecipeOptionsScreen() {
   const { themeContext, themed } = useAppTheme()
@@ -57,7 +60,7 @@ export default observer(function AddRecipeOptionsScreen() {
           onPress={() => router.replace(`../recipe/select-url`)}
         >
           <View style={$themedIconContainer}>
-            <Icon icon="link" size={32} color={colors.tint} />
+            <Image source={link} style={{ width: 50, height: 50 }} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Add Recipe from URL" style={$themedItemTitle} />
@@ -84,7 +87,7 @@ export default observer(function AddRecipeOptionsScreen() {
           }
         >
           <View style={$themedIconContainer}>
-            <Icon icon="camera" size={32} color={colors.tint} />
+            <Image source={camera} style={{ width: 50, height: 50 }} />
           </View>
           <View style={$themedTextContainer}>
             <Text preset="subheading" text="Add Recipe from Photo" style={$themedItemTitle} />
