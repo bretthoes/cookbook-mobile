@@ -18,7 +18,7 @@ import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
-import { ActivityIndicator, FlatList, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native"
 
 export interface RecipeFormInputs {
   title: string
@@ -286,127 +286,101 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
         {/* Ingredients Section */}
         <View style={{ minHeight: spacing.xxs }}>
-          <FlatList
-            ListHeaderComponent={
-              <View>
-                <Text text="Ingredients" preset="bold" />
-                {errors.ingredients?.message && (
-                  <Text text={errors.ingredients.message} style={{ color: "red" }} />
-                )}
-                <Divider size={spacing.md} />
-              </View>
-            }
-            ListFooterComponent={
-              <View>
-                <Divider size={spacing.md} />
-                <Button
-                  text="Add another ingredient"
-                  onPress={() => addIngredient({ name: "", optional: false })}
-                  style={$themedButtonHeightOverride}
-                  disabled={ingredientFields.length >= 40}
-                />
-                <Divider size={spacing.xl} />
-              </View>
-            }
-            data={ingredientFields}
-            keyExtractor={(item, index) => item.id || String(index)}
-            renderItem={({ index }) => {
-              const handleRemove = () => removeIngredient(index)
-              return (
-                <View>
-                  <View style={$themedDirectionItemContainer}>
-                    <Text text={"-"} style={$themedDirectionIndex} />
-                    <Controller
-                      control={control}
-                      name={`ingredients.${index}.name`}
-                      render={({ field }) => (
-                        <TextField
-                          value={field.value}
-                          onChangeText={field.onChange}
-                          placeholder="Add ingredient here..."
-                          containerStyle={$themedTextFieldContainer}
-                          status="error"
-                          helper={errors.ingredients?.[index]?.name?.message ?? ""}
-                          maxLength={255}
-                          RightAccessory={() => <PressableIcon icon="x" onPress={handleRemove} />}
-                        />
+          <Text text="Ingredients" preset="bold" />
+          {errors.ingredients?.message && (
+            <Text text={errors.ingredients.message} style={{ color: "red" }} />
+          )}
+          <Divider size={spacing.md} />
+          {ingredientFields.map((item, index) => (
+            <View key={item.id || String(index)}>
+              {index > 0 && <Divider size={spacing.sm} />}
+              <View style={$themedDirectionItemContainer}>
+                <Text text={"-"} style={$themedDirectionIndex} />
+                <Controller
+                  control={control}
+                  name={`ingredients.${index}.name`}
+                  render={({ field }) => (
+                    <TextField
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      placeholder="Add ingredient here..."
+                      containerStyle={$themedTextFieldContainer}
+                      status="error"
+                      helper={errors.ingredients?.[index]?.name?.message ?? ""}
+                      maxLength={255}
+                      RightAccessory={() => (
+                        <PressableIcon icon="x" onPress={() => removeIngredient(index)} />
                       )}
                     />
-                  </View>
-                  {errors.ingredients?.[index]?.name?.message && (
-                    <Text
-                      text={errors.ingredients[index].name.message}
-                      style={[$errorText, { marginLeft: spacing.xl }]}
-                    />
                   )}
-                </View>
-              )
-            }}
-            ItemSeparatorComponent={() => <Divider size={spacing.sm} />}
+                />
+              </View>
+              {errors.ingredients?.[index]?.name?.message && (
+                <Text
+                  text={errors.ingredients[index].name.message}
+                  style={[$errorText, { marginLeft: spacing.xl }]}
+                />
+              )}
+            </View>
+          ))}
+          <Divider size={spacing.md} />
+          <Button
+            text="Add another ingredient"
+            onPress={() => addIngredient({ name: "", optional: false })}
+            style={$themedButtonHeightOverride}
+            disabled={ingredientFields.length >= 40}
           />
+          <Divider size={spacing.xl} />
         </View>
 
         {/* Directions Section */}
         <View style={{ minHeight: spacing.xxs }}>
-          <FlatList
-            ListHeaderComponent={
-              <View>
-                <Text text="Directions" preset="bold" />
-                {errors.directions?.message && (
-                  <Text text={errors.directions.message} style={{ color: "red" }} />
-                )}
-                <Divider size={spacing.md} />
-              </View>
-            }
-            ListFooterComponent={
-              <View>
-                <Divider size={spacing.md} />
-                <Button
-                  text="Add another direction"
-                  onPress={() => addDirection({ text: "", image: "" })}
-                  style={$themedButtonHeightOverride}
-                  disabled={directionFields.length >= 20}
-                />
-                <Divider size={spacing.xl} />
-              </View>
-            }
-            data={directionFields}
-            keyExtractor={(item, index) => item.id || String(index)}
-            renderItem={({ index }) => {
-              const handleRemove = () => removeDirection(index)
-              return (
-                <View>
-                  <View style={$themedDirectionItemContainer}>
-                    <Text text={`${index + 1}.`} style={$themedDirectionIndex} />
-                    <Controller
-                      control={control}
-                      name={`directions.${index}.text`}
-                      render={({ field }) => (
-                        <TextField
-                          value={field.value}
-                          onChangeText={field.onChange}
-                          placeholder="Add direction here..."
-                          containerStyle={$themedTextFieldContainer}
-                          helper={errors.directions?.[index]?.text?.message ?? ""}
-                          status="error"
-                          maxLength={2048}
-                          multiline
-                          RightAccessory={() => <PressableIcon icon="x" onPress={handleRemove} />}
-                        />
+          <Text text="Directions" preset="bold" />
+          {errors.directions?.message && (
+            <Text text={errors.directions.message} style={{ color: "red" }} />
+          )}
+          <Divider size={spacing.md} />
+          {directionFields.map((item, index) => (
+            <View key={item.id || String(index)}>
+              {index > 0 && <Divider size={spacing.sm} />}
+              <View style={$themedDirectionItemContainer}>
+                <Text text={`${index + 1}.`} style={$themedDirectionIndex} />
+                <Controller
+                  control={control}
+                  name={`directions.${index}.text`}
+                  render={({ field }) => (
+                    <TextField
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      placeholder="Add direction here..."
+                      containerStyle={$themedTextFieldContainer}
+                      helper={errors.directions?.[index]?.text?.message ?? ""}
+                      status="error"
+                      maxLength={2048}
+                      multiline
+                      RightAccessory={() => (
+                        <PressableIcon icon="x" onPress={() => removeDirection(index)} />
                       )}
                     />
-                  </View>
-                  {errors.directions?.[index]?.text?.message && (
-                    <Text
-                      text={errors.directions[index].text.message}
-                      style={[$errorText, { marginLeft: spacing.xl }]}
-                    />
                   )}
-                </View>
-              )
-            }}
-            ItemSeparatorComponent={() => <Divider size={spacing.sm} />}
+                />
+              </View>
+              {errors.directions?.[index]?.text?.message && (
+                <Text
+                  text={errors.directions[index].text.message}
+                  style={[$errorText, { marginLeft: spacing.xl }]}
+                />
+              )}
+            </View>
+          ))}
+          <Divider size={spacing.md} />
+          <Button
+            text="Add another direction"
+            onPress={() => addDirection({ text: "", image: "" })}
+            style={$themedButtonHeightOverride}
+            disabled={directionFields.length >= 20}
           />
+          <Divider size={spacing.xl} />
         </View>
 
         {isLoading && <ActivityIndicator />}
