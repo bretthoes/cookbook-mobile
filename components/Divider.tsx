@@ -1,4 +1,3 @@
-/* eslint-disable  react-native/no-inline-styles */
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme/types"
 import React, { useMemo } from "react"

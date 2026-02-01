@@ -1,5 +1,4 @@
 import { ListItem } from "@/components/ListItem"
-import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
 import React from "react"
 
@@ -14,7 +13,6 @@ export const RecipeListItem = observer(function RecipeListItem({
   lastIndex: number
   onPress: () => void
 }) {
-  const { themed } = useAppTheme()
 
   // No styles to theme in this component, but we're adding the hook for consistency
   // and in case styles are added in the future

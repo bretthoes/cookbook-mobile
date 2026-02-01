@@ -142,15 +142,6 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     }
   }
 
-  const handleFormSubmit = async (data: RecipeFormInputs) => {
-    setIsLoading(true)
-    try {
-      await onSubmit(data)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   return (
     <View>
       <UseCase

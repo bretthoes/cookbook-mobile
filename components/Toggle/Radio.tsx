@@ -11,7 +11,7 @@ export interface RadioToggleProps extends Omit<ToggleProps<RadioInputProps>, "To
   inputDetailStyle?: ViewStyle
 }
 
-interface RadioInputProps extends BaseToggleInputProps<RadioToggleProps> {}
+type RadioInputProps = BaseToggleInputProps<RadioToggleProps>
 
 /**
  * @param {RadioToggleProps} props - The props for the `Radio` component.

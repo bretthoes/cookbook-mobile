@@ -57,7 +57,7 @@ export default observer(function SelectCookbookScreen() {
     setIsLoading(false)
   }, [cookbookStore])
 
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [_, setIsLoading] = React.useState(false)
 
   const handleAddRecipeFromCamera = async () => {
     // Request permission for accessing the media library
@@ -174,7 +174,7 @@ export default observer(function SelectCookbookScreen() {
   )
 })
 
-const $root: ThemedStyle<ViewStyle> = (theme) => ({
+const $root: ThemedStyle<ViewStyle> = () => ({
   flex: 1,
 })
 
@@ -219,7 +219,7 @@ const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   overflow: "hidden",
 })
 
-const $cookbookImage: ThemedStyle<ImageStyle> = (theme) => ({
+const $cookbookImage: ThemedStyle<ImageStyle> = () => ({
   width: 48,
   height: 48,
   borderRadius: 24,
