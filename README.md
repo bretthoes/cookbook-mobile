@@ -1,27 +1,50 @@
-# Cookbook-Mobile
+# Welcome to your Expo app 👋
 
-Mobile app built using React Native that allows users to create and join shared cookbooks, as well as upload and manage recipes.
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Run Locally
+## Get started
 
-To run the app locally, follow these steps:
+1. Install dependencies
 
-1. Ensure you have [Expo](https://expo.dev/) installed.
-2. Install [Android Studio](https://developer.android.com/studio) and set it up for React Native development.
-3. Clone this repository and navigate to its root directory.
-4. Update the development configuration file (`\app\config\config.dev.ts`). Set the `API_URL` value to the URL of a running instance of [SharedCookbook API](https://github.com/bretthoes/SharedCookbook).
-5. Install dependencies by running:
+   ```bash
+   npm install
+   ```
+
+2. Start the app
+
+   ```bash
+   npx expo start
+   ```
+
+In the output, you'll find options to open the app in a
+
+- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
+- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
+- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
+- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+
+You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+
+## Get a fresh project
+
+When you're ready, run:
 
 ```bash
-pnpm install
+npm run reset-project
 ```
 
-6. Run the app on Android using:
+This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
-```bash
-pnpm android
-```
+## Learn more
 
-## Acknowledgement
+To learn more about developing your project with Expo, look at the following resources:
 
-This project is based on the Ignite boilerplate from the [Ignite Boilerplate Repository](https://github.com/infinitered/ignite).
+- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
+- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+
+## Join the community
+
+Join our community of developers creating universal apps.
+
+- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
+- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.

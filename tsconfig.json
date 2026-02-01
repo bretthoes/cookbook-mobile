@@ -1,15 +1,14 @@
 {
+  "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
-    "jsx": "react-native",
-    "module": "es2015",
-    "moduleResolution": "node",
     "strict": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
+    "jsx": "react-native",
+    "customConditions": ["react-native"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "sourceMap": true,
     "target": "esnext",
     "lib": [
@@ -18,23 +17,10 @@
     ],
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "baseUrl": ".",
     "paths": {
-      "src/*": [
-        "./src/*"
-      ],
-      "assets/*": [
-        "./assets/*"
+      "@/*": [
+        "./*"
       ]
-    },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./types"
-    ]
-  },
-  "ts-node": {
-    "compilerOptions": {
-      "module": "commonjs"
     }
   },
   "include": [
@@ -46,6 +32,5 @@
   "exclude": [
     "node_modules",
     "test/**/*"
-  ],
-  "extends": "expo/tsconfig.base"
+  ]
 }
