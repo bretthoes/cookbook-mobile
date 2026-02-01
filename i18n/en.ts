@@ -1,5 +1,3 @@
-import demoEn from "./demo-en"
-
 const en = {
   common: {
     ok: "OK!",
@@ -265,8 +263,6 @@ const en = {
       "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab.",
     note: "Note: You may need to log out and back in for the changes to take effect.",
   },
-
-  ...demoEn,
 }
 
 export default en

@@ -1,4 +1,3 @@
-import demoFr from "./demo-fr"
 import { Translations } from "./en"
 
 const fr: Translations = {
@@ -36,20 +35,18 @@ const fr: Translations = {
   },
   loginScreen: {
     logIn: "Se connecter",
+    signIn: "---Sign In",
     enterDetails:
       "Entrez vos informations ci-dessous pour débloquer des informations top secrètes. Vous ne devinerez jamais ce que nous avons en attente. Ou peut-être que vous le ferez ; ce n'est pas de la science spatiale ici.",
     emailFieldLabel: "E-mail",
+    passwordForgot: "---Forgot Password?",
     passwordFieldLabel: "Mot de passe",
     emailFieldPlaceholder: "Entrez votre adresse e-mail",
     passwordFieldPlaceholder: "Mot de passe super secret ici",
     tapToLogIn: "Appuyez pour vous connecter!",
+    tapToSignIn: "---Tap to sign in!",
     hint: "Astuce : vous pouvez utiliser n'importe quelle adresse e-mail et votre mot de passe préféré :)",
-  },
-  demoNavigator: {
-    componentsTab: "Composants",
-    debugTab: "Débogage",
-    communityTab: "Communauté",
-    podcastListTab: "Podcasts",
+    register: "---No account? Register",
   },
   demoCommunityScreen: {
     title: "Connectez-vous avec la communauté",
@@ -103,29 +100,170 @@ const fr: Translations = {
     windowsReactotronHint:
       "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
   },
+  demoNavigator: {
+    componentsTab: "Composants",
+    debugTab: "Débugage",
+    createTab: "Créer",
+    communityTab: "Communauté",
+    podcastListTab: "Podcast",
+    cookbookListTab: "Livres de recettes",
+    profileTab: "Profil",
+  },
+  pendingInvitationScreen: {
+    title: "Vos invitations",
+    subtitle: "Ces invitations sont en attente d'approbation.",
+    accept: "Accepter",
+    reject: "Rejeter",
+    emptyState: "Aucune invitation en attente pour le moment. Revenez plus tard.",
+  },
+  profileScreen: {
+    howTo: "COMMENT FAIRE",
+    actions: "Actions",
+    manageInfo: "Gérer vos informations.",
+    title: "Profil",
+    pendingInvites: "Voir vos invitations en attente",
+    manageMemberships: "Gérer vos adhésions aux livres de recettes",
+    preferences: "Préférences",
+    customize: "Personnalisez votre expérience.",
+    darkMode: "Mode sombre",
+    preferredLanguage: "Choisissez votre langue préférée",
+    setName: "Définir votre nom d'affichage",
+    tagLine:
+      "Félicitations, vous avez un modèle d'application React Native très avancé ici. Profitez de cette base de code !",
+    reactotron: "Envoyer à Reactotron",
+    reportBugs: "Signaler des bugs",
+    demoList: "Liste de démonstration",
+    demoPodcastList: "Liste de podcasts de démonstration",
+    androidReactotronHint:
+      "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, exécutez adb reverse tcp:9090 tcp:9090 à partir de votre terminal, puis rechargez l'application.",
+    iosReactotronHint:
+      "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
+    macosReactotronHint:
+      "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
+    webReactotronHint:
+      "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
+    windowsReactotronHint:
+      "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
+  },
   demoPodcastListScreen: {
-    title: "Épisodes de Radio React Native",
+    title: "Votre étagère",
     onlyFavorites: "Afficher uniquement les favoris",
     favoriteButton: "Favori",
-    unfavoriteButton: "Non favori",
+    unfavoriteButton: "Retirer des favoris",
     accessibility: {
       cardHint:
-        "Double-cliquez pour écouter l'épisode. Double-cliquez et maintenez pour {{action}} cet épisode.",
-      switch: "Activez pour afficher uniquement les favoris",
-      favoriteAction: "Basculer en favori",
+        "Appuyez deux fois pour écouter l'épisode. Appuyez deux fois et maintenez pour {{action}} cet épisode.",
+      switch: "Activer pour afficher uniquement les favoris",
+      favoriteAction: "Basculer les favoris",
       favoriteIcon: "Épisode non favori",
       unfavoriteIcon: "Épisode favori",
       publishLabel: "Publié le {{date}}",
       durationLabel: "Durée : {{hours}} heures {{minutes}} minutes {{seconds}} secondes",
     },
     noFavoritesEmptyState: {
-      heading: "C'est un peu vide ici",
+      heading: "Cela semble un peu vide",
       content:
-        "Aucun favori n'a été ajouté pour le moment. Appuyez sur le cœur d'un épisode pour l'ajouter à vos favoris !",
+        "Aucun favori n'a encore été ajouté. Appuyez sur le cœur d'un épisode pour l'ajouter à vos favoris !",
+    },
+    invitationListScreen: {
+      title: "Mes invitations",
+      onlyFavorites: "Afficher uniquement les favoris",
+      favoriteButton: "Favori",
+      unfavoriteButton: "Retirer des favoris",
+      accessibility: {
+        cardHint:
+          "Appuyez deux fois pour ouvrir le livre de recettes. Appuyez deux fois et maintenez pour {{action}} ce livre.",
+        switch: "Activer pour afficher uniquement les favoris",
+        favoriteAction: "Basculer les favoris",
+        favoriteIcon: "Livre de recettes non favori",
+        unfavoriteIcon: "Livre de recettes favori",
+        publishLabel: "Publié le {{date}}",
+        durationLabel: "Durée : {{hours}} heures {{minutes}} minutes {{seconds}} secondes",
+      },
+      noFavoritesEmptyState: {
+        heading: "Cela semble un peu vide",
+        content:
+          "Aucun favori n'a encore été ajouté. Appuyez sur le cœur d'un élément pour l'ajouter à vos favoris !",
+      },
+    },
+    cookbookListScreen: {
+      title: "Mes livres de recettes",
+      onlyFavorites: "Afficher uniquement les favoris",
+      favoriteButton: "Favori",
+      unfavoriteButton: "Retirer des favoris",
+      add: "Créer un nouveau livre de recettes",
+      accessibility: {
+        cardHint:
+          "Appuyez deux fois pour ouvrir le livre de recettes. Appuyez deux fois et maintenez pour {{action}} ce livre.",
+        switch: "Activer pour afficher uniquement les favoris",
+        favoriteAction: "Basculer les favoris",
+        favoriteIcon: "Livre de recettes non favori",
+        unfavoriteIcon: "Livre de recettes favori",
+        publishLabel: "Publié le {{date}}",
+        durationLabel: "Durée : {{hours}} heures {{minutes}} minutes {{seconds}} secondes",
+      },
+      noFavoritesEmptyState: {
+        heading: "Cela semble un peu vide",
+        content:
+          "Aucun favori n'a encore été ajouté. Appuyez sur le cœur d'un élément pour l'ajouter à vos favoris !",
+      },
+      cookbookCard: {
+        membersLabel: "{{count}} membre",
+        membersLabel_plural: "{{count}} membres",
+        recipesLabel: "{{count}} recette",
+        recipesLabel_plural: "{{count}} recettes",
+      },
+    },
+    recipeDetailsScreen: {
+      directions: "Instructions",
+      ingredients: "Ingrédients",
+      servings: "Portions",
+      cook: "Temps de cuisson",
+      prep: "Temps de préparation",
+      bake: "Temps de cuisson au four",
+      summary: "Résumé",
+      edit: "Modifier",
+    },
+    recipeListScreen: {
+      title: "Recettes",
+      searchPlaceholder: "Rechercher",
+      add: "Créer une nouvelle recette",
+      edit: "Mettre à jour cette recette",
+      invite: "Inviter quelqu'un d'autre",
+      leave: "Quitter le livre de recettes",
+    },
+    recipeAddScreen: {
+      title: "Ajouter une recette",
+      titleHelper: "Le titre de la nouvelle recette",
+      titlePlacehoder: "Titre",
     },
   },
-
-  ...demoFr,
+  createScreen: {
+    title: "Que voulez-vous créer ?",
+  },
+  recipeListScreen: {
+    title: "Recettes",
+    searchPlaceholder: "Rechercher",
+    add: "Créer une nouvelle recette",
+    edit: "Mettre à jour cette recette",
+    invite: "Inviter quelqu'un d'autre",
+    leave: "Quitter le livre de recettes",
+  },
+  recipeDetailsScreen: {
+    directions: "Instructions",
+    ingredients: "Ingrédients",
+    servings: "Portions",
+    cook: "Temps de cuisson",
+    prep: "Temps de préparation",
+    bake: "Temps de cuisson au four",
+    summary: "Résumé",
+    edit: "Modifier",
+  },
+  languageScreen: {
+    support:
+      "Si vous souhaitez demander la prise en charge d'une langue qui n'est pas répertoriée, veuillez utiliser le lien 'Signaler des bugs' dans l'onglet profil.",
+    note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",
+  },
 }
 
 export default fr

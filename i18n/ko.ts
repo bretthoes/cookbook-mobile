@@ -1,4 +1,3 @@
-import demoKo from "./demo-ko"
 import { Translations } from "./en"
 
 const ko: Translations = {
@@ -261,8 +260,6 @@ const ko: Translations = {
       "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
     note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
   },
-
-  ...demoKo,
 }
 
 export default ko
