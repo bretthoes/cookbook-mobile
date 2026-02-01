@@ -9,8 +9,6 @@ import { RecipeImages } from "@/components/Recipe/RecipeImages"
 import RecipeSummary from "@/components/Recipe/RecipeSummary"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { RecipeIngredient } from "@/models/Recipe"
-import { RecipeDirection } from "@/models/Recipe/RecipeDirection"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -19,7 +17,7 @@ import { useActionSheet } from "@expo/react-native-action-sheet"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
-import { ActivityIndicator, Alert, FlatList, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Alert, View, ViewStyle } from "react-native"
 
 export default observer(function Recipe() {
   const {
@@ -124,65 +122,49 @@ export default observer(function Recipe() {
       {selected && <RecipeSummary recipe={selected} />}
 
       {selected && (
-        <View style={{ minHeight: spacing.xxs }}>
-          <FlatList<RecipeIngredient>
-            ListHeaderComponent={
-              <Text
-                preset="subheading"
-                tx="recipeDetailsScreen:ingredients"
-                style={{ paddingBottom: spacing.md }}
-              />
-            }
-            renderItem={({ item, index }) =>
-              item && (
-                <IngredientItem
-                  ingredient={item}
-                  index={index}
-                  isFirst={index === 0}
-                  isLast={index === selected!.ingredients.length - 1}
-                />
-              )
-            }
-            data={selected?.ingredients}
-            contentContainerStyle={$themedIngredientsContainer}
-            ListEmptyComponent={<View />}
-          ></FlatList>
+        <View style={$themedIngredientsContainer}>
+          <Text
+            preset="subheading"
+            tx="recipeDetailsScreen:ingredients"
+            style={{ paddingBottom: spacing.md }}
+          />
+          {selected.ingredients.map((item, index) => (
+            <IngredientItem
+              key={index}
+              ingredient={item}
+              index={index}
+              isFirst={index === 0}
+              isLast={index === selected.ingredients.length - 1}
+            />
+          ))}
         </View>
       )}
 
       {selected && (
-        <View style={{ minHeight: spacing.xxs }}>
-          <FlatList<RecipeDirection>
-            ListHeaderComponent={
-              <Text
-                preset="subheading"
-                tx="recipeDetailsScreen:directions"
-                style={{ paddingBottom: spacing.md }}
-              />
-            }
-            renderItem={({ item, index }) =>
-              item && (
-                <View
-                  style={[
-                    $themedListItemStyle,
-                    index === 0 && $themedBorderTop,
-                    index === selected!.directions.length - 1 && $themedBorderBottom,
-                  ]}
-                >
-                  <ListItem
-                    style={{ padding: spacing.sm }}
-                    LeftComponent={<DirectionText ordinal={item?.ordinal} text={item?.text} />}
-                    height={spacing.xl}
-                    bottomSeparator={index !== selected!.directions.length - 1}
-                    topSeparator={index !== 0}
-                  />
-                </View>
-              )
-            }
-            data={selected?.directions}
-            contentContainerStyle={$themedDirectionsContainer}
-            ListEmptyComponent={<View />}
+        <View style={$themedDirectionsContainer}>
+          <Text
+            preset="subheading"
+            tx="recipeDetailsScreen:directions"
+            style={{ paddingBottom: spacing.md }}
           />
+          {selected.directions.map((item, index) => (
+            <View
+              key={index}
+              style={[
+                $themedListItemStyle,
+                index === 0 && $themedBorderTop,
+                index === selected.directions.length - 1 && $themedBorderBottom,
+              ]}
+            >
+              <ListItem
+                style={{ padding: spacing.sm }}
+                LeftComponent={<DirectionText ordinal={item?.ordinal} text={item?.text} />}
+                height={spacing.xl}
+                bottomSeparator={index !== selected.directions.length - 1}
+                topSeparator={index !== 0}
+              />
+            </View>
+          ))}
         </View>
       )}
     </Screen>

@@ -127,7 +127,7 @@ export default observer(function Cookbook() {
 
         switch (options[buttonIndex]) {
           case "Add Recipe":
-            router.push(`./recipe/add-options`)
+            router.push(`../../recipe/add-options`)
             break
           case "Edit Cookbook":
             handlePressEdit()
@@ -183,7 +183,7 @@ export default observer(function Cookbook() {
     {
       title: selected?.title ?? "",
       leftIcon: "back",
-      onLeftPress: () => router.replace("./(tabs)/cookbooks"),
+      onLeftPress: () => router.replace("../../(tabs)/cookbooks"),
       rightIcon: "more",
       onRightPress: selected ? () => handlePressMore() : undefined,
     },
@@ -191,13 +191,13 @@ export default observer(function Cookbook() {
   )
 
   const handlePressRecipe = (recipeId: number) => {
-    router.push(`./recipe/${recipeId}`)
+    router.push(`../../recipe/${recipeId}`)
   }
 
   if (!selected) return <ItemNotFound message="Cookbook not found" />
 
   return (
-    <Screen preset="scroll" style={$themedRoot}>
+    <Screen preset="fixed" style={$themedRoot}>
       <FlatList<RecipeBrief>
         data={filteredItems}
         ListEmptyComponent={
