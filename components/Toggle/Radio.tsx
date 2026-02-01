@@ -45,30 +45,26 @@ function RadioInput(props: RadioInputProps) {
     }).start()
   }, [on])
 
-  const offBackgroundColor = [
-    disabled && colors.border,
-    status === "error" && colors.errorBackground,
-    colors.background,
-  ].filter(Boolean)[0]
+  const offBackgroundColor =
+    (disabled && colors.border) ||
+    (status === "error" && colors.errorBackground) ||
+    colors.background
 
-  const outerBorderColor = [
-    disabled && colors.border,
-    status === "error" && colors.error,
-    !on && colors.text,
-    colors.palette.secondary500,
-  ].filter(Boolean)[0]
+  const outerBorderColor =
+    (disabled && colors.border) ||
+    (status === "error" && colors.error) ||
+    (!on && colors.text) ||
+    colors.palette.secondary500
 
-  const onBackgroundColor = [
-    disabled && colors.transparent,
-    status === "error" && colors.errorBackground,
-    colors.backgroundDim,
-  ].filter(Boolean)[0]
+  const onBackgroundColor =
+    (disabled && colors.transparent) ||
+    (status === "error" && colors.errorBackground) ||
+    colors.backgroundDim
 
-  const dotBackgroundColor = [
-    disabled && colors.textDim,
-    status === "error" && colors.error,
-    colors.palette.secondary500,
-  ].filter(Boolean)[0]
+  const dotBackgroundColor =
+    (disabled && colors.textDim) ||
+    (status === "error" && colors.error) ||
+    colors.palette.secondary500
 
   return (
     <View
