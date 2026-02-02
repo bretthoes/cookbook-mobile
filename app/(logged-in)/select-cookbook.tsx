@@ -10,11 +10,109 @@ import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@expo/react-native-action-sheet"
+import { useFocusEffect } from "@react-navigation/native"
 import * as ImagePicker from "expo-image-picker"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect } from "react"
-import { Image, ImageStyle, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import React, { useCallback, useEffect, useState } from "react"
+import { Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated"
+
+function CookbookItem({
+  cookbook,
+  isFirst,
+  isLast,
+  onPress,
+  selectedId,
+  themed,
+}: {
+  cookbook: Cookbook
+  isFirst: boolean
+  isLast: boolean
+  onPress: (cookbookId: number) => void
+  selectedId: number | null
+  themed: ReturnType<typeof useAppTheme>["themed"]
+}) {
+  const opacity = useSharedValue(1)
+  const scale = useSharedValue(1)
+  const cookbookId = cookbook.id
+
+  const $themedItemContainer = React.useMemo(() => themed($itemContainer), [themed])
+  const $themedFirstItem = React.useMemo(() => themed($firstItem), [themed])
+  const $themedLastItem = React.useMemo(() => themed($lastItem), [themed])
+  const $themedIconContainer = React.useMemo(() => themed($iconContainer), [themed])
+  const $themedCookbookImage = React.useMemo(() => themed($cookbookImage), [themed])
+  const $themedTextContainer = React.useMemo(() => themed($textContainer), [themed])
+  const $themedItemTitle = React.useMemo(() => themed($itemTitle), [themed])
+  const $themedItemDescription = React.useMemo(() => themed($itemDescription), [themed])
+
+  // React to selection changes
+  React.useEffect(() => {
+    if (selectedId === null) {
+      // Reset state
+      opacity.value = withTiming(1, { duration: 150 })
+      scale.value = withTiming(1, { duration: 150 })
+    } else if (selectedId === cookbookId) {
+      // This item is selected - scale up slightly
+      scale.value = withTiming(1.02, { duration: 200 })
+      opacity.value = withTiming(1, { duration: 200 })
+    } else {
+      // Other items - fade out
+      opacity.value = withTiming(0.3, { duration: 250 })
+      scale.value = withTiming(0.98, { duration: 250 })
+    }
+  }, [selectedId, cookbookId, opacity, scale])
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }))
+
+  const handlePress = useCallback(() => {
+    onPress(cookbookId)
+  }, [cookbookId, onPress])
+
+  const renderCookbookImage = () => {
+    if (cookbook.image) {
+      return (
+        <Image
+          source={{ uri: cookbook.image }}
+          style={$themedCookbookImage}
+          defaultSource={getCookbookImage(cookbook.id) as any}
+        />
+      )
+    }
+    return <Image source={getCookbookImage(cookbook.id) as any} style={$themedCookbookImage} />
+  }
+
+  return (
+    <Pressable onPress={handlePress} disabled={selectedId !== null}>
+      <Animated.View
+        style={[
+          $themedItemContainer,
+          isFirst && $themedFirstItem,
+          isLast && $themedLastItem,
+          animatedStyle,
+        ]}
+      >
+        <View style={$themedIconContainer}>{renderCookbookImage()}</View>
+        <View style={$themedTextContainer}>
+          <Text preset="subheading" text={cookbook.title} style={$themedItemTitle} />
+          <Text
+            preset="formHelper"
+            text={`${cookbook.members.textLabel}`}
+            style={$themedItemDescription}
+          />
+        </View>
+        <Icon icon="caretRight" size={24} color={colors.text} />
+      </Animated.View>
+    </Pressable>
+  )
+}
 
 // TODO i18n
 export default observer(function SelectCookbookScreen() {
@@ -25,18 +123,19 @@ export default observer(function SelectCookbookScreen() {
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
+  const [_, setIsLoading] = useState(false)
+  const [selectedId, setSelectedId] = useState<number | null>(null)
+
+  // Reset selection state when screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      setSelectedId(null)
+    }, []),
+  )
 
   // Memoize themed styles
   const $themedRoot = React.useMemo(() => themed($root), [themed])
   const $themedListContainer = React.useMemo(() => themed($listContainer), [themed])
-  const $themedItemContainer = React.useMemo(() => themed($itemContainer), [themed])
-  const $themedFirstItem = React.useMemo(() => themed($firstItem), [themed])
-  const $themedLastItem = React.useMemo(() => themed($lastItem), [themed])
-  const $themedIconContainer = React.useMemo(() => themed($iconContainer), [themed])
-  const $themedCookbookImage = React.useMemo(() => themed($cookbookImage), [themed])
-  const $themedTextContainer = React.useMemo(() => themed($textContainer), [themed])
-  const $themedItemTitle = React.useMemo(() => themed($itemTitle), [themed])
-  const $themedItemDescription = React.useMemo(() => themed($itemDescription), [themed])
 
   useHeader({
     leftIcon: "back",
@@ -56,9 +155,7 @@ export default observer(function SelectCookbookScreen() {
     setIsLoading(false)
   }, [cookbookStore])
 
-  const [_, setIsLoading] = React.useState(false)
-
-  const handleAddRecipeFromCamera = async () => {
+  const handleAddRecipeFromCamera = useCallback(async () => {
     // Request permission for accessing the media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
@@ -113,30 +210,24 @@ export default observer(function SelectCookbookScreen() {
         }
       },
     )
-  }
+  }, [showActionSheetWithOptions, setRecipeToAdd])
 
-  const handleSelectCookbook = (cookbook: Cookbook) => {
-    cookbookStore.setSelectedById(cookbook.id)
+  const handleItemPress = useCallback(
+    (cookbookId: number) => {
+      setSelectedId(cookbookId)
+      cookbookStore.setSelectedById(cookbookId)
 
-    if (params.onSelect === "handleAddRecipeFromCamera") {
-      handleAddRecipeFromCamera()
-    } else {
-      router.push(params.nextRoute as any)
-    }
-  }
-
-  const renderCookbookImage = (cookbook: Cookbook) => {
-    if (cookbook.image) {
-      return (
-        <Image
-          source={{ uri: cookbook.image }}
-          style={$themedCookbookImage}
-          defaultSource={getCookbookImage(cookbook.id) as any}
-        />
-      )
-    }
-    return <Image source={getCookbookImage(cookbook.id) as any} style={$themedCookbookImage} />
-  }
+      // Navigate after the fade animation completes
+      setTimeout(() => {
+        if (params.onSelect === "handleAddRecipeFromCamera") {
+          handleAddRecipeFromCamera()
+        } else {
+          router.push(params.nextRoute as any)
+        }
+      }, 350)
+    },
+    [cookbookStore, params.onSelect, params.nextRoute, handleAddRecipeFromCamera],
+  )
 
   return (
     <Screen preset="scroll" style={$themedRoot}>
@@ -147,26 +238,15 @@ export default observer(function SelectCookbookScreen() {
 
       <View style={$themedListContainer}>
         {cookbookStore.cookbooks.map((cookbook, index) => (
-          <TouchableOpacity
+          <CookbookItem
             key={cookbook.id}
-            style={[
-              $themedItemContainer,
-              index === 0 && $themedFirstItem,
-              index === cookbookStore.cookbooks.length - 1 && $themedLastItem,
-            ]}
-            onPress={() => handleSelectCookbook(cookbook)}
-          >
-            <View style={$themedIconContainer}>{renderCookbookImage(cookbook)}</View>
-            <View style={$themedTextContainer}>
-              <Text preset="subheading" text={cookbook.title} style={$themedItemTitle} />
-              <Text
-                preset="formHelper"
-                text={`${cookbook.members.textLabel}`}
-                style={$themedItemDescription}
-              />
-            </View>
-            <Icon icon="caretRight" size={24} color={colors.text} />
-          </TouchableOpacity>
+            cookbook={cookbook}
+            isFirst={index === 0}
+            isLast={index === cookbookStore.cookbooks.length - 1}
+            onPress={handleItemPress}
+            selectedId={selectedId}
+            themed={themed}
+          />
         ))}
       </View>
     </Screen>
