@@ -16,11 +16,7 @@ import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
 import { Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated"
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 
 function CookbookItem({
   cookbook,

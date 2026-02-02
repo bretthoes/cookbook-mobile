@@ -133,7 +133,11 @@ export default observer(function ProfileScreen() {
               <Icon icon="darkMode" size={30} color={isDark ? colors.border : colors.text} />
             </View>
           }
-          RightComponent={<View style={$iconContainer}><Switch value={themeContext === "dark"} onValueChange={toggleTheme} /></View>}
+          RightComponent={
+            <View style={$iconContainer}>
+              <Switch value={themeContext === "dark"} onValueChange={toggleTheme} />
+            </View>
+          }
         />
         {/* <View style={$themeRow}> // TODO see above
         <Text text="Floating Tab Bar" />
