@@ -25,7 +25,7 @@ export default observer(function EmailVerification() {
     return () => {
       setResult("")
     }
-  }, [])
+  }, [setResult])
 
   async function checkEmailVerified() {
     setIsVerifying(true)

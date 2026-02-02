@@ -71,7 +71,7 @@ const Invitations = observer(() => {
       }
     }
     generateLink()
-  }, [selected?.id])
+  }, [selected?.id, inviteUrl, isMinting, link])
 
   const onShareLink = async () => {
     if (!inviteUrl) return

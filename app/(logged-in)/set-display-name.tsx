@@ -7,8 +7,13 @@ import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ViewStyle } from "react-native"
+
+const isValidDisplayName = (input: string) => {
+  const regex = /^[\p{L}\p{M} \-']+$/u
+  return regex.test(input)
+}
 
 export default observer(function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -18,22 +23,17 @@ export default observer(function SetDisplayName() {
     authenticationStore: { displayName, setDisplayName, updateDisplayName, fetchDisplayName },
   } = useStores()
 
-  const getValidationError = (name: string) => {
+  const getValidationError = useCallback((name: string) => {
     if (name.length === 0) return "can't be blank"
     if (name.length > 255) return "cannot exceed 255 characters"
     if (!isValidDisplayName(name))
       return "can only contain letters, spaces, hyphens, and apostrophes"
     return ""
-  }
-
-  const isValidDisplayName = (input: string) => {
-    const regex = /^[\p{L}\p{M} \-']+$/u
-    return regex.test(input)
-  }
+  }, [])
 
   const validationError = useMemo(
     () => (isSubmitted ? getValidationError(localDisplayName) : ""),
-    [isSubmitted, localDisplayName],
+    [isSubmitted, localDisplayName, getValidationError],
   )
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { delay } from "@/utils/delay"
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, useEffect, useMemo, useState } from "react"
+import React, { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
 import {
   AccessibilityProps,
   ActivityIndicator,
@@ -177,9 +177,9 @@ const InvitationCard = observer(function InvitationCard({
     return getCookbookImage(invitation.id)
   }, [invitation.cookbookImage, invitation.id])
 
-  const handlePressFavorite = () => {
+  const handlePressFavorite = useCallback(() => {
     onPressFavorite()
-  }
+  }, [onPressFavorite])
 
   /**
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.

@@ -8,8 +8,13 @@ import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ViewStyle } from "react-native"
+
+const isValidUrl = (input: string) => {
+  const regex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i
+  return regex.test(input)
+}
 
 export default observer(function RecipeUrlScreen() {
   const {
@@ -20,16 +25,11 @@ export default observer(function RecipeUrlScreen() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [result, setResult] = useState("")
 
-  const getValidationError = (url: string) => {
-    if (url.length === 0) return "can't be blank"
-    if (!isValidUrl(url)) return "must be a valid URL"
+  const getValidationError = useCallback((urlToValidate: string) => {
+    if (urlToValidate.length === 0) return "can't be blank"
+    if (!isValidUrl(urlToValidate)) return "must be a valid URL"
     return ""
-  }
-
-  const isValidUrl = (input: string) => {
-    const regex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i
-    return regex.test(input)
-  }
+  }, [])
 
   const validationError = useMemo(
     () => (isSubmitted ? getValidationError(url) : ""),

@@ -58,7 +58,7 @@ export default observer(function InvitationTokenScreen() {
     }
 
     loadInvitation()
-  }, [token, isAuthenticated])
+  }, [token, isAuthenticated, invitationStore])
 
   const handleAccept = async () => {
     if (!isAuthenticated) {

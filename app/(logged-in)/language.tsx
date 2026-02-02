@@ -6,7 +6,7 @@ import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import { router } from "expo-router"
-import i18n from "i18next"
+import i18n, { changeLanguage } from "i18next"
 import React, { useEffect, useState } from "react"
 import { ViewStyle } from "react-native"
 
@@ -36,7 +36,7 @@ export default function LanguageScreen() {
   }, [])
 
   const handleLanguageSelect = async (languageCode: string) => {
-    await i18n.changeLanguage(languageCode)
+    await changeLanguage(languageCode)
     await AsyncStorage.setItem("language", languageCode)
     setCurrentLanguage(languageCode)
   }

@@ -55,7 +55,7 @@ export default observer(function Cookbook() {
     }
     reload()
     setIsLoading(false)
-  }, [membershipStore.fetch, id])
+  }, [membershipStore, id])
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {

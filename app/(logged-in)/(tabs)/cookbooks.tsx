@@ -15,7 +15,7 @@ import { getCookbookImage } from "@/utils/cookbookImages"
 import { delay } from "@/utils/delay"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { ComponentType, useEffect, useMemo, useState } from "react"
+import { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
 import {
   AccessibilityProps,
   ActivityIndicator,
@@ -173,10 +173,10 @@ const CookbookCard = observer(function CookbookCard({
     }
   })
 
-  const handlePressFavorite = () => {
+  const handlePressFavorite = useCallback(() => {
     onPressFavorite()
     liked.value = withSpring(liked.value ? 0 : 1)
-  }
+  }, [onPressFavorite, liked])
 
   /**
    * Android has a "longpress" accessibility action. iOS does not, so we just have to use a hint.

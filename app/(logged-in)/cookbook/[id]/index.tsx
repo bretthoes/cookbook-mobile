@@ -167,7 +167,7 @@ export default observer(function Cookbook() {
     return () => {
       alive = false
     }
-  }, [id])
+  }, [id, recipeStore, membershipStore, setSelectedById])
 
   // re-fetch recipes when the search query changes
   // useEffect(() => {
