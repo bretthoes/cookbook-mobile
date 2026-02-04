@@ -9,10 +9,11 @@ import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { Image, ImageStyle, ViewStyle } from "react-native"
+import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withRepeat,
   withSequence,
   withTiming,
@@ -37,28 +38,43 @@ export default observer(function RecipeUrlScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState("")
 
-  // Animation for the loading text
-  const translateY = useSharedValue(0)
+  // Animation for the typing dots
+  const dot1Y = useSharedValue(0)
+  const dot2Y = useSharedValue(0)
+  const dot3Y = useSharedValue(0)
 
-  const animatedTextStyle = useAnimatedStyle(() => ({
-    transform: [{ translateY: translateY.value }],
+  const dot1Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: dot1Y.value }],
+  }))
+
+  const dot2Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: dot2Y.value }],
+  }))
+
+  const dot3Style = useAnimatedStyle(() => ({
+    transform: [{ translateY: dot3Y.value }],
   }))
 
   useEffect(() => {
     if (isLoading) {
-      // Bouncing animation for the text
-      translateY.value = withRepeat(
+      const bounce = withRepeat(
         withSequence(
-          withTiming(-8, { duration: 400 }),
-          withTiming(0, { duration: 400 }),
+          withTiming(-6, { duration: 200 }),
+          withTiming(0, { duration: 200 }),
         ),
-        -1, // infinite
+        -1,
         false,
       )
+      // Stagger each dot's animation
+      dot1Y.value = bounce
+      dot2Y.value = withDelay(150, bounce)
+      dot3Y.value = withDelay(300, bounce)
     } else {
-      translateY.value = 0
+      dot1Y.value = 0
+      dot2Y.value = 0
+      dot3Y.value = 0
     }
-  }, [isLoading, translateY])
+  }, [isLoading, dot1Y, dot2Y, dot3Y])
 
   const getValidationError = useCallback((urlToValidate: string) => {
     if (urlToValidate.length === 0) return "can't be blank"
@@ -115,6 +131,17 @@ export default observer(function RecipeUrlScreen() {
     marginBottom: spacing.lg,
   }
 
+  const $loadingTextRow: ViewStyle = {
+    flexDirection: "row",
+    alignItems: "center",
+  }
+
+  const $dot: TextStyle = {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginLeft: 2,
+  }
+
   useHeader(
     {
       title: "Add Recipe",
@@ -130,9 +157,12 @@ export default observer(function RecipeUrlScreen() {
     return (
       <Screen style={$root} preset="fixed" contentContainerStyle={$loadingContainer}>
         <Image source={loadingImage} style={$loadingImage} resizeMode="contain" />
-        <Animated.View style={animatedTextStyle}>
-          <Text preset="subheading" text="Almost done..." />
-        </Animated.View>
+        <View style={$loadingTextRow}>
+          <Text preset="subheading" text="Almost done" />
+          <Animated.Text style={[dot1Style, $dot]}>.</Animated.Text>
+          <Animated.Text style={[dot2Style, $dot]}>.</Animated.Text>
+          <Animated.Text style={[dot3Style, $dot]}>.</Animated.Text>
+        </View>
       </Screen>
     )
   }
