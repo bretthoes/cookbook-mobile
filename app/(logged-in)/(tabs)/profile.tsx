@@ -28,7 +28,7 @@ export default observer(function ProfileScreen() {
   const {
     authenticationStore: { logout },
     membershipStore: { email },
-    invitationStore,
+    invitationStore,  
   } = useStores()
 
   const router = useRouter()
@@ -113,7 +113,7 @@ export default observer(function ProfileScreen() {
             router.push({
               pathname: "../select-cookbook",
               params: {
-                nextRoute: "/(logged-in)/(tabs)/membership/list",
+                nextRoute: "../membership/list",
                 action: "Select a cookbook to view its members.",
               },
             })

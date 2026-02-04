@@ -119,7 +119,7 @@ export default observer(function MembershipEditScreen() {
   )
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$themedScreenContentContainer}>
+    <Screen preset="fixed" contentContainerStyle={$themedScreenContentContainer}>
       <FlatList
         data={data}
         renderItem={renderItem}

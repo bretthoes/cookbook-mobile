@@ -83,7 +83,7 @@ export default observer(function Cookbook() {
   if (!id) return null
 
   return (
-    <Screen preset="scroll" style={$themedRoot}>
+    <Screen preset="fixed" style={$themedRoot}>
       <FlatList<Membership>
         data={membershipStore.memberships?.items?.slice() ?? []}
         ListEmptyComponent={

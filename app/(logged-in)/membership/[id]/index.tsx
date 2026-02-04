@@ -125,17 +125,17 @@ export default observer(function MembershipScreen() {
 
   const renderItem = ({ item }: { item: DataItem }) => (
     <View style={$themedItem}>
-      <Text text={item.label} style={$themedLabel} />
+      <Text text={item.label} size="sm" />
       {typeof item.value === "boolean" ? (
         <Icon icon={item.value ? "check" : "x"} size={20} />
       ) : (
-        <Text text={item.value?.toString() || "-"} style={$themedValue} />
+        <Text text={item.value?.toString() || "-"} size="sm" />
       )}
     </View>
   )
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$themedScreenContentContainer}>
+    <Screen preset="fixed" contentContainerStyle={$themedScreenContentContainer}>
       <FlatList
         data={data}
         renderItem={renderItem}
@@ -164,11 +164,8 @@ const $item: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $label: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.text,
-  fontSize: 16,
 })
 
 const $value: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.text,
-  fontSize: 16,
-  fontWeight: "500",
 })
