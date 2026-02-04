@@ -28,7 +28,7 @@ export default observer(function ProfileScreen() {
   const {
     authenticationStore: { logout },
     membershipStore: { email },
-    invitationStore,  
+    invitationStore,
   } = useStores()
 
   const router = useRouter()

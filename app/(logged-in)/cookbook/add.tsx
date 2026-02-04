@@ -84,7 +84,7 @@ export default observer(function AddCookbookScreen() {
       }
     } catch {
       alert("Failed to create cookbook")
-    } 
+    }
   }
 
   const onError = (errors: any) => {
