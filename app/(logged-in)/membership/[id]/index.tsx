@@ -34,8 +34,6 @@ export default observer(function MembershipScreen() {
   )
   const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
   const $themedItem = React.useMemo(() => themed($item), [themed])
-  const $themedLabel = React.useMemo(() => themed($label), [themed])
-  const $themedValue = React.useMemo(() => themed($value), [themed])
 
   const handlePressMore = () => {
     const options = isOwner
