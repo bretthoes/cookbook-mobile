@@ -6,6 +6,7 @@ import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
 import React from "react"
 import { View, ViewStyle } from "react-native"
+import { UseCase } from "../UseCase"
 
 const $titleContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
@@ -31,12 +32,6 @@ const $detailsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
 })
 
-const $descriptionContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  flexDirection: "column",
-  alignItems: "flex-start",
-  marginHorizontal: theme.spacing.sm,
-})
-
 export interface RecipeSummaryProps {
   recipe: Recipe
 }
@@ -53,7 +48,6 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
   const $themedDetailsContainer = React.useMemo(() => themed($detailsContainer), [themed])
-  const $themedDescriptionContainer = React.useMemo(() => themed($descriptionContainer), [themed])
 
   return (
     <View>
@@ -103,10 +97,9 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       )}
 
       {!!recipe.summary && (
-        <View style={$themedDescriptionContainer}>
-          <Text preset="subheading" tx={"recipeDetailsScreen:summary"} />
+        <UseCase tx="recipeDetailsScreen:summary">
           <Text preset="default" text={recipe.summary ?? ""} />
-        </View>
+        </UseCase>
       )}
     </View>
   )
