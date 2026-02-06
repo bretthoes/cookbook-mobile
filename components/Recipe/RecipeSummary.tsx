@@ -36,14 +36,22 @@ export interface RecipeSummaryProps {
   recipe: Recipe
 }
 
+const MAX_SUMMARY_LENGTH = 200
+
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
+  const [isExpanded, setIsExpanded] = React.useState(false)
   const hasImages = !!recipe?.images[0]
   const hasTimeOrServings =
     !!recipe.servings ||
     !!recipe.preparationTimeInMinutes ||
     !!recipe.bakingTimeInMinutes ||
     !!recipe.cookingTimeInMinutes
+
+  const summary = recipe.summary ?? ""
+  const shouldTruncate = summary.length > MAX_SUMMARY_LENGTH
+  const displaySummary =
+    isExpanded || !shouldTruncate ? summary : summary.substring(0, MAX_SUMMARY_LENGTH) + "..."
 
   const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
@@ -98,7 +106,15 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
 
       {!!recipe.summary && (
         <UseCase tx="recipeDetailsScreen:summary">
-          <Text preset="default" text={recipe.summary ?? ""} />
+          <Text preset="default" text={displaySummary} />
+          {shouldTruncate && (
+            <Text
+              weight="light"
+              text={isExpanded ? "Show Less..." : "Show More..."}
+              onPress={() => setIsExpanded(!isExpanded)}
+              style={{ marginTop: spacing.sm, alignSelf: "flex-end" }}
+            />
+          )}
         </UseCase>
       )}
     </View>
