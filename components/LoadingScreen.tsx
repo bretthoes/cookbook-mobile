@@ -1,12 +1,12 @@
 import { useEffect } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
-    useAnimatedStyle,
-    useSharedValue,
-    withDelay,
-    withRepeat,
-    withSequence,
-    withTiming,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withRepeat,
+  withSequence,
+  withTiming,
 } from "react-native-reanimated"
 
 import { spacing } from "@/theme"
@@ -47,10 +47,7 @@ export function LoadingScreen({ text = "Still cooking" }: LoadingScreenProps) {
 
   useEffect(() => {
     const bounce = withRepeat(
-      withSequence(
-        withTiming(-6, { duration: 200 }),
-        withTiming(0, { duration: 200 }),
-      ),
+      withSequence(withTiming(-6, { duration: 200 }), withTiming(0, { duration: 200 })),
       -1,
       false,
     )
