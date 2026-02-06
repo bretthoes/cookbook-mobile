@@ -190,6 +190,7 @@ const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $directionsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
+  paddingBottom: theme.spacing.xl,
 })
 
 const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({

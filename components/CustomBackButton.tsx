@@ -27,5 +27,5 @@ const $moreButton: ViewStyle = {
   zIndex: 1,
   backgroundColor: colors.transparent,
   borderRadius: spacing.xs,
-  padding: spacing.xs,
+  padding: spacing.md,
 }
