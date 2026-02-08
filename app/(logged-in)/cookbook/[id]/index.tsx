@@ -4,6 +4,7 @@ import { ItemNotFound } from "@/components/ItemNotFound"
 import { RecipeListItem } from "@/components/Recipe/RecipeListItem"
 import { Screen } from "@/components/Screen"
 import { SearchBar } from "@/components/SearchBar"
+import { Text } from "@/components/Text"
 import { isRTL, translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { RecipeBrief } from "@/models/Recipe"
@@ -42,6 +43,7 @@ export default observer(function Cookbook() {
   const $themedBorderBottom = useMemo(() => themed($borderBottom), [themed])
   const $themedListItemStyle = useMemo(() => themed($listItemStyle), [themed])
   const $themedRoot = useMemo(() => themed($root), [themed])
+  const $themedListFooter = useMemo(() => themed($listFooter), [themed])
 
   const q = searchQuery.trim().toLowerCase()
   const filteredItems = q
@@ -226,6 +228,9 @@ export default observer(function Cookbook() {
         }
         onRefresh={manualRefresh}
         refreshing={refreshing}
+        ListFooterComponent={<View style={$themedListFooter}>
+          <Text weight="light" text={`${filteredItems.length} recipes.`} />
+        </View>}
         renderItem={({ item, index }) => (
           <View
             style={[
@@ -276,4 +281,10 @@ const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
+})
+
+const $listFooter: ThemedStyle<ViewStyle> = (theme) => ({
+  height: theme.spacing.xxxl,
+  alignItems: "center",
+  justifyContent: "center",
 })
