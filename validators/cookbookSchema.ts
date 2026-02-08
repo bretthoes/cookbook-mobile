@@ -4,7 +4,7 @@ export const cookbookSchema = yup.object().shape({
   title: yup
     .string()
     .required("Title is required")
-    .min(3, "Title at least 3 characters")
-    .max(255, "Title at most 255 characters"),
-  image: yup.string().nullable().defined(),
+    .min(1, "Title cannot be empty")
+    .max(255, "Title cannot be longer than 255 characters"),
+  image: yup.string().nullable().defined().max(2048, "Image cannot be longer than 2048 characters"),
 })
