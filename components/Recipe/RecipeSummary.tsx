@@ -61,7 +61,7 @@ function TimeDisplay({ minutes }: { minutes: number }) {
 
 const $timeItemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "flex-start",
 })
 
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
