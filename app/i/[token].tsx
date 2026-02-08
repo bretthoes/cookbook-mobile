@@ -1,13 +1,17 @@
 import { Button } from "@/components/Button"
+import { EmptyState } from "@/components/EmptyState"
+import { Header } from "@/components/Header"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { isRTL } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
+import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
-import { useHeader } from "@/utils/useHeader"
+import { useAppTheme } from "@/theme/context"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
-import { ActivityIndicator, Alert, ViewStyle } from "react-native"
+import React, { useEffect, useMemo, useState } from "react"
+import { ActivityIndicator, Alert, ImageStyle, View, ViewStyle } from "react-native"
 
 export default observer(function InvitationTokenScreen() {
   const { token } = useLocalSearchParams<{ token: string }>()
@@ -15,16 +19,14 @@ export default observer(function InvitationTokenScreen() {
     invitationStore,
     authenticationStore: { isAuthenticated },
   } = useStores()
+  const { themed } = useAppTheme()
 
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [invitation, setInvitation] = useState<any>(null)
 
-  useHeader({
-    title: "Invitation",
-    leftIcon: "back",
-    onLeftPress: () => router.back(),
-  })
+  const $themedEmptyState = useMemo(() => themed($emptyState), [themed])
+  const $themedEmptyStateImage = useMemo(() => themed($emptyStateImage), [themed])
 
   useEffect(() => {
     const loadInvitation = async () => {
@@ -47,10 +49,10 @@ export default observer(function InvitationTokenScreen() {
         if (invitationStore.invitation) {
           setInvitation(invitationStore.invitation)
         } else {
-          setError("Invitation not found or has expired")
+          setError("Your invitation has mysteriously vanished")
         }
       } catch (err) {
-        setError("Failed to load invitation. Please try again.")
+        setError("Your invitation has mysteriously vanished")
         console.error("Error loading invitation:", err)
       } finally {
         setIsLoading(false)
@@ -110,33 +112,41 @@ export default observer(function InvitationTokenScreen() {
 
   if (isLoading) {
     return (
-      <Screen style={$root} preset="fixed">
+      <Screen style={$root} preset="scroll">
+        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
-        <Text text="Loading invitation..." style={{ marginTop: spacing.md, textAlign: "center" }} />
+        <Text text="Loading invitation..." style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }} />
       </Screen>
     )
   }
 
   if (error) {
     return (
-      <Screen style={$root} preset="fixed">
-        <Text
-          text={error}
-          preset="heading"
-          style={{ marginTop: spacing.xxl, textAlign: "center" }}
-        />
-        <Button text="Go Back" onPress={() => router.back()} style={{ marginTop: spacing.lg }} />
+      <Screen style={$root} preset="scroll">
+        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
+        <View style={$centeredContent}>
+          <EmptyState
+            preset="generic"
+            style={$themedEmptyState}
+            content="We couldn't find your invitation anywhere. You might need a new one."
+            imageStyle={$themedEmptyStateImage}
+            ImageProps={{ resizeMode: "contain" }}
+            button=""
+          />
+          <Button text="Go Back" onPress={() => router.back()} style={{ marginTop: spacing.lg, marginHorizontal: spacing.md }} />
+        </View>
       </Screen>
     )
   }
 
   if (!invitation && !isAuthenticated) {
     return (
-      <Screen style={$root} preset="fixed">
+      <Screen style={$root} preset="scroll">
+        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
         <Text
           text="Invitation Link"
           preset="heading"
-          style={{ marginTop: spacing.xxl, textAlign: "center" }}
+          style={{ marginTop: spacing.xxl, textAlign: "center", paddingHorizontal: spacing.md }}
         />
         <Text
           text="Please log in to view and accept this invitation."
@@ -159,15 +169,17 @@ export default observer(function InvitationTokenScreen() {
 
   if (!invitation) {
     return (
-      <Screen style={$root} preset="fixed">
+      <Screen style={$root} preset="scroll">
+        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
-        <Text text="Loading invitation..." style={{ marginTop: spacing.md, textAlign: "center" }} />
+        <Text text="Loading invitation..." style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }} />
       </Screen>
     )
   }
 
   return (
     <Screen style={$root} preset="scroll">
+      <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
       <Text
         text="You've been invited!"
         preset="heading"
@@ -206,5 +218,18 @@ export default observer(function InvitationTokenScreen() {
 
 const $root: ViewStyle = {
   flex: 1,
-  paddingHorizontal: spacing.md,
 }
+
+const $centeredContent: ViewStyle = {
+  flex: 1,
+  justifyContent: "center",
+}
+
+const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.md,
+  marginTop: theme.spacing.xxxl,
+})
+
+const $emptyStateImage: ThemedStyle<ImageStyle> = () => ({
+  transform: [{ scaleX: isRTL ? -1 : 1 }],
+})
