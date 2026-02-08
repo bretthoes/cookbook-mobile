@@ -1,6 +1,8 @@
+import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { isRTL } from "@/i18n"
 import { Cookbook } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
 import { api } from "@/services/api"
@@ -15,7 +17,7 @@ import * as ImagePicker from "expo-image-picker"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
-import { Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 
 function CookbookItem({
@@ -119,7 +121,7 @@ export default observer(function SelectCookbookScreen() {
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
-  const [_, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
   // Reset selection state when screen comes into focus
@@ -132,6 +134,8 @@ export default observer(function SelectCookbookScreen() {
   // Memoize themed styles
   const $themedRoot = React.useMemo(() => themed($root), [themed])
   const $themedListContainer = React.useMemo(() => themed($listContainer), [themed])
+  const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
+  const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
 
   useHeader({
     leftIcon: "back",
@@ -143,12 +147,17 @@ export default observer(function SelectCookbookScreen() {
   useEffect(() => {
     // declare the data fetching function
     const fetchData = async () => {
-      await cookbookStore.fetch()
+      setIsLoading(true)
+      try {
+        await cookbookStore.fetch()
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setIsLoading(false)
+      }
     }
     // call the function
-    setIsLoading(true)
-    fetchData().catch(console.error)
-    setIsLoading(false)
+    fetchData()
   }, [cookbookStore])
 
   const handleAddRecipeFromCamera = useCallback(async () => {
@@ -232,19 +241,33 @@ export default observer(function SelectCookbookScreen() {
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
 
-      <View style={$themedListContainer}>
-        {cookbookStore.cookbooks.map((cookbook, index) => (
-          <CookbookItem
-            key={cookbook.id}
-            cookbook={cookbook}
-            isFirst={index === 0}
-            isLast={index === cookbookStore.cookbooks.length - 1}
-            onPress={handleItemPress}
-            selectedId={selectedId}
-            themed={themed}
-          />
-        ))}
-      </View>
+      {isLoading ? (
+        <View style={{ marginTop: spacing.xxl, alignItems: "center" }}>
+          <ActivityIndicator size="large" />
+        </View>
+      ) : cookbookStore.cookbooks.length === 0 ? (
+        <EmptyState
+          preset="generic"
+          style={$themedEmptyState}
+          content="No cookbooks have been added yet."
+          imageStyle={$themedEmptyStateImage}
+          ImageProps={{ resizeMode: "contain" }}
+        />
+      ) : (
+        <View style={$themedListContainer}>
+          {cookbookStore.cookbooks.map((cookbook, index) => (
+            <CookbookItem
+              key={cookbook.id}
+              cookbook={cookbook}
+              isFirst={index === 0}
+              isLast={index === cookbookStore.cookbooks.length - 1}
+              onPress={handleItemPress}
+              selectedId={selectedId}
+              themed={themed}
+            />
+          ))}
+        </View>
+      )}
     </Screen>
   )
 })
@@ -308,4 +331,13 @@ const $itemTitle: ThemedStyle<TextStyle> = (theme) => ({
 const $itemDescription: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
   fontSize: 14,
+})
+
+const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
+  marginTop: theme.spacing.xxl,
+  paddingHorizontal: theme.spacing.md,
+})
+
+const $emptyStateImage: ThemedStyle<ImageStyle> = () => ({
+  transform: [{ scaleX: isRTL ? -1 : 1 }],
 })
