@@ -41,13 +41,21 @@ export const InvitationStoreModel = types
         console.error(`Error fetching invitations: ${JSON.stringify(response)}`)
       }
     }),
-    respond: flow(function* (id: number, accepted: boolean) {
-      const response = yield api.updateInvite(id, accepted)
+    respond: flow(function* (idOrToken: number | string, accepted: boolean) {
+      let response
+      if (typeof idOrToken === "string") {
+        response = yield api.UpdateInvitationToken(idOrToken, accepted)
+      } else {
+        response = yield api.updateInvite(idOrToken, accepted)
+      }
+
       if (response.kind === "ok") {
-        const idx = self.invitations.items.findIndex((inv) => inv.id === id)
-        if (idx >= 0) {
-          self.invitations.items.splice(idx, 1)
-          self.invitations.totalCount = Math.max(0, self.invitations.totalCount - 1)
+        if (typeof idOrToken === "number") {
+          const idx = self.invitations.items.findIndex((inv) => inv.id === idOrToken)
+          if (idx >= 0) {
+            self.invitations.items.splice(idx, 1)
+            self.invitations.totalCount = Math.max(0, self.invitations.totalCount - 1)
+          }
         }
         return true
       } else {
