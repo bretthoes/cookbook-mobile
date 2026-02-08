@@ -558,6 +558,45 @@ export class Api {
   }
 
   /**
+   * Updates an invitation token by its token string.
+   */
+  async UpdateInvitationToken(
+    token: string,
+    accepted: boolean,
+  ): Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+    const newStatus = accepted
+      ? CookbookInvitationStatus.Accepted
+      : CookbookInvitationStatus.Rejected
+
+    const response: ApiResponse<number> = await this.authorizedRequest(`InvitationTokens/${token}`, "PUT", {
+      Token: token,
+      NewStatus: newStatus,
+    })
+
+    if (!response.ok) {
+      const problem = getGeneralApiProblem(response)
+      if (problem) return problem
+    }
+
+    try {
+      // The API might return the invitationId or might return nothing (204 No Content)
+      // If response is ok, consider it successful even if data is null/undefined
+      const invitationId = response.data ?? 0
+      return { kind: "ok", invitationId }
+    } catch (e) {
+      if (__DEV__ && e instanceof Error) {
+        console.error(`Bad data: ${e.message}\n${response.data}`, e.stack)
+      }
+      // If response was ok but we can't parse data, still consider it successful
+      // since the API call succeeded
+      if (response.ok) {
+        return { kind: "ok", invitationId: 0 }
+      }
+      return { kind: "bad-data" }
+    }
+  }
+
+  /**
    * Uploads a collection of images to the server. TODO update method name to plural
    */
   async uploadImage(

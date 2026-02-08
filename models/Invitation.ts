@@ -10,6 +10,7 @@ export const InvitationModel = types
   .model("Invitation")
   .props({
     id: types.identifierNumber,
+    cookbookId: types.maybeNull(types.number),
     senderName: types.maybeNull(types.string),
     senderEmail: types.maybeNull(types.string),
     cookbookTitle: types.string,
