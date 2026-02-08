@@ -11,7 +11,7 @@ import { router, useLocalSearchParams } from "expo-router"
 import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
-import { Alert, FlatList, TextStyle, View, ViewStyle } from "react-native"
+import { Alert, FlatList, View, ViewStyle } from "react-native"
 
 type DataItem = {
   label: string
@@ -158,12 +158,4 @@ const $item: ThemedStyle<ViewStyle> = (theme) => ({
   paddingVertical: theme.spacing.sm,
   borderBottomWidth: 1,
   borderBottomColor: theme.colors.separator,
-})
-
-const $label: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.text,
-})
-
-const $value: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.text,
 })
