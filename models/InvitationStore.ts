@@ -71,7 +71,7 @@ export const InvitationStoreModel = types
         case "not-found":
           return "No account exists with that email."
         case "conflict":
-          return response.detail ?? "They've already been invited."
+          return "They've already been invited."
         default:
           return "Something went wrong, please try again later."
       }

@@ -84,20 +84,18 @@ const Invitations = observer(() => {
 
   const onSendEmail = async () => {
     setIsSubmitted(true)
+    setEmailMsg("") // Clear previous message
     const error = getValidationError(inviteEmail)
-    if (error) return
+    if (error) {
+      setIsSubmitted(false)
+      return
+    }
 
     const cookbookId = selected?.id ?? 0
     const res = await invite(cookbookId, inviteEmail.trim())
     setIsSubmitted(false)
 
-    if (!res?.ok) {
-      setEmailMsg(res?.msg ?? "Failed to send invitation.")
-      return
-    }
-
-    const url = toInviteUrl(res.token)
-    setEmailMsg(`Invitation sent. Link: ${url}`)
+    setEmailMsg(res)
     setInviteEmail("")
   }
 
@@ -147,7 +145,10 @@ const Invitations = observer(() => {
           <UseCase>
             <TextField
               value={inviteEmail}
-              onChangeText={(text) => setInviteEmail(text.replace(/\s/g, ""))}
+              onChangeText={(text) => {
+                setInviteEmail(text.replace(/\s/g, ""))
+                setEmailMsg("") // Clear message when user types
+              }}
               autoCapitalize="none"
               label="Email Address"
               autoComplete="email"
