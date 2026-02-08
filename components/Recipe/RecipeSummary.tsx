@@ -1,4 +1,5 @@
 import { Text } from "@/components/Text"
+import { translate } from "@/i18n"
 import { Recipe } from "@/models/Recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -38,6 +39,31 @@ export interface RecipeSummaryProps {
 
 const MAX_SUMMARY_LENGTH = 200
 
+function formatMinutes(minutes: number): { hours: number; minutes: number } {
+  const hours = Math.floor(minutes / 60)
+  const mins = minutes % 60
+  return { hours, minutes: mins }
+}
+
+function TimeDisplay({ minutes }: { minutes: number }) {
+  const { hours, minutes: mins } = formatMinutes(minutes)
+  return (
+    <>
+      {hours > 0 && (
+        <Text preset="default" text={`${hours} hour${hours !== 1 ? "s" : ""}`} />
+      )}
+      {mins > 0 && (
+        <Text preset="default" text={`${mins} mins`} />
+      )}
+    </>
+  )
+}
+
+const $timeItemContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  alignItems: "center",
+  justifyContent: "center",
+})
+
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
   const [isExpanded, setIsExpanded] = React.useState(false)
@@ -56,6 +82,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
   const $themedDetailsContainer = React.useMemo(() => themed($detailsContainer), [themed])
+  const $themedTimeItemContainer = React.useMemo(() => themed($timeItemContainer), [themed])
 
   return (
     <View>
@@ -76,29 +103,41 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
         <View style={$themedDetailsContainer}>
           {!!recipe.servings && (
             <View>
-              <Text weight="light" tx={"recipeDetailsScreen:servings"} />
+              <Text preset="subheading" weight="light" tx={"recipeDetailsScreen:servings"} />
               <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
             </View>
           )}
 
           {!!recipe.bakingTimeInMinutes && (
-            <View>
-              <Text weight="light" tx={"recipeDetailsScreen:bake"} />
-              <Text preset="heading" weight="light" text={`${recipe.bakingTimeInMinutes}m`} />
+            <View style={$themedTimeItemContainer}>
+              <Text 
+                preset="formHelper" 
+                weight="light" 
+                text={translate("recipeDetailsScreen:bake").toUpperCase()}
+              />
+              <TimeDisplay minutes={recipe.bakingTimeInMinutes} />
             </View>
           )}
 
           {!!recipe.preparationTimeInMinutes && (
-            <View>
-              <Text weight="light" tx={"recipeDetailsScreen:prep"} />
-              <Text preset="heading" weight="light" text={`${recipe.preparationTimeInMinutes}m`} />
+            <View style={$themedTimeItemContainer}>
+              <Text 
+                preset="formHelper" 
+                weight="light" 
+                text={translate("recipeDetailsScreen:prep").toUpperCase()}
+              />
+              <TimeDisplay minutes={recipe.preparationTimeInMinutes} />
             </View>
           )}
 
           {!!recipe.cookingTimeInMinutes && (
-            <View>
-              <Text weight="light" tx={"recipeDetailsScreen:cook"} />
-              <Text preset="heading" weight="light" text={`${recipe.cookingTimeInMinutes}m`} />
+            <View style={$themedTimeItemContainer}>
+              <Text 
+                preset="formHelper" 
+                weight="light" 
+                text={translate("recipeDetailsScreen:cook").toUpperCase()}
+              />
+              <TimeDisplay minutes={recipe.cookingTimeInMinutes} />
             </View>
           )}
         </View>
