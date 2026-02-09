@@ -15,6 +15,7 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, FlatList, ImageStyle, View, ViewStyle } from "react-native"
+import * as SecureStore from "expo-secure-store"
 
 export default observer(function Cookbook() {
   const { cookbookStore, membershipStore } = useStores()
@@ -23,6 +24,7 @@ export default observer(function Cookbook() {
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
 
   // Memoize themed styles
   const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
@@ -37,6 +39,12 @@ export default observer(function Cookbook() {
     title: "Members",
     onLeftPress: () => router.back(),
   })
+
+  useEffect(() => {
+    SecureStore.getItemAsync("email").then((email) => {
+      setCurrentUserEmail(email)
+    })
+  }, [])
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -107,24 +115,28 @@ export default observer(function Cookbook() {
         }
         onRefresh={manualRefresh}
         refreshing={refreshing}
-        renderItem={({ item, index }) => (
-          <View
-            style={[
-              $themedListItemStyle,
-              index === 0 && $themedBorderTop,
-              index === membershipStore.memberships?.items?.length - 1 && $themedBorderBottom,
-            ]}
-          >
-            <RecipeListItem
-              index={index}
-              lastIndex={membershipStore.memberships?.items?.length - 1}
-              text={`${item.name ?? item.email}`}
-              onPress={async () => {
-                router.push(`../membership/${item.id}`)
-              }}
-            />
-          </View>
-        )}
+        renderItem={({ item, index }) => {
+          const isCurrentUser = item.email?.toLowerCase() === currentUserEmail?.toLowerCase()
+          return (
+            <View
+              style={[
+                $themedListItemStyle,
+                index === 0 && $themedBorderTop,
+                index === membershipStore.memberships?.items?.length - 1 && $themedBorderBottom,
+              ]}
+            >
+              <RecipeListItem
+                index={index}
+                lastIndex={membershipStore.memberships?.items?.length - 1}
+                text={`${item.name ?? item.email}`}
+                onPress={async () => {
+                  router.push(`../membership/${item.id}`)
+                }}
+                TextProps={isCurrentUser ? { weight: "bold" as const } : undefined}
+              />
+            </View>
+          )
+        }}
         ListFooterComponent={
           <>
             {membershipStore.memberships?.hasMultiplePages && (
