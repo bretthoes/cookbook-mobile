@@ -17,7 +17,15 @@ import * as ImagePicker from "expo-image-picker"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
-import { ActivityIndicator, Image, ImageStyle, Pressable, TextStyle, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  Image,
+  ImageStyle,
+  Pressable,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native"
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 
 function CookbookItem({

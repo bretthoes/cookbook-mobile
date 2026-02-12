@@ -13,7 +13,15 @@ import { getCookbookImage } from "@/utils/cookbookImages"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, Alert, Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  ImageStyle,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native"
 
 export default observer(function InvitationTokenScreen() {
   const { token } = useLocalSearchParams<{ token: string }>()
@@ -153,7 +161,10 @@ export default observer(function InvitationTokenScreen() {
       <Screen style={$root} preset="scroll">
         <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
-        <Text text="Loading invitation..." style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }} />
+        <Text
+          text="Loading invitation..."
+          style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }}
+        />
       </Screen>
     )
   }
@@ -171,7 +182,11 @@ export default observer(function InvitationTokenScreen() {
             ImageProps={{ resizeMode: "contain" }}
             button=""
           />
-          <Button text="Go Back" onPress={() => router.back()} style={{ marginTop: spacing.lg, marginHorizontal: spacing.md }} />
+          <Button
+            text="Go Back"
+            onPress={() => router.back()}
+            style={{ marginTop: spacing.lg, marginHorizontal: spacing.md }}
+          />
         </View>
       </Screen>
     )
@@ -210,7 +225,10 @@ export default observer(function InvitationTokenScreen() {
       <Screen style={$root} preset="scroll">
         <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
-        <Text text="Loading invitation..." style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }} />
+        <Text
+          text="Loading invitation..."
+          style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }}
+        />
       </Screen>
     )
   }
@@ -250,7 +268,12 @@ export default observer(function InvitationTokenScreen() {
       {actionError && (
         <Text
           text={actionError}
-          style={{ color: theme.colors.error, marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }}
+          style={{
+            color: theme.colors.error,
+            marginTop: spacing.md,
+            textAlign: "center",
+            paddingHorizontal: spacing.md,
+          }}
         />
       )}
 

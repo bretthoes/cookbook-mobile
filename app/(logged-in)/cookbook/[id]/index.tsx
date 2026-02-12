@@ -228,9 +228,11 @@ export default observer(function Cookbook() {
         }
         onRefresh={manualRefresh}
         refreshing={refreshing}
-        ListFooterComponent={<View style={$themedListFooter}>
-          <Text weight="light" text={`${filteredItems.length} recipes.`} />
-        </View>}
+        ListFooterComponent={
+          <View style={$themedListFooter}>
+            <Text weight="light" text={`${filteredItems.length} recipes.`} />
+          </View>
+        }
         renderItem={({ item, index }) => (
           <View
             style={[

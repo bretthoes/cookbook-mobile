@@ -49,12 +49,8 @@ function TimeDisplay({ minutes }: { minutes: number }) {
   const { hours, minutes: mins } = formatMinutes(minutes)
   return (
     <>
-      {hours > 0 && (
-        <Text preset="default" text={`${hours} hour${hours !== 1 ? "s" : ""}`} />
-      )}
-      {mins > 0 && (
-        <Text preset="default" text={`${mins} mins`} />
-      )}
+      {hours > 0 && <Text preset="default" text={`${hours} hour${hours !== 1 ? "s" : ""}`} />}
+      {mins > 0 && <Text preset="default" text={`${mins} mins`} />}
     </>
   )
 }
@@ -110,9 +106,9 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
 
           {!!recipe.bakingTimeInMinutes && (
             <View style={$themedTimeItemContainer}>
-              <Text 
-                preset="formHelper" 
-                weight="light" 
+              <Text
+                preset="formHelper"
+                weight="light"
                 text={translate("recipeDetailsScreen:bake").toUpperCase()}
               />
               <TimeDisplay minutes={recipe.bakingTimeInMinutes} />
@@ -121,9 +117,9 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
 
           {!!recipe.preparationTimeInMinutes && (
             <View style={$themedTimeItemContainer}>
-              <Text 
-                preset="formHelper" 
-                weight="light" 
+              <Text
+                preset="formHelper"
+                weight="light"
                 text={translate("recipeDetailsScreen:prep").toUpperCase()}
               />
               <TimeDisplay minutes={recipe.preparationTimeInMinutes} />
@@ -132,9 +128,9 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
 
           {!!recipe.cookingTimeInMinutes && (
             <View style={$themedTimeItemContainer}>
-              <Text 
-                preset="formHelper" 
-                weight="light" 
+              <Text
+                preset="formHelper"
+                weight="light"
                 text={translate("recipeDetailsScreen:cook").toUpperCase()}
               />
               <TimeDisplay minutes={recipe.cookingTimeInMinutes} />
