@@ -113,6 +113,7 @@ export default observer(function MembershipScreen() {
   const data: DataItem[] = [
     { label: "Email", value: membership.email },
     { label: "Name", value: membership.name },
+    { label: "Is Owner", value: membership.isOwner },
     { label: "Can Add Recipe", value: membership.canAddRecipe },
     { label: "Can Update Recipe", value: membership.canUpdateRecipe },
     { label: "Can Delete Recipe", value: membership.canDeleteRecipe },

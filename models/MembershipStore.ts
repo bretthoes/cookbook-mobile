@@ -84,6 +84,24 @@ export const MembershipStoreModel = types
 
       membership.setProp(property, value)
     },
+    toggleOwner: flow(function* (id: number, makeOwner: boolean) {
+      const membership = self.memberships.items.find((m) => m.id === id)
+      if (!membership) return false
+
+      // Update local state first
+      membership.setProp("isOwner", makeOwner)
+
+      // Then update on server
+      const response = yield api.updateMembership(id, membership)
+      if (response.kind === "ok") {
+        return true
+      } else {
+        console.error(`Error updating membership ownership: ${JSON.stringify(response)}`)
+        // Revert local state on failure
+        membership.setProp("isOwner", !makeOwner)
+        return false
+      }
+    }),
   }))
 
 export interface MembershipStore extends Instance<typeof MembershipStoreModel> {}

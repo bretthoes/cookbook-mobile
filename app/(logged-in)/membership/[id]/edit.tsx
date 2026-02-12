@@ -8,11 +8,13 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
+import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
-import React, { useState } from "react"
-import { FlatList, TextStyle, View, ViewStyle } from "react-native"
+import React, { useEffect, useState } from "react"
+import { Alert, FlatList, TextStyle, View, ViewStyle } from "react-native"
 
 type MembershipProperty =
+  | "isOwner"
   | "canAddRecipe"
   | "canUpdateRecipe"
   | "canDeleteRecipe"
@@ -25,13 +27,16 @@ type DataItem = {
   value: string | boolean | null
   type: "text" | "switch"
   key?: MembershipProperty
+  canToggle?: boolean
 }
 
 export default observer(function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { membershipStore } = useStores()
+  const { membershipStore, cookbookStore } = useStores()
   const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
   const [resultMessage, setResultMessage] = useState<string | null>(null)
+  const [email, setEmail] = useState<string | null>(null)
+  const [isOwner, setIsOwner] = useState<boolean>(false)
   const { themed } = useAppTheme()
 
   // Memoize themed styles
@@ -44,6 +49,21 @@ export default observer(function MembershipEditScreen() {
   const $themedResultMessage = React.useMemo(() => themed($resultMessage), [themed])
   const $themedSuccessMessage = React.useMemo(() => themed($successMessage), [themed])
   const $themedErrorMessage = React.useMemo(() => themed($errorMessage), [themed])
+
+  useEffect(() => {
+    SecureStore.getItemAsync("email").then((result) => {
+      setEmail(result)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (email && membershipStore.memberships?.items) {
+      const userMembership = membershipStore.memberships.items.find(
+        (m) => m.email === email && m.isOwner,
+      )
+      setIsOwner(!!userMembership)
+    }
+  }, [email, membershipStore.memberships?.items])
 
   useHeader({
     title: "Edit Member",
@@ -62,9 +82,86 @@ export default observer(function MembershipEditScreen() {
 
   if (!membership) return <ItemNotFound message="Membership not found" />
 
+  const isCurrentUserMembership = membership.email?.toLowerCase() === email?.toLowerCase()
+  const canToggleOwner = isOwner && !isCurrentUserMembership
+
+  const handleToggleOwner = (newValue: boolean) => {
+    // Safety check: only current owner can toggle ownership
+    if (!isOwner) {
+      Alert.alert("Error", "Only the cookbook owner can change ownership.")
+      return
+    }
+
+    // Safety check: cannot toggle own membership
+    if (isCurrentUserMembership) {
+      Alert.alert("Error", "You cannot change your own ownership status.")
+      return
+    }
+
+    const currentValue = membership.isOwner
+    if (newValue === currentValue) return // No change
+
+    const cookbookId = cookbookStore.selected?.id
+    if (!cookbookId) {
+      Alert.alert("Error", "Cookbook not found. Please try again.")
+      return
+    }
+
+    if (newValue) {
+      // Promoting to owner - show confirmation first
+      Alert.alert(
+        "Promote to Owner",
+        "Are you sure? This will forfeit your ownership of this cookbook.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+          },
+          {
+            text: "Confirm",
+            style: "destructive",
+            onPress: async () => {
+              // Update optimistically
+              membershipStore.setMembershipProperty(parseInt(id), "isOwner", true)
+              const success = await membershipStore.toggleOwner(parseInt(id), true)
+              if (success) {
+                // Refresh ownMembership to reflect the ownership change
+                await membershipStore.singleByCookbookId(cookbookId)
+              } else {
+                // Revert on failure
+                membershipStore.setMembershipProperty(parseInt(id), "isOwner", false)
+                Alert.alert("Error", "Failed to update ownership. Please try again.")
+              }
+            },
+          },
+        ],
+      )
+    } else {
+      // Demoting from owner - update directly (no confirmation needed)
+      membershipStore.setMembershipProperty(parseInt(id), "isOwner", false)
+      membershipStore.toggleOwner(parseInt(id), false).then(async (success) => {
+        if (success) {
+          // Refresh ownMembership to reflect the ownership change
+          await membershipStore.singleByCookbookId(cookbookId)
+        } else {
+          // Revert on failure
+          membershipStore.setMembershipProperty(parseInt(id), "isOwner", true)
+          Alert.alert("Error", "Failed to update ownership. Please try again.")
+        }
+      })
+    }
+  }
+
   const data: DataItem[] = [
     { label: "Email", value: membership.email, type: "text" },
     { label: "Name", value: membership.name, type: "text" },
+    {
+      label: "Is Owner",
+      value: membership.isOwner,
+      type: "switch",
+      key: "isOwner",
+      canToggle: canToggleOwner,
+    },
     {
       label: "Can Add Recipe",
       value: membership.canAddRecipe,
@@ -105,10 +202,13 @@ export default observer(function MembershipEditScreen() {
         <Switch
           value={item.value as boolean}
           onValueChange={(value) => {
-            if (item.key) {
+            if (item.key === "isOwner") {
+              handleToggleOwner(value)
+            } else if (item.key) {
               membershipStore.setMembershipProperty(parseInt(id), item.key, value)
             }
           }}
+          disabled={item.key === "isOwner" && !item.canToggle}
         />
       ) : typeof item.value === "boolean" ? (
         <Icon icon={item.value ? "check" : "x"} size={20} />
