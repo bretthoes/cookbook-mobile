@@ -9,11 +9,13 @@ import { RecipeImages } from "@/components/Recipe/RecipeImages"
 import RecipeSummary from "@/components/Recipe/RecipeSummary"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { Switch } from "@/components/Toggle"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useActionSheet } from "@expo/react-native-action-sheet"
+import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
@@ -40,6 +42,15 @@ export default observer(function Recipe() {
   const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
   const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
+  const [cookMode, setCookMode] = useState(false)
+
+  useEffect(() => {
+    if (cookMode) activateKeepAwake()
+    else deactivateKeepAwake()
+    return () => {
+      deactivateKeepAwake()
+    }
+  }, [cookMode])
 
   useEffect(() => {
     setIsLoading(true)
@@ -142,11 +153,13 @@ export default observer(function Recipe() {
 
       {selected && (
         <View style={$themedDirectionsContainer}>
-          <Text
-            preset="subheading"
-            tx="recipeDetailsScreen:directions"
-            style={{ paddingBottom: spacing.md }}
-          />
+          <View style={$directionsHeaderRow}>
+            <Text preset="subheading" tx="recipeDetailsScreen:directions" />
+            <View style={$cookModeRow}>
+              <Text text="Keep Screen on" />
+              <Switch value={cookMode} onValueChange={setCookMode} />
+            </View>
+          </View>
           {selected.directions.map((item, index) => (
             <View
               key={index}
@@ -192,6 +205,19 @@ const $directionsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
   paddingBottom: theme.spacing.xl,
 })
+
+const $directionsHeaderRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingBottom: spacing.md,
+}
+
+const $cookModeRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: spacing.xs,
+}
 
 const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,

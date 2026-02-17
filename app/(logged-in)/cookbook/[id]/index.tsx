@@ -277,8 +277,8 @@ const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.backgroundDim,
-  paddingHorizontal: theme.spacing.md,
-  marginHorizontal: theme.spacing.lg,
+  paddingHorizontal: theme.spacing.sm,
+  marginHorizontal: theme.spacing.sm,
 })
 
 const $root: ThemedStyle<ViewStyle> = (theme) => ({
