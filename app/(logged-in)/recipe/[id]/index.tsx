@@ -43,6 +43,16 @@ export default observer(function Recipe() {
   const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
   const [cookMode, setCookMode] = useState(false)
+  const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
+
+  const toggleDirectionCompleted = (index: number) => {
+    setCompletedDirections((prev) => {
+      const next = new Set(prev)
+      if (next.has(index)) next.delete(index)
+      else next.add(index)
+      return next
+    })
+  }
 
   useEffect(() => {
     if (cookMode) activateKeepAwake()
@@ -170,8 +180,15 @@ export default observer(function Recipe() {
               ]}
             >
               <ListItem
+                onPress={() => toggleDirectionCompleted(index)}
                 style={{ padding: spacing.sm }}
-                LeftComponent={<DirectionText ordinal={item?.ordinal} text={item?.text} />}
+                LeftComponent={
+                  <DirectionText
+                    ordinal={item?.ordinal}
+                    text={item?.text ?? ""}
+                    completed={completedDirections.has(index)}
+                  />
+                }
                 height={spacing.xl}
                 bottomSeparator={index !== selected.directions.length - 1}
                 topSeparator={index !== 0}
