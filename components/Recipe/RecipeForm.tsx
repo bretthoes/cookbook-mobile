@@ -114,8 +114,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     setValue("images", next)
   }
 
-  const getImageDisplayUri = (uriOrKey: string) =>
-    newImageKeysToLocalUri[uriOrKey] ?? uriOrKey
+  const getImageDisplayUri = (uriOrKey: string) => newImageKeysToLocalUri[uriOrKey] ?? uriOrKey
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -135,7 +134,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const uploadResponse = await api.uploadImage(result.assets)
         if (uploadResponse.kind === "ok") {
-          const existing = isEdit ? getValues("images") ?? [] : []
+          const existing = isEdit ? (getValues("images") ?? []) : []
           const combined = [...existing, ...uploadResponse.keys].slice(0, 6)
           setValue("images", combined)
           const keyToUri: Record<string, string> = {}
@@ -180,11 +179,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                     padding: 2,
                   }}
                 >
-                  <PressableIcon
-                    icon="x"
-                    onPress={() => removeImage(index)}
-                    color="#fff"
-                  />
+                  <PressableIcon icon="x" onPress={() => removeImage(index)} color="#fff" />
                 </View>
               </View>
             ))}
@@ -192,11 +187,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         )}
 
         <Button
-          text={
-            isEdit
-              ? `Add photos (${currentImages.length}/6)`
-              : `Add photos (max of 6)`
-          }
+          text={isEdit ? `Add photos (${currentImages.length}/6)` : `Add photos (max of 6)`}
           onPress={pickImage}
           disabled={isUploading || currentImages.length >= 6}
         />

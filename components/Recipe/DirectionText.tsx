@@ -15,10 +15,7 @@ export const DirectionText = ({ ordinal, text, completed }: DirectionTextProps) 
     : undefined
   return (
     <View style={{ flexDirection: "row" }}>
-      <Text
-        size="xl"
-        style={[{ marginRight: spacing.sm }]}
-      >
+      <Text size="xl" style={[{ marginRight: spacing.sm }]}>
         {`${ordinal}.`}
       </Text>
       <Text style={[{ flex: 1 }, textStyle]} size="md">
