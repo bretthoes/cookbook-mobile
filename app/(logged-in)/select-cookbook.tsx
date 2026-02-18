@@ -189,7 +189,7 @@ export default observer(function SelectCookbookScreen() {
           // "Take a Photo" option was selected
           const result = await ImagePicker.launchCameraAsync({
             allowsEditing: true,
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ["images"],
           })
 
           if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -205,7 +205,7 @@ export default observer(function SelectCookbookScreen() {
         } else if (buttonIndex === 1) {
           // "Select from Camera Roll" option was selected
           const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ["images"],
             allowsMultipleSelection: false,
             allowsEditing: true,
           })

@@ -127,7 +127,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     setIsUploading(true)
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: ["images"],
         allowsMultipleSelection: true,
         aspect: [1, 1],
       })

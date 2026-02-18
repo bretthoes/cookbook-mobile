@@ -15,7 +15,7 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useActionSheet } from "@expo/react-native-action-sheet"
-import { activateKeepAwake, deactivateKeepAwake } from "expo-keep-awake"
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
@@ -55,7 +55,7 @@ export default observer(function Recipe() {
   }
 
   useEffect(() => {
-    if (cookMode) activateKeepAwake()
+    if (cookMode) activateKeepAwakeAsync()
     else deactivateKeepAwake()
     return () => {
       deactivateKeepAwake()
