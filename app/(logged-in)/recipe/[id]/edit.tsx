@@ -61,11 +61,15 @@ export default observer(function EditRecipe() {
         optional: false,
         ordinal: index + 1,
       })),
-      images: formData.images.map((image, index) => ({
-        id: 0,
-        name: image?.trim() ?? "",
-        ordinal: index + 1,
-      })),
+      images: formData.images.map((name, index) => {
+        const trimmed = name?.trim() ?? ""
+        const existing = selected?.images?.find((img) => img.name === trimmed)
+        return {
+          id: existing?.id ?? 0,
+          name: trimmed,
+          ordinal: index + 1,
+        }
+      }),
     }
 
     try {

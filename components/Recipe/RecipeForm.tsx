@@ -16,7 +16,7 @@ import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native"
 
@@ -76,11 +76,18 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
+    getValues,
   } = useForm<RecipeFormInputs>({
     resolver: yupResolver(recipeSchema),
     mode: "onSubmit",
     defaultValues: formValues,
   })
+
+  const currentImages = watch("images") ?? []
+
+  // Map uploaded key → local file URI so we can display new images before save (keys are not full URLs)
+  const [newImageKeysToLocalUri, setNewImageKeysToLocalUri] = useState<Record<string, string>>({})
 
   useHeader({
     titleTx: isEdit ? "recipeListScreen:edit" : "recipeListScreen:add",
@@ -102,13 +109,14 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     remove: removeDirection,
   } = useFieldArray({ control, name: "directions" })
 
-  // Remove the S3_URL mapping since server provides full URLs
-  const [imagesLocal, setImagesLocal] = useState(formValues.images || [])
-  useEffect(() => {
-    setImagesLocal(formValues.images || [])
-  }, [formValues.images])
+  const removeImage = (index: number) => {
+    const next = currentImages.filter((_, i) => i !== index)
+    setValue("images", next)
+  }
 
-  // Image picker function
+  const getImageDisplayUri = (uriOrKey: string) =>
+    newImageKeysToLocalUri[uriOrKey] ?? uriOrKey
+
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
@@ -125,14 +133,16 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const newImages = result.assets.map((x) => x.uri)
-        const combinedImages = [...newImages].slice(0, 6)
-
-        setImagesLocal(combinedImages)
-
         const uploadResponse = await api.uploadImage(result.assets)
         if (uploadResponse.kind === "ok") {
-          setValue("images", uploadResponse.keys.slice(0, 6))
+          const existing = isEdit ? getValues("images") ?? [] : []
+          const combined = [...existing, ...uploadResponse.keys].slice(0, 6)
+          setValue("images", combined)
+          const keyToUri: Record<string, string> = {}
+          uploadResponse.keys.forEach((key, i) => {
+            if (result.assets[i]?.uri) keyToUri[key] = result.assets[i].uri
+          })
+          setNewImageKeysToLocalUri((prev) => ({ ...prev, ...keyToUri }))
         } else {
           alert("Image upload failed")
         }
@@ -152,22 +162,43 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         }
       >
         {isUploading && <ActivityIndicator />}
-        {imagesLocal.length > 0 && (
+        {currentImages.length > 0 && (
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
-            {imagesLocal.map((imageUri, index) => (
-              <AutoImage
-                key={index}
-                source={{ uri: imageUri }}
-                style={{ width: 100, height: 100, margin: 5 }}
-              />
+            {currentImages.map((imageUri, index) => (
+              <View key={index} style={{ margin: 5 }}>
+                <AutoImage
+                  source={{ uri: getImageDisplayUri(imageUri) }}
+                  style={{ width: 100, height: 100 }}
+                />
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 4,
+                    right: 4,
+                    backgroundColor: "rgba(0,0,0,0.5)",
+                    borderRadius: 12,
+                    padding: 2,
+                  }}
+                >
+                  <PressableIcon
+                    icon="x"
+                    onPress={() => removeImage(index)}
+                    color="#fff"
+                  />
+                </View>
+              </View>
             ))}
           </View>
         )}
 
         <Button
-          text={isEdit ? "Replace existing photos (max of 6)" : "Add photos (max of 6)"}
+          text={
+            isEdit
+              ? `Add photos (${currentImages.length}/6)`
+              : `Add photos (max of 6)`
+          }
           onPress={pickImage}
-          disabled={isUploading}
+          disabled={isUploading || currentImages.length >= 6}
         />
 
         <Divider size={spacing.lg} />

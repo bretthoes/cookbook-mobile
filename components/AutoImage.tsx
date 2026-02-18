@@ -10,6 +10,11 @@ export interface AutoImageProps extends ImageProps {
    * How tall should the image be?
    */
   maxHeight?: number
+  /**
+   * Fallback aspect ratio when image dimensions cannot be determined (e.g., due to CORS).
+   * @default 1 (square)
+   */
+  fallbackAspectRatio?: number
 }
 
 /**
@@ -22,21 +27,54 @@ export interface AutoImageProps extends ImageProps {
  * the desired dimensions instead of just being contained within its image-container.
  * @param {number} remoteUri - The URI of the remote image.
  * @param {number} dimensions - The desired dimensions of the image. If not provided, the original dimensions will be returned.
+ * @param {number} fallbackAspectRatio - Fallback aspect ratio when dimensions cannot be determined. Defaults to 1 (square).
  * @returns {[number, number]} - The scaled dimensions of the image.
  */
 export function useAutoImage(
   remoteUri: string,
   dimensions?: [maxWidth?: number, maxHeight?: number],
+  fallbackAspectRatio: number = 1,
 ): [width: number, height: number] {
   const [[remoteWidth, remoteHeight], setRemoteImageDimensions] = useState([0, 0])
+  const [failedToLoad, setFailedToLoad] = useState(false)
   const remoteAspectRatio = remoteWidth / remoteHeight
   const [maxWidth, maxHeight] = dimensions ?? []
 
   useLayoutEffect(() => {
     if (!remoteUri) return
 
-    Image.getSize(remoteUri, (w, h) => setRemoteImageDimensions([w, h]))
+    // Reset state when URI changes
+    setFailedToLoad(false)
+    setRemoteImageDimensions([0, 0])
+
+    Image.getSize(
+      remoteUri,
+      (w, h) => setRemoteImageDimensions([w, h]),
+      () => {
+        // getSize can fail due to CORS issues with remote images (e.g., S3)
+        // The image will still display using fallback dimensions
+        setFailedToLoad(true)
+      },
+    )
   }, [remoteUri])
+
+  // Use fallback dimensions when getSize fails
+  if (failedToLoad) {
+    if (maxWidth && maxHeight) {
+      // Use smaller dimension based on fallback aspect ratio
+      if (fallbackAspectRatio >= 1) {
+        return [maxWidth, maxWidth / fallbackAspectRatio]
+      } else {
+        return [maxHeight * fallbackAspectRatio, maxHeight]
+      }
+    } else if (maxWidth) {
+      return [maxWidth, maxWidth / fallbackAspectRatio]
+    } else if (maxHeight) {
+      return [maxHeight * fallbackAspectRatio, maxHeight]
+    }
+    // No dimensions provided, can't determine fallback size
+    return [0, 0]
+  }
 
   if (Number.isNaN(remoteAspectRatio)) return [0, 0]
 
@@ -59,7 +97,7 @@ export function useAutoImage(
  * @returns {JSX.Element} The rendered `AutoImage` component.
  */
 export function AutoImage(props: AutoImageProps) {
-  const { maxWidth, maxHeight, ...ImageProps } = props
+  const { maxWidth, maxHeight, fallbackAspectRatio, ...ImageProps } = props
   const source = props.source as ImageURISource
 
   const [width, height] = useAutoImage(
@@ -68,6 +106,7 @@ export function AutoImage(props: AutoImageProps) {
       default: source?.uri as string,
     }),
     [maxWidth, maxHeight],
+    fallbackAspectRatio,
   )
 
   return <Image {...ImageProps} style={[{ width, height }, props.style]} />
