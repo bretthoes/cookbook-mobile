@@ -90,8 +90,8 @@ export default observer(function EmailVerification() {
       <TouchableOpacity onPress={handleResendEmail} disabled={isCooldown} style={$resendContainer}>
         <Text style={[$resendText, isCooldown && { color: colors.border }]}>
           {isCooldown
-            ? `Didn&apos;t get the email? Click here to resend (${cooldownTime}s)`
-            : "Didn&apos;t get the email? Click here to resend"}
+            ? `Didn\'t get the email? Click here to resend (${cooldownTime}s)`
+            : "Didn\'t get the email? Click here to resend"}
         </Text>
       </TouchableOpacity>
     </Screen>

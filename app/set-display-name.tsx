@@ -53,7 +53,7 @@ export default observer(function SetDisplayName() {
       />
       <Text
         testID="set-display-name-description"
-        text="This is optional, but you can set a display name. This is how others will see you, instead of your email. You can change this any time in the app."
+        text="This is how others will see you, instead of your email. You can change this any time in the app."
         style={$content}
       />
       <UseCase>
@@ -66,7 +66,7 @@ export default observer(function SetDisplayName() {
           autoCapitalize="none"
           autoComplete="name"
           autoCorrect={false}
-          label="Display name (optional)"
+          label="Display name"
           placeholder="Bob"
           onSubmitEditing={forward}
         />
