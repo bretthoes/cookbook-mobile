@@ -64,10 +64,10 @@ export default observer(function SetDisplayName() {
           helper={error}
           status={error ? "error" : undefined}
           autoCapitalize="none"
-          autoComplete="name"
+          autoComplete="name" 
           autoCorrect={false}
           label="Display name"
-          placeholder="Bob"
+          placeholder="Bob" // TODO different names for different languages
           onSubmitEditing={forward}
         />
       </UseCase>
