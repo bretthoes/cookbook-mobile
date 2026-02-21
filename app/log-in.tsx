@@ -50,7 +50,7 @@ export default observer(function Login(_props) {
   useEffect(() => {
     if (isAuthenticated) {
       setIsSubmitted(false)
-      router.replace("./(tabs)/cookbooks")
+      router.replace("/(logged-in)/(tabs)/cookbooks")
     }
   }, [isAuthenticated])
 

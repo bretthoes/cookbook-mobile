@@ -2,9 +2,10 @@
 import { Button } from "@/components/Button"
 import { Text } from "@/components/Text"
 import { isRTL } from "@/i18n"
+import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
-import { useRouter } from "expo-router"
+import { Redirect, useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
@@ -13,8 +14,13 @@ const welcomeFace = require("../assets/images/welcome-face.png")
 
 // @mst replace-next-line export default function WelcomeScreen() {
 export default observer(function WelcomeScreen() {
+  const { authenticationStore: { isAuthenticated } } = useStores()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
   const router = useRouter()
+
+  if (isAuthenticated) {
+    return <Redirect href="/(logged-in)/(tabs)/cookbooks" />
+  }
 
   return (
     <View style={$container}>
