@@ -41,6 +41,7 @@ const en = {
     passwordFieldPlaceholder: "Super secret password here",
     tapToLogIn: "Tap to log in!",
     tapToSignIn: "Tap to sign in!",
+    rememberMe: "Remember me",
     hint: "Hint: you can use any email address and your favorite password :)",
     register: "No account? Register",
   },

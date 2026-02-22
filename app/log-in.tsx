@@ -4,13 +4,18 @@ import { PressableIcon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
+import { Checkbox } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
 import { useStores } from "@/models/helpers/useStores"
+import * as SecureStore from "expo-secure-store"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "../theme"
+
+const REMEMBER_ME_EMAIL_KEY = "login_remember_email"
+const REMEMBER_ME_PASSWORD_KEY = "login_remember_password"
 
 export default observer(function Login(_props) {
   const authPasswordInput = useRef<TextInput>(null)
@@ -19,6 +24,7 @@ export default observer(function Login(_props) {
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [attemptsCount, setAttemptsCount] = useState(0)
+  const [rememberMe, setRememberMe] = useState(true)
   const {
     authenticationStore: {
       login,
@@ -32,13 +38,20 @@ export default observer(function Login(_props) {
   } = useStores()
 
   useEffect(() => {
-    // Here is where you could fetch credentials from keychain or storage
-    // and pre-fill the form fields.
     setResult("")
-    setAuthEmail("bretthoes@gmail.com")
-    setAuthPassword("Admin123!")
+    // Load saved credentials from secure store
+    const loadStoredCredentials = async () => {
+      try {
+        const storedEmail = await SecureStore.getItemAsync(REMEMBER_ME_EMAIL_KEY)
+        const storedPassword = await SecureStore.getItemAsync(REMEMBER_ME_PASSWORD_KEY)
+        if (storedEmail) setAuthEmail(storedEmail)
+        if (storedPassword) setAuthPassword(storedPassword)
+      } catch {
+        // Ignore - secure store may not be available (e.g. web)
+      }
+    }
+    loadStoredCredentials()
 
-    // Return a "cleanup" function that React will run when the component unmounts
     return () => {
       setResult("")
       setAuthPassword("")
@@ -49,10 +62,24 @@ export default observer(function Login(_props) {
   // Add effect to handle authentication state changes
   useEffect(() => {
     if (isAuthenticated) {
+      const persistCredentials = async () => {
+        try {
+          if (rememberMe) {
+            await SecureStore.setItemAsync(REMEMBER_ME_EMAIL_KEY, authEmail)
+            await SecureStore.setItemAsync(REMEMBER_ME_PASSWORD_KEY, authPassword)
+          } else {
+            await SecureStore.deleteItemAsync(REMEMBER_ME_EMAIL_KEY)
+            await SecureStore.deleteItemAsync(REMEMBER_ME_PASSWORD_KEY)
+          }
+        } catch {
+          // Ignore - secure store may not be available
+        }
+      }
+      persistCredentials()
       setIsSubmitted(false)
       router.replace("/(logged-in)/(tabs)/cookbooks")
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated, rememberMe, authEmail, authPassword])
 
   const error = isSubmitted ? validationError : ""
 
@@ -134,6 +161,13 @@ export default observer(function Login(_props) {
       </UseCase>
 
       <View style={$content}>
+        <View style={$rememberMeRow}>
+          <Checkbox
+            value={rememberMe}
+            onValueChange={setRememberMe}
+            labelTx="loginScreen:rememberMe"
+          />
+        </View>
         <Button
           testID="login-button"
           tx="loginScreen:tapToLogIn"
@@ -172,6 +206,10 @@ const $enterDetails: TextStyle = {
 const $hint: TextStyle = {
   color: colors.tint,
   marginBottom: spacing.md,
+}
+
+const $rememberMeRow: ViewStyle = {
+  marginBottom: spacing.sm,
 }
 
 const $tapButton: ViewStyle = {

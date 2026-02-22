@@ -43,6 +43,7 @@ const ko: Translations = {
     passwordFieldPlaceholder: "엄청 비밀스러운 암호를 입력하세요",
     tapToLogIn: "눌러서 로그인 하기!",
     tapToSignIn: "눌러서 로그인 하기!",
+    rememberMe: "___Remember me",
     hint: "힌트: 가장 좋아하는 암호와 아무런 아무 이메일 주소나 사용할 수 있어요 :)",
     register: "계정이 없나요? 등록기",
   },

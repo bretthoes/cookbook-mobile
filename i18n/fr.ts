@@ -45,6 +45,7 @@ const fr: Translations = {
     passwordFieldPlaceholder: "Mot de passe super secret ici",
     tapToLogIn: "Appuyez pour vous connecter!",
     tapToSignIn: "---Tap to sign in!",
+    rememberMe: "___Remember me",
     hint: "Astuce : vous pouvez utiliser n'importe quelle adresse e-mail et votre mot de passe préféré :)",
     register: "---No account? Register",
   },
