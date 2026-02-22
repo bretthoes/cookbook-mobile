@@ -60,7 +60,7 @@ export const InvitationStoreModel = types
         return true
       } else {
         console.error(`Error updating invitations: ${JSON.stringify(response)}`)
-        return false
+        return { success: false, conflict: response.kind === "conflict" }
       }
     }),
     invite: flow(function* (cookbookId: number, email: string) {

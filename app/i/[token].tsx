@@ -126,30 +126,23 @@ export default observer(function InvitationTokenScreen() {
   const handleReject = async () => {
     if (!token) return
 
-    Alert.alert("Decline Invitation", "Are you sure you want to decline this invitation?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Decline",
-        style: "destructive",
-        onPress: async () => {
-          setActionError(null)
-          setProcessingAction("decline")
-          const startTime = Date.now()
-          const success = await invitationStore.respond(token, false)
-          const elapsedTime = Date.now() - startTime
-          const minDelay = 1000 // 1 second minimum
-          if (elapsedTime < minDelay) {
-            await new Promise((resolve) => setTimeout(resolve, minDelay - elapsedTime))
-          }
-          setProcessingAction(null)
-          if (success) {
-            router.back()
-          } else {
-            setActionError("Failed to decline invitation. Please try again.")
-          }
-        },
-      },
-    ])
+    setActionError(null)
+    setProcessingAction("decline")
+    const startTime = Date.now()
+    const success = await invitationStore.respond(token, false)
+    const elapsedTime = Date.now() - startTime
+    const minDelay = 1000 // 1 second minimum
+    if (elapsedTime < minDelay) {
+      await new Promise((resolve) => setTimeout(resolve, minDelay - elapsedTime))
+    }
+    setProcessingAction(null)
+    if (success === true) {
+      router.back()
+    } else {
+      setActionError(
+        success?.conflict ? "This invitation link has already been redeemed." : "Failed to decline invitation. Please try again."
+      )
+    }
   }
 
   if (processingAction) {
@@ -265,6 +258,15 @@ export default observer(function InvitationTokenScreen() {
         style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
       />
 
+      {isAuthenticated && (
+        <Button
+          text="Decline"
+          onPress={handleReject}
+          style={{ marginTop: spacing.md, marginHorizontal: spacing.md }}
+          preset="reversed"
+        />
+      )}
+
       {actionError && (
         <Text
           text={actionError}
@@ -274,15 +276,6 @@ export default observer(function InvitationTokenScreen() {
             textAlign: "center",
             paddingHorizontal: spacing.md,
           }}
-        />
-      )}
-
-      {isAuthenticated && (
-        <Button
-          text="Decline"
-          onPress={handleReject}
-          style={{ marginTop: spacing.md, marginHorizontal: spacing.md }}
-          preset="reversed"
         />
       )}
     </Screen>
