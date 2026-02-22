@@ -14,7 +14,9 @@ const welcomeFace = require("../assets/images/welcome-face.png")
 
 // @mst replace-next-line export default function WelcomeScreen() {
 export default observer(function WelcomeScreen() {
-  const { authenticationStore: { isAuthenticated } } = useStores()
+  const {
+    authenticationStore: { isAuthenticated },
+  } = useStores()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
   const router = useRouter()
 

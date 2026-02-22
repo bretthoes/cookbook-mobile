@@ -10,7 +10,8 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "generate:api": "openapi-typescript ../SharedCookbook/src/Web/wwwroot/api/specification.json -o services/api/generated/schema.d.ts"
   },
   "dependencies": {
     "@expo-google-fonts/space-grotesk": "^0.4.1",
@@ -22,7 +23,6 @@
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
     "@shopify/flash-list": "2.0.2",
-    "apisauce": "^3.2.2",
     "date-fns": "^4.1.0",
     "expo": "~54.0.33",
     "expo-application": "^7.0.8",
@@ -49,6 +49,8 @@
     "mobx": "^6.15.0",
     "mobx-react-lite": "^4.1.1",
     "mobx-state-tree": "^7.0.2",
+    "openapi-fetch": "^0.17.0",
+    "openapi-typescript": "^7.13.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.71.1",
