@@ -245,6 +245,12 @@ const ko: Translations = {
     invite: "Invite someone else",
     leave: "Leave cookbook",
   },
+  cookbookDetailScreen: {
+    addRecipe: "___Add Recipe",
+    viewMembers: "___View Members",
+    editCookbook: "___Edit Cookbook",
+    leaveCookbook: "___Leave Cookbook",
+  },
   recipeDetailsScreen: {
     directions: "Directions",
     ingredients: "Ingredients",

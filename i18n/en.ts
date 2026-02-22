@@ -248,6 +248,12 @@ const en = {
     invite: "Invite someone else",
     leave: "Leave cookbook",
   },
+  cookbookDetailScreen: {
+    addRecipe: "Add Recipe",
+    viewMembers: "View Members",
+    editCookbook: "Edit Cookbook",
+    leaveCookbook: "Leave Cookbook",
+  },
   recipeDetailsScreen: {
     directions: "Directions",
     ingredients: "Ingredients",

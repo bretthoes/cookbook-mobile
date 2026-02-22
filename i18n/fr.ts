@@ -250,6 +250,12 @@ const fr: Translations = {
     invite: "Inviter quelqu'un d'autre",
     leave: "Quitter le livre de recettes",
   },
+  cookbookDetailScreen: {
+    addRecipe: "___Add Recipe",
+    viewMembers: "___View Members",
+    editCookbook: "___Edit Cookbook",
+    leaveCookbook: "___Leave Cookbook",
+  },
   recipeDetailsScreen: {
     directions: "Instructions",
     ingredients: "Ingrédients",

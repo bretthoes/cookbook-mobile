@@ -1,3 +1,4 @@
+import { CookbookDetailPopover } from "@/components/CookbookDetailPopover"
 import { Divider } from "@/components/Divider"
 import { EmptyState } from "@/components/EmptyState"
 import { ItemNotFound } from "@/components/ItemNotFound"
@@ -13,7 +14,6 @@ import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { delay } from "@/utils/delay"
 import { useHeader } from "@/utils/useHeader"
-import { useActionSheet } from "@expo/react-native-action-sheet"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useEffect, useMemo, useState } from "react"
@@ -26,12 +26,12 @@ export default observer(function Cookbook() {
     membershipStore,
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
   const isAuthor = membershipStore.ownMembership?.isOwner
 
   const [refreshing, setRefreshing] = useState(false)
+  const [popoverVisible, setPopoverVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   //const debouncedSearchQuery = useDebounce(searchQuery)
@@ -111,39 +111,42 @@ export default observer(function Cookbook() {
     )
   }
 
-  const handlePressMore = () => {
-    const options = isAuthor
-      ? ["Add Recipe", "View Members", "Edit Cookbook", "Leave Cookbook", "Cancel"]
-      : ["Add Recipe", "View Members", "Leave Cookbook", "Cancel"]
-    const cancelButtonIndex = options.length - 1
-    const destructiveButtonIndex = options.indexOf("Leave Cookbook")
+  const handlePressMore = () => setPopoverVisible(true)
 
-    showActionSheetWithOptions(
+  const popoverOptions = useMemo(
+    () => [
       {
-        options,
-        cancelButtonIndex,
-        destructiveButtonIndex,
+        key: "addRecipe",
+        tx: "cookbookDetailScreen:addRecipe" as const,
+        leftIcon: "create" as const,
+        onPress: () => router.push(`../../recipe/add-options`),
       },
-      (buttonIndex) => {
-        if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
-
-        switch (options[buttonIndex]) {
-          case "Add Recipe":
-            router.push(`../../recipe/add-options`)
-            break
-          case "View Members":
-            router.push(`../../membership/list`)
-            break
-          case "Edit Cookbook":
-            handlePressEdit()
-            break
-          case "Leave Cookbook":
-            handlePressLeave()
-            break
-        }
+      {
+        key: "viewMembers",
+        tx: "cookbookDetailScreen:viewMembers" as const,
+        leftIcon: "membership" as const,
+        onPress: () => router.push(`../../membership/list`),
       },
-    )
-  }
+      ...(isAuthor
+        ? [
+            {
+              key: "editCookbook",
+              tx: "cookbookDetailScreen:editCookbook" as const,
+              leftIcon: "settings" as const,
+              onPress: handlePressEdit,
+            },
+          ]
+        : []),
+      {
+        key: "leaveCookbook",
+        tx: "cookbookDetailScreen:leaveCookbook" as const,
+        leftIcon: "x" as const,
+        destructive: true,
+        onPress: handlePressLeave,
+      },
+    ],
+    [isAuthor],
+  )
 
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
@@ -202,7 +205,13 @@ export default observer(function Cookbook() {
   if (!selected) return <ItemNotFound message="Cookbook not found" />
 
   return (
-    <Screen preset="fixed" style={$themedRoot}>
+    <>
+      <CookbookDetailPopover
+        visible={popoverVisible}
+        onDismiss={() => setPopoverVisible(false)}
+        options={popoverOptions}
+      />
+      <Screen preset="fixed" style={$themedRoot}>
       <FlatList<RecipeBrief>
         data={filteredItems}
         ListEmptyComponent={
@@ -254,6 +263,7 @@ export default observer(function Cookbook() {
         )}
       />
     </Screen>
+    </>
   )
 })
 
