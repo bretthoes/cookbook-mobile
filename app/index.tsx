@@ -40,12 +40,19 @@ export default observer(function WelcomeScreen() {
 
       <View style={[$bottomContainer, $bottomContainerInsets]}>
         <Text tx="welcomeScreen:postscript" size="md" />
+        <View style={$buttonGroup}>
         <Button
-          text="Continue"
-          preset="reversed"
-          onPress={() => router.push("/log-in")}
-          style={$loginButton}
-        />
+            text="Register"
+            preset="reversed"
+            onPress={() => router.push("/register")}
+          />
+          <Button
+            text="Login"
+            preset="default"
+            onPress={() => router.push("/log-in")}
+            style={$loginButton}
+          />
+        </View>
       </View>
     </View>
   )
@@ -73,7 +80,12 @@ const $bottomContainer: ViewStyle = {
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
   paddingHorizontal: spacing.lg,
-  justifyContent: "space-around",
+  paddingVertical: spacing.md,
+}
+
+const $buttonGroup: ViewStyle = {
+  marginTop: "auto",
+  justifyContent: "flex-end",
 }
 
 const $welcomeLogo: ImageStyle = {
@@ -96,5 +108,5 @@ const $welcomeHeading: TextStyle = {
 }
 
 const $loginButton: ViewStyle = {
-  marginTop: spacing.md,
+  marginTop: spacing.sm,
 }

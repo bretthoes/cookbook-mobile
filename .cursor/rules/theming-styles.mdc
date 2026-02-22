@@ -1,9 +1,7 @@
 ---
 description: Use themed styles via useAppTheme for theme-aware styling
-globs: "**/*.tsx,**/*.ts"
 alwaysApply: false
 ---
-
 # Theming and Styled Components
 
 Use `useAppTheme()` and the `themed()` function for any styles that depend on theme (colors, spacing). Never hardcode theme values in components.

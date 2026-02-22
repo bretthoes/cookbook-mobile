@@ -1,9 +1,7 @@
 ---
 description: Use Screen and useHeader for consistent screen layout
-globs: "**/app/**/*.tsx"
 alwaysApply: false
 ---
-
 # Screen Structure
 
 Use the shared `Screen` component and `useHeader` hook for consistent layout and navigation across screens.
