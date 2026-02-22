@@ -1,0 +1,60 @@
+---
+description: Use i18n (tx) for all user-facing text in components and screens
+globs: "**/*.tsx,**/*.ts"
+alwaysApply: true
+---
+
+# i18n Translation Standard
+
+Use the `tx` prop for all user-visible text. Never use `text` or hardcoded strings for content shown to users.
+
+## Setup
+- i18n: `@/i18n` (i18n/i18n.ts). Keys use `TxKeyPath` (e.g., `common:ok`, `loginScreen:logIn`).
+- Components: `Text`, `Button`, and similar expose `tx` — prefer `tx` over `text`.
+
+## When Adding Text
+
+1. **Use `tx` on components**
+   ```tsx
+   <Button tx="common:ok" />              // ✅ GOOD
+   <Text tx="recipeDetailsScreen:edit" /> // ✅ GOOD
+   <Button text="OK!" />                  // ❌ BAD
+   ```
+
+2. **Add key in `i18n/en.ts`**  
+   Add the English string under the right nested section (e.g., `loginScreen`, `recipeListScreen`).
+
+3. **Add placeholders in other locales** (`fr.ts`, `ko.ts`, etc.)  
+   Same key, English string prefixed with `___` (e.g., `"___Save Recipe"`). No translation needed yet.
+
+## Key Naming
+- **camelCase** for keys.
+- **Sections** per screen/feature: `loginScreen`, `recipeDetailsScreen`, `recipeListScreen`, etc.
+
+## Example
+
+Before:
+```tsx
+<Button text="Save Recipe" onPress={handleSave} />
+```
+
+After:
+```tsx
+<Button tx="recipeDetailsScreen:save" onPress={handleSave} />
+```
+
+In `i18n/en.ts`:
+```ts
+recipeDetailsScreen: {
+  // ...existing
+  save: "Save Recipe",
+},
+```
+
+In `i18n/fr.ts` and `i18n/ko.ts`:
+```ts
+recipeDetailsScreen: {
+  // ...existing
+  save: "___Save Recipe",
+},
+```
