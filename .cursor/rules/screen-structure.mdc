@@ -1,0 +1,53 @@
+---
+description: Use Screen and useHeader for consistent screen layout
+globs: "**/app/**/*.tsx"
+alwaysApply: false
+---
+
+# Screen Structure
+
+Use the shared `Screen` component and `useHeader` hook for consistent layout and navigation across screens.
+
+## Screen Component
+
+Wrap screen content in `Screen` from `@/components/Screen`:
+
+```tsx
+import { Screen } from "@/components/Screen"
+
+export default function MyScreen() {
+  return (
+    <Screen preset="scroll">
+      {/* content */}
+    </Screen>
+  )
+}
+```
+
+**Presets:**
+- `scroll` – Scrollable content; use when content may overflow (default for most screens)
+- `fixed` – Non-scrolling; use for short, fixed layouts
+- `auto` – Enables scroll only when content exceeds viewport
+
+## Header via useHeader
+
+Use `useHeader` from `@/utils/useHeader` for screen headers. Call it at the top of the component:
+
+```tsx
+import { useHeader } from "@/utils/useHeader"
+import { router } from "expo-router"
+
+export default function MyScreen() {
+  useHeader({
+    titleTx: "recipeListScreen:title",
+    leftIcon: "back",
+    onLeftPress: () => router.back(),
+    rightTx: "common:save",
+    onRightPress: handleSave,
+  })
+
+  return <Screen preset="scroll">...</Screen>
+}
+```
+
+**Common props:** `titleTx` / `title`, `leftIcon`, `onLeftPress`, `rightText` / `rightTx`, `onRightPress`, `RightActionComponent`. Prefer `titleTx` and `rightTx` over plain text (per i18n rule).

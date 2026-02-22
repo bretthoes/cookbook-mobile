@@ -1,0 +1,40 @@
+---
+description: Use themed styles via useAppTheme for theme-aware styling
+globs: "**/*.tsx,**/*.ts"
+alwaysApply: false
+---
+
+# Theming and Styled Components
+
+Use `useAppTheme()` and the `themed()` function for any styles that depend on theme (colors, spacing). Never hardcode theme values in components.
+
+## Patterns
+
+1. **Define base styles** as `ThemedStyle<ViewStyle>` (or `TextStyle`) with `$` prefix:
+   ```tsx
+   const $container: ThemedStyle<ViewStyle> = (theme) => ({
+     flex: 1,
+     backgroundColor: theme.colors.background,
+     padding: theme.spacing.md,
+   })
+   ```
+
+2. **Memoize themed styles** before passing to components to avoid recomputing on every render:
+   ```tsx
+   const { themed } = useAppTheme()
+   const $themedContainer = useMemo(() => themed($container), [themed])
+   return <View style={$themedContainer} />
+   ```
+
+3. **Use `themed()` directly** for one-off or dynamic cases:
+   ```tsx
+   <View style={themed($root)} />
+   <View style={themed([$baseStyle, { padding: 8 }])} />
+   ```
+
+## Rules
+
+- Prefix style constants with `$` (e.g., `$root`, `$listItemStyle`, `$emptyState`)
+- Import `ThemedStyle` from `@/theme`; use `theme.colors`, `theme.spacing` inside style fns
+- Memoize when the style is used in JSX and the component re-renders frequently
+- Prefer `@/theme` design tokens over raw numbers for spacing/colors
