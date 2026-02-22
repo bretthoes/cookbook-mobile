@@ -260,6 +260,10 @@ const ko: Translations = {
     bake: "Bake Time",
     summary: "Summary",
     edit: "Edit",
+    editRecipe: "___Edit Recipe",
+    deleteRecipe: "___Delete Recipe",
+    exportRecipe: "___Export Recipe",
+    printRecipe: "___Print Recipe",
   },
   // Settings related translations
   languageScreen: {

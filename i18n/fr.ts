@@ -265,6 +265,10 @@ const fr: Translations = {
     bake: "Temps de cuisson au four",
     summary: "Résumé",
     edit: "Modifier",
+    editRecipe: "___Edit Recipe",
+    deleteRecipe: "___Delete Recipe",
+    exportRecipe: "___Export Recipe",
+    printRecipe: "___Print Recipe",
   },
   languageScreen: {
     support:

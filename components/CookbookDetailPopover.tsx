@@ -27,6 +27,7 @@ export interface CookbookDetailPopoverOption {
   tx: TxKeyPath
   leftIcon: IconTypes
   destructive?: boolean
+  disabled?: boolean
   onPress: () => void
 }
 
@@ -34,10 +35,12 @@ export interface CookbookDetailPopoverProps {
   visible: boolean
   onDismiss: () => void
   options: CookbookDetailPopoverOption[]
+  /** Override top position (e.g. for screens without a header). Default: insets.top + 56 */
+  anchorTop?: number
 }
 
 export function CookbookDetailPopover(props: CookbookDetailPopoverProps) {
-  const { visible, onDismiss, options } = props
+  const { visible, onDismiss, options, anchorTop: anchorTopOverride } = props
   const { themed, theme } = useAppTheme()
   const insets = useSafeAreaInsets()
 
@@ -55,6 +58,10 @@ export function CookbookDetailPopover(props: CookbookDetailPopoverProps) {
   const $themedDestructiveText = useMemo(
     () => themed($destructiveText(theme.colors.error)),
     [themed, theme.colors.error],
+  )
+  const $themedDisabledText = useMemo(
+    () => themed($disabledText(theme.colors.textDim)),
+    [themed, theme.colors.textDim],
   )
 
   const overlayAnimatedStyle = useAnimatedStyle(() => ({
@@ -85,11 +92,13 @@ export function CookbookDetailPopover(props: CookbookDetailPopoverProps) {
   }
 
   const handleOptionPress = (opt: CookbookDetailPopoverOption) => {
+    if (opt.disabled) return
     handleDismiss()
     opt.onPress()
   }
 
-  const popoverTop = insets.top + HEADER_HEIGHT + theme.spacing.xs
+  const popoverTop =
+    anchorTopOverride ?? insets.top + HEADER_HEIGHT + theme.spacing.xs
   const popoverRight = theme.spacing.md
   const popoverLeft = isRTL ? popoverRight : undefined
   const popoverRightRTL = isRTL ? undefined : popoverRight
@@ -123,10 +132,25 @@ export function CookbookDetailPopover(props: CookbookDetailPopoverProps) {
             key={opt.key}
             tx={opt.tx}
             leftIcon={opt.leftIcon}
-            leftIconColor={opt.destructive ? theme.colors.error : undefined}
-            textStyle={opt.destructive ? $themedDestructiveText : undefined}
+            leftIconColor={
+              opt.disabled
+                ? theme.colors.textDim
+                : opt.destructive
+                  ? theme.colors.error
+                  : undefined
+            }
+            textStyle={
+              opt.disabled
+                ? $themedDisabledText
+                : opt.destructive
+                  ? $themedDestructiveText
+                  : undefined
+            }
+            disabled={opt.disabled}
             onPress={() => handleOptionPress(opt)}
-            style={opt.destructive ? $themedPopoverItemDestructive : $themedPopoverItem}
+            style={
+              opt.destructive ? $themedPopoverItemDestructive : $themedPopoverItem
+            }
           />
         ))}
       </Animated.View>
@@ -166,4 +190,10 @@ const $destructiveText =
   (errorColor: string): ThemedStyle<TextStyle> =>
   () => ({
     color: errorColor,
+  })
+
+const $disabledText =
+  (dimColor: string): ThemedStyle<TextStyle> =>
+  () => ({
+    color: dimColor,
   })

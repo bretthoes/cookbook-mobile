@@ -1,3 +1,4 @@
+import { CookbookDetailPopover } from "@/components/CookbookDetailPopover"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
 import { ItemNotFound } from "@/components/ItemNotFound"
@@ -14,12 +15,12 @@ import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { useActionSheet } from "@expo/react-native-action-sheet"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Alert, View, ViewStyle } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default observer(function Recipe() {
   const {
@@ -27,9 +28,10 @@ export default observer(function Recipe() {
     membershipStore: { ownMembership },
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
+  const insets = useSafeAreaInsets()
   const [isLoading, setIsLoading] = useState(false)
+  const [popoverVisible, setPopoverVisible] = useState(false)
   const isRecipeAuthor =
     ownMembership?.email?.toLowerCase() === selected?.authorEmail?.toLowerCase() &&
     !!ownMembership?.email
@@ -95,30 +97,44 @@ export default observer(function Recipe() {
     )
   }
 
-  const handlePressMore = () => {
-    const options = canEdit
-      ? ["Edit Recipe", "Delete Recipe", "Cancel"]
-      : ["Delete Recipe", "Cancel"]
-    const cancelButtonIndex = options.length - 1
-    const destructiveButtonIndex = options.indexOf("Delete Recipe")
+  const handlePressMore = () => setPopoverVisible(true)
 
-    showActionSheetWithOptions(
+  const popoverOptions = useMemo(
+    () => [
+      ...(canEdit
+        ? [
+            {
+              key: "editRecipe",
+              tx: "recipeDetailsScreen:editRecipe" as const,
+              leftIcon: "settings" as const,
+              onPress: handlePressEdit,
+            },
+          ]
+        : []),
       {
-        options,
-        cancelButtonIndex,
-        destructiveButtonIndex,
+        key: "exportRecipe",
+        tx: "recipeDetailsScreen:exportRecipe" as const,
+        leftIcon: "share" as const,
+        disabled: true,
+        onPress: () => {},
       },
-      (buttonIndex) => {
-        if (buttonIndex === undefined || buttonIndex === cancelButtonIndex) return
-
-        if (buttonIndex === 0 && canEdit) {
-          handlePressEdit()
-        } else if (buttonIndex === (canDelete ? 1 : 0)) {
-          handlePressDelete()
-        }
+      {
+        key: "printRecipe",
+        tx: "recipeDetailsScreen:printRecipe" as const,
+        leftIcon: "view" as const,
+        disabled: true,
+        onPress: () => {},
       },
-    )
-  }
+      {
+        key: "deleteRecipe",
+        tx: "recipeDetailsScreen:deleteRecipe" as const,
+        leftIcon: "x" as const,
+        destructive: true,
+        onPress: handlePressDelete,
+      },
+    ],
+    [canEdit],
+  )
 
   if (!selected && !isLoading)
     return (
@@ -128,15 +144,25 @@ export default observer(function Recipe() {
       </>
     )
 
+  const popoverAnchorTop =
+    insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
+
   return isLoading ? (
     <ActivityIndicator />
   ) : (
-    <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
-      <CustomBackButton
+    <>
+      <CookbookDetailPopover
+        visible={popoverVisible}
+        onDismiss={() => setPopoverVisible(false)}
+        options={popoverOptions}
+        anchorTop={popoverAnchorTop}
+      />
+      <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
+        <CustomBackButton
         onPress={() => router.back()}
         top={recipeHasImages ? spacing.xl : spacing.sm} // TODO check both recipeHasImages AND the image loaded properly... We get warnings when there's a size issue (image loaded from URL but is way too big) or its found but the file is 0kb etc
       />
-      {canEdit && (
+      {(canEdit || canDelete) && (
         <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
       )}
       {selected?.images && <RecipeImages data={selected?.images} />}
@@ -197,7 +223,8 @@ export default observer(function Recipe() {
           ))}
         </View>
       )}
-    </Screen>
+      </Screen>
+    </>
   )
 })
 

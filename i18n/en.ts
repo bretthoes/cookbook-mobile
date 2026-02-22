@@ -263,6 +263,10 @@ const en = {
     bake: "Bake Time",
     summary: "Summary",
     edit: "Edit",
+    editRecipe: "Edit Recipe",
+    deleteRecipe: "Delete Recipe",
+    exportRecipe: "Export Recipe",
+    printRecipe: "Print Recipe",
   },
   // Settings related translations
   languageScreen: {
