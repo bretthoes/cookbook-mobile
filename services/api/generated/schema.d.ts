@@ -125,7 +125,7 @@ export interface paths {
     }
     get?: never
     put?: never
-    post: operations["InvitationTokensCreateInvitationToken"]
+    post: operations["InvitationTokensCreate"]
     delete?: never
     options?: never
     head?: never
@@ -986,7 +986,7 @@ export interface operations {
       }
     }
   }
-  InvitationTokensCreateInvitationToken: {
+  InvitationTokensCreate: {
     parameters: {
       query?: never
       header?: never
