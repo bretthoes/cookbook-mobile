@@ -10,7 +10,7 @@ import { useHeader } from "@/utils/useHeader"
 import * as Linking from "expo-linking"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useEffect, useMemo, useRef, useState } from "react"
 import { Share, View, ViewStyle } from "react-native"
 
 const Invitations = observer(() => {
@@ -52,30 +52,52 @@ const Invitations = observer(() => {
     onLeftPress: () => router.back(),
   })
 
-  // Generate invite link on mount
+  const hasGeneratedForCookbook = useRef<number | null>(null)
+
+  // Generate invite link once on mount when cookbook is available
   useEffect(() => {
-    const generateLink = async () => {
-      if (inviteUrl || isMinting) return
-      setIsMinting(true)
-      try {
-        const cookbookId = selected?.id ?? 0
-        const res = await link(cookbookId)
+    const cookbookId = selected?.id ?? 0
+    if (!cookbookId || hasGeneratedForCookbook.current === cookbookId) return
+    hasGeneratedForCookbook.current = cookbookId
+
+    let cancelled = false
+    setInviteUrl(null)
+    setLinkMsg("")
+    setIsMinting(true)
+    link(cookbookId)
+      .then((res) => {
+        if (cancelled) return
         if (res?.message) {
-          setLinkMsg(res?.message ?? "Failed to create link.")
-          return
+          setLinkMsg(res.message ?? "Failed to create link.")
+        } else {
+          setInviteUrl(toInviteUrl(res.token))
         }
-        const url = toInviteUrl(res.token)
-        setInviteUrl(url)
-      } finally {
-        setIsMinting(false)
-      }
+      })
+      .finally(() => {
+        if (!cancelled) setIsMinting(false)
+      })
+    return () => {
+      cancelled = true
     }
-    generateLink()
-  }, [selected?.id, inviteUrl, isMinting, link])
+  }, [selected?.id])
 
   const onShareLink = async () => {
-    if (!inviteUrl) return
-    await Share.share({ message: inviteUrl })
+    const cookbookId = selected?.id ?? 0
+    if (!cookbookId || isMinting) return
+    setIsMinting(true)
+    setLinkMsg("")
+    try {
+      const res = await link(cookbookId)
+      if (res?.message) {
+        setLinkMsg(res.message)
+        return
+      }
+      const url = toInviteUrl(res.token)
+      setInviteUrl(url)
+      await Share.share({ message: url })
+    } finally {
+      setIsMinting(false)
+    }
   }
 
   const onInviteByEmailPress = () => {
@@ -118,7 +140,7 @@ const Invitations = observer(() => {
           <Button
             text="Share"
             onPress={onShareLink}
-            disabled={!inviteUrl || isMinting}
+            disabled={!selected?.id || isMinting}
             style={{ marginTop: spacing.md }}
           />
           {!!linkMsg && (

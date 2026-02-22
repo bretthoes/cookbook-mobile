@@ -78,7 +78,7 @@ export async function createInvite(
 ): Promise<ApiResult<{ token: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/Invitations", {
-      body: { cookbookId, email },
+      body: { cookbookId, email }, 
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
@@ -95,8 +95,8 @@ export async function createInviteToken(cookbookId: number): Promise<ApiResult<{
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
-    if (data === undefined || data === null) return { kind: "not-found" }
-    return toOkResult({ token: data })
+    const { token } = data as { token: string }
+    return toOkResult({ token })
   } catch (e) {
     return toProblemFromError(e)
   }

@@ -492,6 +492,9 @@ export interface components {
       id?: number
       newStatus?: components["schemas"]["InvitationStatus"]
     }
+    InvitationTokenDto: {
+      token?: string
+    }
     CreateInvitationTokenCommand: {
       /** Format: int32 */
       cookbookId?: number
@@ -1004,7 +1007,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          "application/json": string
+          "application/json": components["schemas"]["InvitationTokenDto"]
         }
       }
     }
