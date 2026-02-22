@@ -111,7 +111,7 @@ export default observer(function InvitationTokenScreen() {
     }
     setProcessingAction(null)
 
-    if (success) {
+    if (success === true) {
       Alert.alert("Success", "You've been added to the cookbook!", [
         {
           text: "OK",
@@ -119,7 +119,9 @@ export default observer(function InvitationTokenScreen() {
         },
       ])
     } else {
-      setActionError("Failed to accept invitation. Please try again.")
+      setActionError(
+        success?.conflict ? "This invitation link has already been redeemed." : "Failed to accept invitation. Please try again."
+      )
     }
   }
 
