@@ -59,7 +59,6 @@ export const InvitationStoreModel = types
         }
         return true
       } else {
-        console.error(`Error updating invitations: ${JSON.stringify(response)}`)
         return { success: false, conflict: response.kind === "conflict" }
       }
     }),
