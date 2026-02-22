@@ -113,8 +113,8 @@ export default observer(function Cookbook() {
 
   const handlePressMore = () => {
     const options = isAuthor
-      ? ["Add Recipe", "Edit Cookbook", "Leave Cookbook", "Cancel"]
-      : ["Add Recipe", "Leave Cookbook", "Cancel"]
+      ? ["Add Recipe", "View Members", "Edit Cookbook", "Leave Cookbook", "Cancel"]
+      : ["Add Recipe", "View Members", "Leave Cookbook", "Cancel"]
     const cancelButtonIndex = options.length - 1
     const destructiveButtonIndex = options.indexOf("Leave Cookbook")
 
@@ -130,6 +130,9 @@ export default observer(function Cookbook() {
         switch (options[buttonIndex]) {
           case "Add Recipe":
             router.push(`../../recipe/add-options`)
+            break
+          case "View Members":
+            router.push(`../../membership/list`)
             break
           case "Edit Cookbook":
             handlePressEdit()
