@@ -36,6 +36,8 @@ export default observer(function InvitationTokenScreen() {
   const [error, setError] = useState<string | null>(null)
   const [invitation, setInvitation] = useState<any>(null)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [acceptedSuccessfully, setAcceptedSuccessfully] = useState(false)
+  const [declinedSuccessfully, setDeclinedSuccessfully] = useState(false)
 
   const $themedEmptyState = useMemo(() => themed($emptyState), [themed])
   const $themedEmptyStateImage = useMemo(() => themed($emptyStateImage), [themed])
@@ -112,12 +114,7 @@ export default observer(function InvitationTokenScreen() {
     setProcessingAction(null)
 
     if (success === true) {
-      Alert.alert("Success", "You've been added to the cookbook!", [
-        {
-          text: "OK",
-          onPress: () => router.replace("../../(tabs)/cookbooks"),
-        },
-      ])
+      setAcceptedSuccessfully(true)
     } else {
       setActionError(
         success?.conflict ? "This invitation link has already been redeemed." : "Failed to accept invitation. Please try again."
@@ -139,7 +136,7 @@ export default observer(function InvitationTokenScreen() {
     }
     setProcessingAction(null)
     if (success === true) {
-      router.back()
+      setDeclinedSuccessfully(true)
     } else {
       setActionError(
         success?.conflict ? "This invitation link has already been redeemed." : "Failed to decline invitation. Please try again."
@@ -149,6 +146,74 @@ export default observer(function InvitationTokenScreen() {
 
   if (processingAction) {
     return <LoadingScreen text={"Not much longer"} />
+  }
+
+  if (acceptedSuccessfully && invitation) {
+    return (
+      <Screen style={$root} preset="scroll">
+        <Header
+          title="Invite link"
+          leftIcon="back"
+          onLeftPress={() => router.replace("../../(tabs)/cookbooks")}
+        />
+        <Text
+          text="Success"
+          preset="heading"
+          style={{ marginTop: spacing.lg, textAlign: "center", paddingHorizontal: spacing.md }}
+        />
+        <Text
+          text="You've been added to the cookbook!"
+          style={{ marginTop: spacing.sm, textAlign: "center", paddingHorizontal: spacing.md }}
+        />
+        <View style={$cookbookContainer}>
+          {cookbookImageSource && (
+            <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
+          )}
+          {invitation.cookbookTitle && (
+            <Text text={invitation.cookbookTitle} preset="subheading" style={$themedCookbookTitle} />
+          )}
+        </View>
+        <Button
+          text="Back to cookbooks"
+          onPress={() => router.replace("../../(tabs)/cookbooks")}
+          style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
+        />
+      </Screen>
+    )
+  }
+
+  if (declinedSuccessfully && invitation) {
+    return (
+      <Screen style={$root} preset="scroll">
+        <Header
+          title="Invite link"
+          leftIcon="back"
+          onLeftPress={() => router.replace("../../(tabs)/cookbooks")}
+        />
+        <Text
+          text="Invitation Declined"
+          preset="heading"
+          style={{ marginTop: spacing.lg, textAlign: "center", paddingHorizontal: spacing.md }}
+        />
+        <Text
+          text="You've declined this invitation. You can navigate back now."
+          style={{ marginTop: spacing.sm, textAlign: "center", paddingHorizontal: spacing.md }}
+        />
+        <View style={$cookbookContainer}>
+          {cookbookImageSource && (
+            <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
+          )}
+          {invitation.cookbookTitle && (
+            <Text text={invitation.cookbookTitle} preset="subheading" style={$themedCookbookTitle} />
+          )}
+        </View>
+        <Button
+          text="Back to cookbooks"
+          onPress={() => router.replace("../../(tabs)/cookbooks")}
+          style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
+        />
+      </Screen>
+    )
   }
 
   if (isLoading) {
