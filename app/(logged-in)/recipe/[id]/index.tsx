@@ -1,4 +1,4 @@
-import { CookbookDetailPopover } from "@/components/CookbookDetailPopover"
+import { Popover } from "@/components/Popover"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
 import { ItemNotFound } from "@/components/ItemNotFound"
@@ -151,7 +151,7 @@ export default observer(function Recipe() {
     <ActivityIndicator />
   ) : (
     <>
-      <CookbookDetailPopover
+      <Popover
         visible={popoverVisible}
         onDismiss={() => setPopoverVisible(false)}
         options={popoverOptions}

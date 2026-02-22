@@ -22,7 +22,7 @@ const ABSOLUTE_FILL: ViewStyle = {
   bottom: 0,
 }
 
-export interface CookbookDetailPopoverOption {
+export interface PopoverOption {
   key: string
   tx: TxKeyPath
   leftIcon: IconTypes
@@ -31,15 +31,15 @@ export interface CookbookDetailPopoverOption {
   onPress: () => void
 }
 
-export interface CookbookDetailPopoverProps {
+export interface PopoverProps {
   visible: boolean
   onDismiss: () => void
-  options: CookbookDetailPopoverOption[]
+  options: PopoverOption[]
   /** Override top position (e.g. for screens without a header). Default: insets.top + 56 */
   anchorTop?: number
 }
 
-export function CookbookDetailPopover(props: CookbookDetailPopoverProps) {
+export function Popover(props: PopoverProps) {
   const { visible, onDismiss, options, anchorTop: anchorTopOverride } = props
   const { themed, theme } = useAppTheme()
   const insets = useSafeAreaInsets()
@@ -91,7 +91,7 @@ export function CookbookDetailPopover(props: CookbookDetailPopoverProps) {
     setTimeout(onDismiss, 120)
   }
 
-  const handleOptionPress = (opt: CookbookDetailPopoverOption) => {
+  const handleOptionPress = (opt: PopoverOption) => {
     if (opt.disabled) return
     handleDismiss()
     opt.onPress()

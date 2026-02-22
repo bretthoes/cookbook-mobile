@@ -1,4 +1,4 @@
-import { CookbookDetailPopover } from "@/components/CookbookDetailPopover"
+import { Popover } from "@/components/Popover"
 import { Divider } from "@/components/Divider"
 import { EmptyState } from "@/components/EmptyState"
 import { ItemNotFound } from "@/components/ItemNotFound"
@@ -206,7 +206,7 @@ export default observer(function Cookbook() {
 
   return (
     <>
-      <CookbookDetailPopover
+      <Popover
         visible={popoverVisible}
         onDismiss={() => setPopoverVisible(false)}
         options={popoverOptions}
