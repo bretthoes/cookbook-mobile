@@ -1,5 +1,3 @@
-import { ApiResponse } from "apisauce"
-
 export type GeneralApiProblem =
   /**
    * Times up.
@@ -49,40 +47,46 @@ export type GeneralApiProblem =
   | { kind: "bad-data" }
 
 /**
- * Attempts to get a common cause of problems from an api response.
+ * Maps a fetch Response (and optionally pre-parsed body) to GeneralApiProblem.
+ * Used by the openapi-fetch client wrapper when response is not OK.
  *
- * @param response The api response.
+ * @param response - The fetch Response
+ * @param data - Optional pre-parsed JSON body (e.g. from openapi-fetch)
  */
-export function getGeneralApiProblem(response: ApiResponse<any>): GeneralApiProblem | null {
-  switch (response.problem) {
-    case "CONNECTION_ERROR":
-      return { kind: "cannot-connect", temporary: true }
-    case "NETWORK_ERROR":
-      return { kind: "cannot-connect", temporary: true }
-    case "TIMEOUT_ERROR":
-      return { kind: "timeout", temporary: true }
-    case "SERVER_ERROR":
-      return { kind: "server" }
-    case "UNKNOWN_ERROR":
-      return { kind: "unknown", temporary: true }
-    case "CLIENT_ERROR":
-      switch (response.status) {
-        case 401:
-          if ((response.data?.detail ?? "").toLowerCase() === "notallowed")
-            return { kind: "notallowed" }
-          return { kind: "unauthorized" }
-        case 403:
-          return { kind: "forbidden" }
-        case 404:
-          return { kind: "not-found" }
-        case 409:
-          return { kind: "conflict", detail: response.data?.detail }
-        default:
-          return { kind: "rejected" }
-      }
-    case "CANCEL_ERROR":
-      return null
+export function getGeneralApiProblemFromResponse(
+  response: Response,
+  data?: { detail?: string } | null,
+): GeneralApiProblem | null {
+  if (response.ok) return null
+
+  if (response.status >= 500) return { kind: "server" }
+
+  if (response.status >= 400) {
+    switch (response.status) {
+      case 401:
+        if ((data?.detail ?? "").toLowerCase() === "notallowed") return { kind: "notallowed" }
+        return { kind: "unauthorized" }
+      case 403:
+        return { kind: "forbidden" }
+      case 404:
+        return { kind: "not-found" }
+      case 409:
+        return { kind: "conflict", detail: data?.detail }
+      default:
+        return { kind: "rejected" }
+    }
   }
 
   return null
+}
+
+/**
+ * Maps fetch/network errors (AbortError, TypeError) to GeneralApiProblem.
+ */
+export function getGeneralApiProblemFromError(error: unknown): GeneralApiProblem | null {
+  if (error instanceof Error) {
+    if (error.name === "AbortError") return { kind: "timeout", temporary: true }
+    if (error instanceof TypeError) return { kind: "cannot-connect", temporary: true }
+  }
+  return { kind: "unknown", temporary: true }
 }
