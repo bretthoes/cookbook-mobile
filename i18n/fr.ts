@@ -193,6 +193,13 @@ const fr: Translations = {
     title: "___Invitations",
     subtitle: "___Manage your cookbook invitations.",
   },
+  invitationAddOptionsScreen: {
+    title: "___Invite Friends",
+    inviteByEmail: "___Invite by Email",
+    inviteByEmailDesc: "___Send an invitation directly to their email",
+    inviteByLink: "___Invite by Shared Link",
+    inviteByLinkDesc: "___Create a shareable link for anyone to join",
+  },
   invitationAddEmailScreen: {
     title: "___Invite by Email",
     inviteIntro: "___Invite friends to join {{cookbookName}}.",
@@ -400,6 +407,8 @@ const fr: Translations = {
   },
   selectCookbookScreen: {
     title: "___Select a Cookbook",
+    placeholder: "___Select a cookbook",
+    dropdownDescription: "___Select the cookbook where you would like to add this recipe.",
     actionForRecipe: "___Select the cookbook where you would like to add a new recipe.",
     actionForMembers: "___Select a cookbook to view its members.",
     actionForInvite: "___Select the cookbook where you would like to send an invitation to a friend.",

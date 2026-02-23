@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { Cookbook } from "@/models/Cookbook"
 import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
@@ -32,9 +33,6 @@ export interface CookbookDropdownProps {
  * A reusable dropdown component for selecting a cookbook.
  * Displays a button that opens a modal with a list of cookbooks to choose from.
  */
-const PLACEHOLDER = "Select a cookbook"
-const DESCRIPTION = "Select the cookbook where you would like to add this recipe."
-
 export const CookbookDropdown = observer(function CookbookDropdown(props: CookbookDropdownProps) {
   const { cookbooks, selectedCookbook, onSelect, error } = props
 
@@ -54,13 +52,17 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
   }
 
   return (
-    <UseCase description={DESCRIPTION}>
+    <UseCase description={translate("selectCookbookScreen:dropdownDescription")}>
       <TouchableOpacity
         style={$themedDropdownButton}
         onPress={() => setIsDropdownVisible(!isDropdownVisible)}
       >
         <Text
-          text={selectedCookbook ? selectedCookbook.title : PLACEHOLDER}
+          text={
+            selectedCookbook
+              ? selectedCookbook.title
+              : translate("selectCookbookScreen:placeholder")
+          }
           style={$themedDropdownText}
         />
         <Icon icon={isDropdownVisible ? "caretUp" : "caretDown"} size={20} color={colors.textDim} />

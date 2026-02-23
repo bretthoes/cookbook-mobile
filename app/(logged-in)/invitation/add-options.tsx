@@ -1,5 +1,6 @@
 import { OptionListItem, $container, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
+import { translate } from "@/i18n"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
@@ -14,7 +15,7 @@ export default observer(function AddInvitationOptionsScreen() {
 
   useHeader({
     leftIcon: "back",
-    title: "Invite Friends",
+    titleTx: "invitationAddOptionsScreen:title",
     onLeftPress: () => router.back(),
   })
 
@@ -25,14 +26,14 @@ export default observer(function AddInvitationOptionsScreen() {
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
       <View style={$themedListContainer}>
         <OptionListItem
-          title="Invite by Email"
-          description="Send an invitation directly to their email"
+          title={translate("invitationAddOptionsScreen:inviteByEmail")}
+          description={translate("invitationAddOptionsScreen:inviteByEmailDesc")}
           leftIcon="mail"
           onPress={() => router.replace("../invitation/add-email")}
         />
         <OptionListItem
-          title="Invite by Shared Link"
-          description="Create a shareable link for anyone to join"
+          title={translate("invitationAddOptionsScreen:inviteByLink")}
+          description={translate("invitationAddOptionsScreen:inviteByLinkDesc")}
           leftImage={link}
           onPress={() => router.replace("../invitation/add-link")}
         />
