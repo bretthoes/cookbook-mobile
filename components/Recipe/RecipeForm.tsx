@@ -5,6 +5,7 @@ import { PressableIcon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -93,7 +94,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     titleTx: isEdit ? "recipeListScreen:edit" : "recipeListScreen:add",
     leftIcon: "back",
     onLeftPress: () => router.back(),
-    rightText: "Save",
+    rightTx: "common:save",
     onRightPress: () => handleSubmit(onSubmit, onError)(),
   })
 
@@ -143,7 +144,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           })
           setNewImageKeysToLocalUri((prev) => ({ ...prev, ...keyToUri }))
         } else {
-          alert("Image upload failed")
+          alert(translate("recipeFormScreen:imageUploadFailed"))
         }
       }
     } finally {
@@ -156,8 +157,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
       <UseCase
         description={
           isEdit
-            ? "Swipe back to exit without saving."
-            : "Fill out the details for your new recipe."
+            ? translate("recipeFormScreen:descriptionEdit")
+            : translate("recipeFormScreen:descriptionNew")
         }
       >
         {isUploading && <ActivityIndicator />}
@@ -187,7 +188,11 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         )}
 
         <Button
-          text={isEdit ? `Add photos (${currentImages.length}/6)` : `Add photos (max of 6)`}
+          text={
+            isEdit
+              ? translate("recipeFormScreen:addPhotos", { current: currentImages.length })
+              : translate("recipeFormScreen:addPhotosMax")
+          }
           onPress={pickImage}
           disabled={isUploading || currentImages.length >= 6}
         />
@@ -219,8 +224,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               value={value ?? ""}
               onChangeText={onChange}
               helper={errors.summary?.message ?? ""}
-              placeholder="Recipe summary here..."
-              label="Summary (optional)"
+              placeholderTx="recipeFormScreen:summaryPlaceholder"
+              labelTx="recipeFormScreen:summaryLabel"
               status="error"
               multiline
               maxLength={2048}
@@ -259,7 +264,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               helper={errors.cookingTimeInMinutes?.message ?? ""}
               placeholder="0"
               status="error"
-              label="Cook time minutes (optional)"
+              labelTx="recipeFormScreen:cookLabel"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -297,7 +302,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               helper={errors.servings?.message ?? ""}
               placeholder="0"
               status="error"
-              label="Servings (optional)"
+              labelTx="recipeFormScreen:servingsLabel"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -325,7 +330,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                     <TextField
                       value={field.value}
                       onChangeText={field.onChange}
-                      placeholder="Add ingredient here..."
+                      placeholderTx="recipeFormScreen:ingredientPlaceholder"
                       containerStyle={$themedTextFieldContainer}
                       status="error"
                       helper={errors.ingredients?.[index]?.name?.message ?? ""}
@@ -347,7 +352,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           ))}
           <Divider size={spacing.md} />
           <Button
-            text="Add another ingredient"
+            tx="recipeFormScreen:addAnotherIngredient"
             onPress={() => addIngredient({ name: "", optional: false })}
             style={$themedButtonHeightOverride}
             disabled={ingredientFields.length >= 40}
@@ -357,7 +362,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
         {/* Directions Section */}
         <View style={{ minHeight: spacing.xxs }}>
-          <Text text="Directions" preset="bold" />
+          <Text tx="recipeDetailsScreen:directions" preset="bold" />
           {errors.directions?.message && (
             <Text text={errors.directions.message} style={{ color: "red" }} />
           )}
@@ -374,7 +379,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                     <TextField
                       value={field.value}
                       onChangeText={field.onChange}
-                      placeholder="Add direction here..."
+                      placeholderTx="recipeFormScreen:directionPlaceholder"
                       containerStyle={$themedTextFieldContainer}
                       helper={errors.directions?.[index]?.text?.message ?? ""}
                       status="error"
@@ -397,7 +402,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           ))}
           <Divider size={spacing.md} />
           <Button
-            text="Add another direction"
+            tx="recipeFormScreen:addAnotherDirection"
             onPress={() => addDirection({ text: "", image: "" })}
             style={$themedButtonHeightOverride}
             disabled={directionFields.length >= 20}
