@@ -2,6 +2,8 @@ import { Icon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { translate } from "@/i18n"
+import type { TxKeyPath } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -14,7 +16,7 @@ import React, { useEffect, useState } from "react"
 import { Alert, FlatList, View, ViewStyle } from "react-native"
 
 type DataItem = {
-  label: string
+  labelTx: TxKeyPath
   value: string | boolean | null
 }
 
@@ -37,10 +39,14 @@ export default observer(function MembershipScreen() {
 
   const handlePressMore = () => {
     const options = isOwner
-      ? ["Edit membership", "Delete membership", "Cancel"]
-      : ["Delete membership", "Cancel"]
+      ? [
+          translate("membershipScreen:actionEdit"),
+          translate("membershipScreen:actionDelete"),
+          translate("membershipScreen:actionCancel"),
+        ]
+      : [translate("membershipScreen:actionDelete"), translate("membershipScreen:actionCancel")]
     const cancelButtonIndex = options.length - 1
-    const destructiveButtonIndex = options.indexOf("Delete membership")
+    const destructiveButtonIndex = options.indexOf(translate("membershipScreen:actionDelete"))
 
     showActionSheetWithOptions(
       {
@@ -55,21 +61,24 @@ export default observer(function MembershipScreen() {
           router.push(`../membership/${id}/edit`)
         } else if (selectedIndex === (isOwner ? 1 : 0)) {
           Alert.alert(
-            "Delete Member",
-            "This will remove the member from this cookbook. Are you sure?",
+            translate("membershipScreen:deleteMemberTitle"),
+            translate("membershipScreen:deleteMemberMessage"),
             [
               {
-                text: "Cancel",
+                text: translate("membershipScreen:actionCancel"),
                 style: "cancel",
               },
               {
-                text: "Delete",
+                text: translate("membershipScreen:deleteButton"),
                 style: "destructive",
                 onPress: async () => {
                   const result = await membershipStore.delete(parseInt(id))
                   if (result) {
                   } else {
-                    Alert.alert("Error", "Failed to delete membership")
+                    Alert.alert(
+                      translate("membershipScreen:errorTitle"),
+                      translate("membershipScreen:deleteFailed"),
+                    )
                   }
                 },
               },
@@ -98,7 +107,7 @@ export default observer(function MembershipScreen() {
   useHeader(
     {
       leftIcon: "back",
-      title: "Membership Details",
+      titleTx: "membershipScreen:detailTitle",
       onLeftPress: () => router.back(),
       rightIcon: isOwner ? "more" : undefined,
       onRightPress: isOwner ? handlePressMore : undefined,
@@ -107,24 +116,27 @@ export default observer(function MembershipScreen() {
   )
 
   if (!membership) {
-    return <ItemNotFound message="Membership not found" />
+    return <ItemNotFound message={translate("membershipScreen:notFound")} />
   }
 
   const data: DataItem[] = [
-    { label: "Email", value: membership.email },
-    { label: "Name", value: membership.name },
-    { label: "Is Owner", value: membership.isOwner },
-    { label: "Can Add Recipe", value: membership.canAddRecipe },
-    { label: "Can Update Recipe", value: membership.canUpdateRecipe },
-    { label: "Can Delete Recipe", value: membership.canDeleteRecipe },
-    { label: "Can Invite", value: membership.canSendInvite },
-    { label: "Can Manage Members", value: membership.canRemoveMember },
-    { label: "Can Edit Cookbook Details", value: membership.canEditCookbookDetails },
+    { labelTx: "membershipScreen:labels.email", value: membership.email },
+    { labelTx: "membershipScreen:labels.name", value: membership.name },
+    { labelTx: "membershipScreen:labels.isOwner", value: membership.isOwner },
+    { labelTx: "membershipScreen:labels.canAddRecipe", value: membership.canAddRecipe },
+    { labelTx: "membershipScreen:labels.canUpdateRecipe", value: membership.canUpdateRecipe },
+    { labelTx: "membershipScreen:labels.canDeleteRecipe", value: membership.canDeleteRecipe },
+    { labelTx: "membershipScreen:labels.canInvite", value: membership.canSendInvite },
+    { labelTx: "membershipScreen:labels.canManageMembers", value: membership.canRemoveMember },
+    {
+      labelTx: "membershipScreen:labels.canEditCookbookDetails",
+      value: membership.canEditCookbookDetails,
+    },
   ]
 
   const renderItem = ({ item }: { item: DataItem }) => (
     <View style={$themedItem}>
-      <Text text={item.label} size="sm" />
+      <Text tx={item.labelTx} size="sm" />
       {typeof item.value === "boolean" ? (
         <Icon icon={item.value ? "check" : "x"} size={20} />
       ) : (

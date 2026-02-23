@@ -36,7 +36,7 @@ export default observer(function Cookbook() {
 
   useHeader({
     leftIcon: "back",
-    title: "Members",
+    titleTx: "membershipScreen:listTitle",
     onLeftPress: () => router.back(),
   })
 
@@ -109,7 +109,7 @@ export default observer(function Cookbook() {
         }
         ListHeaderComponent={
           <Text
-            text="Manage your cookbook members."
+            tx="membershipScreen:subtitle"
             style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
           />
         }
