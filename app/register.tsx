@@ -5,6 +5,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { router } from "expo-router"
@@ -18,13 +19,14 @@ export default observer(function Register() {
 
   // Password validation (handled locally)
   const passwordValidationError = useMemo(() => {
-    if (password.length === 0) return "can't be blank"
-    if (password.length < 6) return "must be at least 6 characters"
-    if (password.length > 30) return "cannot exceed 30 characters"
-    if (!/[A-Z]/.test(password)) return "must contain at least one uppercase letter"
-    if (!/[a-z]/.test(password)) return "must contain at least one lowercase letter"
-    if (!/\d/.test(password)) return "must contain at least one digit"
-    if (!/[^A-Za-z0-9]/.test(password)) return "must contain at least one special character"
+    if (password.length === 0) return translate("registerScreen:validation.cantBeBlank")
+    if (password.length < 6) return translate("registerScreen:validation.minLength")
+    if (password.length > 30) return translate("registerScreen:validation.maxLength")
+    if (!/[A-Z]/.test(password)) return translate("registerScreen:validation.needsUppercase")
+    if (!/[a-z]/.test(password)) return translate("registerScreen:validation.needsLowercase")
+    if (!/\d/.test(password)) return translate("registerScreen:validation.needsDigit")
+    if (!/[^A-Za-z0-9]/.test(password))
+      return translate("registerScreen:validation.needsSpecialChar")
     return ""
   }, [password])
 
@@ -77,9 +79,9 @@ export default observer(function Register() {
   return (
     <Screen preset="auto" style={$root} safeAreaEdges={["top", "bottom"]}>
       <View style={$content}>
-        <Text testID="login-heading" text="Register" preset="heading" />
+        <Text testID="login-heading" tx="registerScreen:title" preset="heading" />
         <Text
-          text="Enter your details below to create a new account."
+          tx="registerScreen:subtitle"
           preset="subheading"
           style={$enterDetails}
         />
@@ -121,14 +123,14 @@ export default observer(function Register() {
       <View style={$content}>
         <Button
           testID="register-button"
-          text="Tap to register!"
+          tx="registerScreen:tapToRegister"
           style={$tapButton}
           preset="reversed"
           onPress={authenticate}
         />
 
         <Text
-          text="Already have an account? Login"
+          tx="registerScreen:alreadyHaveAccount"
           style={$register}
           onPress={() => router.push("/log-in")}
         />

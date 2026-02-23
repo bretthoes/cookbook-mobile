@@ -12,6 +12,23 @@ const en = {
     readyForLaunch: "Your app, almost ready for launch!",
     exciting: "(ohh, this is exciting!)",
     letsGo: "Let's go!",
+    registerButton: "Register",
+    loginButton: "Login",
+  },
+  registerScreen: {
+    title: "Register",
+    subtitle: "Enter your details below to create a new account.",
+    tapToRegister: "Tap to register!",
+    alreadyHaveAccount: "Already have an account? Login",
+    validation: {
+      cantBeBlank: "can't be blank",
+      minLength: "must be at least 6 characters",
+      maxLength: "cannot exceed 30 characters",
+      needsUppercase: "must contain at least one uppercase letter",
+      needsLowercase: "must contain at least one lowercase letter",
+      needsDigit: "must contain at least one digit",
+      needsSpecialChar: "must contain at least one special character",
+    },
   },
   errorScreen: {
     title: "Something went wrong!",

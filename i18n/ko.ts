@@ -14,6 +14,23 @@ const ko: Translations = {
     readyForLaunch: "출시 준비가 거의 끝난 나만의 앱!",
     exciting: "(오, 이거 신나는데요!)",
     letsGo: "가보자구요!",
+    registerButton: "___Register",
+    loginButton: "___Login",
+  },
+  registerScreen: {
+    title: "___Register",
+    subtitle: "___Enter your details below to create a new account.",
+    tapToRegister: "___Tap to register!",
+    alreadyHaveAccount: "___Already have an account? Login",
+    validation: {
+      cantBeBlank: "___can't be blank",
+      minLength: "___must be at least 6 characters",
+      maxLength: "___cannot exceed 30 characters",
+      needsUppercase: "___must contain at least one uppercase letter",
+      needsLowercase: "___must contain at least one lowercase letter",
+      needsDigit: "___must contain at least one digit",
+      needsSpecialChar: "___must contain at least one special character",
+    },
   },
   errorScreen: {
     title: "뭔가 잘못되었습니다!",

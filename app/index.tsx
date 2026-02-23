@@ -42,12 +42,12 @@ export default observer(function WelcomeScreen() {
         <Text tx="welcomeScreen:postscript" size="md" />
         <View style={$buttonGroup}>
         <Button
-            text="Register"
+            tx="welcomeScreen:registerButton"
             preset="reversed"
             onPress={() => router.push("/register")}
           />
           <Button
-            text="Login"
+            tx="welcomeScreen:loginButton"
             preset="default"
             onPress={() => router.push("/log-in")}
             style={$loginButton}

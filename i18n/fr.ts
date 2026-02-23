@@ -14,6 +14,23 @@ const fr: Translations = {
     readyForLaunch: "Votre application, presque prête pour le lancement !",
     exciting: "(ohh, c'est excitant !)",
     letsGo: "Allons-y !",
+    registerButton: "___Register",
+    loginButton: "___Login",
+  },
+  registerScreen: {
+    title: "___Register",
+    subtitle: "___Enter your details below to create a new account.",
+    tapToRegister: "___Tap to register!",
+    alreadyHaveAccount: "___Already have an account? Login",
+    validation: {
+      cantBeBlank: "___can't be blank",
+      minLength: "___must be at least 6 characters",
+      maxLength: "___cannot exceed 30 characters",
+      needsUppercase: "___must contain at least one uppercase letter",
+      needsLowercase: "___must contain at least one lowercase letter",
+      needsDigit: "___must contain at least one digit",
+      needsSpecialChar: "___must contain at least one special character",
+    },
   },
   errorScreen: {
     title: "Quelque chose s'est mal passé !",
