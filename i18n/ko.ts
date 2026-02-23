@@ -309,6 +309,24 @@ const ko: Translations = {
     exportRecipe: "___Export Recipe",
     printRecipe: "___Print Recipe",
   },
+  setDisplayNameScreen: {
+    title: "___Set a display name",
+    next: "___Next",
+    description: "___This is how others will see you, instead of your email. You can change this any time in the app.",
+    descriptionProfile: "___This is how others will see you in the app, instead of your email.",
+    hint: "___No special characters, please!",
+    label: "___Display name",
+    placeholder: "___Bob",
+    validation: {
+      tooLong60: "___cannot exceed 60 characters",
+      tooLong255: "___cannot exceed 255 characters",
+      invalidChars: "___can only contain letters, spaces, hyphens, and apostrophes",
+      cantBeBlank: "___can't be blank",
+    },
+    noChangesToSave: "___No changes to save.",
+    updatedSuccessfully: "___Display name updated successfully!",
+    updateFailed: "___Failed to update display name, please try again.",
+  },
   // Settings related translations
   languageScreen: {
     support:

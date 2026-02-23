@@ -312,6 +312,24 @@ const en = {
     exportRecipe: "Export Recipe",
     printRecipe: "Print Recipe",
   },
+  setDisplayNameScreen: {
+    title: "Set a display name",
+    next: "Next",
+    description: "This is how others will see you, instead of your email. You can change this any time in the app.",
+    descriptionProfile: "This is how others will see you in the app, instead of your email.",
+    hint: "No special characters, please!",
+    label: "Display name",
+    placeholder: "Bob",
+    validation: {
+      tooLong60: "cannot exceed 60 characters",
+      tooLong255: "cannot exceed 255 characters",
+      invalidChars: "can only contain letters, spaces, hyphens, and apostrophes",
+      cantBeBlank: "can't be blank",
+    },
+    noChangesToSave: "No changes to save.",
+    updatedSuccessfully: "Display name updated successfully!",
+    updateFailed: "Failed to update display name, please try again.",
+  },
   // Settings related translations
   languageScreen: {
     support:

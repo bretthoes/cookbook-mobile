@@ -2,6 +2,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
@@ -24,10 +25,10 @@ export default observer(function SetDisplayName() {
   } = useStores()
 
   const getValidationError = useCallback((name: string) => {
-    if (name.length === 0) return "can't be blank"
-    if (name.length > 255) return "cannot exceed 255 characters"
+    if (name.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
+    if (name.length > 255) return translate("setDisplayNameScreen:validation.tooLong255")
     if (!isValidDisplayName(name))
-      return "can only contain letters, spaces, hyphens, and apostrophes"
+      return translate("setDisplayNameScreen:validation.invalidChars")
     return ""
   }, [])
 
@@ -63,7 +64,7 @@ export default observer(function SetDisplayName() {
 
     // Check if the local display name is already equal to the store's display name
     if (localDisplayName === displayName) {
-      setResult("No changes to save.")
+      setResult(translate("setDisplayNameScreen:noChangesToSave"))
       setIsSubmitted(false)
       return
     }
@@ -74,18 +75,18 @@ export default observer(function SetDisplayName() {
     // Call the update function
     const success = await updateDisplayName()
     if (success) {
-      setResult("Display name updated successfully!")
+      setResult(translate("setDisplayNameScreen:updatedSuccessfully"))
     } else {
-      setResult("Failed to update display name, please try again.")
+      setResult(translate("setDisplayNameScreen:updateFailed"))
     }
     setIsSubmitted(false)
   }
 
   useHeader(
     {
-      title: "Set a display name",
+      titleTx: "setDisplayNameScreen:title",
       leftIcon: "back",
-      rightText: "Save",
+      rightTx: "common:save",
       onLeftPress: () => router.back(),
       onRightPress: handleSave,
     },
@@ -95,7 +96,7 @@ export default observer(function SetDisplayName() {
   return (
     <Screen style={$root} preset="scroll">
       <Text
-        text="This is how others will see you in the app, instead of your email."
+        tx="setDisplayNameScreen:descriptionProfile"
         style={{ paddingBottom: spacing.md, paddingHorizontal: spacing.md }}
       />
       <UseCase>
@@ -107,7 +108,7 @@ export default observer(function SetDisplayName() {
           autoCapitalize="none"
           autoComplete="name"
           autoCorrect={false}
-          label="Display name"
+          labelTx="setDisplayNameScreen:label"
           placeholder=""
         />
         <Text text={`${result}`} preset="formHelper" />

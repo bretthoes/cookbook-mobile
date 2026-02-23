@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { router } from "expo-router"
@@ -16,9 +17,9 @@ export default observer(function SetDisplayName() {
     authenticationStore: { displayName, setDisplayName },
   } = useStores()
   const displayNameValidator = useMemo(() => {
-    if (displayName.length > 60) return "cannot exceed 60 characters"
+    if (displayName.length > 60) return translate("setDisplayNameScreen:validation.tooLong60")
     if (!/^[\p{L}\p{M} \-']+$/u.test(displayName)) {
-      return "can only contain letters, spaces, hyphens, and apostrophes"
+      return translate("setDisplayNameScreen:validation.invalidChars")
     }
     return ""
   }, [displayName])
@@ -42,22 +43,22 @@ export default observer(function SetDisplayName() {
       <Header
         leftIcon="back"
         onLeftPress={() => router.back()}
-        rightText="Next"
+        rightTx="setDisplayNameScreen:next"
         onRightPress={forward}
       />
       <Text
         testID="set-display-name-heading"
-        text="Set a display name"
+        tx="setDisplayNameScreen:title"
         preset="subheading"
         style={$content}
       />
       <Text
         testID="set-display-name-description"
-        text="This is how others will see you, instead of your email. You can change this any time in the app."
+        tx="setDisplayNameScreen:description"
         style={$content}
       />
       <UseCase>
-        {<Text text="No special characters, please!" size="sm" weight="light" style={$hint} />}
+        {<Text tx="setDisplayNameScreen:hint" size="sm" weight="light" style={$hint} />}
         <TextField
           value={displayName}
           onChangeText={setDisplayName}
@@ -66,8 +67,8 @@ export default observer(function SetDisplayName() {
           autoCapitalize="none"
           autoComplete="name"
           autoCorrect={false}
-          label="Display name"
-          placeholder="Bob" // TODO different names for different languages
+          labelTx="setDisplayNameScreen:label"
+          placeholderTx="setDisplayNameScreen:placeholder"
           onSubmitEditing={forward}
         />
       </UseCase>
