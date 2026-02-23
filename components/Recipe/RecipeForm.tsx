@@ -206,8 +206,8 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             <TextField
               value={value}
               onChangeText={onChange}
-              placeholder="Recipe title here..."
-              label="Title"
+              placeholderTx="recipeFormScreen:titlePlaceholder"
+              labelTx="recipeFormScreen:titleLabel"
               status="error"
               helper={errors.title?.message ?? ""}
             />
@@ -245,7 +245,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               helper={errors.preparationTimeInMinutes?.message ?? ""}
               placeholder="0"
               status="error"
-              label="Prep time minutes (optional)"
+              labelTx="recipeFormScreen:prepLabel"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -283,7 +283,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               helper={errors.bakingTimeInMinutes?.message ?? ""}
               placeholder="0"
               status="error"
-              label="Bake time minutes (optional)"
+              labelTx="recipeFormScreen:bakeLabel"
               inputMode="numeric"
               keyboardType="numeric"
             />
@@ -313,7 +313,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
         {/* Ingredients Section */}
         <View style={{ minHeight: spacing.xxs }}>
-          <Text text="Ingredients" preset="bold" />
+          <Text tx="recipeDetailsScreen:ingredients" preset="bold" />
           {errors.ingredients?.message && (
             <Text text={errors.ingredients.message} style={{ color: "red" }} />
           )}

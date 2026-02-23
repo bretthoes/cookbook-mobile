@@ -5,6 +5,10 @@ const en = {
     back: "Back",
     logOut: "Log Out",
     save: "Save",
+    goBack: "Go Back",
+  },
+  itemNotFound: {
+    message: "Item not found",
   },
   welcomeScreen: {
     postscript:
@@ -420,6 +424,13 @@ const en = {
   recipeEditScreen: {
     notFound: "Recipe not found",
     updateFailed: "Update recipe failed",
+  },
+  recipeSummary: {
+    showMore: "Show More...",
+    showLess: "Show Less...",
+    hour: "hour",
+    hour_plural: "hours",
+    mins: "mins",
   },
   recipeDetailsScreen: {
     directions: "Directions",

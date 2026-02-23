@@ -49,8 +49,15 @@ function TimeDisplay({ minutes }: { minutes: number }) {
   const { hours, minutes: mins } = formatMinutes(minutes)
   return (
     <>
-      {hours > 0 && <Text preset="default" text={`${hours} hour${hours !== 1 ? "s" : ""}`} />}
-      {mins > 0 && <Text preset="default" text={`${mins} mins`} />}
+      {hours > 0 && (
+        <Text
+          preset="default"
+          text={`${hours} ${hours !== 1 ? translate("recipeSummary:hour_plural") : translate("recipeSummary:hour")}`}
+        />
+      )}
+      {mins > 0 && (
+        <Text preset="default" text={`${mins} ${translate("recipeSummary:mins")}`} />
+      )}
     </>
   )
 }
@@ -145,7 +152,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
           {shouldTruncate && (
             <Text
               weight="light"
-              text={isExpanded ? "Show Less..." : "Show More..."}
+              tx={isExpanded ? "recipeSummary:showLess" : "recipeSummary:showMore"}
               onPress={() => setIsExpanded(!isExpanded)}
               style={{ marginTop: spacing.sm, alignSelf: "flex-end" }}
             />

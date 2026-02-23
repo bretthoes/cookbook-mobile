@@ -7,6 +7,10 @@ const ko: Translations = {
     back: "뒤로",
     logOut: "로그아웃",
     save: "___Save",
+    goBack: "___Go Back",
+  },
+  itemNotFound: {
+    message: "___Item not found",
   },
   welcomeScreen: {
     postscript:
@@ -417,6 +421,13 @@ const ko: Translations = {
   recipeEditScreen: {
     notFound: "___Recipe not found",
     updateFailed: "___Update recipe failed",
+  },
+  recipeSummary: {
+    showMore: "___Show More...",
+    showLess: "___Show Less...",
+    hour: "___hour",
+    hour_plural: "___hours",
+    mins: "___mins",
   },
   recipeDetailsScreen: {
     directions: "Directions",

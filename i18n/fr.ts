@@ -7,6 +7,10 @@ const fr: Translations = {
     back: "Retour",
     logOut: "Déconnexion",
     save: "___Save",
+    goBack: "___Go Back",
+  },
+  itemNotFound: {
+    message: "___Item not found",
   },
   welcomeScreen: {
     postscript:
@@ -422,6 +426,13 @@ const fr: Translations = {
   recipeEditScreen: {
     notFound: "___Recipe not found",
     updateFailed: "___Update recipe failed",
+  },
+  recipeSummary: {
+    showMore: "___Show More...",
+    showLess: "___Show Less...",
+    hour: "___hour",
+    hour_plural: "___hours",
+    mins: "___mins",
   },
   recipeDetailsScreen: {
     directions: "Instructions",

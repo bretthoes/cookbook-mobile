@@ -102,7 +102,7 @@ export default observer(function AddCookbookScreen() {
 
   return (
     <Screen preset="scroll" contentContainerStyle={$root}>
-      <Text text="Fill out the details for your new cookbook." />
+      <Text tx="cookbookAddScreen:subtitle" />
       <UseCase>
         {imageLocal.length > 0 && (
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
