@@ -16,7 +16,6 @@ Define styles in the same file as the component that uses them. Do not create se
 ## Example
 
 ```tsx
-// OptionListItem.tsx – styles live here, not in optionListStyles.ts
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme"
 import type { TextStyle, ViewStyle } from "react-native"

@@ -19,12 +19,12 @@ Prioritize existing components and create new reusable components rather than wr
 ```tsx
 // Screen composes existing components
 import { ListItem } from "@/components/ListItem"
-import { OptionList } from "@/components/OptionList"
+import { OptionListItem } from "@/components/OptionListItem"
 
 export function MyScreen() {
   return (
     <Screen>
-      <OptionList items={items} onSelect={handleSelect} />
+      <OptionListItem title="..." description="..." onPress={handleSelect} leftIcon="add" />
     </Screen>
   )
 }
