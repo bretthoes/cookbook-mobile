@@ -368,6 +368,7 @@ const fr: Translations = {
   selectCookbookScreen: {
     title: "___Select a Cookbook",
     actionForRecipe: "___Select the cookbook where you would like to add a new recipe.",
+    actionForMembers: "___Select a cookbook to view its members.",
     actionForInvite: "___Select the cookbook where you would like to send an invitation to a friend.",
     actionForAddFromCamera: "___Select a cookbook to add the recipe to.",
     emptyState: "___No cookbooks have been added yet.",
@@ -410,6 +411,17 @@ const fr: Translations = {
     failedToUpdate: "___Failed to update cookbook",
     errorUpdating: "___An error occurred while updating the cookbook",
     notFound: "___Cookbook not found",
+  },
+  recipeDetailScreen: {
+    notFound: "___Recipe not found",
+    keepScreenOn: "___Keep Screen on",
+    deleteTitle: "___Delete Recipe",
+    deleteMessage: "___Are you sure you want to delete this recipe? This action cannot be undone.",
+    deleteButton: "___Delete",
+  },
+  recipeEditScreen: {
+    notFound: "___Recipe not found",
+    updateFailed: "___Update recipe failed",
   },
   recipeDetailsScreen: {
     directions: "Instructions",

@@ -2,6 +2,7 @@ import { Popover } from "@/components/Popover"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
 import { ItemNotFound } from "@/components/ItemNotFound"
+import { translate } from "@/i18n"
 import { ListItem } from "@/components/ListItem"
 import { MoreButton } from "@/components/MoreButton"
 import { DirectionText } from "@/components/Recipe/DirectionText"
@@ -79,15 +80,15 @@ export default observer(function Recipe() {
 
   const handlePressDelete = async () => {
     Alert.alert(
-      "Delete Recipe",
-      "Are you sure you want to delete this recipe? This action cannot be undone.",
+      translate("recipeDetailScreen:deleteTitle"),
+      translate("recipeDetailScreen:deleteMessage"),
       [
         {
-          text: "Cancel",
+          text: translate("common:cancel"),
           style: "cancel",
         },
         {
-          text: "Delete",
+          text: translate("recipeDetailScreen:deleteButton"),
           style: "destructive",
           onPress: async () => {
             await deleteRecipe()
@@ -192,7 +193,7 @@ export default observer(function Recipe() {
           <View style={$directionsHeaderRow}>
             <Text preset="subheading" tx="recipeDetailsScreen:directions" />
             <View style={$cookModeRow}>
-              <Text text="Keep Screen on" />
+              <Text tx="recipeDetailScreen:keepScreenOn" />
               <Switch value={cookMode} onValueChange={setCookMode} />
             </View>
           </View>

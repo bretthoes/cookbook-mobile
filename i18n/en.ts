@@ -364,6 +364,7 @@ const en = {
   selectCookbookScreen: {
     title: "Select a Cookbook",
     actionForRecipe: "Select the cookbook where you would like to add a new recipe.",
+    actionForMembers: "Select a cookbook to view its members.",
     actionForInvite: "Select the cookbook where you would like to send an invitation to a friend.",
     actionForAddFromCamera: "Select a cookbook to add the recipe to.",
     emptyState: "No cookbooks have been added yet.",
@@ -408,6 +409,17 @@ const en = {
     failedToUpdate: "Failed to update cookbook",
     errorUpdating: "An error occurred while updating the cookbook",
     notFound: "Cookbook not found",
+  },
+  recipeDetailScreen: {
+    notFound: "Recipe not found",
+    keepScreenOn: "Keep Screen on",
+    deleteTitle: "Delete Recipe",
+    deleteMessage: "Are you sure you want to delete this recipe? This action cannot be undone.",
+    deleteButton: "Delete",
+  },
+  recipeEditScreen: {
+    notFound: "Recipe not found",
+    updateFailed: "Update recipe failed",
   },
   recipeDetailsScreen: {
     directions: "Directions",

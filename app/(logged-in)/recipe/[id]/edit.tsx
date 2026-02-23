@@ -1,6 +1,7 @@
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { RecipeForm, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { RecipeSnapshotIn } from "@/models/Recipe"
 import { router } from "expo-router"
@@ -77,11 +78,11 @@ export default observer(function EditRecipe() {
       if (success) {
         router.replace(`../../cookbook/${cookbook?.id}`)
       } else {
-        alert("Update recipe failed")
+        alert(translate("recipeEditScreen:updateFailed"))
       }
     } catch (error) {
       console.error("Update recipe failed:", error)
-      alert("Update recipe failed")
+      alert(translate("recipeEditScreen:updateFailed"))
     }
   }
 
@@ -89,7 +90,7 @@ export default observer(function EditRecipe() {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
 
-  if (!selected) return <ItemNotFound message="Recipe not found" />
+  if (!selected) return <ItemNotFound message={translate("recipeEditScreen:notFound")} />
 
   return (
     <Screen preset="scroll">

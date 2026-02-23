@@ -7,7 +7,7 @@ import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
 import config from "@/config/config.dev"
-import { isRTL } from "@/i18n"
+import { isRTL, translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
@@ -114,7 +114,7 @@ export default observer(function ProfileScreen() {
               pathname: "../select-cookbook",
               params: {
                 nextRoute: "../membership/list",
-                action: "Select a cookbook to view its members.",
+                action: translate("selectCookbookScreen:actionForMembers"),
               },
             })
           }
