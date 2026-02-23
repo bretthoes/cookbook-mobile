@@ -1,17 +1,12 @@
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { colors } from "@/theme"
+import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import type { ImageSourcePropType } from "react-native"
 import { useMemo } from "react"
 import { Image, TouchableOpacity, View } from "react-native"
-import {
-  $iconContainer,
-  $itemContainer,
-  $itemDescription,
-  $itemTitle,
-  $textContainer,
-} from "./optionListStyles"
+import type { TextStyle, ViewStyle } from "react-native"
 
 const CARET_SIZE = 26
 
@@ -63,3 +58,51 @@ export function OptionListItem({
     </TouchableOpacity>
   )
 }
+
+// #region Styles
+
+export const $container: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingTop: theme.spacing.xl,
+})
+
+export const $listContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.backgroundDim,
+  marginHorizontal: theme.spacing.lg,
+  borderRadius: theme.spacing.md,
+})
+
+const $itemContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  padding: theme.spacing.md,
+  borderBottomWidth: 1,
+  borderBottomColor: theme.colors.background,
+  minHeight: 80,
+})
+
+const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  width: 48,
+  height: 48,
+  backgroundColor: theme.colors.background,
+  alignItems: "center",
+  justifyContent: "center",
+  marginRight: theme.spacing.md,
+  borderRadius: 24,
+})
+
+const $textContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  flex: 1,
+  marginRight: theme.spacing.sm,
+})
+
+const $itemTitle: ThemedStyle<TextStyle> = (theme) => ({
+  fontSize: 16,
+  marginBottom: theme.spacing.xs,
+})
+
+const $itemDescription: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  fontSize: 14,
+})
+
+// #endregion

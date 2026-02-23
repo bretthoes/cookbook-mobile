@@ -1,4 +1,4 @@
-import { OptionListItem, $listContainer } from "@/components/OptionList"
+import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"

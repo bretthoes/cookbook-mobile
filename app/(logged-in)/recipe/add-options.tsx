@@ -1,4 +1,4 @@
-import { OptionListItem, $container, $listContainer } from "@/components/OptionList"
+import { OptionListItem, $container, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
