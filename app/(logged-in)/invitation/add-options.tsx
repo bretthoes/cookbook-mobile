@@ -4,21 +4,28 @@ import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { Image, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 
-const cookbook = require("../../../assets/images/cookbook.png")
-const addRecipe = require("../../../assets/images/addRecipe.png")
-const invite = require("../../../assets/images/invite.png")
+const link = require("../../../assets/images/link.png")
 
-export default observer(function CreateScreen() {
+export default observer(function AddInvitationOptionsScreen() {
   const { themeContext, themed } = useAppTheme()
   const isDark = themeContext === "dark"
 
+  useHeader({
+    leftIcon: "back",
+    title: "Invite Friends",
+    onLeftPress: () => {
+      router.back()
+    },
+  })
+
   // Memoize themed styles
-  const $themedTitle = useMemo(() => themed($title), [themed])
+  const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedListContainer = useMemo(() => themed($listContainer), [themed])
   const $themedItemContainer = useMemo(() => themed($itemContainer), [themed])
   const $themedIconContainer = useMemo(() => themed($iconContainer), [themed])
@@ -27,89 +34,50 @@ export default observer(function CreateScreen() {
   const $themedItemDescription = useMemo(() => themed($itemDescription), [themed])
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]}>
-      <Text preset="heading" tx="createScreen:title" style={$themedTitle} />
-
+    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
       <View style={$themedListContainer}>
         <TouchableOpacity
           style={$themedItemContainer}
-          onPress={() => router.push("../cookbook/add")}
+          onPress={() => router.replace("../invitation/add-email")}
         >
           <View style={$themedIconContainer}>
-            <Image source={cookbook} style={{ width: 50, height: 50 }} />
+            <Icon icon="mail" size={32} color={colors.tint} />
           </View>
           <View style={$themedTextContainer}>
-            <Text preset="subheading" text="A New Cookbook" style={$themedItemTitle} />
+            <Text preset="subheading" text="Invite by Email" style={$themedItemTitle} />
             <Text
               preset="formHelper"
-              text="Create a new collection and fill it with your favorite recipes"
+              text="Send an invitation directly to their email"
               style={$themedItemDescription}
             />
           </View>
-          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={$themedItemContainer}
-          onPress={() =>
-            router.push({
-              pathname: "../select-cookbook",
-              params: {
-                nextRoute: "../../recipe/add-options",
-                action: "Select the cookbook where you would like to add a new recipe.",
-              },
-            } as any)
-          }
+          onPress={() => router.replace("../invitation/add-link")}
         >
           <View style={$themedIconContainer}>
-            <Image source={addRecipe} style={{ width: 50, height: 50 }} />
+            <Image source={link} style={{ width: 50, height: 50 }} />
           </View>
           <View style={$themedTextContainer}>
-            <Text preset="subheading" text="A New Recipe" style={$themedItemTitle} />
+            <Text preset="subheading" text="Invite by Shared Link" style={$themedItemTitle} />
             <Text
               preset="formHelper"
-              text="Add a recipe to one of your cookbooks"
+              text="Create a shareable link for anyone to join"
               style={$themedItemDescription}
             />
           </View>
-          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={$themedItemContainer}
-          onPress={() =>
-            router.push({
-              pathname: "../select-cookbook",
-              params: {
-                nextRoute: "../invitation/add-options",
-                action:
-                  "Select the cookbook where you would like to send an invitation to a friend.",
-              },
-            } as any)
-          }
-        >
-          <View style={$themedIconContainer}>
-            <Image source={invite} style={{ width: 50, height: 50 }} />
-          </View>
-          <View style={$themedTextContainer}>
-            <Text preset="subheading" text="Invitation to a Friend" style={$themedItemTitle} />
-            <Text
-              preset="formHelper"
-              text="Send a link to your friend"
-              style={$themedItemDescription}
-            />
-          </View>
-          <Icon icon="caretRight" size={26} color={isDark ? colors.border : colors.text} />
+          <Icon icon="caretRight" size={24} color={isDark ? colors.border : colors.text} />
         </TouchableOpacity>
       </View>
     </Screen>
   )
 })
 
-const $title: ThemedStyle<TextStyle> = (theme) => ({
-  marginBottom: theme.spacing.lg,
-  paddingHorizontal: theme.spacing.lg,
-  paddingTop: theme.spacing.lg + theme.spacing.xl,
+const $container: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingTop: theme.spacing.xl,
 })
 
 const $listContainer: ThemedStyle<ViewStyle> = (theme) => ({
@@ -130,11 +98,11 @@ const $itemContainer: ThemedStyle<ViewStyle> = (theme) => ({
 const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   width: 48,
   height: 48,
-  borderRadius: 24,
   backgroundColor: theme.colors.background,
   alignItems: "center",
   justifyContent: "center",
   marginRight: theme.spacing.md,
+  borderRadius: 24,
 })
 
 const $textContainer: ThemedStyle<ViewStyle> = (theme) => ({
