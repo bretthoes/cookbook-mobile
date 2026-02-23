@@ -28,8 +28,8 @@ export default observer(function ForgotPassword() {
 
   return (
     <Screen style={$root} preset="auto" safeAreaEdges={["top", "bottom"]}>
-      <Text text="Enter your email" preset="heading" />
-      <Text>We&apos;ll send a message with instructions to reset your password.</Text>
+      <Text tx="forgotPasswordScreen:title" preset="heading" />
+      <Text tx="forgotPasswordScreen:subtitle" />
 
       <TextField
         value={authEmail}
@@ -47,7 +47,7 @@ export default observer(function ForgotPassword() {
 
       <Text text={`${result}`} preset="formHelper" />
 
-      <Button text="Send me the code!" onPress={sendForgotPasswordEmail} style={$tapButton} />
+      <Button tx="forgotPasswordScreen:sendButton" onPress={sendForgotPasswordEmail} style={$tapButton} />
     </Screen>
   )
 })

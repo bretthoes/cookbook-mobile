@@ -3,6 +3,7 @@ import { Header } from "@/components/Header"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { router } from "expo-router"
@@ -37,7 +38,7 @@ export default observer(function EmailVerification() {
     if (result) {
       router.replace("/log-in")
     } else {
-      setErrorMessage("Your email is not yet verified. Please check your inbox before continuing.")
+      setErrorMessage(translate("emailVerificationScreen:notYetVerified"))
     }
     setIsVerifying(false)
   }
@@ -67,19 +68,19 @@ export default observer(function EmailVerification() {
       <Header
         leftIcon="back"
         onLeftPress={() => router.back()}
-        rightText="Next"
+        rightTx="emailVerificationScreen:next"
         onRightPress={checkEmailVerified}
       />
       <Text
-        text="Confirm your account"
+        tx="emailVerificationScreen:title"
         preset="subheading"
         style={{ paddingHorizontal: spacing.md }}
       />
       <UseCase>
-        <Text>We&apos;ve sent a confirmation email to</Text>
+        <Text tx="emailVerificationScreen:sentToPrefix" />
         <Text weight="bold">{authEmail}</Text>
         <Divider />
-        <Text>Please check your inbox, and spam folder, and click the verification link.</Text>
+        <Text tx="emailVerificationScreen:sentToSuffix" />
 
         <Text text={`${result}`} preset="formHelper" style={$formHelper} />
 
@@ -90,8 +91,8 @@ export default observer(function EmailVerification() {
       <TouchableOpacity onPress={handleResendEmail} disabled={isCooldown} style={$resendContainer}>
         <Text style={[$resendText, isCooldown && { color: colors.border }]}>
           {isCooldown
-            ? `Didn\'t get the email? Click here to resend (${cooldownTime}s)`
-            : "Didn\'t get the email? Click here to resend"}
+            ? translate("emailVerificationScreen:resendCooldown", { seconds: cooldownTime })
+            : translate("emailVerificationScreen:resendPrompt")}
         </Text>
       </TouchableOpacity>
     </Screen>

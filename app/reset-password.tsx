@@ -3,6 +3,7 @@ import { PressableIcon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { router } from "expo-router"
@@ -22,13 +23,14 @@ export default observer(function ResetPassword() {
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const passwordValidationError = useMemo(() => {
-    if (password.length === 0) return "can't be blank"
-    if (password.length < 6) return "must be at least 6 characters"
-    if (password.length > 30) return "cannot exceed 30 characters"
-    if (!/[A-Z]/.test(password)) return "must contain at least one uppercase letter"
-    if (!/[a-z]/.test(password)) return "must contain at least one lowercase letter"
-    if (!/\d/.test(password)) return "must contain at least one digit"
-    if (!/[^A-Za-z0-9]/.test(password)) return "must contain at least one special character"
+    if (password.length === 0) return translate("registerScreen:validation.cantBeBlank")
+    if (password.length < 6) return translate("registerScreen:validation.minLength")
+    if (password.length > 30) return translate("registerScreen:validation.maxLength")
+    if (!/[A-Z]/.test(password)) return translate("registerScreen:validation.needsUppercase")
+    if (!/[a-z]/.test(password)) return translate("registerScreen:validation.needsLowercase")
+    if (!/\d/.test(password)) return translate("registerScreen:validation.needsDigit")
+    if (!/[^A-Za-z0-9]/.test(password))
+      return translate("registerScreen:validation.needsSpecialChar")
     return ""
   }, [password])
 
@@ -70,15 +72,15 @@ export default observer(function ResetPassword() {
   )
 
   // TODO determine 200 in a less hacky way; just to disable button to prevent multiple reset submits
-  const passwordSuccessfullyReset = result === "Password reset successfully."
+  const passwordSuccessfullyReset = result === translate("resetPasswordScreen:successMessage")
 
   return (
     <Screen contentContainerStyle={$root} preset="auto" safeAreaEdges={["top", "bottom"]}>
       <View style={$contentContainer}>
-        <Text text="Reset your password" preset="heading" />
-        <Text>We&apos;ve sent a reset link to</Text>
+        <Text tx="resetPasswordScreen:title" preset="heading" />
+        <Text tx="resetPasswordScreen:sentToPrefix" />
         <Text weight="bold">{authEmail}</Text>
-        <Text>Please check your inbox and fill out the form below.</Text>
+        <Text tx="resetPasswordScreen:sentToSuffix" />
 
         <TextField
           value={resetCode}
@@ -86,8 +88,8 @@ export default observer(function ResetPassword() {
           containerStyle={{ marginBottom: spacing.lg }}
           autoCapitalize="none"
           autoCorrect={false}
-          label="Reset code"
-          placeholder="Paste reset code here"
+          labelTx="resetPasswordScreen:resetCodeLabel"
+          placeholderTx="resetPasswordScreen:resetCodePlaceholder"
           onSubmitEditing={() => authPasswordInput.current?.focus()}
         />
 
@@ -113,7 +115,7 @@ export default observer(function ResetPassword() {
         <Button
           disabled={passwordSuccessfullyReset}
           testID="Update password"
-          text="Update password"
+          tx="resetPasswordScreen:updateButton"
           style={$tapButton}
           textStyle={passwordSuccessfullyReset ? { color: colors.border } : undefined}
           preset="reversed"
@@ -123,7 +125,7 @@ export default observer(function ResetPassword() {
 
       <Button
         testID="login-button"
-        text="Back to login"
+        tx="resetPasswordScreen:backToLogin"
         style={$loginButton}
         preset="reversed"
         onPress={() => router.push("/log-in")}
