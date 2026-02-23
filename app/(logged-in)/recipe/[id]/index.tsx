@@ -141,7 +141,7 @@ export default observer(function Recipe() {
     return (
       <>
         <Divider size={spacing.xxxl} />
-        <ItemNotFound message="Recipe not found" />
+        <ItemNotFound messageTx="itemNotFound:recipe" />
       </>
     )
 

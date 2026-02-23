@@ -6,9 +6,12 @@ const en = {
     logOut: "Log Out",
     save: "Save",
     goBack: "Go Back",
+    error: "Error",
   },
   itemNotFound: {
     message: "Item not found",
+    cookbook: "Cookbook not found",
+    recipe: "Recipe not found",
   },
   welcomeScreen: {
     postscript:
@@ -190,6 +193,12 @@ const en = {
   demoDebugScreen: {
     howTo: "HOW TO",
     title: "Debug",
+    appId: "App Id",
+    appName: "App Name",
+    appVersion: "App Version",
+    appBuildVersion: "App Build Version",
+    hermesEnabled: "Hermes Enabled",
+    fabricEnabled: "Fabric Enabled",
     tagLine:
       "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
     reactotron: "Send to Reactotron",
@@ -219,6 +228,7 @@ const en = {
     darkMode: "Dark Mode",
     preferredLanguage: "Choose your preferred language",
     setName: "Set your display name",
+    floatingTabBar: "Floating Tab Bar",
     tagLine:
       "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
     reactotron: "Send to Reactotron",
@@ -392,6 +402,18 @@ const en = {
     viewMembers: "View Members",
     editCookbook: "Edit Cookbook",
     leaveCookbook: "Leave Cookbook",
+    notFound: "Cookbook not found",
+    noRecipesEmpty: "No recipes have been added yet.",
+    recipeCount: "{{count}} recipes.",
+    leaveCannotRemoveFavoritesTitle: "Cannot Leave Cookbook",
+    leaveCannotRemoveFavorites: "Please remove this cookbook from your favorites before leaving.",
+    leaveTransferOwnershipFirst:
+      "Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+    leaveConfirmTitle: "Leave Cookbook",
+    leaveConfirmMessage:
+      "Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
+    leaveButton: "Leave",
+    leaveError: "Failed to leave cookbook. Please try again.",
   },
   cookbookAddScreen: {
     title: "Add new cookbook",
@@ -465,6 +487,7 @@ const en = {
     directionPlaceholder: "Add direction here...",
     addAnotherIngredient: "Add another ingredient",
     addAnotherDirection: "Add another direction",
+    zeroPlaceholder: "0",
   },
   setDisplayNameScreen: {
     title: "Set a display name",

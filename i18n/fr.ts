@@ -8,9 +8,12 @@ const fr: Translations = {
     logOut: "Déconnexion",
     save: "___Save",
     goBack: "___Go Back",
+    error: "___Error",
   },
   itemNotFound: {
     message: "___Item not found",
+    cookbook: "___Cookbook not found",
+    recipe: "___Recipe not found",
   },
   welcomeScreen: {
     postscript:
@@ -130,6 +133,12 @@ const fr: Translations = {
   demoDebugScreen: {
     howTo: "COMMENT FAIRE",
     title: "Débugage",
+    appId: "___App Id",
+    appName: "___App Name",
+    appVersion: "___App Version",
+    appBuildVersion: "___App Build Version",
+    hermesEnabled: "___Hermes Enabled",
+    fabricEnabled: "___Fabric Enabled",
     tagLine:
       "Félicitations, vous avez un modèle d'application React Native très avancé ici. Profitez de cette base de code !",
     reactotron: "Envoyer à Reactotron",
@@ -224,6 +233,7 @@ const fr: Translations = {
     darkMode: "Mode sombre",
     preferredLanguage: "Choisissez votre langue préférée",
     setName: "Définir votre nom d'affichage",
+    floatingTabBar: "___Floating Tab Bar",
     tagLine:
       "Félicitations, vous avez un modèle d'application React Native très avancé ici. Profitez de cette base de code !",
     reactotron: "Envoyer à Reactotron",
@@ -394,6 +404,18 @@ const fr: Translations = {
     viewMembers: "___View Members",
     editCookbook: "___Edit Cookbook",
     leaveCookbook: "___Leave Cookbook",
+    notFound: "___Cookbook not found",
+    noRecipesEmpty: "___No recipes have been added yet.",
+    recipeCount: "___{{count}} recipes.",
+    leaveCannotRemoveFavoritesTitle: "___Cannot Leave Cookbook",
+    leaveCannotRemoveFavorites: "___Please remove this cookbook from your favorites before leaving.",
+    leaveTransferOwnershipFirst:
+      "___Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+    leaveConfirmTitle: "___Leave Cookbook",
+    leaveConfirmMessage:
+      "___Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
+    leaveButton: "___Leave",
+    leaveError: "___Failed to leave cookbook. Please try again.",
   },
   cookbookAddScreen: {
     title: "___Add new cookbook",
@@ -467,6 +489,7 @@ const fr: Translations = {
     directionPlaceholder: "___Add direction here...",
     addAnotherIngredient: "___Add another ingredient",
     addAnotherDirection: "___Add another direction",
+    zeroPlaceholder: "___0",
   },
   membershipScreen: {
     listTitle: "___Members",

@@ -59,11 +59,11 @@ export default observer(function Cookbook() {
     // Check if cookbook is in favorites
     if (selected && hasFavorite(selected)) {
       Alert.alert(
-        "Cannot Leave Cookbook",
-        "Please remove this cookbook from your favorites before leaving.",
+        translate("cookbookDetailScreen:leaveCannotRemoveFavoritesTitle"),
+        translate("cookbookDetailScreen:leaveCannotRemoveFavorites"),
         [
           {
-            text: "OK",
+            text: translate("common:ok"),
             style: "cancel",
           },
         ],
@@ -74,11 +74,11 @@ export default observer(function Cookbook() {
     // TODO should refresh currentCookbook here to ensure membersCount is up to date.
     if (isAuthor && selected?.membersCount !== 1) {
       Alert.alert(
-        "Leave Cookbook",
-        "Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+        translate("cookbookDetailScreen:leaveConfirmTitle"),
+        translate("cookbookDetailScreen:leaveTransferOwnershipFirst"),
         [
           {
-            text: "OK",
+            text: translate("common:ok"),
             style: "cancel",
           },
         ],
@@ -87,15 +87,15 @@ export default observer(function Cookbook() {
     }
 
     Alert.alert(
-      "Leave Cookbook",
-      "Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
+      translate("cookbookDetailScreen:leaveConfirmTitle"),
+      translate("cookbookDetailScreen:leaveConfirmMessage"),
       [
         {
-          text: "Cancel",
+          text: translate("common:cancel"),
           style: "cancel",
         },
         {
-          text: "Leave",
+          text: translate("cookbookDetailScreen:leaveButton"),
           style: "destructive",
           onPress: async () => {
             if (!membershipStore.ownMembership?.id) return
@@ -103,7 +103,10 @@ export default observer(function Cookbook() {
             if (result) {
               remove()
             } else {
-              Alert.alert("Error", "Failed to leave cookbook. Please try again.")
+              Alert.alert(
+                translate("common:error"),
+                translate("cookbookDetailScreen:leaveError"),
+              )
             }
           },
         },
@@ -202,7 +205,7 @@ export default observer(function Cookbook() {
     router.push(`../../recipe/${recipeId}`)
   }
 
-  if (!selected) return <ItemNotFound message="Cookbook not found" />
+  if (!selected) return <ItemNotFound messageTx="itemNotFound:cookbook" />
 
   return (
     <>
@@ -242,7 +245,12 @@ export default observer(function Cookbook() {
         refreshing={refreshing}
         ListFooterComponent={
           <View style={$themedListFooter}>
-            <Text weight="light" text={`${filteredItems.length} recipes.`} />
+            <Text
+              weight="light"
+              text={translate("cookbookDetailScreen:recipeCount", {
+                count: filteredItems.length,
+              })}
+            />
           </View>
         }
         renderItem={({ item, index }) => (

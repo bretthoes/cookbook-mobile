@@ -140,7 +140,7 @@ export default observer(function ProfileScreen() {
           }
         />
         {/* <View style={$themeRow}> // TODO see above
-        <Text text="Floating Tab Bar" />
+        <Text tx="profileScreen:floatingTabBar" />
         <Switch
           value={useFloatingTabBar}
           onValueChange={toggleFloatingTabBar}
@@ -179,7 +179,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           LeftComponent={
             <View>
-              <Text preset="bold">App Id</Text>
+              <Text preset="bold" tx="demoDebugScreen:appId" />
               <Text>{Application.applicationId}</Text>
             </View>
           }
@@ -187,7 +187,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           LeftComponent={
             <View>
-              <Text preset="bold">App Name</Text>
+              <Text preset="bold" tx="demoDebugScreen:appName" />
               <Text>{Application.applicationName}</Text>
             </View>
           }
@@ -195,7 +195,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           LeftComponent={
             <View>
-              <Text preset="bold">App Version</Text>
+              <Text preset="bold" tx="demoDebugScreen:appVersion" />
               <Text>{Application.nativeApplicationVersion}</Text>
             </View>
           }
@@ -203,7 +203,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           LeftComponent={
             <View>
-              <Text preset="bold">App Build Version</Text>
+              <Text preset="bold" tx="demoDebugScreen:appBuildVersion" />
               <Text>{Application.nativeBuildVersion}</Text>
             </View>
           }
@@ -211,7 +211,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           LeftComponent={
             <View>
-              <Text preset="bold">Hermes Enabled</Text>
+              <Text preset="bold" tx="demoDebugScreen:hermesEnabled" />
               <Text>{String(usingHermes)}</Text>
             </View>
           }
@@ -219,7 +219,7 @@ export default observer(function ProfileScreen() {
         <ListItem
           LeftComponent={
             <View>
-              <Text preset="bold">Fabric Enabled</Text>
+              <Text preset="bold" tx="demoDebugScreen:fabricEnabled" />
               <Text>{String(usingFabric)}</Text>
             </View>
           }

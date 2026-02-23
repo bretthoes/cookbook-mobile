@@ -8,9 +8,12 @@ const ko: Translations = {
     logOut: "로그아웃",
     save: "___Save",
     goBack: "___Go Back",
+    error: "___Error",
   },
   itemNotFound: {
     message: "___Item not found",
+    cookbook: "___Cookbook not found",
+    recipe: "___Recipe not found",
   },
   welcomeScreen: {
     postscript:
@@ -192,6 +195,12 @@ const ko: Translations = {
   demoDebugScreen: {
     howTo: "사용방법",
     title: "디버그",
+    appId: "___App Id",
+    appName: "___App Name",
+    appVersion: "___App Version",
+    appBuildVersion: "___App Build Version",
+    hermesEnabled: "___Hermes Enabled",
+    fabricEnabled: "___Fabric Enabled",
     tagLine:
       "축하합니다. 여기 아주 고급스러운 React Native 앱 템플릿이 있습니다. 이 보일러 플레이트를 사용해보세요!",
     reactotron: "Reactotron 으로 보내기",
@@ -221,6 +230,7 @@ const ko: Translations = {
     darkMode: "다크 모드",
     preferredLanguage: "선호하는 언어 선택",
     setName: "표시 이름 설정",
+    floatingTabBar: "___Floating Tab Bar",
     tagLine:
       "축하합니다! 고급 React Native 앱 템플릿을 가지고 계시네요. 이 보일러플레이트를 최대한 활용하세요!",
     reactotron: "Reactotron으로 전송",
@@ -389,6 +399,18 @@ const ko: Translations = {
     viewMembers: "___View Members",
     editCookbook: "___Edit Cookbook",
     leaveCookbook: "___Leave Cookbook",
+    notFound: "___Cookbook not found",
+    noRecipesEmpty: "___No recipes have been added yet.",
+    recipeCount: "___{{count}} recipes.",
+    leaveCannotRemoveFavoritesTitle: "___Cannot Leave Cookbook",
+    leaveCannotRemoveFavorites: "___Please remove this cookbook from your favorites before leaving.",
+    leaveTransferOwnershipFirst:
+      "___Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+    leaveConfirmTitle: "___Leave Cookbook",
+    leaveConfirmMessage:
+      "___Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
+    leaveButton: "___Leave",
+    leaveError: "___Failed to leave cookbook. Please try again.",
   },
   cookbookAddScreen: {
     title: "___Add new cookbook",
@@ -462,6 +484,7 @@ const ko: Translations = {
     directionPlaceholder: "___Add direction here...",
     addAnotherIngredient: "___Add another ingredient",
     addAnotherDirection: "___Add another direction",
+    zeroPlaceholder: "___0",
   },
   membershipScreen: {
     listTitle: "___Members",
