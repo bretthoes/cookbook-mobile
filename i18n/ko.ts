@@ -6,6 +6,7 @@ const ko: Translations = {
     cancel: "취소",
     back: "뒤로",
     logOut: "로그아웃",
+    save: "___Save",
   },
   welcomeScreen: {
     postscript:
@@ -250,6 +251,27 @@ const ko: Translations = {
     viewMembers: "___View Members",
     editCookbook: "___Edit Cookbook",
     leaveCookbook: "___Leave Cookbook",
+  },
+  cookbookAddScreen: {
+    title: "___Add new cookbook",
+    subtitle: "___Fill out the details for your new cookbook.",
+    addCoverPhoto: "___Add cover photo (optional)",
+    titleLabel: "___Title",
+    titlePlaceholder: "___Enter cookbook title",
+    allowCameraRollAccess: "___Please allow camera roll access in settings.",
+    imageSelectionFailed: "___Image selection failed",
+    createFailed: "___Failed to create cookbook",
+  },
+  cookbookEditScreen: {
+    title: "___Edit Cookbook",
+    subtitle: "___Edit the details for your cookbook.",
+    changeCoverPhoto: "___Change Cover Photo",
+    titleLabel: "___Title",
+    noChangesToSave: "___No changes to save",
+    updatedSuccessfully: "___Cookbook updated successfully!",
+    failedToUpdate: "___Failed to update cookbook",
+    errorUpdating: "___An error occurred while updating the cookbook",
+    notFound: "___Cookbook not found",
   },
   recipeDetailsScreen: {
     directions: "Directions",

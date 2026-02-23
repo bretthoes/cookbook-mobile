@@ -5,6 +5,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { CookbookToAddSnapshotIn } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
 import { api } from "@/services/api"
@@ -49,7 +50,7 @@ export default observer(function AddCookbookScreen() {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
-      alert("Please allow camera roll access in settings.")
+      alert(translate("cookbookAddScreen:allowCameraRollAccess"))
       return
     }
 
@@ -65,7 +66,7 @@ export default observer(function AddCookbookScreen() {
       if (uploadResponse.kind === "ok") {
         setValue("image", uploadResponse?.keys?.pop() ?? "")
       } else {
-        alert("Image selection failed")
+        alert(translate("cookbookAddScreen:imageSelectionFailed"))
       }
     }
   }
@@ -80,10 +81,10 @@ export default observer(function AddCookbookScreen() {
       if (success) {
         router.replace("../../(tabs)/cookbooks")
       } else {
-        alert("Failed to create cookbook")
+        alert(translate("cookbookAddScreen:createFailed"))
       }
     } catch {
-      alert("Failed to create cookbook")
+      alert(translate("cookbookAddScreen:createFailed"))
     }
   }
 
@@ -92,9 +93,9 @@ export default observer(function AddCookbookScreen() {
   }
 
   useHeader({
-    title: "Add new cookbook",
+    titleTx: "cookbookAddScreen:title",
     leftIcon: "back",
-    rightText: "Save",
+    rightTx: "common:save",
     onRightPress: () => handleSubmit(onPressSend, onError)(),
     onLeftPress: () => router.back(),
   })
@@ -112,7 +113,7 @@ export default observer(function AddCookbookScreen() {
           </View>
         )}
 
-        <Button text="Add cover photo (optional)" onPress={pickImage} />
+        <Button tx="cookbookAddScreen:addCoverPhoto" onPress={pickImage} />
 
         <Divider size={spacing.xxl} line />
 
@@ -122,9 +123,9 @@ export default observer(function AddCookbookScreen() {
           render={({ field: { onChange, value } }) => (
             <TextField
               value={value}
-              label="Title"
+              labelTx="cookbookAddScreen:titleLabel"
               onChangeText={onChange}
-              placeholder="Enter cookbook title"
+              placeholderTx="cookbookAddScreen:titlePlaceholder"
               status="error"
               helper={errors.title?.message ?? ""}
             />

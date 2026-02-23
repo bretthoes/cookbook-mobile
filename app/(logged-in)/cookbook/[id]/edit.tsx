@@ -4,6 +4,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
@@ -27,6 +28,7 @@ export default observer(function EditCookbookScreen() {
   const { cookbookStore } = useStores()
   const [localImage, setLocalImage] = useState<string | null>(null)
   const [result, setResult] = useState<string>("")
+  const [resultIsSuccess, setResultIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   cookbookStore.setSelectedById(Number(id))
 
@@ -57,10 +59,10 @@ export default observer(function EditCookbookScreen() {
 
   useHeader(
     {
-      title: "Edit Cookbook",
+      titleTx: "cookbookEditScreen:title",
       leftIcon: "back",
       onLeftPress: () => router.back(),
-      rightText: "Save",
+      rightTx: "common:save",
       onRightPress: () => handleSubmit(onPressSend, onError)(),
     },
     [handleSubmit],
@@ -94,7 +96,8 @@ export default observer(function EditCookbookScreen() {
       data.title === cookbookStore.selected.title &&
       data.image === cookbookStore.selected.image
     ) {
-      setResult("No changes to save")
+      setResult(translate("cookbookEditScreen:noChangesToSave"))
+      setResultIsSuccess(false)
       return
     }
 
@@ -111,20 +114,23 @@ export default observer(function EditCookbookScreen() {
       })
 
       if (success) {
-        setResult("Cookbook updated successfully!")
+        setResult(translate("cookbookEditScreen:updatedSuccessfully"))
+        setResultIsSuccess(true)
       } else {
-        setResult("Failed to update cookbook")
+        setResult(translate("cookbookEditScreen:failedToUpdate"))
+        setResultIsSuccess(false)
       }
     } catch (error) {
       console.error("Error updating cookbook:", error)
-      setResult("An error occurred while updating the cookbook")
+      setResult(translate("cookbookEditScreen:errorUpdating"))
+      setResultIsSuccess(false)
     } finally {
       setIsLoading(false)
     }
   }
 
   if (!cookbookStore.selected) {
-    return <ItemNotFound message="Cookbook not found" />
+    return <ItemNotFound message={translate("cookbookEditScreen:notFound")} />
   }
 
   return (
@@ -133,14 +139,14 @@ export default observer(function EditCookbookScreen() {
       contentContainerStyle={$screenContentContainer}
       safeAreaEdges={["bottom"]}
     >
-      <Text text="Edit the details for your cookbook." />
+      <Text tx="cookbookEditScreen:subtitle" />
       <UseCase>
         <Controller
           control={control}
           name="title"
           render={({ field: { onChange, value } }) => (
             <TextField
-              label="Title"
+              labelTx="cookbookEditScreen:titleLabel"
               value={value}
               onChangeText={onChange}
               helper={errors.title?.message}
@@ -156,7 +162,7 @@ export default observer(function EditCookbookScreen() {
             <View style={$imagePlaceholder} />
           )}
           <Button
-            text="Change Cover Photo"
+            tx="cookbookEditScreen:changeCoverPhoto"
             onPress={pickImage}
             style={$imageButton}
             disabled={isLoading}
@@ -170,7 +176,7 @@ export default observer(function EditCookbookScreen() {
             style={[
               $result,
               {
-                color: result.includes("successfully")
+                color: resultIsSuccess
                   ? colors.palette.primary500
                   : colors.palette.angry500,
               },

@@ -4,6 +4,7 @@ const en = {
     cancel: "Cancel",
     back: "Back",
     logOut: "Log Out",
+    save: "Save",
   },
   welcomeScreen: {
     postscript:
@@ -253,6 +254,27 @@ const en = {
     viewMembers: "View Members",
     editCookbook: "Edit Cookbook",
     leaveCookbook: "Leave Cookbook",
+  },
+  cookbookAddScreen: {
+    title: "Add new cookbook",
+    subtitle: "Fill out the details for your new cookbook.",
+    addCoverPhoto: "Add cover photo (optional)",
+    titleLabel: "Title",
+    titlePlaceholder: "Enter cookbook title",
+    allowCameraRollAccess: "Please allow camera roll access in settings.",
+    imageSelectionFailed: "Image selection failed",
+    createFailed: "Failed to create cookbook",
+  },
+  cookbookEditScreen: {
+    title: "Edit Cookbook",
+    subtitle: "Edit the details for your cookbook.",
+    changeCoverPhoto: "Change Cover Photo",
+    titleLabel: "Title",
+    noChangesToSave: "No changes to save",
+    updatedSuccessfully: "Cookbook updated successfully!",
+    failedToUpdate: "Failed to update cookbook",
+    errorUpdating: "An error occurred while updating the cookbook",
+    notFound: "Cookbook not found",
   },
   recipeDetailsScreen: {
     directions: "Directions",
