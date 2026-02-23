@@ -2,6 +2,7 @@ import { Translations } from "./en"
 
 const ko: Translations = {
   common: {
+    loading: "___Still cooking",
     ok: "확인!",
     cancel: "취소",
     back: "뒤로",
@@ -569,6 +570,7 @@ const ko: Translations = {
   },
   // Settings related translations
   languageScreen: {
+    title: "___Select Language",
     support:
       "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
     note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",

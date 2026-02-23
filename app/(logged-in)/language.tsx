@@ -21,7 +21,7 @@ export default function LanguageScreen() {
 
   useHeader({
     leftIcon: "back",
-    title: "Select Language",
+    titleTx: "languageScreen:title",
     onLeftPress: () => router.back(),
   })
 

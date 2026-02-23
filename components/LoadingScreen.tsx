@@ -1,3 +1,4 @@
+import { translate } from "@/i18n"
 import { useEffect } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
@@ -19,7 +20,7 @@ const loadingImage = require("../assets/images/loading.png")
 export interface LoadingScreenProps {
   /**
    * The text to display above the animated dots
-   * @default "Still cooking"
+   * @default translate("common:loading")
    */
   text?: string
 }
@@ -27,7 +28,9 @@ export interface LoadingScreenProps {
 /**
  * A full-screen loading indicator with an image and animated typing dots.
  */
-export function LoadingScreen({ text = "Still cooking" }: LoadingScreenProps) {
+export function LoadingScreen({
+  text = translate("common:loading"),
+}: LoadingScreenProps) {
   // Animation for the typing dots
   const dot1Y = useSharedValue(0)
   const dot2Y = useSharedValue(0)

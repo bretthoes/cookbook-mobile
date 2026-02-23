@@ -2,6 +2,7 @@ import { Translations } from "./en"
 
 const fr: Translations = {
   common: {
+    loading: "___Still cooking",
     ok: "OK !",
     cancel: "Annuler",
     back: "Retour",
@@ -574,6 +575,7 @@ const fr: Translations = {
     updateFailed: "___Failed to update display name, please try again.",
   },
   languageScreen: {
+    title: "___Select Language",
     support:
       "Si vous souhaitez demander la prise en charge d'une langue qui n'est pas répertoriée, veuillez utiliser le lien 'Signaler des bugs' dans l'onglet profil.",
     note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",

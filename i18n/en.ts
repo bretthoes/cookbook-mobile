@@ -1,5 +1,6 @@
 const en = {
   common: {
+    loading: "Still cooking",
     ok: "OK!",
     cancel: "Cancel",
     back: "Back",
@@ -573,6 +574,7 @@ const en = {
   },
   // Settings related translations
   languageScreen: {
+    title: "Select Language",
     support:
       "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab.",
     note: "Note: You may need to log out and back in for the changes to take effect.",
