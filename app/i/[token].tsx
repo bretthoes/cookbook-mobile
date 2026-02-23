@@ -4,7 +4,7 @@ import { Header } from "@/components/Header"
 import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { isRTL } from "@/i18n"
+import { isRTL, translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -57,7 +57,7 @@ export default observer(function InvitationTokenScreen() {
   useEffect(() => {
     const loadInvitation = async () => {
       if (!token) {
-        setError("Invalid invitation link")
+        setError(translate("invitationLinkScreen:invalidLink"))
         setIsLoading(false)
         return
       }
@@ -75,10 +75,10 @@ export default observer(function InvitationTokenScreen() {
         if (invitationStore.invitation) {
           setInvitation(invitationStore.invitation)
         } else {
-          setError("Your invitation has mysteriously vanished")
+          setError(translate("invitationLinkScreen:vanished"))
         }
       } catch (err) {
-        setError("Your invitation has mysteriously vanished")
+        setError(translate("invitationLinkScreen:vanished"))
         console.error("Error loading invitation:", err)
       } finally {
         setIsLoading(false)
@@ -90,13 +90,17 @@ export default observer(function InvitationTokenScreen() {
 
   const handleAccept = async () => {
     if (!isAuthenticated) {
-      Alert.alert("Login Required", "Please log in to accept this invitation.", [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Log In",
-          onPress: () => router.push("/log-in"),
-        },
-      ])
+      Alert.alert(
+        translate("invitationLinkScreen:loginRequiredTitle"),
+        translate("invitationLinkScreen:loginRequiredMessage"),
+        [
+          { text: translate("common:cancel"), style: "cancel" },
+          {
+            text: translate("invitationLinkScreen:loginButton"),
+            onPress: () => router.push("/log-in"),
+          },
+        ],
+      )
       return
     }
 
@@ -117,7 +121,9 @@ export default observer(function InvitationTokenScreen() {
       setAcceptedSuccessfully(true)
     } else {
       setActionError(
-        success?.conflict ? "This invitation link has already been redeemed." : "Failed to accept invitation. Please try again."
+        success?.conflict
+          ? translate("invitationLinkScreen:alreadyRedeemed")
+          : translate("invitationLinkScreen:acceptFailed"),
       )
     }
   }
@@ -139,30 +145,32 @@ export default observer(function InvitationTokenScreen() {
       setDeclinedSuccessfully(true)
     } else {
       setActionError(
-        success?.conflict ? "This invitation link has already been redeemed." : "Failed to decline invitation. Please try again."
+        success?.conflict
+          ? translate("invitationLinkScreen:alreadyRedeemed")
+          : translate("invitationLinkScreen:declineFailed"),
       )
     }
   }
 
   if (processingAction) {
-    return <LoadingScreen text={"Not much longer"} />
+    return <LoadingScreen text={translate("invitationLinkScreen:loadingShort")} />
   }
 
   if (acceptedSuccessfully && invitation) {
     return (
       <Screen style={$root} preset="scroll">
         <Header
-          title="Invite link"
+          titleTx="invitationLinkScreen:title"
           leftIcon="back"
           onLeftPress={() => router.replace("../../(tabs)/cookbooks")}
         />
         <Text
-          text="Success"
+          tx="invitationLinkScreen:successHeading"
           preset="heading"
           style={{ marginTop: spacing.lg, textAlign: "center", paddingHorizontal: spacing.md }}
         />
         <Text
-          text="You've been added to the cookbook!"
+          tx="invitationLinkScreen:successMessage"
           style={{ marginTop: spacing.sm, textAlign: "center", paddingHorizontal: spacing.md }}
         />
         <View style={$cookbookContainer}>
@@ -174,7 +182,7 @@ export default observer(function InvitationTokenScreen() {
           )}
         </View>
         <Button
-          text="Back to cookbooks"
+          tx="invitationLinkScreen:backToCookbooks"
           onPress={() => router.replace("../../(tabs)/cookbooks")}
           style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
         />
@@ -186,17 +194,17 @@ export default observer(function InvitationTokenScreen() {
     return (
       <Screen style={$root} preset="scroll">
         <Header
-          title="Invite link"
+          titleTx="invitationLinkScreen:title"
           leftIcon="back"
           onLeftPress={() => router.replace("../../(tabs)/cookbooks")}
         />
         <Text
-          text="Invitation Declined"
+          tx="invitationLinkScreen:declinedHeading"
           preset="heading"
           style={{ marginTop: spacing.lg, textAlign: "center", paddingHorizontal: spacing.md }}
         />
         <Text
-          text="You've declined this invitation. You can navigate back now."
+          tx="invitationLinkScreen:declinedMessage"
           style={{ marginTop: spacing.sm, textAlign: "center", paddingHorizontal: spacing.md }}
         />
         <View style={$cookbookContainer}>
@@ -208,7 +216,7 @@ export default observer(function InvitationTokenScreen() {
           )}
         </View>
         <Button
-          text="Back to cookbooks"
+          tx="invitationLinkScreen:backToCookbooks"
           onPress={() => router.replace("../../(tabs)/cookbooks")}
           style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
         />
@@ -219,10 +227,10 @@ export default observer(function InvitationTokenScreen() {
   if (isLoading) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
         <Text
-          text="Loading invitation..."
+          tx="invitationLinkScreen:loading"
           style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }}
         />
       </Screen>
@@ -232,18 +240,18 @@ export default observer(function InvitationTokenScreen() {
   if (error) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
         <View style={$centeredContent}>
           <EmptyState
             preset="generic"
             style={$themedEmptyState}
-            content="We couldn't find your invitation anywhere. You might need a new one."
+            contentTx="invitationLinkScreen:notFoundContent"
             imageStyle={$themedEmptyStateImage}
             ImageProps={{ resizeMode: "contain" }}
             button=""
           />
           <Button
-            text="Go Back"
+            tx="invitationLinkScreen:goBack"
             onPress={() => router.back()}
             style={{ marginTop: spacing.lg, marginHorizontal: spacing.md }}
           />
@@ -255,23 +263,23 @@ export default observer(function InvitationTokenScreen() {
   if (!invitation && !isAuthenticated) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
         <Text
-          text="Invitation Link"
+          tx="invitationLinkScreen:heading"
           preset="heading"
           style={{ marginTop: spacing.xxl, textAlign: "center", paddingHorizontal: spacing.md }}
         />
         <Text
-          text="Please log in to view and accept this invitation."
+          tx="invitationLinkScreen:loginToView"
           style={{ marginTop: spacing.md, paddingHorizontal: spacing.md, textAlign: "center" }}
         />
         <Button
-          text="Log In"
+          tx="invitationLinkScreen:loginButton"
           onPress={() => router.push("/log-in")}
           style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
         />
         <Button
-          text="Go Back"
+          tx="invitationLinkScreen:goBack"
           onPress={() => router.back()}
           style={{ marginTop: spacing.md, marginHorizontal: spacing.md }}
           preset="reversed"
@@ -283,10 +291,10 @@ export default observer(function InvitationTokenScreen() {
   if (!invitation) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
         <Text
-          text="Loading invitation..."
+          tx="invitationLinkScreen:loading"
           style={{ marginTop: spacing.md, textAlign: "center", paddingHorizontal: spacing.md }}
         />
       </Screen>
@@ -295,9 +303,9 @@ export default observer(function InvitationTokenScreen() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Header title="Invite link" leftIcon="back" onLeftPress={() => router.back()} />
+      <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
       <Text
-        text="You've been invited!"
+        tx="invitationLinkScreen:invitedHeading"
         preset="heading"
         style={{ marginTop: spacing.lg, textAlign: "center", paddingHorizontal: spacing.md }}
       />
@@ -313,21 +321,21 @@ export default observer(function InvitationTokenScreen() {
 
       {!isAuthenticated && (
         <Text
-          text="Please log in to accept this invitation."
+          tx="invitationLinkScreen:loginToAccept"
           preset="formHelper"
           style={{ marginTop: spacing.md, paddingHorizontal: spacing.md, textAlign: "center" }}
         />
       )}
 
       <Button
-        text={isAuthenticated ? "Accept Invitation" : "Log In to Accept"}
+        tx={isAuthenticated ? "invitationLinkScreen:acceptButton" : "invitationLinkScreen:loginToAcceptButton"}
         onPress={handleAccept}
         style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
       />
 
       {isAuthenticated && (
         <Button
-          text="Decline"
+          tx="invitationLinkScreen:declineButton"
           onPress={handleReject}
           style={{ marginTop: spacing.md, marginHorizontal: spacing.md }}
           preset="reversed"
