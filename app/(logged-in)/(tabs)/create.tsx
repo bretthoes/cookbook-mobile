@@ -1,6 +1,7 @@
 import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { translate } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
@@ -24,36 +25,35 @@ export default observer(function CreateScreen() {
 
       <View style={$themedListContainer}>
         <OptionListItem
-          title="A New Cookbook"
-          description="Create a new collection and fill it with your favorite recipes"
+          title={translate("createScreen:optionCookbook")}
+          description={translate("createScreen:optionCookbookDesc")}
           leftImage={cookbook}
           onPress={() => router.push("../cookbook/add")}
         />
         <OptionListItem
-          title="A New Recipe"
-          description="Add a recipe to one of your cookbooks"
+          title={translate("createScreen:optionRecipe")}
+          description={translate("createScreen:optionRecipeDesc")}
           leftImage={addRecipe}
           onPress={() =>
             router.push({
               pathname: "../select-cookbook",
               params: {
                 nextRoute: "../../recipe/add-options",
-                action: "Select the cookbook where you would like to add a new recipe.",
+                action: translate("selectCookbookScreen:actionForRecipe"),
               },
             } as any)
           }
         />
         <OptionListItem
-          title="Invitation to a Friend"
-          description="Send a link to your friend"
+          title={translate("createScreen:optionInvite")}
+          description={translate("createScreen:optionInviteDesc")}
           leftImage={invite}
           onPress={() =>
             router.push({
               pathname: "../select-cookbook",
               params: {
                 nextRoute: "../invitation/add-options",
-                action:
-                  "Select the cookbook where you would like to send an invitation to a friend.",
+                action: translate("selectCookbookScreen:actionForInvite"),
               },
             } as any)
           }

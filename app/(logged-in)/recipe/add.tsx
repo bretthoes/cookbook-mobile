@@ -1,6 +1,7 @@
 import { RecipeForm, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { translate } from "@/i18n"
 import { RecipeToAddSnapshotIn } from "@/models/Recipe"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -70,7 +71,7 @@ export default observer(function AddRecipeScreen() {
   const onPressSend = useCallback(
     async (formData: RecipeFormInputs) => {
       if (!selectedCookbook) {
-        alert("No cookbook selected")
+        alert(translate("recipeAddScreen:noCookbookSelected"))
         return
       }
 
@@ -121,7 +122,7 @@ export default observer(function AddRecipeScreen() {
         if (success) {
           router.replace(`../../cookbook/${selectedCookbook.id}`)
         } else {
-          alert("Failed to create recipe")
+          alert(translate("recipeAddScreen:createFailed"))
         }
       } catch (e) {
         console.error("Add recipe failed:", e)
@@ -131,7 +132,7 @@ export default observer(function AddRecipeScreen() {
           console.error("Stack trace:", e.stack)
         } else console.error("Non-standard error:", JSON.stringify(e, null, 2))
 
-        alert("Failed to create recipe")
+        alert(translate("recipeAddScreen:createFailed"))
       }
     },
     [create, selectedCookbook],
@@ -145,7 +146,7 @@ export default observer(function AddRecipeScreen() {
     <Screen preset="scroll">
       {selectedCookbook && cookbookImageSource && (
         <>
-          <Text text="Adding recipe to:" style={$themedCookbookLabel} />
+          <Text tx="recipeAddScreen:addingTo" style={$themedCookbookLabel} />
           <View style={$themedCookbookHeader}>
             <Image source={cookbookImageSource} style={$themedCookbookImage} />
             <Text preset="bold" text={selectedCookbook.title} style={$themedCookbookTitle} />

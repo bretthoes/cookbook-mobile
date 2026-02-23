@@ -1,5 +1,6 @@
 import { OptionListItem, $container, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
+import { translate } from "@/i18n"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
@@ -15,7 +16,7 @@ export default observer(function AddRecipeOptionsScreen() {
 
   useHeader({
     leftIcon: "back",
-    title: "Add Recipe",
+    titleTx: "recipeAddOptionsScreen:title",
     onLeftPress: () => router.back(),
   })
 
@@ -26,27 +27,27 @@ export default observer(function AddRecipeOptionsScreen() {
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
       <View style={$themedListContainer}>
         <OptionListItem
-          title="Add Recipe Manually"
-          description="Create a new recipe from scratch"
+          title={translate("recipeAddOptionsScreen:optionManual")}
+          description={translate("recipeAddOptionsScreen:optionManualDesc")}
           leftIcon="create"
           onPress={() => router.replace("../recipe/add")}
         />
         <OptionListItem
-          title="Add Recipe from URL"
-          description="Import a recipe from a website"
+          title={translate("recipeAddOptionsScreen:optionFromUrl")}
+          description={translate("recipeAddOptionsScreen:optionFromUrlDesc")}
           leftImage={link}
           onPress={() => router.replace("../recipe/select-url")}
         />
         <OptionListItem
-          title="Add Recipe from Photo"
-          description="Import a recipe from a photo"
+          title={translate("recipeAddOptionsScreen:optionFromPhoto")}
+          description={translate("recipeAddOptionsScreen:optionFromPhotoDesc")}
           leftImage={camera}
           onPress={() =>
             router.replace({
               pathname: "../select-cookbook",
               params: {
                 nextRoute: "/(logged-in)/(tabs)/recipe/add",
-                action: "Select a cookbook to add the recipe to.",
+                action: translate("selectCookbookScreen:actionForAddFromCamera"),
                 onSelect: "handleAddRecipeFromCamera",
               },
             })

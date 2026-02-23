@@ -2,7 +2,7 @@ import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { isRTL } from "@/i18n"
+import { isRTL, translate } from "@/i18n"
 import { Cookbook } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
 import { api } from "@/services/api"
@@ -147,7 +147,7 @@ export default observer(function SelectCookbookScreen() {
 
   useHeader({
     leftIcon: "back",
-    title: "Select a Cookbook",
+    titleTx: "selectCookbookScreen:title",
     onLeftPress: () => router.back(),
   })
 
@@ -172,12 +172,16 @@ export default observer(function SelectCookbookScreen() {
     // Request permission for accessing the media library
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
-      alert("Please allow camera roll access in settings.")
+      alert(translate("selectCookbookScreen:allowCameraRollAccess"))
       return
     }
 
-    const options = ["Take a Photo", "Select from Camera Roll", "Cancel"]
-    const cancelButtonIndex = 2
+    const options = [
+      translate("selectCookbookScreen:takePhoto"),
+      translate("selectCookbookScreen:selectFromRoll"),
+      translate("common:cancel"),
+    ]
+    const cancelButtonIndex = options.length - 1
     // Display the action sheet and get the user's choice
     showActionSheetWithOptions(
       {
@@ -199,7 +203,7 @@ export default observer(function SelectCookbookScreen() {
               setRecipeToAdd(uploadResponse.recipe)
               router.replace("./recipe/add")
             } else {
-              alert("Image parsing failed")
+              alert(translate("selectCookbookScreen:imageParsingFailed"))
             }
           }
         } else if (buttonIndex === 1) {
@@ -217,7 +221,7 @@ export default observer(function SelectCookbookScreen() {
               setRecipeToAdd(uploadResponse.recipe)
               router.replace("./recipe/add")
             } else {
-              alert("Image parsing failed")
+              alert(translate("selectCookbookScreen:imageParsingFailed"))
             }
           }
         }
@@ -257,7 +261,7 @@ export default observer(function SelectCookbookScreen() {
         <EmptyState
           preset="generic"
           style={$themedEmptyState}
-          content="No cookbooks have been added yet."
+          contentTx="selectCookbookScreen:emptyState"
           imageStyle={$themedEmptyStateImage}
           ImageProps={{ resizeMode: "contain" }}
         />

@@ -257,6 +257,49 @@ const ko: Translations = {
 
   createScreen: {
     title: "무엇을 만들고 싶으신가요?",
+    optionCookbook: "___A New Cookbook",
+    optionCookbookDesc: "___Create a new collection and fill it with your favorite recipes",
+    optionRecipe: "___A New Recipe",
+    optionRecipeDesc: "___Add a recipe to one of your cookbooks",
+    optionInvite: "___Invitation to a Friend",
+    optionInviteDesc: "___Send a link to your friend",
+  },
+  recipeAddOptionsScreen: {
+    title: "___Add Recipe",
+    optionManual: "___Add Recipe Manually",
+    optionManualDesc: "___Create a new recipe from scratch",
+    optionFromUrl: "___Add Recipe from URL",
+    optionFromUrlDesc: "___Import a recipe from a website",
+    optionFromPhoto: "___Add Recipe from Photo",
+    optionFromPhotoDesc: "___Import a recipe from a photo",
+  },
+  recipeSelectUrlScreen: {
+    title: "___Add Recipe",
+    next: "___Next",
+    subtitle: "___Enter a valid link and we'll extract the recipe for you.",
+    urlLabel: "___URL:",
+    urlPlaceholder: "___www.example.com/recipe",
+    validation: {
+      cantBeBlank: "___can't be blank",
+      mustBeValidUrl: "___must be a valid URL",
+    },
+    extractFailed: "___Failed to add recipe, please try again.",
+  },
+  recipeAddScreen: {
+    addingTo: "___Adding recipe to:",
+    noCookbookSelected: "___No cookbook selected",
+    createFailed: "___Failed to create recipe",
+  },
+  selectCookbookScreen: {
+    title: "___Select a Cookbook",
+    actionForRecipe: "___Select the cookbook where you would like to add a new recipe.",
+    actionForInvite: "___Select the cookbook where you would like to send an invitation to a friend.",
+    actionForAddFromCamera: "___Select a cookbook to add the recipe to.",
+    emptyState: "___No cookbooks have been added yet.",
+    allowCameraRollAccess: "___Please allow camera roll access in settings.",
+    takePhoto: "___Take a Photo",
+    selectFromRoll: "___Select from Camera Roll",
+    imageParsingFailed: "___Image parsing failed",
   },
 
   // Recipe related translations

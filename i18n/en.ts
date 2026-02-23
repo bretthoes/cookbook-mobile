@@ -260,6 +260,49 @@ const en = {
 
   createScreen: {
     title: "What do you want to create?",
+    optionCookbook: "A New Cookbook",
+    optionCookbookDesc: "Create a new collection and fill it with your favorite recipes",
+    optionRecipe: "A New Recipe",
+    optionRecipeDesc: "Add a recipe to one of your cookbooks",
+    optionInvite: "Invitation to a Friend",
+    optionInviteDesc: "Send a link to your friend",
+  },
+  recipeAddOptionsScreen: {
+    title: "Add Recipe",
+    optionManual: "Add Recipe Manually",
+    optionManualDesc: "Create a new recipe from scratch",
+    optionFromUrl: "Add Recipe from URL",
+    optionFromUrlDesc: "Import a recipe from a website",
+    optionFromPhoto: "Add Recipe from Photo",
+    optionFromPhotoDesc: "Import a recipe from a photo",
+  },
+  recipeSelectUrlScreen: {
+    title: "Add Recipe",
+    next: "Next",
+    subtitle: "Enter a valid link and we'll extract the recipe for you.",
+    urlLabel: "URL:",
+    urlPlaceholder: "www.example.com/recipe",
+    validation: {
+      cantBeBlank: "can't be blank",
+      mustBeValidUrl: "must be a valid URL",
+    },
+    extractFailed: "Failed to add recipe, please try again.",
+  },
+  recipeAddScreen: {
+    addingTo: "Adding recipe to:",
+    noCookbookSelected: "No cookbook selected",
+    createFailed: "Failed to create recipe",
+  },
+  selectCookbookScreen: {
+    title: "Select a Cookbook",
+    actionForRecipe: "Select the cookbook where you would like to add a new recipe.",
+    actionForInvite: "Select the cookbook where you would like to send an invitation to a friend.",
+    actionForAddFromCamera: "Select a cookbook to add the recipe to.",
+    emptyState: "No cookbooks have been added yet.",
+    allowCameraRollAccess: "Please allow camera roll access in settings.",
+    takePhoto: "Take a Photo",
+    selectFromRoll: "Select from Camera Roll",
+    imageParsingFailed: "Image parsing failed",
   },
 
   // Recipe related translations

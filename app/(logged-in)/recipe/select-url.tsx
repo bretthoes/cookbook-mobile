@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { api } from "@/services/api"
 import { spacing } from "@/theme"
@@ -30,8 +31,9 @@ export default observer(function RecipeUrlScreen() {
   const [result, setResult] = useState("")
 
   const getValidationError = useCallback((urlToValidate: string) => {
-    if (urlToValidate.length === 0) return "can't be blank"
-    if (!isValidUrl(urlToValidate)) return "must be a valid URL"
+    if (urlToValidate.length === 0) return translate("recipeSelectUrlScreen:validation.cantBeBlank")
+    if (!isValidUrl(urlToValidate))
+      return translate("recipeSelectUrlScreen:validation.mustBeValidUrl")
     return ""
   }, [])
 
@@ -67,18 +69,18 @@ export default observer(function RecipeUrlScreen() {
       setRecipeToAdd(uploadResponse.recipe)
       router.replace("../recipe/add")
     } else {
-      setResult("Failed to add recipe, please try again.")
+      setResult(translate("recipeSelectUrlScreen:extractFailed"))
     }
     setIsSubmitted(false)
   }
 
   useHeader(
     {
-      title: "Add Recipe",
+      titleTx: "recipeSelectUrlScreen:title",
       onLeftPress: () => router.back(),
       leftIcon: "back",
       onRightPress: handleNext,
-      rightText: "Next",
+      rightTx: "recipeSelectUrlScreen:next",
     },
     [url],
   )
@@ -90,7 +92,7 @@ export default observer(function RecipeUrlScreen() {
   return (
     <Screen style={$root} preset="scroll">
       <Text
-        text="Enter a valid link and we'll extract the recipe for you."
+        tx="recipeSelectUrlScreen:subtitle"
         style={{ paddingHorizontal: spacing.md }}
       />
       <UseCase>
@@ -104,8 +106,8 @@ export default observer(function RecipeUrlScreen() {
           autoComplete="url"
           autoCorrect={false}
           keyboardType="url"
-          label="URL:"
-          placeholder="www.example.com/recipe"
+          labelTx="recipeSelectUrlScreen:urlLabel"
+          placeholderTx="recipeSelectUrlScreen:urlPlaceholder"
           helper={validationError}
           status={validationError ? "error" : undefined}
         />
