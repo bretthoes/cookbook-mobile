@@ -78,6 +78,23 @@ const en = {
   errors: {
     invalidEmail: "Invalid email address.",
   },
+  validation: {
+    titleRequired: "Title is required",
+    titleMinLength: "Title at least 1 characters",
+    titleMaxLength: "Title at most 255 characters",
+    titleCannotBeEmpty: "Title cannot be empty",
+    titleCookbookMaxLength: "Title cannot be longer than 255 characters",
+    summaryMaxLength: "Summary at most 2048 characters",
+    mustBeNumber: "Must be a number",
+    mustBeGreaterThanZero: "Must be greater than 0",
+    maxMinutesExceeded: "Cannot exceed 10080 minutes (1 week)",
+    ingredientNameMaxLength: "Ingredient name cannot exceed 255 characters",
+    maxIngredients: "Cannot have more than 40 ingredients",
+    directionTextMaxLength: "Direction text cannot exceed 2048 characters",
+    maxDirections: "Cannot have more than 40 directions",
+    maxImages: "Cannot have more than 6 images",
+    imageMaxLength: "Image cannot be longer than 2048 characters",
+  },
   loginScreen: {
     logIn: "Log In",
     signIn: "Sign In",
@@ -308,6 +325,8 @@ const en = {
         content:
           "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
       },
+      noCookbooksEmptyState:
+        "No cookbooks have been added yet. Tap the plus button to create a new cookbook!",
       cookbookCard: {
         membersLabel: "{{count}} member",
         membersLabel_plural: "{{count}} members",

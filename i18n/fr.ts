@@ -82,6 +82,23 @@ const fr: Translations = {
   errors: {
     invalidEmail: "Adresse e-mail invalide.",
   },
+  validation: {
+    titleRequired: "___Title is required",
+    titleMinLength: "___Title at least 1 characters",
+    titleMaxLength: "___Title at most 255 characters",
+    titleCannotBeEmpty: "___Title cannot be empty",
+    titleCookbookMaxLength: "___Title cannot be longer than 255 characters",
+    summaryMaxLength: "___Summary at most 2048 characters",
+    mustBeNumber: "___Must be a number",
+    mustBeGreaterThanZero: "___Must be greater than 0",
+    maxMinutesExceeded: "___Cannot exceed 10080 minutes (1 week)",
+    ingredientNameMaxLength: "___Ingredient name cannot exceed 255 characters",
+    maxIngredients: "___Cannot have more than 40 ingredients",
+    directionTextMaxLength: "___Direction text cannot exceed 2048 characters",
+    maxDirections: "___Cannot have more than 40 directions",
+    maxImages: "___Cannot have more than 6 images",
+    imageMaxLength: "___Image cannot be longer than 2048 characters",
+  },
   loginScreen: {
     logIn: "Se connecter",
     signIn: "---Sign In",
@@ -313,6 +330,8 @@ const fr: Translations = {
         content:
           "Aucun favori n'a encore été ajouté. Appuyez sur le cœur d'un élément pour l'ajouter à vos favoris !",
       },
+      noCookbooksEmptyState:
+        "___No cookbooks have been added yet. Tap the plus button to create a new cookbook!",
       cookbookCard: {
         membersLabel: "{{count}} membre",
         membersLabel_plural: "{{count}} membres",

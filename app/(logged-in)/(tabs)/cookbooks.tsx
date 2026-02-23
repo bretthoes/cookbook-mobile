@@ -81,13 +81,13 @@ export default observer(function DemoPodcastListScreen(_props) {
               style={$emptyState}
               headingTx={
                 cookbookStore.favoritesOnly
-                  ? "demoPodcastListScreen:noFavoritesEmptyState.heading"
+                  ? "demoPodcastListScreen:cookbookListScreen.noFavoritesEmptyState.heading"
                   : undefined
               }
-              content={
+              contentTx={
                 cookbookStore.favoritesOnly
-                  ? "No favorites have been added yet. Tap the heart on an item to add it to your favorites!"
-                  : "No cookbooks have been added yet. Tap the plus button to create a new cookbook!"
+                  ? "demoPodcastListScreen:cookbookListScreen.noFavoritesEmptyState.content"
+                  : "demoPodcastListScreen:cookbookListScreen.noCookbooksEmptyState"
               }
               button={cookbookStore.favoritesOnly ? "" : undefined}
               buttonOnPress={manualRefresh}

@@ -46,7 +46,7 @@ export default observer(function AddInvitationLinkScreen() {
       .then((res) => {
         if (cancelled) return
         if (res?.message) {
-          setLinkMsg(res.message ?? "Failed to create link.")
+          setLinkMsg(res.message ?? translate("invitationAddLinkScreen:failedToCreateLink"))
         } else {
           setInviteUrl(toInviteUrl(res.token))
         }

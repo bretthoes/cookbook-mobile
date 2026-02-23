@@ -223,7 +223,7 @@ export default observer(function Cookbook() {
           ) : (
             <EmptyState
               preset="generic"
-              content={"No recipes have been added yet."}
+              contentTx="cookbookDetailScreen:noRecipesEmpty"
               style={$themedEmptyState}
               buttonOnPress={manualRefresh}
               imageStyle={$themedEmptyStateImage}
