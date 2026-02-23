@@ -1,3 +1,4 @@
+import { translate } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -26,7 +27,7 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
     <View style={$themedRoot}>
       <TextInput
         style={$themedSearchBar}
-        placeholder={placeholder ?? "Search"} // TODO i8n
+        placeholder={placeholder ?? translate("recipeListScreen:searchPlaceholder")}
         value={value}
         onChangeText={onChangeText}
         placeholderTextColor={colors.border}
