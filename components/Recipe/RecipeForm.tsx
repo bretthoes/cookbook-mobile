@@ -120,7 +120,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
-      alert("Please allow camera roll access in settings.")
+      alert(translate("recipeFormScreen:allowCameraRollAccess"))
       return
     }
 

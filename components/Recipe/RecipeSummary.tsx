@@ -107,7 +107,11 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
           {!!recipe.servings && (
             <View>
               <Text preset="subheading" weight="light" tx={"recipeDetailsScreen:servings"} />
-              <Text preset="heading" weight="light" text={`${recipe.servings}pp`} />
+              <Text
+                preset="heading"
+                weight="light"
+                text={`${recipe.servings}${translate("recipeSummary:servingsSuffix")}`}
+              />
             </View>
           )}
 

@@ -477,6 +477,7 @@ const ko: Translations = {
     hour: "___hour",
     hour_plural: "___hours",
     mins: "___mins",
+    servingsSuffix: "___pp",
   },
   recipeDetailsScreen: {
     directions: "Directions",

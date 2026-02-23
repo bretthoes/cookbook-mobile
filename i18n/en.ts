@@ -481,6 +481,7 @@ const en = {
     hour: "hour",
     hour_plural: "hours",
     mins: "mins",
+    servingsSuffix: "pp",
   },
   recipeDetailsScreen: {
     directions: "Directions",
