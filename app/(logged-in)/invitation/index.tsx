@@ -50,7 +50,7 @@ export default observer(function Invitations() {
 
   useHeader({
     leftIcon: "back",
-    title: "Invitations",
+    titleTx: "invitationScreen:title",
     onLeftPress: () => router.back(),
   })
 
@@ -81,7 +81,7 @@ export default observer(function Invitations() {
       <FlatList<Invitation>
         ListHeaderComponent={
           <Text
-            text="Manage your cookbook invitations."
+            tx="invitationScreen:subtitle"
             style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
           />
         }
@@ -342,7 +342,7 @@ const InvitationCard = observer(function InvitationCard({
               accessibilityLabel={translate("pendingInvitationScreen:accept")}
               LeftAccessory={AcceptButtonLeftAccessory}
             >
-              <Text size="xxs" weight="medium" text={translate("pendingInvitationScreen:accept")} />
+              <Text size="xxs" weight="medium" tx="pendingInvitationScreen:accept" />
             </Button>
             <Button
               onPress={() => handleRespond(false)}
@@ -350,7 +350,7 @@ const InvitationCard = observer(function InvitationCard({
               accessibilityLabel={translate("pendingInvitationScreen:reject")}
               LeftAccessory={RejectButtonLeftAccessory}
             >
-              <Text size="xxs" weight="medium" text={translate("pendingInvitationScreen:reject")} />
+              <Text size="xxs" weight="medium" tx="pendingInvitationScreen:reject" />
             </Button>
           </View>
         }

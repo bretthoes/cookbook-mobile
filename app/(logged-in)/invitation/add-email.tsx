@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -30,7 +31,7 @@ export default observer(function AddInvitationEmailScreen() {
   )
 
   useHeader({
-    title: "Invite by Email",
+    titleTx: "invitationAddEmailScreen:title",
     leftIcon: "back",
     onLeftPress: () => router.back(),
   })
@@ -60,7 +61,10 @@ export default observer(function AddInvitationEmailScreen() {
   return (
     <Screen preset="scroll">
       <Text
-        text={`Invite friends to join ${selected?.title ?? "your cookbook"}.`}
+        tx="invitationAddEmailScreen:inviteIntro"
+        txOptions={{
+          cookbookName: selected?.title ?? translate("invitationAddEmailScreen:yourCookbook"),
+        }}
         style={$themedIntro}
       />
 
@@ -73,16 +77,16 @@ export default observer(function AddInvitationEmailScreen() {
               setEmailMsg("")
             }}
             autoCapitalize="none"
-            label="Email Address"
+            labelTx="invitationAddEmailScreen:emailLabel"
             autoComplete="email"
             autoCorrect={false}
             keyboardType="email-address"
-            placeholder="Enter an email address"
+            placeholderTx="invitationAddEmailScreen:emailPlaceholder"
             helper={validationError}
             status={validationError ? "error" : undefined}
           />
           <Button
-            text="Send Email Invite"
+            tx="invitationAddEmailScreen:sendButton"
             onPress={onSendEmail}
             style={$themedButton}
           />

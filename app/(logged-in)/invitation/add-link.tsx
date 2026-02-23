@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -25,7 +26,7 @@ export default observer(function AddInvitationLinkScreen() {
   const [linkMsg, setLinkMsg] = useState("")
 
   useHeader({
-    title: "Invite by Link",
+    titleTx: "invitationAddLinkScreen:title",
     leftIcon: "back",
     onLeftPress: () => router.back(),
   })
@@ -86,20 +87,23 @@ export default observer(function AddInvitationLinkScreen() {
   return (
     <Screen preset="scroll">
       <Text
-        text={`Invite friends to join ${selected?.title ?? "your cookbook"}.`}
+        tx="invitationAddLinkScreen:inviteIntro"
+        txOptions={{
+          cookbookName: selected?.title ?? translate("invitationAddLinkScreen:yourCookbook"),
+        }}
         style={$themedIntro}
       />
 
       <View style={$themedSection}>
         <UseCase>
-          <Text text="Invite link" preset="formLabel" style={$themedFormLabel} />
+          <Text tx="invitationAddLinkScreen:inviteLinkLabel" preset="formLabel" style={$themedFormLabel} />
           <TextField
-            value={isMinting ? "Generating link..." : inviteUrl || ""}
+            value={isMinting ? translate("invitationAddLinkScreen:generatingLink") : inviteUrl || ""}
             editable={false}
-            placeholder="Link will be generated..."
+            placeholderTx="invitationAddLinkScreen:linkPlaceholder"
           />
           <Button
-            text="Share"
+            tx="invitationAddLinkScreen:shareButton"
             onPress={onShareLink}
             disabled={!selected?.id || isMinting}
             style={$themedButton}

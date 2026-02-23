@@ -93,6 +93,28 @@ const en = {
     reject: "Reject",
     emptyState: "No pending invitations at the moment. Check back later.",
   },
+  invitationScreen: {
+    title: "Invitations",
+    subtitle: "Manage your cookbook invitations.",
+  },
+  invitationAddEmailScreen: {
+    title: "Invite by Email",
+    inviteIntro: "Invite friends to join {{cookbookName}}.",
+    yourCookbook: "your cookbook",
+    emailLabel: "Email Address",
+    emailPlaceholder: "Enter an email address",
+    sendButton: "Send Email Invite",
+  },
+  invitationAddLinkScreen: {
+    title: "Invite by Link",
+    inviteIntro: "Invite friends to join {{cookbookName}}.",
+    yourCookbook: "your cookbook",
+    inviteLinkLabel: "Invite link",
+    generatingLink: "Generating link...",
+    linkPlaceholder: "Link will be generated...",
+    shareButton: "Share",
+    failedToCreateLink: "Failed to create link.",
+  },
   demoDebugScreen: {
     howTo: "HOW TO",
     title: "Debug",

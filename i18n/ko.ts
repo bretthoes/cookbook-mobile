@@ -95,6 +95,28 @@ const ko: Translations = {
     reject: "거절하다",
     emptyState: "아직 보류 중인 초대가 없습니다. 나중에 다시 확인하세요.",
   },
+  invitationScreen: {
+    title: "___Invitations",
+    subtitle: "___Manage your cookbook invitations.",
+  },
+  invitationAddEmailScreen: {
+    title: "___Invite by Email",
+    inviteIntro: "___Invite friends to join {{cookbookName}}.",
+    yourCookbook: "___your cookbook",
+    emailLabel: "___Email Address",
+    emailPlaceholder: "___Enter an email address",
+    sendButton: "___Send Email Invite",
+  },
+  invitationAddLinkScreen: {
+    title: "___Invite by Link",
+    inviteIntro: "___Invite friends to join {{cookbookName}}.",
+    yourCookbook: "___your cookbook",
+    inviteLinkLabel: "___Invite link",
+    generatingLink: "___Generating link...",
+    linkPlaceholder: "___Link will be generated...",
+    shareButton: "___Share",
+    failedToCreateLink: "___Failed to create link.",
+  },
   demoDebugScreen: {
     howTo: "사용방법",
     title: "디버그",
