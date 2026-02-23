@@ -1,0 +1,58 @@
+---
+description: Prefer existing and reusable components over custom inline UI code
+globs: **/*.tsx
+alwaysApply: false
+---
+# Reusable Components
+
+Prioritize existing components and create new reusable components rather than writing custom UI code scattered across screen or page files.
+
+## Rule
+
+- **Check first**: Before writing UI code, search the codebase for existing components (e.g. `components/`, shared UI primitives) that could be used or extended.
+- **Extract early**: If the same UI pattern appears in more than one place, extract it into a shared component.
+- **Prefer composition**: Build screens by composing small, focused components rather than large monolithic blocks of JSX.
+- **Avoid inline-only UI**: Resist defining one-off layouts, lists, cards, or form elements directly in screen files when a reusable component would serve.
+
+## Good
+
+```tsx
+// Screen composes existing components
+import { ListItem } from "@/components/ListItem"
+import { OptionList } from "@/components/OptionList"
+
+export function MyScreen() {
+  return (
+    <Screen>
+      <OptionList items={items} onSelect={handleSelect} />
+    </Screen>
+  )
+}
+```
+
+## Avoid
+
+```tsx
+// Custom inline UI duplicated across screens
+export function MyScreen() {
+  return (
+    <Screen>
+      <View style={styles.container}>
+        {items.map((item) => (
+          <Pressable key={item.id} onPress={() => handleSelect(item)}>
+            <Text>{item.label}</Text>
+          </Pressable>
+        ))}
+      </View>
+    </Screen>
+  )
+}
+```
+
+## When to Create New Components
+
+Create a new reusable component when:
+
+- The pattern would be useful in 2+ places
+- It encapsulates meaningful UI behavior (selection, validation, layout)
+- It keeps screen files focused on flow and data, not presentation details

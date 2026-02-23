@@ -1,0 +1,42 @@
+---
+description: Colocate styles in the same file where they're used; avoid separate style files
+globs: **/*.tsx
+alwaysApply: false
+---
+# Style Colocation
+
+Define styles in the same file as the component that uses them. Do not create separate style files (e.g. `componentStyles.ts`, `styles.ts`).
+
+## Rule
+
+- **Single consumer**: If styles are used by only one component, define them in that component file.
+- **No separate style files**: Do not create `*Styles.ts`, `*styles.ts`, or similar files that export styles for a single component.
+- Use `// #region Styles` or a similar comment to organize styles at the bottom of the file when helpful.
+
+## Example
+
+```tsx
+// OptionListItem.tsx – styles live here, not in optionListStyles.ts
+import { useAppTheme } from "@/theme/context"
+import type { ThemedStyle } from "@/theme"
+import type { TextStyle, ViewStyle } from "react-native"
+
+// ... component code ...
+
+// #region Styles
+const $itemContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  padding: theme.spacing.md,
+})
+
+const $itemTitle: ThemedStyle<TextStyle> = (theme) => ({
+  fontSize: 16,
+  marginBottom: theme.spacing.xs,
+})
+// #endregion
+```
+
+## When to Extract
+
+Only extract styles to a separate file when they are shared by multiple components/files.

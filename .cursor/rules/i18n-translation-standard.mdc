@@ -1,31 +1,48 @@
 ---
-description: Use i18n (tx) for all user-facing text in components and screens
+description: Use i18n (tx and *Tx props) for all user-facing text in components and screens
 globs: "**/*.tsx,**/*.ts"
 alwaysApply: true
 ---
 
 # i18n Translation Standard
 
-Use the `tx` prop for all user-visible text. Never use `text` or hardcoded strings for content shown to users.
+**All user-visible strings must use translation.** Never use `text`, `placeholder`, `label`, or other string props for content shown to users. Always use the `*Tx` variant when a component offers one.
 
 ## Setup
 - i18n: `@/i18n` (i18n/i18n.ts). Keys use `TxKeyPath` (e.g., `common:ok`, `loginScreen:logIn`).
-- Components: `Text`, `Button`, and similar expose `tx` — prefer `tx` over `text`.
+- Base: `Text`, `Button` expose `tx` — use `tx`, not `text`.
+- Components may expose other `*Tx` props — **always prefer those over the plain string prop**.
+
+## Use *Tx Props on Components
+
+When a component offers a `*Tx` prop (for strings), use it. Do not use the plain string prop.
+
+| Component   | Use *Tx prop         | Not the string prop    |
+|-------------|----------------------|-------------------------|
+| TextField   | `placeholderTx`      | ~~placeholder~~         |
+| TextField   | `labelTx`            | ~~label~~               |
+| TextField   | `helperTx`           | ~~helper~~              |
+| Toggle      | `labelTx`, `helperTx`| ~~label~~, ~~helper~~    |
+| Header      | `titleTx`, `leftTx`, `rightTx` | ~~title~~, etc. |
+| Card        | `headingTx`, `contentTx`, `footerTx` | ~~heading~~, etc. |
+| EmptyState  | `headingTx`, `contentTx`, `buttonTx` | ~~heading~~, etc. |
+
+```tsx
+// ✅ GOOD
+<TextField placeholderTx="loginScreen:emailFieldPlaceholder" labelTx="loginScreen:emailFieldLabel" />
+<Button tx="common:ok" />
+<Text tx="recipeDetailsScreen:edit" />
+
+// ❌ BAD
+<TextField placeholder="Enter email" label="Email" />
+<Button text="OK!" />
+```
 
 ## When Adding Text
 
-1. **Use `tx` on components**
-   ```tsx
-   <Button tx="common:ok" />              // ✅ GOOD
-   <Text tx="recipeDetailsScreen:edit" /> // ✅ GOOD
-   <Button text="OK!" />                  // ❌ BAD
-   ```
-
-2. **Add key in `i18n/en.ts`**  
-   Add the English string under the right nested section (e.g., `loginScreen`, `recipeListScreen`).
-
-3. **Add placeholders in other locales** (`fr.ts`, `ko.ts`, etc.)  
-   Same key, English string prefixed with `___` (e.g., `"___Save Recipe"`). No translation needed yet.
+1. **Use `tx` or the appropriate `*Tx` prop** — never the plain string version.
+2. **Add key in `i18n/en.ts`** — under the right nested section (e.g., `loginScreen`, `recipeListScreen`).
+3. **Add placeholders in other locales** (`fr.ts`, `ko.ts`, etc.) — same key, English string prefixed with `___` (e.g., `"___Save Recipe"`).
 
 ## Key Naming
 - **camelCase** for keys.
@@ -35,11 +52,13 @@ Use the `tx` prop for all user-visible text. Never use `text` or hardcoded strin
 
 Before:
 ```tsx
+<TextField placeholder="Enter recipe name" label="Name" />
 <Button text="Save Recipe" onPress={handleSave} />
 ```
 
 After:
 ```tsx
+<TextField placeholderTx="recipeDetailsScreen:namePlaceholder" labelTx="recipeDetailsScreen:nameLabel" />
 <Button tx="recipeDetailsScreen:save" onPress={handleSave} />
 ```
 
@@ -47,6 +66,8 @@ In `i18n/en.ts`:
 ```ts
 recipeDetailsScreen: {
   // ...existing
+  namePlaceholder: "Enter recipe name",
+  nameLabel: "Name",
   save: "Save Recipe",
 },
 ```
@@ -55,6 +76,8 @@ In `i18n/fr.ts` and `i18n/ko.ts`:
 ```ts
 recipeDetailsScreen: {
   // ...existing
+  namePlaceholder: "___Enter recipe name",
+  nameLabel: "___Name",
   save: "___Save Recipe",
 },
 ```
