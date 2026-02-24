@@ -82,8 +82,8 @@ export const AuthenticationStoreModel = types
         store.setProp("authToken", accessToken)
       }
     },
-    login: flow(function* (password: string, isFirstLogin = false) {
-      store.setProp("result", "")
+    login: flow(function* (password: string, isFirstLogin = false, silent = false) {
+      if (!silent) store.setProp("result", "")
       const response = yield api.login(store.authEmail, password)
       switch (response.kind) {
         case "ok":
@@ -106,7 +106,7 @@ export const AuthenticationStoreModel = types
           }
           return true
         case "unauthorized":
-          store.setProp("result", "Email or password is incorrect.")
+          if (!silent) store.setProp("result", "Email or password is incorrect.")
           return false
         case "notallowed":
           if (isFirstLogin) return false
@@ -119,7 +119,7 @@ export const AuthenticationStoreModel = types
           }
           return false
         default:
-          store.setProp("result", "Cannot connect. Please try again later.")
+          if (!silent) store.setProp("result", "Cannot connect. Please try again later.")
           console.error(`Error logging in: ${JSON.stringify(response)}`)
           return false
       }

@@ -22,7 +22,6 @@ import {
   Platform,
   StyleSheet,
   TextStyle,
-  UIManager,
   View,
   ViewStyle,
 } from "react-native"
@@ -144,11 +143,6 @@ const InvitationCard = observer(function InvitationCard({
   const acceptPressed = useSharedValue(0)
   const rejectPressed = useSharedValue(0)
   const cardOpacity = useSharedValue(1)
-
-  // enable on Android
-  if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true)
-  }
 
   const handleRespond = (accepted: boolean) => {
     // first, fade out
