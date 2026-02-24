@@ -19,7 +19,7 @@ import { useAppTheme } from "@/theme/context"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Alert, View, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
@@ -74,11 +74,11 @@ export default observer(function Recipe() {
     setIsLoading(false)
   }, [id, single])
 
-  const handlePressEdit = () => {
+  const handlePressEdit = useCallback(() => {
     router.push(`../recipe/${selected?.id}/edit`)
-  }
+  }, [selected?.id])
 
-  const handlePressDelete = async () => {
+  const handlePressDelete = useCallback(async () => {
     Alert.alert(
       translate("recipeDetailScreen:deleteTitle"),
       translate("recipeDetailScreen:deleteMessage"),
@@ -96,7 +96,7 @@ export default observer(function Recipe() {
         },
       ],
     )
-  }
+  }, [deleteRecipe])
 
   const handlePressMore = () => setPopoverVisible(true)
 
@@ -134,7 +134,7 @@ export default observer(function Recipe() {
         onPress: handlePressDelete,
       },
     ],
-    [canEdit],
+    [canEdit, handlePressEdit, handlePressDelete],
   )
 
   if (!selected && !isLoading)

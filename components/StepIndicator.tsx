@@ -1,7 +1,6 @@
 import { Text } from "@/components/Text"
-import { translate } from "@/i18n"
-import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 import { useEffect, useMemo } from "react"
 import { LayoutAnimation, View, ViewStyle } from "react-native"
 

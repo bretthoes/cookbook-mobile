@@ -3,10 +3,15 @@ import { Text } from "@/components/Text"
 import { colors } from "@/theme"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import type { ImageSourcePropType } from "react-native"
 import { useMemo } from "react"
-import { Image, TouchableOpacity, View } from "react-native"
-import type { TextStyle, ViewStyle } from "react-native"
+import {
+  Image,
+  TouchableOpacity,
+  View,
+  type ImageSourcePropType,
+  type TextStyle,
+  type ViewStyle,
+} from "react-native"
 
 const CARET_SIZE = 26
 

@@ -90,7 +90,9 @@ export default observer(function DemoPodcastListScreen(_props) {
                   : "demoPodcastListScreen:cookbookListScreen.noCookbooksEmptyState"
               }
               contentTxOptions={
-                cookbookStore.favoritesOnly ? undefined : { tabName: translate("demoNavigator:createTab") }
+                cookbookStore.favoritesOnly
+                  ? undefined
+                  : { tabName: translate("demoNavigator:createTab") }
               }
               button={cookbookStore.favoritesOnly ? "" : undefined}
               buttonOnPress={manualRefresh}

@@ -75,6 +75,7 @@ export function Popover(props: PopoverProps) {
       popoverOpacity.value = withTiming(1, { duration: 150 })
       popoverTranslateY.value = withTiming(0, { duration: 150 })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- SharedValues are stable refs
   }, [visible])
 
   const handleDismiss = () => {

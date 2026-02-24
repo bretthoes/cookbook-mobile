@@ -16,7 +16,7 @@ import { delay } from "@/utils/delay"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Alert, FlatList, ImageStyle, View, ViewStyle } from "react-native"
 
 export default observer(function Cookbook() {
@@ -50,12 +50,12 @@ export default observer(function Cookbook() {
     ? recipeStore.recipes.filter((r) => r.title.toLowerCase().includes(q)).slice()
     : recipeStore.recipes.slice()
 
-  const handlePressEdit = () => {
+  const handlePressEdit = useCallback(() => {
     if (!isAuthor) return
     router.push(`./${id}/edit`)
-  }
+  }, [isAuthor, id])
 
-  const handlePressLeave = async () => {
+  const handlePressLeave = useCallback(async () => {
     // Check if cookbook is in favorites
     if (selected && hasFavorite(selected)) {
       Alert.alert(
@@ -109,7 +109,7 @@ export default observer(function Cookbook() {
         },
       ],
     )
-  }
+  }, [isAuthor, selected, hasFavorite, membershipStore, remove])
 
   const handlePressMore = () => setPopoverVisible(true)
 
@@ -145,7 +145,7 @@ export default observer(function Cookbook() {
         onPress: handlePressLeave,
       },
     ],
-    [isAuthor],
+    [isAuthor, handlePressEdit, handlePressLeave],
   )
 
   // simulate a longer refresh, if the refresh is too fast for UX
