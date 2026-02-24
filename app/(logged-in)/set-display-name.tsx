@@ -20,9 +20,8 @@ export default observer(function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [localDisplayName, setLocalDisplayName] = useState("")
   const [result, setResult] = useState("")
-  const {
-    authenticationStore: { displayName, setDisplayName, updateDisplayName, fetchDisplayName },
-  } = useStores()
+  const { authenticationStore } = useStores()
+  const { displayName, setDisplayName, updateDisplayName, fetchDisplayName } = authenticationStore
 
   const getValidationError = useCallback((name: string) => {
     if (name.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
@@ -45,15 +44,15 @@ export default observer(function SetDisplayName() {
     // Fetch the current display name
     const load = async () => {
       await fetchDisplayName()
-      // Set the local display name to the fetched value
-      setLocalDisplayName(displayName)
+      // Set the local display name to the fetched value (read from store after fetch)
+      setLocalDisplayName(authenticationStore.displayName)
     }
     load()
 
     return () => {
       setResult("")
     }
-  }, [fetchDisplayName, displayName])
+  }, [fetchDisplayName, authenticationStore])
 
   const handleSave = async () => {
     setIsSubmitted(true)

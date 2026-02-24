@@ -123,7 +123,7 @@ export async function getDisplayName(): Promise<ApiResult<{ displayName: string 
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ displayName: typeof data === "string" ? data : String(data) })
+    return toOkResult({ displayName: data.displayName ?? "" })
   } catch (e) {
     return toProblemFromError(e)
   }

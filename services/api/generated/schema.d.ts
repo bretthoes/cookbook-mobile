@@ -642,6 +642,9 @@ export interface components {
     UpdateUserCommand: {
       displayName?: string
     }
+    DisplayNameDto: {
+      displayName?: string
+    }
     HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
       ({
         errors?: {
@@ -1313,7 +1316,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          "application/json": string
+          "application/json": components["schemas"]["DisplayNameDto"]
         }
       }
     }
