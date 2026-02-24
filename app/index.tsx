@@ -41,7 +41,7 @@ export default observer(function WelcomeScreen() {
       <View style={[$bottomContainer, $bottomContainerInsets]}>
         <Text tx="welcomeScreen:postscript" size="md" />
         <View style={$buttonGroup}>
-        <Button
+          <Button
             tx="welcomeScreen:registerButton"
             preset="reversed"
             onPress={() => router.push("/register")}

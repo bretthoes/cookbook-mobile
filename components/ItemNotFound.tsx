@@ -49,8 +49,10 @@ export function ItemNotFound({
 }: ItemNotFoundProps) {
   const { themed } = useAppTheme()
 
-  const displayMessage = message ?? (messageTx ? translate(messageTx) : translate("itemNotFound:message"))
-  const displayButtonText = buttonText ?? (buttonTx ? translate(buttonTx) : translate("common:goBack"))
+  const displayMessage =
+    message ?? (messageTx ? translate(messageTx) : translate("itemNotFound:message"))
+  const displayButtonText =
+    buttonText ?? (buttonTx ? translate(buttonTx) : translate("common:goBack"))
 
   const $themedRoot = useMemo(() => themed($root), [themed])
   const $themedContainer = useMemo(() => themed($container), [themed])

@@ -41,6 +41,7 @@ All styles live in the same file as the component. **Never create separate style
 - If consumers need layout styles (e.g. container, list wrapper), export those constants from the same file (see OptionListItem's `$container`, `$listContainer`)
 
 Style constants:
+
 - Prefix with `$` (e.g. `$container`, `$listItemStyle`)
 - Use `ThemedStyle<ViewStyle>` or `ThemedStyle<TextStyle>` from `@/theme`
 - Use `theme.colors`, `theme.spacing` inside style fns; avoid raw numbers
@@ -60,6 +61,7 @@ All user-visible strings use translation. Never use `text`, `placeholder`, `labe
 - Add placeholders in other locales (`fr.ts`, `ko.ts`) with `___English string`
 
 When defining a new component that accepts text:
+
 - Offer `tx` and/or `*Tx` props alongside optional plain `text` / `*` for flexibility
 - Document that consumers should prefer `*Tx` over plain string props
 
@@ -106,4 +108,4 @@ const $container: ThemedStyle<ViewStyle> = (theme) => ({
 - **reusable-components**: Prefer existing components; extract when pattern repeats
 - **style-colocation**: No separate style files; colocate in component file
 - **theming-styles**: useAppTheme, ThemedStyle, $ prefix, memoization
-- **i18n-translation-standard**: *Tx props for all user-facing text
+- **i18n-translation-standard**: \*Tx props for all user-facing text

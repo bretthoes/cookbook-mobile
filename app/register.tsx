@@ -17,13 +17,7 @@ import { useHeader } from "@/utils/useHeader"
 import { router, useNavigation } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import {
-  LayoutAnimation,
-  TextInput,
-  TextStyle,
-  View,
-  ViewStyle,
-} from "react-native"
+import { LayoutAnimation, TextInput, TextStyle, View, ViewStyle } from "react-native"
 
 const TOTAL_STEPS = 4
 const SUCCESS_DELAY_MS = 1000
@@ -93,7 +87,8 @@ export default observer(function Register() {
   }, [password])
 
   const displayNameError = useMemo(() => {
-    if (localDisplayName.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
+    if (localDisplayName.length === 0)
+      return translate("setDisplayNameScreen:validation.cantBeBlank")
     if (localDisplayName.length > 60) return translate("setDisplayNameScreen:validation.tooLong60")
     if (!isValidDisplayName(localDisplayName))
       return translate("setDisplayNameScreen:validation.invalidChars")
@@ -242,9 +237,7 @@ export default observer(function Register() {
   )
 
   if (currentStep === 5) {
-    return (
-      <LoadingScreen text={translate("registerScreen:gettingReady")} />
-    )
+    return <LoadingScreen text={translate("registerScreen:gettingReady")} />
   }
 
   return (

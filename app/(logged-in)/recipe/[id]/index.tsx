@@ -145,8 +145,7 @@ export default observer(function Recipe() {
       </>
     )
 
-  const popoverAnchorTop =
-    insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
+  const popoverAnchorTop = insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
 
   return isLoading ? (
     <ActivityIndicator />
@@ -160,70 +159,70 @@ export default observer(function Recipe() {
       />
       <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
         <CustomBackButton
-        onPress={() => router.back()}
-        top={recipeHasImages ? spacing.xl : spacing.sm} // TODO check both recipeHasImages AND the image loaded properly... We get warnings when there's a size issue (image loaded from URL but is way too big) or its found but the file is 0kb etc
-      />
-      {(canEdit || canDelete) && (
-        <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
-      )}
-      {selected?.images && <RecipeImages data={selected?.images} />}
-      {selected && <RecipeSummary recipe={selected} />}
+          onPress={() => router.back()}
+          top={recipeHasImages ? spacing.xl : spacing.sm} // TODO check both recipeHasImages AND the image loaded properly... We get warnings when there's a size issue (image loaded from URL but is way too big) or its found but the file is 0kb etc
+        />
+        {(canEdit || canDelete) && (
+          <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
+        )}
+        {selected?.images && <RecipeImages data={selected?.images} />}
+        {selected && <RecipeSummary recipe={selected} />}
 
-      {selected && (
-        <View style={$themedIngredientsContainer}>
-          <Text
-            preset="subheading"
-            tx="recipeDetailsScreen:ingredients"
-            style={{ paddingBottom: spacing.md }}
-          />
-          {selected.ingredients.map((item, index) => (
-            <IngredientItem
-              key={index}
-              ingredient={item}
-              index={index}
-              isFirst={index === 0}
-              isLast={index === selected.ingredients.length - 1}
+        {selected && (
+          <View style={$themedIngredientsContainer}>
+            <Text
+              preset="subheading"
+              tx="recipeDetailsScreen:ingredients"
+              style={{ paddingBottom: spacing.md }}
             />
-          ))}
-        </View>
-      )}
-
-      {selected && (
-        <View style={$themedDirectionsContainer}>
-          <View style={$directionsHeaderRow}>
-            <Text preset="subheading" tx="recipeDetailsScreen:directions" />
-            <View style={$cookModeRow}>
-              <Text tx="recipeDetailScreen:keepScreenOn" />
-              <Switch value={cookMode} onValueChange={setCookMode} />
-            </View>
-          </View>
-          {selected.directions.map((item, index) => (
-            <View
-              key={index}
-              style={[
-                $themedListItemStyle,
-                index === 0 && $themedBorderTop,
-                index === selected.directions.length - 1 && $themedBorderBottom,
-              ]}
-            >
-              <ListItem
-                onPress={() => toggleDirectionCompleted(index)}
-                style={{ padding: spacing.sm }}
-                LeftComponent={
-                  <DirectionText
-                    ordinal={item?.ordinal}
-                    text={item?.text ?? ""}
-                    completed={completedDirections.has(index)}
-                  />
-                }
-                height={spacing.xl}
-                bottomSeparator={index !== selected.directions.length - 1}
-                topSeparator={index !== 0}
+            {selected.ingredients.map((item, index) => (
+              <IngredientItem
+                key={index}
+                ingredient={item}
+                index={index}
+                isFirst={index === 0}
+                isLast={index === selected.ingredients.length - 1}
               />
+            ))}
+          </View>
+        )}
+
+        {selected && (
+          <View style={$themedDirectionsContainer}>
+            <View style={$directionsHeaderRow}>
+              <Text preset="subheading" tx="recipeDetailsScreen:directions" />
+              <View style={$cookModeRow}>
+                <Text tx="recipeDetailScreen:keepScreenOn" />
+                <Switch value={cookMode} onValueChange={setCookMode} />
+              </View>
             </View>
-          ))}
-        </View>
-      )}
+            {selected.directions.map((item, index) => (
+              <View
+                key={index}
+                style={[
+                  $themedListItemStyle,
+                  index === 0 && $themedBorderTop,
+                  index === selected.directions.length - 1 && $themedBorderBottom,
+                ]}
+              >
+                <ListItem
+                  onPress={() => toggleDirectionCompleted(index)}
+                  style={{ padding: spacing.sm }}
+                  LeftComponent={
+                    <DirectionText
+                      ordinal={item?.ordinal}
+                      text={item?.text ?? ""}
+                      completed={completedDirections.has(index)}
+                    />
+                  }
+                  height={spacing.xl}
+                  bottomSeparator={index !== selected.directions.length - 1}
+                  topSeparator={index !== 0}
+                />
+              </View>
+            ))}
+          </View>
+        )}
       </Screen>
     </>
   )

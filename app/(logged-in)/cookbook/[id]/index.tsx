@@ -103,10 +103,7 @@ export default observer(function Cookbook() {
             if (result) {
               remove()
             } else {
-              Alert.alert(
-                translate("common:error"),
-                translate("cookbookDetailScreen:leaveError"),
-              )
+              Alert.alert(translate("common:error"), translate("cookbookDetailScreen:leaveError"))
             }
           },
         },
@@ -215,62 +212,62 @@ export default observer(function Cookbook() {
         options={popoverOptions}
       />
       <Screen preset="fixed" style={$themedRoot}>
-      <FlatList<RecipeBrief>
-        data={filteredItems}
-        ListEmptyComponent={
-          isLoading ? (
-            <ActivityIndicator />
-          ) : (
-            <EmptyState
-              preset="generic"
-              contentTx="cookbookDetailScreen:noRecipesEmpty"
-              style={$themedEmptyState}
-              buttonOnPress={manualRefresh}
-              imageStyle={$themedEmptyStateImage}
-              ImageProps={{ resizeMode: "contain" }}
-            />
-          )
-        }
-        ListHeaderComponent={
-          <View>
-            <SearchBar
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder={translate("recipeListScreen:searchPlaceholder")}
-            />
-            <Divider size={spacing.sm} />
-          </View>
-        }
-        onRefresh={manualRefresh}
-        refreshing={refreshing}
-        ListFooterComponent={
-          <View style={$themedListFooter}>
-            <Text
-              weight="light"
-              text={translate("cookbookDetailScreen:recipeCount", {
-                count: filteredItems.length,
-              })}
-            />
-          </View>
-        }
-        renderItem={({ item, index }) => (
-          <View
-            style={[
-              $themedListItemStyle,
-              index === 0 && $themedBorderTop,
-              index === recipeStore.recipes?.length - 1 && $themedBorderBottom,
-            ]}
-          >
-            <RecipeListItem
-              text={item.title}
-              index={index}
-              lastIndex={filteredItems.length - 1}
-              onPress={() => handlePressRecipe(item.id)}
-            />
-          </View>
-        )}
-      />
-    </Screen>
+        <FlatList<RecipeBrief>
+          data={filteredItems}
+          ListEmptyComponent={
+            isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <EmptyState
+                preset="generic"
+                contentTx="cookbookDetailScreen:noRecipesEmpty"
+                style={$themedEmptyState}
+                buttonOnPress={manualRefresh}
+                imageStyle={$themedEmptyStateImage}
+                ImageProps={{ resizeMode: "contain" }}
+              />
+            )
+          }
+          ListHeaderComponent={
+            <View>
+              <SearchBar
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder={translate("recipeListScreen:searchPlaceholder")}
+              />
+              <Divider size={spacing.sm} />
+            </View>
+          }
+          onRefresh={manualRefresh}
+          refreshing={refreshing}
+          ListFooterComponent={
+            <View style={$themedListFooter}>
+              <Text
+                weight="light"
+                text={translate("cookbookDetailScreen:recipeCount", {
+                  count: filteredItems.length,
+                })}
+              />
+            </View>
+          }
+          renderItem={({ item, index }) => (
+            <View
+              style={[
+                $themedListItemStyle,
+                index === 0 && $themedBorderTop,
+                index === recipeStore.recipes?.length - 1 && $themedBorderBottom,
+              ]}
+            >
+              <RecipeListItem
+                text={item.title}
+                index={index}
+                lastIndex={filteredItems.length - 1}
+                onPress={() => handlePressRecipe(item.id)}
+              />
+            </View>
+          )}
+        />
+      </Screen>
     </>
   )
 })

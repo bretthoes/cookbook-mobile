@@ -178,7 +178,11 @@ export default observer(function InvitationTokenScreen() {
             <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
           )}
           {invitation.cookbookTitle && (
-            <Text text={invitation.cookbookTitle} preset="subheading" style={$themedCookbookTitle} />
+            <Text
+              text={invitation.cookbookTitle}
+              preset="subheading"
+              style={$themedCookbookTitle}
+            />
           )}
         </View>
         <Button
@@ -212,7 +216,11 @@ export default observer(function InvitationTokenScreen() {
             <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
           )}
           {invitation.cookbookTitle && (
-            <Text text={invitation.cookbookTitle} preset="subheading" style={$themedCookbookTitle} />
+            <Text
+              text={invitation.cookbookTitle}
+              preset="subheading"
+              style={$themedCookbookTitle}
+            />
           )}
         </View>
         <Button
@@ -227,7 +235,11 @@ export default observer(function InvitationTokenScreen() {
   if (isLoading) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header
+          titleTx="invitationLinkScreen:title"
+          leftIcon="back"
+          onLeftPress={() => router.back()}
+        />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
         <Text
           tx="invitationLinkScreen:loading"
@@ -240,7 +252,11 @@ export default observer(function InvitationTokenScreen() {
   if (error) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header
+          titleTx="invitationLinkScreen:title"
+          leftIcon="back"
+          onLeftPress={() => router.back()}
+        />
         <View style={$centeredContent}>
           <EmptyState
             preset="generic"
@@ -263,7 +279,11 @@ export default observer(function InvitationTokenScreen() {
   if (!invitation && !isAuthenticated) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header
+          titleTx="invitationLinkScreen:title"
+          leftIcon="back"
+          onLeftPress={() => router.back()}
+        />
         <Text
           tx="invitationLinkScreen:heading"
           preset="heading"
@@ -291,7 +311,11 @@ export default observer(function InvitationTokenScreen() {
   if (!invitation) {
     return (
       <Screen style={$root} preset="scroll">
-        <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
+        <Header
+          titleTx="invitationLinkScreen:title"
+          leftIcon="back"
+          onLeftPress={() => router.back()}
+        />
         <ActivityIndicator size="large" style={{ marginTop: spacing.xxl }} />
         <Text
           tx="invitationLinkScreen:loading"
@@ -303,7 +327,11 @@ export default observer(function InvitationTokenScreen() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Header titleTx="invitationLinkScreen:title" leftIcon="back" onLeftPress={() => router.back()} />
+      <Header
+        titleTx="invitationLinkScreen:title"
+        leftIcon="back"
+        onLeftPress={() => router.back()}
+      />
       <Text
         tx="invitationLinkScreen:invitedHeading"
         preset="heading"
@@ -328,7 +356,11 @@ export default observer(function InvitationTokenScreen() {
       )}
 
       <Button
-        tx={isAuthenticated ? "invitationLinkScreen:acceptButton" : "invitationLinkScreen:loginToAcceptButton"}
+        tx={
+          isAuthenticated
+            ? "invitationLinkScreen:acceptButton"
+            : "invitationLinkScreen:loginToAcceptButton"
+        }
         onPress={handleAccept}
         style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
       />

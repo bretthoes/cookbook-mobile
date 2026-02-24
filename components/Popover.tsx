@@ -5,11 +5,7 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useEffect, useMemo } from "react"
 import { Modal, Pressable, TextStyle, ViewStyle } from "react-native"
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated"
+import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 const HEADER_HEIGHT = 56
@@ -51,10 +47,7 @@ export function Popover(props: PopoverProps) {
   const $themedOverlay = useMemo(() => themed($overlay), [themed])
   const $themedPopover = useMemo(() => themed($popover), [themed])
   const $themedPopoverItem = useMemo(() => themed($popoverItem), [themed])
-  const $themedPopoverItemDestructive = useMemo(
-    () => themed($popoverItemDestructive),
-    [themed],
-  )
+  const $themedPopoverItemDestructive = useMemo(() => themed($popoverItemDestructive), [themed])
   const $themedDestructiveText = useMemo(
     () => themed($destructiveText(theme.colors.error)),
     [themed, theme.colors.error],
@@ -97,8 +90,7 @@ export function Popover(props: PopoverProps) {
     opt.onPress()
   }
 
-  const popoverTop =
-    anchorTopOverride ?? insets.top + HEADER_HEIGHT + theme.spacing.xs
+  const popoverTop = anchorTopOverride ?? insets.top + HEADER_HEIGHT + theme.spacing.xs
   const popoverRight = theme.spacing.md
   const popoverLeft = isRTL ? popoverRight : undefined
   const popoverRightRTL = isRTL ? undefined : popoverRight
@@ -133,11 +125,7 @@ export function Popover(props: PopoverProps) {
             tx={opt.tx}
             leftIcon={opt.leftIcon}
             leftIconColor={
-              opt.disabled
-                ? theme.colors.textDim
-                : opt.destructive
-                  ? theme.colors.error
-                  : undefined
+              opt.disabled ? theme.colors.textDim : opt.destructive ? theme.colors.error : undefined
             }
             textStyle={
               opt.disabled
@@ -148,9 +136,7 @@ export function Popover(props: PopoverProps) {
             }
             disabled={opt.disabled}
             onPress={() => handleOptionPress(opt)}
-            style={
-              opt.destructive ? $themedPopoverItemDestructive : $themedPopoverItem
-            }
+            style={opt.destructive ? $themedPopoverItemDestructive : $themedPopoverItem}
           />
         ))}
       </Animated.View>
@@ -161,8 +147,7 @@ export function Popover(props: PopoverProps) {
 const $overlay: ThemedStyle<ViewStyle> = (theme) => ({
   ...ABSOLUTE_FILL,
   backgroundColor:
-    (theme.colors as { palette?: { overlay50?: string } }).palette?.overlay50 ??
-    "rgba(0,0,0,0.5)",
+    (theme.colors as { palette?: { overlay50?: string } }).palette?.overlay50 ?? "rgba(0,0,0,0.5)",
 })
 
 const $popover: ThemedStyle<ViewStyle> = (theme) => ({

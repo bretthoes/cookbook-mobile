@@ -55,9 +55,7 @@ function TimeDisplay({ minutes }: { minutes: number }) {
           text={`${hours} ${hours !== 1 ? translate("recipeSummary:hour_plural") : translate("recipeSummary:hour")}`}
         />
       )}
-      {mins > 0 && (
-        <Text preset="default" text={`${mins} ${translate("recipeSummary:mins")}`} />
-      )}
+      {mins > 0 && <Text preset="default" text={`${mins} ${translate("recipeSummary:mins")}`} />}
     </>
   )
 }

@@ -427,7 +427,8 @@ const fr: Translations = {
     dropdownDescription: "___Select the cookbook where you would like to add this recipe.",
     actionForRecipe: "___Select the cookbook where you would like to add a new recipe.",
     actionForMembers: "___Select a cookbook to view its members.",
-    actionForInvite: "___Select the cookbook where you would like to send an invitation to a friend.",
+    actionForInvite:
+      "___Select the cookbook where you would like to send an invitation to a friend.",
     actionForAddFromCamera: "___Select a cookbook to add the recipe to.",
     emptyState: "___No cookbooks have been added yet.",
     allowCameraRollAccess: "___Please allow camera roll access in settings.",
@@ -452,7 +453,8 @@ const fr: Translations = {
     noRecipesEmpty: "___No recipes have been added yet.",
     recipeCount: "___{{count}} recipes.",
     leaveCannotRemoveFavoritesTitle: "___Cannot Leave Cookbook",
-    leaveCannotRemoveFavorites: "___Please remove this cookbook from your favorites before leaving.",
+    leaveCannotRemoveFavorites:
+      "___Please remove this cookbook from your favorites before leaving.",
     leaveTransferOwnershipFirst:
       "___Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
     leaveConfirmTitle: "___Leave Cookbook",
@@ -576,7 +578,8 @@ const fr: Translations = {
     next: "___Next",
     continue: "___Continue",
     skipForNow: "___Skip for now",
-    description: "___This is how others will see you, instead of your email. You can change this any time in the app.",
+    description:
+      "___This is how others will see you, instead of your email. You can change this any time in the app.",
     descriptionProfile: "___This is how others will see you in the app, instead of your email.",
     hint: "___No special characters, please!",
     label: "___Display name",

@@ -8,10 +8,7 @@ const POLL_INTERVAL_MS = 8000
  * Polls login while on the email verification step. When the user has clicked
  * the verification link in their email, login will succeed and onVerified is called.
  */
-export function useEmailVerificationPolling(
-  isActive: boolean,
-  onVerified: () => void,
-) {
+export function useEmailVerificationPolling(isActive: boolean, onVerified: () => void) {
   const {
     authenticationStore: { login },
   } = useStores()
@@ -33,7 +30,7 @@ export function useEmailVerificationPolling(
         intervalRef.current = null
       }
       return
-    } 
+    }
 
     // Poll immediately, then on interval
     checkVerification()

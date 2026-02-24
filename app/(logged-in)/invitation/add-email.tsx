@@ -90,9 +90,7 @@ export default observer(function AddInvitationEmailScreen() {
             onPress={onSendEmail}
             style={$themedButton}
           />
-          {!!emailMsg && (
-            <Text text={emailMsg} preset="formHelper" style={$themedHelper} />
-          )}
+          {!!emailMsg && <Text text={emailMsg} preset="formHelper" style={$themedHelper} />}
         </UseCase>
       </View>
     </Screen>

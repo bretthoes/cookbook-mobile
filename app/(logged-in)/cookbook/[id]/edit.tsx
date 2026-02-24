@@ -176,9 +176,7 @@ export default observer(function EditCookbookScreen() {
             style={[
               $result,
               {
-                color: resultIsSuccess
-                  ? colors.palette.primary500
-                  : colors.palette.angry500,
+                color: resultIsSuccess ? colors.palette.primary500 : colors.palette.angry500,
               },
             ]}
           />

@@ -49,8 +49,7 @@ const en = {
     resendButton: "Resend verification email",
     resendCooldown: "Try again in {{seconds}}s",
     iveVerified: "I've verified",
-    returnHereHint:
-      "After clicking the link in your email, return here and tap the button below.",
+    returnHereHint: "After clicking the link in your email, return here and tap the button below.",
     verifying: "Verifying...",
   },
   registerScreen: {
@@ -539,7 +538,8 @@ const en = {
     next: "Next",
     continue: "Continue",
     skipForNow: "Skip for now",
-    description: "This is how others will see you, instead of your email. You can change this any time in the app.",
+    description:
+      "This is how others will see you, instead of your email. You can change this any time in the app.",
     descriptionProfile: "This is how others will see you in the app, instead of your email.",
     hint: "No special characters, please!",
     label: "Display name",

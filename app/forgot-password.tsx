@@ -47,7 +47,11 @@ export default observer(function ForgotPassword() {
 
       <Text text={`${result}`} preset="formHelper" />
 
-      <Button tx="forgotPasswordScreen:sendButton" onPress={sendForgotPasswordEmail} style={$tapButton} />
+      <Button
+        tx="forgotPasswordScreen:sendButton"
+        onPress={sendForgotPasswordEmail}
+        style={$tapButton}
+      />
     </Screen>
   )
 })

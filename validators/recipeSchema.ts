@@ -44,9 +44,7 @@ export const recipeSchema = yup.object({
     .array()
     .of(
       yup.object({
-        name: yup
-          .string()
-          .max(255, () => translate("validation:ingredientNameMaxLength")),
+        name: yup.string().max(255, () => translate("validation:ingredientNameMaxLength")),
         optional: yup.bool().nullable().default(false),
       }),
     )
@@ -55,9 +53,7 @@ export const recipeSchema = yup.object({
     .array()
     .of(
       yup.object({
-        text: yup
-          .string()
-          .max(2048, () => translate("validation:directionTextMaxLength")),
+        text: yup.string().max(2048, () => translate("validation:directionTextMaxLength")),
         image: yup.string().nullable().default(null),
       }),
     )

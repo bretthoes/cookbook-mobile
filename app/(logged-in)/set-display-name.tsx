@@ -27,8 +27,7 @@ export default observer(function SetDisplayName() {
   const getValidationError = useCallback((name: string) => {
     if (name.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
     if (name.length > 255) return translate("setDisplayNameScreen:validation.tooLong255")
-    if (!isValidDisplayName(name))
-      return translate("setDisplayNameScreen:validation.invalidChars")
+    if (!isValidDisplayName(name)) return translate("setDisplayNameScreen:validation.invalidChars")
     return ""
   }, [])
 

@@ -78,7 +78,7 @@ export async function createInvite(
 ): Promise<ApiResult<{ token: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/Invitations", {
-      body: { cookbookId, email }, 
+      body: { cookbookId, email },
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)

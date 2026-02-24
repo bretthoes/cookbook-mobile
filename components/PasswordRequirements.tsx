@@ -44,11 +44,7 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
             accessibilityLabel={translate(`registerScreen:validation.${key}`)}
           >
             {met ? (
-              <Icon
-                icon="check"
-                color={theme.colors.tint}
-                size={16}
-              />
+              <Icon icon="check" color={theme.colors.tint} size={16} />
             ) : (
               <View style={[$circle, { borderColor: theme.colors.border }]} />
             )}

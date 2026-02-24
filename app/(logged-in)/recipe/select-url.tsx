@@ -91,10 +91,7 @@ export default observer(function RecipeUrlScreen() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text
-        tx="recipeSelectUrlScreen:subtitle"
-        style={{ paddingHorizontal: spacing.md }}
-      />
+      <Text tx="recipeSelectUrlScreen:subtitle" style={{ paddingHorizontal: spacing.md }} />
       <UseCase>
         <TextField
           value={url}

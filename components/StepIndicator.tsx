@@ -15,11 +15,7 @@ export interface StepIndicatorProps {
 /**
  * Progress indicator for multi-step flows. Shows current step within total.
  */
-export function StepIndicator({
-  currentStep,
-  totalSteps,
-  variant = "dots",
-}: StepIndicatorProps) {
+export function StepIndicator({ currentStep, totalSteps, variant = "dots" }: StepIndicatorProps) {
   const { themed } = useAppTheme()
 
   useEffect(() => {
@@ -52,10 +48,7 @@ export function StepIndicator({
       {Array.from({ length: totalSteps }, (_, i) => (
         <View
           key={i}
-          style={[
-            $themedDot,
-            i + 1 === currentStep && $themedDotActive,
-          ]}
+          style={[$themedDot, i + 1 === currentStep && $themedDotActive]}
           accessibilityState={{ checked: i + 1 <= currentStep }}
         />
       ))}

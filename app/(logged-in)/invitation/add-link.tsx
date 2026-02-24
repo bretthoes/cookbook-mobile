@@ -96,9 +96,15 @@ export default observer(function AddInvitationLinkScreen() {
 
       <View style={$themedSection}>
         <UseCase>
-          <Text tx="invitationAddLinkScreen:inviteLinkLabel" preset="formLabel" style={$themedFormLabel} />
+          <Text
+            tx="invitationAddLinkScreen:inviteLinkLabel"
+            preset="formLabel"
+            style={$themedFormLabel}
+          />
           <TextField
-            value={isMinting ? translate("invitationAddLinkScreen:generatingLink") : inviteUrl || ""}
+            value={
+              isMinting ? translate("invitationAddLinkScreen:generatingLink") : inviteUrl || ""
+            }
             editable={false}
             placeholderTx="invitationAddLinkScreen:linkPlaceholder"
           />
@@ -108,9 +114,7 @@ export default observer(function AddInvitationLinkScreen() {
             disabled={!selected?.id || isMinting}
             style={$themedButton}
           />
-          {!!linkMsg && (
-            <Text text={linkMsg} preset="formHelper" style={$themedHelper} />
-          )}
+          {!!linkMsg && <Text text={linkMsg} preset="formHelper" style={$themedHelper} />}
         </UseCase>
       </View>
     </Screen>
