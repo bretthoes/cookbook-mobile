@@ -354,7 +354,7 @@ const fr: Translations = {
           "Aucun favori n'a encore été ajouté. Appuyez sur le cœur d'un élément pour l'ajouter à vos favoris !",
       },
       noCookbooksEmptyState:
-        "___No cookbooks have been added yet. Tap the plus button to create a new cookbook!",
+        "Aucun livre de recettes n'a encore été ajouté. Vous pouvez en créer un dans l'onglet {{tabName}} ci-dessous.",
       cookbookCard: {
         membersLabel: "{{count}} membre",
         membersLabel_plural: "{{count}} membres",

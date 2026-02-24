@@ -348,7 +348,7 @@ const en = {
           "No favorites have been added yet. Tap the heart on an item to add it to your favorites!",
       },
       noCookbooksEmptyState:
-        "No cookbooks have been added yet. Tap the plus button to create a new cookbook!",
+        "No cookbooks have been added yet. You can make a new one in the {{tabName}} tab below.",
       cookbookCard: {
         membersLabel: "{{count}} member",
         membersLabel_plural: "{{count}} members",

@@ -346,7 +346,7 @@ const ko: Translations = {
         content: "아직 즐겨찾기가 없습니다. 항목의 하트를 눌러 즐겨찾기에 추가해보세요!",
       },
       noCookbooksEmptyState:
-        "___No cookbooks have been added yet. Tap the plus button to create a new cookbook!",
+        "아직 요리책이 추가되지 않았습니다. 아래 {{tabName}} 탭에서 새로 만들 수 있습니다.",
       cookbookCard: {
         membersLabel: "회원 {{count}}명",
         membersLabel_plural: "회원 {{count}}명",
