@@ -274,7 +274,7 @@ export default observer(function Register() {
           <View style={$content}>
             <Button
               testID="register-email-button"
-              tx="registerScreen:createAccount"
+              tx="common:next"
               style={$tapButton}
               preset="reversed"
               onPress={handleEmailStepSubmit}
