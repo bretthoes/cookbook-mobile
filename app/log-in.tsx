@@ -7,8 +7,8 @@ import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
 import { useStores } from "@/models/helpers/useStores"
-import * as SecureStore from "expo-secure-store"
 import { router } from "expo-router"
+import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
@@ -19,6 +19,7 @@ const REMEMBER_ME_PASSWORD_KEY = "login_remember_password"
 
 export default observer(function Login(_props) {
   const authPasswordInput = useRef<TextInput>(null)
+  const hasLoadedCredentials = useRef(false)
 
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
@@ -40,22 +41,24 @@ export default observer(function Login(_props) {
   useEffect(() => {
     setResult("")
     // Load saved credentials from secure store
-    const loadStoredCredentials = async () => {
-      try {
-        const storedEmail = await SecureStore.getItemAsync(REMEMBER_ME_EMAIL_KEY)
-        const storedPassword = await SecureStore.getItemAsync(REMEMBER_ME_PASSWORD_KEY)
-        if (storedEmail) setAuthEmail(storedEmail)
-        if (storedPassword) setAuthPassword(storedPassword)
-      } catch {
-        // Ignore - secure store may not be available (e.g. web)
+    if (!hasLoadedCredentials.current) {
+      hasLoadedCredentials.current = true
+      const loadStoredCredentials = async () => {
+        try {
+          const storedEmail = await SecureStore.getItemAsync(REMEMBER_ME_EMAIL_KEY)
+          const storedPassword = await SecureStore.getItemAsync(REMEMBER_ME_PASSWORD_KEY)
+          if (storedEmail) setAuthEmail(storedEmail)
+          if (storedPassword) setAuthPassword(storedPassword)
+        } catch {
+          // Ignore - secure store may not be available (e.g. web)
+        }
       }
+      loadStoredCredentials()
     }
-    loadStoredCredentials()
 
     return () => {
       setResult("")
-      setAuthPassword("")
-      setAuthEmail("")
+      // Don't clear email/password, preserves form when login fails so user doesn't have to re-enter
     }
   }, [setAuthEmail, setResult])
 
