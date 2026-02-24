@@ -2,18 +2,16 @@ import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
 import { isRTL, translate } from "@/i18n"
 import { Cookbook } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { useHeader } from "@/utils/useHeader"
-import { useActionSheet } from "@expo/react-native-action-sheet"
 import { useFocusEffect } from "@react-navigation/native"
-import * as ImagePicker from "expo-image-picker"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
@@ -122,12 +120,9 @@ function CookbookItem({
 
 // TODO i18n
 export default observer(function SelectCookbookScreen() {
-  const {
-    cookbookStore,
-    recipeStore: { setRecipeToAdd },
-  } = useStores()
+  const { cookbookStore } = useStores()
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
-  const { showActionSheetWithOptions } = useActionSheet()
+  const addRecipeFromCamera = useAddRecipeFromCamera()
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -168,67 +163,6 @@ export default observer(function SelectCookbookScreen() {
     fetchData()
   }, [cookbookStore])
 
-  const handleAddRecipeFromCamera = useCallback(async () => {
-    // Request permission for accessing the media library
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
-    if (status !== "granted") {
-      alert(translate("selectCookbookScreen:allowCameraRollAccess"))
-      return
-    }
-
-    const options = [
-      translate("selectCookbookScreen:takePhoto"),
-      translate("selectCookbookScreen:selectFromRoll"),
-      translate("common:cancel"),
-    ]
-    const cancelButtonIndex = options.length - 1
-    // Display the action sheet and get the user's choice
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      async (buttonIndex) => {
-        if (buttonIndex === 0) {
-          // "Take a Photo" option was selected
-          const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            mediaTypes: ["images"],
-          })
-
-          if (!result.canceled && result.assets && result.assets.length > 0) {
-            const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-
-            if (uploadResponse.kind === "ok") {
-              setRecipeToAdd(uploadResponse.recipe)
-              router.replace("./recipe/add")
-            } else {
-              alert(translate("selectCookbookScreen:imageParsingFailed"))
-            }
-          }
-        } else if (buttonIndex === 1) {
-          // "Select from Camera Roll" option was selected
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
-            allowsMultipleSelection: false,
-            allowsEditing: true,
-          })
-
-          if (!result.canceled && result.assets && result.assets.length > 0) {
-            const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-
-            if (uploadResponse.kind === "ok") {
-              setRecipeToAdd(uploadResponse.recipe)
-              router.replace("./recipe/add")
-            } else {
-              alert(translate("selectCookbookScreen:imageParsingFailed"))
-            }
-          }
-        }
-      },
-    )
-  }, [showActionSheetWithOptions, setRecipeToAdd])
-
   const handleItemPress = useCallback(
     (cookbookId: number) => {
       setSelectedId(cookbookId)
@@ -237,13 +171,13 @@ export default observer(function SelectCookbookScreen() {
       // Navigate after the fade animation completes
       setTimeout(() => {
         if (params.onSelect === "handleAddRecipeFromCamera") {
-          handleAddRecipeFromCamera()
+          addRecipeFromCamera()
         } else {
           router.push(params.nextRoute as any)
         }
       }, 350)
     },
-    [cookbookStore, params.onSelect, params.nextRoute, handleAddRecipeFromCamera],
+    [cookbookStore, params.onSelect, params.nextRoute, addRecipeFromCamera],
   )
 
   return (

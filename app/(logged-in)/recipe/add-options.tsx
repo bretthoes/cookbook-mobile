@@ -1,6 +1,8 @@
 import { OptionListItem, $container, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
+import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
 import { translate } from "@/i18n"
+import { useStores } from "@/models/helpers/useStores"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
@@ -13,6 +15,8 @@ const camera = require("../../../assets/images/camera.png")
 
 export default observer(function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
+  const { cookbookStore } = useStores()
+  const addRecipeFromCamera = useAddRecipeFromCamera()
 
   useHeader({
     leftIcon: "back",
@@ -42,16 +46,20 @@ export default observer(function AddRecipeOptionsScreen() {
           title={translate("recipeAddOptionsScreen:optionFromPhoto")}
           description={translate("recipeAddOptionsScreen:optionFromPhotoDesc")}
           leftImage={camera}
-          onPress={() =>
-            router.replace({
-              pathname: "../select-cookbook",
-              params: {
-                nextRoute: "/(logged-in)/(tabs)/recipe/add",
-                action: translate("selectCookbookScreen:actionForAddFromCamera"),
-                onSelect: "handleAddRecipeFromCamera",
-              },
-            })
-          }
+          onPress={() => {
+            if (cookbookStore.selected) {
+              addRecipeFromCamera()
+            } else {
+              router.replace({
+                pathname: "../select-cookbook",
+                params: {
+                  nextRoute: "/(logged-in)/(tabs)/recipe/add",
+                  action: translate("selectCookbookScreen:actionForAddFromCamera"),
+                  onSelect: "handleAddRecipeFromCamera",
+                },
+              })
+            }
+          }}
         />
       </View>
     </Screen>
