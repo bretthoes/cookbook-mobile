@@ -45,6 +45,7 @@ export default observer(function AddCookbookScreen() {
   })
 
   const [imageLocal, setImageLocal] = useState("")
+  const [createError, setCreateError] = useState<string | null>(null)
 
   // Image picker function
   const pickImage = async () => {
@@ -72,6 +73,7 @@ export default observer(function AddCookbookScreen() {
   }
 
   const onPressSend = async (formData: CookbookFormInputs) => {
+    setCreateError(null)
     const newCookbook: CookbookToAddSnapshotIn = {
       title: formData.title.trim(),
       image: formData.image,
@@ -81,10 +83,10 @@ export default observer(function AddCookbookScreen() {
       if (success) {
         router.replace("../../(tabs)/cookbooks")
       } else {
-        alert(translate("cookbookAddScreen:createFailed"))
+        setCreateError(translate("cookbookAddScreen:createFailed"))
       }
     } catch {
-      alert(translate("cookbookAddScreen:createFailed"))
+      setCreateError(translate("cookbookAddScreen:createFailed"))
     }
   }
 
@@ -124,10 +126,13 @@ export default observer(function AddCookbookScreen() {
             <TextField
               value={value}
               labelTx="cookbookAddScreen:titleLabel"
-              onChangeText={onChange}
+              onChangeText={(text) => {
+                onChange(text)
+                if (createError) setCreateError(null)
+              }}
               placeholderTx="cookbookAddScreen:titlePlaceholder"
-              status="error"
-              helper={errors.title?.message ?? ""}
+              status={errors.title || createError ? "error" : undefined}
+              helper={errors.title?.message ?? createError ?? ""}
             />
           )}
         />
