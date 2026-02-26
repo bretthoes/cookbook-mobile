@@ -4,7 +4,7 @@ import { RecipeIngredient } from "@/models/Recipe"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import React, { useMemo, useState } from "react"
-import { View, ViewStyle } from "react-native"
+import { Pressable, View, ViewStyle } from "react-native"
 
 interface IngredientItemProps {
   ingredient: RecipeIngredient
@@ -31,14 +31,17 @@ export const IngredientItem = ({ ingredient, index, isFirst, isLast }: Ingredien
 
   return (
     <View style={[$themedItemStyle, isFirst && $themedBorderTop, isLast && $themedBorderBottom]}>
-      <View style={$themedContainer}>
-        <View style={$themedCheckboxContainer}>
+      <Pressable
+        style={$themedContainer}
+        onPress={() => handleValueChange(!isChecked)}
+      >
+        <View style={$themedCheckboxContainer} pointerEvents="none">
           <Checkbox value={isChecked} onValueChange={handleValueChange} />
         </View>
         <View style={$themedTextContainer}>
           <Text size="md">{ingredient.name}</Text>
         </View>
-      </View>
+      </Pressable>
       {!isLast && <View style={$themedSeparator} />}
     </View>
   )
