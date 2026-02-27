@@ -10,9 +10,6 @@ import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { View } from "react-native"
 
-const link = require("../../../assets/images/link.png")
-const camera = require("../../../assets/images/camera.png")
-
 export default observer(function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
   const { cookbookStore } = useStores()
@@ -33,19 +30,19 @@ export default observer(function AddRecipeOptionsScreen() {
         <OptionListItem
           title={translate("recipeAddOptionsScreen:optionManual")}
           description={translate("recipeAddOptionsScreen:optionManualDesc")}
-          leftIcon="create"
+          leftIcon="pen"
           onPress={() => router.replace("../recipe/add")}
         />
         <OptionListItem
           title={translate("recipeAddOptionsScreen:optionFromUrl")}
           description={translate("recipeAddOptionsScreen:optionFromUrlDesc")}
-          leftImage={link}
+          leftIcon="web"
           onPress={() => router.replace("../recipe/select-url")}
         />
         <OptionListItem
           title={translate("recipeAddOptionsScreen:optionFromPhoto")}
           description={translate("recipeAddOptionsScreen:optionFromPhotoDesc")}
-          leftImage={camera}
+          leftIcon="camera"
           onPress={() => {
             if (cookbookStore.selected) {
               addRecipeFromCamera()

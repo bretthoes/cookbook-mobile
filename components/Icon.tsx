@@ -112,6 +112,7 @@ export function Icon(props: IconProps) {
 export const iconRegistry = {
   back: require("../assets/icons/back.png"),
   bell: require("../assets/icons/bell.png"),
+  camera: require("../assets/icons/camera.png"),
   caretLeft: require("../assets/icons/caretLeft.png"),
   caretRight: require("../assets/icons/caretRight.png"),
   caretUp: require("../assets/icons/caretUp.png"),
@@ -123,6 +124,7 @@ export const iconRegistry = {
   darkMode: require("../assets/icons/darkMode.png"),
   heart: require("../assets/icons/heart.png"),
   hidden: require("../assets/icons/hidden.png"),
+  pen: require("../assets/icons/pen.png"),
   languages: require("../assets/icons/languages.png"),
   lock: require("../assets/icons/lock.png"),
   mail: require("../assets/icons/mail.png"),
@@ -137,6 +139,7 @@ export const iconRegistry = {
   share: require("../assets/icons/share.png"),
   user: require("../assets/icons/user.png"),
   view: require("../assets/icons/view.png"),
+  web: require("../assets/icons/web.png"),
   x: require("../assets/icons/x.png"),
 }
 

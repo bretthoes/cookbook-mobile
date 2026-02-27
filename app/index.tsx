@@ -10,7 +10,7 @@ import { observer } from "mobx-react-lite"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 const welcomeLogo = require("../assets/images/logo.png")
-const welcomeFace = require("../assets/images/welcome-face.png")
+const welcomeFace = require("../assets/images/cookbook.png")
 
 // @mst replace-next-line export default function WelcomeScreen() {
 export default observer(function WelcomeScreen() {
