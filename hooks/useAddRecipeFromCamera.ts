@@ -30,40 +30,37 @@ export function useAddRecipeFromCamera() {
     ]
     const cancelButtonIndex = options.length - 1
 
-    showActionSheetWithOptions(
-      { options, cancelButtonIndex },
-      async (buttonIndex) => {
-        if (buttonIndex === 0) {
-          const result = await ImagePicker.launchCameraAsync({
-            allowsEditing: true,
-            mediaTypes: ["images"],
-          })
-          if (!result.canceled && result.assets?.length) {
-            const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-            if (uploadResponse.kind === "ok") {
-              setRecipeToAdd(uploadResponse.recipe)
-              router.replace("/(logged-in)/recipe/add")
-            } else {
-              alert(translate("selectCookbookScreen:imageParsingFailed"))
-            }
-          }
-        } else if (buttonIndex === 1) {
-          const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ["images"],
-            allowsMultipleSelection: false,
-            allowsEditing: true,
-          })
-          if (!result.canceled && result.assets?.length) {
-            const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-            if (uploadResponse.kind === "ok") {
-              setRecipeToAdd(uploadResponse.recipe)
-              router.replace("/(logged-in)/recipe/add")
-            } else {
-              alert(translate("selectCookbookScreen:imageParsingFailed"))
-            }
+    showActionSheetWithOptions({ options, cancelButtonIndex }, async (buttonIndex) => {
+      if (buttonIndex === 0) {
+        const result = await ImagePicker.launchCameraAsync({
+          allowsEditing: true,
+          mediaTypes: ["images"],
+        })
+        if (!result.canceled && result.assets?.length) {
+          const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
+          if (uploadResponse.kind === "ok") {
+            setRecipeToAdd(uploadResponse.recipe)
+            router.replace("/(logged-in)/recipe/add")
+          } else {
+            alert(translate("selectCookbookScreen:imageParsingFailed"))
           }
         }
-      },
-    )
+      } else if (buttonIndex === 1) {
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ["images"],
+          allowsMultipleSelection: false,
+          allowsEditing: true,
+        })
+        if (!result.canceled && result.assets?.length) {
+          const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
+          if (uploadResponse.kind === "ok") {
+            setRecipeToAdd(uploadResponse.recipe)
+            router.replace("/(logged-in)/recipe/add")
+          } else {
+            alert(translate("selectCookbookScreen:imageParsingFailed"))
+          }
+        }
+      }
+    })
   }, [showActionSheetWithOptions, setRecipeToAdd])
 }

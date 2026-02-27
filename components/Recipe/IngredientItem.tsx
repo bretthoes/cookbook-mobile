@@ -31,10 +31,7 @@ export const IngredientItem = ({ ingredient, index, isFirst, isLast }: Ingredien
 
   return (
     <View style={[$themedItemStyle, isFirst && $themedBorderTop, isLast && $themedBorderBottom]}>
-      <Pressable
-        style={$themedContainer}
-        onPress={() => handleValueChange(!isChecked)}
-      >
+      <Pressable style={$themedContainer} onPress={() => handleValueChange(!isChecked)}>
         <View style={$themedCheckboxContainer} pointerEvents="none">
           <Checkbox value={isChecked} onValueChange={handleValueChange} />
         </View>
