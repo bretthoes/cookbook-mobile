@@ -1,12 +1,12 @@
 import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { translate } from "@/i18n"
 import type { TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
 import React, { useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
 
 interface ItemNotFoundProps {
@@ -48,11 +48,12 @@ export function ItemNotFound({
   style,
 }: ItemNotFoundProps) {
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
 
   const displayMessage =
-    message ?? (messageTx ? translate(messageTx) : translate("itemNotFound:message"))
+    message ?? (messageTx ? t(messageTx) : t("itemNotFound:message"))
   const displayButtonText =
-    buttonText ?? (buttonTx ? translate(buttonTx) : translate("common:goBack"))
+    buttonText ?? (buttonTx ? t(buttonTx) : t("common:goBack"))
 
   const $themedRoot = useMemo(() => themed($root), [themed])
   const $themedContainer = useMemo(() => themed($container), [themed])

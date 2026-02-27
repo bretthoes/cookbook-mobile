@@ -6,7 +6,7 @@ import { RecipeListItem } from "@/components/Recipe/RecipeListItem"
 import { Screen } from "@/components/Screen"
 import { SearchBar } from "@/components/SearchBar"
 import { Text } from "@/components/Text"
-import { isRTL, translate } from "@/i18n"
+import { isRTL } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { RecipeBrief } from "@/models/Recipe"
 import type { ThemedStyle } from "@/theme"
@@ -16,6 +16,7 @@ import { delay } from "@/utils/delay"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Alert, FlatList, ImageStyle, View, ViewStyle } from "react-native"
 
@@ -27,6 +28,7 @@ export default observer(function Cookbook() {
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
 
   const isAuthor = membershipStore.ownMembership?.isOwner
 
@@ -59,11 +61,11 @@ export default observer(function Cookbook() {
     // Check if cookbook is in favorites
     if (selected && hasFavorite(selected)) {
       Alert.alert(
-        translate("cookbookDetailScreen:leaveCannotRemoveFavoritesTitle"),
-        translate("cookbookDetailScreen:leaveCannotRemoveFavorites"),
+        t("cookbookDetailScreen:leaveCannotRemoveFavoritesTitle"),
+        t("cookbookDetailScreen:leaveCannotRemoveFavorites"),
         [
           {
-            text: translate("common:ok"),
+            text: t("common:ok"),
             style: "cancel",
           },
         ],
@@ -74,11 +76,11 @@ export default observer(function Cookbook() {
     // TODO should refresh currentCookbook here to ensure membersCount is up to date.
     if (isAuthor && selected?.membersCount !== 1) {
       Alert.alert(
-        translate("cookbookDetailScreen:leaveConfirmTitle"),
-        translate("cookbookDetailScreen:leaveTransferOwnershipFirst"),
+        t("cookbookDetailScreen:leaveConfirmTitle"),
+        t("cookbookDetailScreen:leaveTransferOwnershipFirst"),
         [
           {
-            text: translate("common:ok"),
+            text: t("common:ok"),
             style: "cancel",
           },
         ],
@@ -87,15 +89,15 @@ export default observer(function Cookbook() {
     }
 
     Alert.alert(
-      translate("cookbookDetailScreen:leaveConfirmTitle"),
-      translate("cookbookDetailScreen:leaveConfirmMessage"),
+      t("cookbookDetailScreen:leaveConfirmTitle"),
+      t("cookbookDetailScreen:leaveConfirmMessage"),
       [
         {
-          text: translate("common:cancel"),
+          text: t("common:cancel"),
           style: "cancel",
         },
         {
-          text: translate("cookbookDetailScreen:leaveButton"),
+          text: t("cookbookDetailScreen:leaveButton"),
           style: "destructive",
           onPress: async () => {
             if (!membershipStore.ownMembership?.id) return
@@ -103,13 +105,13 @@ export default observer(function Cookbook() {
             if (result) {
               remove()
             } else {
-              Alert.alert(translate("common:error"), translate("cookbookDetailScreen:leaveError"))
+              Alert.alert(t("common:error"), t("cookbookDetailScreen:leaveError"))
             }
           },
         },
       ],
     )
-  }, [isAuthor, selected, hasFavorite, membershipStore, remove])
+  }, [isAuthor, selected, hasFavorite, membershipStore, remove, t])
 
   const handlePressMore = () => setPopoverVisible(true)
 
@@ -233,7 +235,7 @@ export default observer(function Cookbook() {
               <SearchBar
                 value={searchQuery}
                 onChangeText={setSearchQuery}
-                placeholder={translate("recipeListScreen:searchPlaceholder")}
+                placeholder={t("recipeListScreen:searchPlaceholder")}
               />
               <Divider size={spacing.sm} />
             </View>
@@ -244,7 +246,7 @@ export default observer(function Cookbook() {
             <View style={$themedListFooter}>
               <Text
                 weight="light"
-                text={translate("cookbookDetailScreen:recipeCount", {
+                text={t("cookbookDetailScreen:recipeCount", {
                   count: filteredItems.length,
                 })}
               />

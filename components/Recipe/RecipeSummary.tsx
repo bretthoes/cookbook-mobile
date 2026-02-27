@@ -1,10 +1,10 @@
 import { Text } from "@/components/Text"
-import { translate } from "@/i18n"
 import { Recipe } from "@/models/Recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
 import React from "react"
 import { View, ViewStyle } from "react-native"
 import { UseCase } from "../UseCase"
@@ -46,16 +46,17 @@ function formatMinutes(minutes: number): { hours: number; minutes: number } {
 }
 
 function TimeDisplay({ minutes }: { minutes: number }) {
+  const { t } = useTranslation()
   const { hours, minutes: mins } = formatMinutes(minutes)
   return (
     <>
       {hours > 0 && (
         <Text
           preset="default"
-          text={`${hours} ${hours !== 1 ? translate("recipeSummary:hour_plural") : translate("recipeSummary:hour")}`}
+          text={`${hours} ${hours !== 1 ? t("recipeSummary:hour_plural") : t("recipeSummary:hour")}`}
         />
       )}
-      {mins > 0 && <Text preset="default" text={`${mins} ${translate("recipeSummary:mins")}`} />}
+      {mins > 0 && <Text preset="default" text={`${mins} ${t("recipeSummary:mins")}`} />}
     </>
   )
 }
@@ -67,6 +68,7 @@ const $timeItemContainer: ThemedStyle<ViewStyle> = (theme) => ({
 
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = React.useState(false)
   const hasImages = !!recipe?.images[0]
   const hasTimeOrServings =
@@ -108,7 +110,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               <Text
                 preset="heading"
                 weight="light"
-                text={`${recipe.servings}${translate("recipeSummary:servingsSuffix")}`}
+                text={`${recipe.servings}${t("recipeSummary:servingsSuffix")}`}
               />
             </View>
           )}
@@ -118,7 +120,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               <Text
                 preset="formHelper"
                 weight="light"
-                text={translate("recipeDetailsScreen:bake").toUpperCase()}
+                text={t("recipeDetailsScreen:bake").toUpperCase()}
               />
               <TimeDisplay minutes={recipe.bakingTimeInMinutes} />
             </View>
@@ -129,7 +131,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               <Text
                 preset="formHelper"
                 weight="light"
-                text={translate("recipeDetailsScreen:prep").toUpperCase()}
+                text={t("recipeDetailsScreen:prep").toUpperCase()}
               />
               <TimeDisplay minutes={recipe.preparationTimeInMinutes} />
             </View>
@@ -140,7 +142,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               <Text
                 preset="formHelper"
                 weight="light"
-                text={translate("recipeDetailsScreen:cook").toUpperCase()}
+                text={t("recipeDetailsScreen:cook").toUpperCase()}
               />
               <TimeDisplay minutes={recipe.cookingTimeInMinutes} />
             </View>

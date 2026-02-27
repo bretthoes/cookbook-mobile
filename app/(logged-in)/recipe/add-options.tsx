@@ -1,17 +1,18 @@
 import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
-import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
 import { useMemo } from "react"
 import { View } from "react-native"
 
 export default observer(function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
   const { cookbookStore } = useStores()
   const addRecipeFromCamera = useAddRecipeFromCamera()
 
@@ -28,20 +29,20 @@ export default observer(function AddRecipeOptionsScreen() {
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
       <View style={$themedListContainer}>
         <OptionListItem
-          title={translate("recipeAddOptionsScreen:optionManual")}
-          description={translate("recipeAddOptionsScreen:optionManualDesc")}
+          title={t("recipeAddOptionsScreen:optionManual")}
+          description={t("recipeAddOptionsScreen:optionManualDesc")}
           leftIcon="pen"
           onPress={() => router.replace("../recipe/add")}
         />
         <OptionListItem
-          title={translate("recipeAddOptionsScreen:optionFromUrl")}
-          description={translate("recipeAddOptionsScreen:optionFromUrlDesc")}
+          title={t("recipeAddOptionsScreen:optionFromUrl")}
+          description={t("recipeAddOptionsScreen:optionFromUrlDesc")}
           leftIcon="web"
           onPress={() => router.replace("../recipe/select-url")}
         />
         <OptionListItem
-          title={translate("recipeAddOptionsScreen:optionFromPhoto")}
-          description={translate("recipeAddOptionsScreen:optionFromPhotoDesc")}
+          title={t("recipeAddOptionsScreen:optionFromPhoto")}
+          description={t("recipeAddOptionsScreen:optionFromPhotoDesc")}
           leftIcon="camera"
           onPress={() => {
             if (cookbookStore.selected) {
@@ -51,7 +52,7 @@ export default observer(function AddRecipeOptionsScreen() {
                 pathname: "../select-cookbook",
                 params: {
                   nextRoute: "/(logged-in)/(tabs)/recipe/add",
-                  action: translate("selectCookbookScreen:actionForAddFromCamera"),
+                  action: t("selectCookbookScreen:actionForAddFromCamera"),
                   onSelect: "handleAddRecipeFromCamera",
                 },
               })

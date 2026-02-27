@@ -1,9 +1,9 @@
 import { TOptions } from "i18next"
 import { ForwardedRef, forwardRef, ReactNode } from "react"
 import { Text as RNText, TextProps as RNTextProps, StyleProp, TextStyle } from "react-native"
+import { useTranslation } from "react-i18next"
 
 import { isRTL, TxKeyPath } from "@/i18n"
-import { translate } from "@/i18n/translate"
 import type { ThemedStyle, ThemedStyleArray } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { typography } from "@/theme/typography"
@@ -58,8 +58,9 @@ export interface TextProps extends RNTextProps {
 export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<RNText>) {
   const { weight, size, tx, txOptions, text, children, style: $styleOverride, ...rest } = props
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
 
-  const i18nText = tx && translate(tx, txOptions)
+  const i18nText = tx && t(tx, txOptions)
   const content = i18nText || text || children
 
   const preset: Presets = props.preset ?? "default"

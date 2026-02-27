@@ -2,6 +2,7 @@ import { ListItem } from "@/components/ListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { UseCase } from "@/components/UseCase"
+import { loadDateFnsLocale } from "@/utils/formatDate"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -38,6 +39,7 @@ export default function LanguageScreen() {
   const handleLanguageSelect = async (languageCode: string) => {
     await changeLanguage(languageCode)
     await AsyncStorage.setItem("language", languageCode)
+    loadDateFnsLocale()
     setCurrentLanguage(languageCode)
   }
 

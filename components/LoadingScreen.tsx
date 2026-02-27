@@ -1,4 +1,3 @@
-import { translate } from "@/i18n"
 import { useEffect } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
@@ -28,7 +27,9 @@ export interface LoadingScreenProps {
 /**
  * A full-screen loading indicator with an image and animated typing dots.
  */
-export function LoadingScreen({ text = translate("common:loading") }: LoadingScreenProps) {
+export function LoadingScreen(props: LoadingScreenProps) {
+  const { t } = useTranslation()
+  const text = props.text ?? t("common:loading")
   // Animation for the typing dots
   const dot1Y = useSharedValue(0)
   const dot2Y = useSharedValue(0)

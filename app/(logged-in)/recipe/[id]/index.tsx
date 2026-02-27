@@ -2,7 +2,6 @@ import { Popover } from "@/components/Popover"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { translate } from "@/i18n"
 import { ListItem } from "@/components/ListItem"
 import { MoreButton } from "@/components/MoreButton"
 import { DirectionText } from "@/components/Recipe/DirectionText"
@@ -19,6 +18,7 @@ import { useAppTheme } from "@/theme/context"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
+import { useTranslation } from "react-i18next"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ActivityIndicator, Alert, View, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
@@ -30,6 +30,7 @@ export default observer(function Recipe() {
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
   const insets = useSafeAreaInsets()
   const [isLoading, setIsLoading] = useState(false)
   const [popoverVisible, setPopoverVisible] = useState(false)
@@ -80,15 +81,15 @@ export default observer(function Recipe() {
 
   const handlePressDelete = useCallback(async () => {
     Alert.alert(
-      translate("recipeDetailScreen:deleteTitle"),
-      translate("recipeDetailScreen:deleteMessage"),
+      t("recipeDetailScreen:deleteTitle"),
+      t("recipeDetailScreen:deleteMessage"),
       [
         {
-          text: translate("common:cancel"),
+          text: t("common:cancel"),
           style: "cancel",
         },
         {
-          text: translate("recipeDetailScreen:deleteButton"),
+          text: t("recipeDetailScreen:deleteButton"),
           style: "destructive",
           onPress: async () => {
             await deleteRecipe()
@@ -96,7 +97,7 @@ export default observer(function Recipe() {
         },
       ],
     )
-  }, [deleteRecipe])
+  }, [deleteRecipe, t])
 
   const handlePressMore = () => setPopoverVisible(true)
 

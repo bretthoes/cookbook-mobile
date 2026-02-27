@@ -1,6 +1,5 @@
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
-import { translate } from "@/i18n"
 import { useAppTheme } from "@/theme/context"
 import type { ThemedStyle } from "@/theme"
 import { useMemo } from "react"
@@ -24,6 +23,7 @@ export interface PasswordRequirementsProps {
  */
 export function PasswordRequirements({ password }: PasswordRequirementsProps) {
   const { themed, theme } = useAppTheme()
+  const { t } = useTranslation()
   const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedRow = useMemo(() => themed($row), [themed])
   const $themedLabel = useMemo(() => themed($labelText), [themed])
@@ -41,7 +41,7 @@ export function PasswordRequirements({ password }: PasswordRequirementsProps) {
             key={key}
             style={$themedRow}
             accessibilityState={{ checked: met }}
-            accessibilityLabel={translate(`registerScreen:validation.${key}`)}
+            accessibilityLabel={t(`registerScreen:validation.${key}`)}
           >
             {met ? (
               <Icon icon="check" color={theme.colors.tint} size={16} />

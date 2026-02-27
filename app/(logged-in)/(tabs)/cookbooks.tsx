@@ -5,7 +5,7 @@ import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
-import { isRTL, translate } from "@/i18n"
+import { isRTL } from "@/i18n"
 import { Cookbook } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -29,6 +29,7 @@ import {
   View,
   ViewStyle,
 } from "react-native"
+import { useTranslation } from "react-i18next"
 import Animated, {
   Extrapolate,
   interpolate,
@@ -42,6 +43,7 @@ const ICON_SIZE = 14
 export default observer(function DemoPodcastListScreen(_props) {
   const { cookbookStore } = useStores()
   const { themeContext } = useAppTheme()
+  const { t } = useTranslation()
   const isDark = themeContext === "dark"
 
   const [refreshing, setRefreshing] = useState(false)
@@ -92,7 +94,7 @@ export default observer(function DemoPodcastListScreen(_props) {
               contentTxOptions={
                 cookbookStore.favoritesOnly
                   ? undefined
-                  : { tabName: translate("demoNavigator:createTab") }
+                  : { tabName: t("demoNavigator:createTab") }
               }
               button={cookbookStore.favoritesOnly ? "" : undefined}
               buttonOnPress={manualRefresh}
@@ -114,7 +116,7 @@ export default observer(function DemoPodcastListScreen(_props) {
                   labelTx="demoPodcastListScreen:onlyFavorites"
                   labelPosition="left"
                   labelStyle={$labelStyle}
-                  accessibilityLabel={translate("demoPodcastListScreen:accessibility.switch")}
+                  accessibilityLabel={t("demoPodcastListScreen:accessibility.switch")}
                 />
               </View>
             )}
@@ -145,6 +147,7 @@ const CookbookCard = observer(function CookbookCard({
   isDark: boolean
 }) {
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
   const imageUri = useMemo<ImageSourcePropType>(() => {
@@ -192,7 +195,7 @@ const CookbookCard = observer(function CookbookCard({
       Platform.select<AccessibilityProps>({
         ios: {
           accessibilityLabel: cookbook.title,
-          accessibilityHint: translate("demoPodcastListScreen:accessibility.cardHint", {
+          accessibilityHint: t("demoPodcastListScreen:accessibility.cardHint", {
             action: isFavorite ? "unfavorite" : "favorite",
           }),
         },
@@ -201,7 +204,7 @@ const CookbookCard = observer(function CookbookCard({
           accessibilityActions: [
             {
               name: "longpress",
-              label: translate("demoPodcastListScreen:accessibility.favoriteAction"),
+              label: t("demoPodcastListScreen:accessibility.favoriteAction"),
             },
           ],
           onAccessibilityAction: ({ nativeEvent }) => {
@@ -211,7 +214,7 @@ const CookbookCard = observer(function CookbookCard({
           },
         },
       }),
-    [cookbook, isFavorite, handlePressFavorite],
+    [cookbook, isFavorite, handlePressFavorite, t],
   )
 
   const handlePressCard = () => {
@@ -280,8 +283,8 @@ const CookbookCard = observer(function CookbookCard({
           style={[$themedFavoriteButton, isFavorite && $themedUnFavoriteButton]}
           accessibilityLabel={
             isFavorite
-              ? translate("demoPodcastListScreen:accessibility.unfavoriteIcon")
-              : translate("demoPodcastListScreen:accessibility.favoriteIcon")
+              ? t("demoPodcastListScreen:accessibility.unfavoriteIcon")
+              : t("demoPodcastListScreen:accessibility.favoriteIcon")
           }
           LeftAccessory={ButtonLeftAccessory}
         >
@@ -290,8 +293,8 @@ const CookbookCard = observer(function CookbookCard({
             weight="medium"
             text={
               isFavorite
-                ? translate("demoPodcastListScreen:unfavoriteButton")
-                : translate("demoPodcastListScreen:favoriteButton")
+                ? t("demoPodcastListScreen:unfavoriteButton")
+                : t("demoPodcastListScreen:favoriteButton")
             }
           />
         </Button>
