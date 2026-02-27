@@ -387,7 +387,7 @@ const en = {
     optionCookbookDesc: "Create a new collection and fill it with your favorite recipes",
     optionRecipe: "A New Recipe",
     optionRecipeDesc: "Add a recipe to one of your cookbooks",
-    optionInvite: "Invitation to a Friend",
+    optionInvite: "Send an invitation",
     optionInviteDesc: "Send a link to your friend",
   },
   recipeAddOptionsScreen: {
@@ -422,7 +422,7 @@ const en = {
     dropdownDescription: "Select the cookbook where you would like to add this recipe.",
     actionForRecipe: "Select the cookbook where you would like to add a new recipe.",
     actionForMembers: "Select a cookbook to view its members.",
-    actionForInvite: "Select the cookbook where you would like to send an invitation to a friend.",
+    actionForInvite: "Select the cookbook where you would like to send the invitation from.",
     actionForAddFromCamera: "Select a cookbook to add the recipe to.",
     emptyState: "No cookbooks have been added yet.",
     allowCameraRollAccess: "Please allow camera roll access in settings.",
