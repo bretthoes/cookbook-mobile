@@ -44,7 +44,7 @@ export default observer(function WelcomeScreen() {
           <Button
             tx="welcomeScreen:registerButton"
             preset="reversed"
-            onPress={() => router.push("/register")}
+            onPress={() => router.push("/register-options")}
           />
           <Button
             tx="welcomeScreen:loginButton"
