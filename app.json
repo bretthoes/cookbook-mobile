@@ -12,7 +12,9 @@
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
-      "associatedDomains": ["applinks:sharedcookbook.com"]
+      "associatedDomains": [
+        "applinks:sharedcookbook.com"
+      ]
     },
     "android": {
       "icon": "./assets/images/app-icon-android-legacy.png",
@@ -27,7 +29,10 @@
               "pathPrefix": "/i"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "adaptiveIcon": {
@@ -76,7 +81,8 @@
             "enforceNavigationBarContrast": false
           }
         }
-      ]
+      ],
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true,
