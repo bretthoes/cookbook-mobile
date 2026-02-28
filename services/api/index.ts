@@ -237,6 +237,12 @@ export class Api {
     return userWrappers.login(email, password)
   }
 
+  async loginWithGoogle(
+    idToken: string,
+  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
+    return userWrappers.loginWithGoogle(idToken)
+  }
+
   async register(email: string, password: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return userWrappers.register(email, password)
   }

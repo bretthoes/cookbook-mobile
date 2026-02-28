@@ -158,6 +158,20 @@ export const AuthenticationStoreModel = types
         console.error(`Error in forgotPassword: ${JSON.stringify(response)}`)
       }
     }),
+    loginWithGoogle: flow(function* (idToken: string) {
+      store.setProp("result", "")
+      const response = yield api.loginWithGoogle(idToken)
+      if (response.kind !== "ok") {
+        store.setProp("result", "Sign in with Google failed. Please try again.")
+        console.error(`Error logging in with Google: ${JSON.stringify(response)}`)
+        return false
+      }
+      store.setProp("authResult", AuthResultModel.create(response.authResult))
+      store.setProp("authToken", response.authResult.accessToken)
+      yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
+      yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+      return true
+    }),
     resetPassword: flow(function* (resetCode: string, password: string) {
       const response = yield api.resetPassword(store.authEmail, resetCode, password)
       if (response.kind === "ok") {

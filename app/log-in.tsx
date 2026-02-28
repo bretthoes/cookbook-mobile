@@ -6,6 +6,7 @@ import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
+import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
 import { useStores } from "@/models/helpers/useStores"
 import { router } from "expo-router"
 import * as SecureStore from "expo-secure-store"
@@ -29,6 +30,7 @@ export default observer(function Login(_props) {
   const {
     authenticationStore: {
       login,
+      loginWithGoogle,
       authEmail,
       setAuthEmail,
       validationError,
@@ -37,6 +39,8 @@ export default observer(function Login(_props) {
       isAuthenticated,
     },
   } = useStores()
+  const { signIn } = useGoogleSignIn()
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   useEffect(() => {
     setResult("")
@@ -178,11 +182,27 @@ export default observer(function Login(_props) {
           preset="reversed"
           onPress={authenticate}
         />
+        <Button
+          tx="registerOptionsScreen:optionGoogle"
+          preset="default"
+          style={$tapButton}
+          onPress={async () => {
+            if (isGoogleLoading) return
+            setIsGoogleLoading(true)
+            const credential = await signIn()
+            if (credential) {
+              const success = await loginWithGoogle(credential.idToken)
+              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+            }
+            setIsGoogleLoading(false)
+          }}
+          disabled={isGoogleLoading}
+        />
 
         <Text
           tx="loginScreen:register"
           style={$register}
-          onPress={() => router.push("/register")}
+          onPress={() => router.push("/register-options")}
         />
       </View>
     </Screen>

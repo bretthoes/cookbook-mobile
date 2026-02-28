@@ -11,6 +11,7 @@ import * as SecureStore from "expo-secure-store"
 /** Paths that do not require Authorization header */
 const UNPROTECTED_PATHS = [
   "/api/Users/login",
+  "/api/Users/login-google",
   "/api/Users/register",
   "/api/Users/resendConfirmationEmail",
   "/api/Users/forgotPassword",

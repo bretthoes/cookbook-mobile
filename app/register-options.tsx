@@ -1,12 +1,14 @@
 import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { spacing } from "@/theme"
+import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
+import { useStores } from "@/models/helpers/useStores"
+import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
 
@@ -16,6 +18,10 @@ const googleLogo = require("@/assets/images/google.png")
 export default observer(function RegisterOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
+  const { signIn } = useGoogleSignIn()
+  const { authenticationStore } = useStores()
+  const { result } = authenticationStore
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
 
   useHeader({
     leftIcon: "back",
@@ -47,11 +53,21 @@ export default observer(function RegisterOptionsScreen() {
           title={t("registerOptionsScreen:optionGoogle")}
           description={t("registerOptionsScreen:optionGoogleDesc")}
           leftImage={googleLogo}
-          onPress={() => {
-            // TODO: Sign in with Google
+          onPress={async () => {
+            if (isGoogleLoading) return
+            setIsGoogleLoading(true)
+            const credential = await signIn()
+            if (credential) {
+              const success = await authenticationStore.loginWithGoogle(credential.idToken)
+              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+            }
+            setIsGoogleLoading(false)
           }}
         />
       </View>
+      {result ? (
+        <Text text={result} preset="formHelper" style={$errorText} />
+      ) : null}
       <View style={$footer}>
         <Text
           tx="registerScreen:alreadyHaveAccount"
@@ -71,4 +87,10 @@ const $footer: ViewStyle = {
 
 const $loginLink: TextStyle = {
   textDecorationLine: "underline",
+}
+
+const $errorText: TextStyle = {
+  color: colors.error,
+  marginTop: spacing.sm,
+  paddingHorizontal: spacing.md,
 }

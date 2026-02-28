@@ -308,6 +308,22 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/Users/login-google": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["PostApiUsersLoginGoogle"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/Users/refresh": {
     parameters: {
       query?: never
@@ -679,6 +695,9 @@ export interface components {
       password?: string
       twoFactorCode?: string | null
       twoFactorRecoveryCode?: string | null
+    }
+    LoginGoogleRequest: {
+      idToken: string
     }
     RefreshRequest: {
       refreshToken?: string
@@ -1363,6 +1382,29 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["LoginRequest"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["AccessTokenResponse"]
+        }
+      }
+    }
+  }
+  PostApiUsersLoginGoogle: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginGoogleRequest"]
       }
     }
     responses: {
