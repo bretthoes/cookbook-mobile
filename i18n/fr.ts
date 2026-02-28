@@ -79,6 +79,15 @@ const fr: Translations = {
       needsSpecialChar: "___must contain at least one special character",
     },
   },
+  registerOptionsScreen: {
+    title: "___Create account",
+    optionEmail: "___Continue with email",
+    optionEmailDesc: "___Sign up using your email address",
+    optionApple: "___Continue with Apple",
+    optionAppleDesc: "___Sign up with your Apple ID",
+    optionGoogle: "___Continue with Google",
+    optionGoogleDesc: "___Sign up with your Google account",
+  },
   errorScreen: {
     title: "Quelque chose s'est mal passé !",
     friendlySubtitle:

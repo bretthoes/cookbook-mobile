@@ -76,6 +76,15 @@ const en = {
       needsSpecialChar: "must contain at least one special character",
     },
   },
+  registerOptionsScreen: {
+    title: "Create account",
+    optionEmail: "Continue with email",
+    optionEmailDesc: "Sign up using your email address",
+    optionApple: "Continue with Apple",
+    optionAppleDesc: "Sign up with your Apple ID",
+    optionGoogle: "Continue with Google",
+    optionGoogleDesc: "Sign up with your Google account",
+  },
   errorScreen: {
     title: "Something went wrong!",
     friendlySubtitle:
