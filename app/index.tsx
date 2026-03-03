@@ -39,7 +39,6 @@ export default observer(function WelcomeScreen() {
       </View>
 
       <View style={[$bottomContainer, $bottomContainerInsets]}>
-        <Text tx="welcomeScreen:postscript" size="md" />
         <View style={$buttonGroup}>
           <Button
             tx="welcomeScreen:registerButton"
@@ -76,7 +75,6 @@ const $bottomContainer: ViewStyle = {
   flexShrink: 1,
   flexGrow: 0,
   flexBasis: "43%",
-  backgroundColor: colors.backgroundDim,
   borderTopLeftRadius: 16,
   borderTopRightRadius: 16,
   paddingHorizontal: spacing.lg,
@@ -98,8 +96,8 @@ const $welcomeFace: ImageStyle = {
   height: 169,
   width: 269,
   position: "absolute",
-  bottom: -47,
-  right: -80,
+  bottom: -220,
+  right: -60,
   transform: [{ scaleX: isRTL ? -1 : 1 }],
 }
 
