@@ -12,8 +12,14 @@ import { router } from "expo-router"
 import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
-import { TextInput, TextStyle, View, ViewStyle } from "react-native"
+import { Image, ImageStyle, TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "../theme"
+
+const googleLogo = require("@/assets/images/google.png")
+
+function GoogleLogoAccessory({ style }: { style?: unknown }) {
+  return <Image source={googleLogo} style={[$googleLogo, style as ImageStyle]} />
+}
 
 const REMEMBER_ME_EMAIL_KEY = "login_remember_email"
 const REMEMBER_ME_PASSWORD_KEY = "login_remember_password"
@@ -182,10 +188,18 @@ export default observer(function Login(_props) {
           preset="reversed"
           onPress={authenticate}
         />
+
+        <View style={$orContainer}>
+          <View style={$orLine} />
+          <Text tx="loginScreen:or" style={$orLabel} size="sm" />
+          <View style={$orLine} />
+        </View>
+
         <Button
           tx="registerOptionsScreen:optionGoogle"
           preset="default"
           style={$tapButton}
+          LeftAccessory={GoogleLogoAccessory}
           onPress={async () => {
             if (isGoogleLoading) return
             setIsGoogleLoading(true)
@@ -247,4 +261,27 @@ const $register: TextStyle = {
 const $forgotPasswordInline: TextStyle = {
   fontSize: spacing.sm,
   textDecorationLine: "underline",
+}
+
+const $orContainer: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  marginTop: spacing.sm,
+  marginBottom: spacing.xs,
+}
+
+const $orLine: ViewStyle = {
+  flex: 1,
+  height: 1,
+  backgroundColor: colors.border,
+}
+
+const $orLabel: TextStyle = {
+  marginHorizontal: spacing.sm,
+  color: colors.textDim,
+}
+
+const $googleLogo: ImageStyle = {
+  width: 20,
+  height: 20,
 }
