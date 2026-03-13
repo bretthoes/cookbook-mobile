@@ -126,6 +126,7 @@ const fr: Translations = {
   },
   loginScreen: {
     logIn: "Se connecter",
+    or: "ou",
     signIn: "---Sign In",
     enterDetails:
       "Entrez vos informations ci-dessous pour débloquer des informations top secrètes. Vous ne devinerez jamais ce que nous avons en attente. Ou peut-être que vous le ferez ; ce n'est pas de la science spatiale ici.",

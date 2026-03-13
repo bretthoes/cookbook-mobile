@@ -124,6 +124,7 @@ const ko: Translations = {
   },
   loginScreen: {
     logIn: "로그인",
+    or: "또는",
     signIn: "로그인",
     enterDetails:
       "일급비밀 정보를 해제하기 위해 상세 정보를 입력하세요. 무엇이 기다리고 있는지 절대 모를겁니다. 혹은 알 수 있을지도 모르겠군요. 엄청 복잡한 뭔가는 아닙니다.",
