@@ -172,6 +172,20 @@ export const AuthenticationStoreModel = types
       yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
       return true
     }),
+    loginWithApple: flow(function* (identityToken: string) {
+      store.setProp("result", "")
+      const response = yield api.loginWithApple(identityToken)
+      if (response.kind !== "ok") {
+        store.setProp("result", "Sign in with Apple failed. Please try again.")
+        console.error(`Error logging in with Apple: ${JSON.stringify(response)}`)
+        return false
+      }
+      store.setProp("authResult", AuthResultModel.create(response.authResult))
+      store.setProp("authToken", response.authResult.accessToken)
+      yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
+      yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+      return true
+    }),
     resetPassword: flow(function* (resetCode: string, password: string) {
       const response = yield api.resetPassword(store.authEmail, resetCode, password)
       if (response.kind === "ok") {

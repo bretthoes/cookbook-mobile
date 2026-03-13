@@ -292,6 +292,22 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/Users/login-apple": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["UsersLoginApple"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/Users/register": {
     parameters: {
       query?: never
@@ -663,6 +679,9 @@ export interface components {
     }
     LoginWithGoogleCommand: {
       idToken?: string
+    }
+    LoginWithAppleCommand: {
+      identityToken?: string
     }
     HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
       ({
@@ -1350,6 +1369,27 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["LoginWithGoogleCommand"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  UsersLoginApple: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginWithAppleCommand"]
       }
     }
     responses: {

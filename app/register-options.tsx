@@ -1,6 +1,7 @@
 import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useAppleSignIn } from "@/hooks/useAppleSignIn"
 import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
@@ -10,7 +11,7 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { TextStyle, View, ViewStyle } from "react-native"
+import { Platform, TextStyle, View, ViewStyle } from "react-native"
 
 const appleLogo = require("@/assets/images/apple.png")
 const googleLogo = require("@/assets/images/google.png")
@@ -18,10 +19,12 @@ const googleLogo = require("@/assets/images/google.png")
 export default observer(function RegisterOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const { signIn } = useGoogleSignIn()
+  const { signIn: googleSignIn } = useGoogleSignIn()
+  const { signIn: appleSignIn } = useAppleSignIn()
   const { authenticationStore } = useStores()
   const { result } = authenticationStore
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [isAppleLoading, setIsAppleLoading] = useState(false)
 
   useHeader({
     leftIcon: "back",
@@ -41,14 +44,23 @@ export default observer(function RegisterOptionsScreen() {
           leftIcon="mail"
           onPress={() => router.replace("/register")}
         />
-        <OptionListItem
-          title={t("registerOptionsScreen:optionApple")}
-          description={t("registerOptionsScreen:optionAppleDesc")}
-          leftImage={appleLogo}
-          onPress={() => {
-            // TODO: Sign in with Apple
-          }}
-        />
+        {Platform.OS === "ios" && (
+          <OptionListItem
+            title={t("registerOptionsScreen:optionApple")}
+            description={t("registerOptionsScreen:optionAppleDesc")}
+            leftImage={appleLogo}
+            onPress={async () => {
+              if (isAppleLoading) return
+              setIsAppleLoading(true)
+              const credential = await appleSignIn()
+              if (credential) {
+                const success = await authenticationStore.loginWithApple(credential.identityToken)
+                if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+              }
+              setIsAppleLoading(false)
+            }}
+          />
+        )}
         <OptionListItem
           title={t("registerOptionsScreen:optionGoogle")}
           description={t("registerOptionsScreen:optionGoogleDesc")}
@@ -56,7 +68,7 @@ export default observer(function RegisterOptionsScreen() {
           onPress={async () => {
             if (isGoogleLoading) return
             setIsGoogleLoading(true)
-            const credential = await signIn()
+            const credential = await googleSignIn()
             if (credential) {
               const success = await authenticationStore.loginWithGoogle(credential.idToken)
               if (success) router.replace("/(logged-in)/(tabs)/cookbooks")

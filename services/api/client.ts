@@ -12,6 +12,7 @@ import * as SecureStore from "expo-secure-store"
 const UNPROTECTED_PATHS = [
   "/api/Users/login",
   "/api/Users/login-google",
+  "/api/Users/login-apple",
   "/api/Users/register",
   "/api/Users/resendConfirmationEmail",
   "/api/Users/forgotPassword",

@@ -51,6 +51,26 @@ export async function loginWithGoogle(
   }
 }
 
+export async function loginWithApple(
+  identityToken: string,
+): Promise<ApiResult<{ authResult: AuthResultSnapshotIn }>> {
+  try {
+    const { data, error, response } = await client.POST("/api/Users/login-apple", {
+      body: { identityToken },
+    })
+    if (!response.ok)
+      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    if (!data) return { kind: "bad-data" }
+    const { tokenType, accessToken, expiresIn, refreshToken } = data
+    if (!tokenType || !accessToken || !expiresIn || !refreshToken) return { kind: "bad-data" }
+    return toOkResult({
+      authResult: { tokenType, accessToken, expiresIn, refreshToken },
+    })
+  } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
 export async function register(
   email: string,
   password: string,
