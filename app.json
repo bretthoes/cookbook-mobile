@@ -12,9 +12,7 @@
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
-      "associatedDomains": [
-        "applinks:sharedcookbook.com"
-      ]
+      "associatedDomains": ["applinks:sharedcookbook.com"]
     },
     "android": {
       "icon": "./assets/images/app-icon-android-legacy.png",
@@ -29,10 +27,7 @@
               "pathPrefix": "/i"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ],
       "adaptiveIcon": {
@@ -82,7 +77,13 @@
           }
         }
       ],
-      ["@react-native-google-signin/google-signin",{"iosUrlScheme":"com.googleusercontent.apps.855003467457-0np16tdr82tqvulovp4mjsfmi2ulf84r"}]
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.855003467457-0np16tdr82tqvulovp4mjsfmi2ulf84r"
+        }
+      ],
+      "expo-speech-recognition"
     ],
     "experiments": {
       "typedRoutes": true,
