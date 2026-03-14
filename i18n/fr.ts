@@ -437,8 +437,7 @@ const fr: Translations = {
     dropdownDescription: "___Select the cookbook where you would like to add this recipe.",
     actionForRecipe: "___Select the cookbook where you would like to add a new recipe.",
     actionForMembers: "___Select a cookbook to view its members.",
-    actionForInvite:
-      "___Select the cookbook where you would like to send the invitation from.",
+    actionForInvite: "___Select the cookbook where you would like to send the invitation from.",
     actionForAddFromCamera: "___Select a cookbook to add the recipe to.",
     emptyState: "___No cookbooks have been added yet.",
     allowCameraRollAccess: "___Please allow camera roll access in settings.",

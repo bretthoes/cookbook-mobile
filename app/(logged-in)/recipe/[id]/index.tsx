@@ -80,23 +80,19 @@ export default observer(function Recipe() {
   }, [selected?.id])
 
   const handlePressDelete = useCallback(async () => {
-    Alert.alert(
-      t("recipeDetailScreen:deleteTitle"),
-      t("recipeDetailScreen:deleteMessage"),
-      [
-        {
-          text: t("common:cancel"),
-          style: "cancel",
+    Alert.alert(t("recipeDetailScreen:deleteTitle"), t("recipeDetailScreen:deleteMessage"), [
+      {
+        text: t("common:cancel"),
+        style: "cancel",
+      },
+      {
+        text: t("recipeDetailScreen:deleteButton"),
+        style: "destructive",
+        onPress: async () => {
+          await deleteRecipe()
         },
-        {
-          text: t("recipeDetailScreen:deleteButton"),
-          style: "destructive",
-          onPress: async () => {
-            await deleteRecipe()
-          },
-        },
-      ],
-    )
+      },
+    ])
   }, [deleteRecipe, t])
 
   const handlePressMore = () => setPopoverVisible(true)

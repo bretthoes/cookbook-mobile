@@ -77,9 +77,7 @@ export default observer(function RegisterOptionsScreen() {
           }}
         />
       </View>
-      {result ? (
-        <Text text={result} preset="formHelper" style={$errorText} />
-      ) : null}
+      {result ? <Text text={result} preset="formHelper" style={$errorText} /> : null}
       <View style={$footer}>
         <Text
           tx="registerScreen:alreadyHaveAccount"

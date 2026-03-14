@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next"
 import { useMemo } from "react"
 import { View } from "react-native"
 
-
 export default observer(function AddInvitationOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
