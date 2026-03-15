@@ -59,6 +59,12 @@ export default observer(function AddRecipeOptionsScreen() {
             }
           }}
         />
+        <OptionListItem
+          title={t("recipeAddOptionsScreen:optionFromVoice")}
+          description={t("recipeAddOptionsScreen:optionFromVoiceDesc")}
+          leftIcon="menu"
+          onPress={() => router.replace("../recipe/add-voice")}
+        />
       </View>
     </Screen>
   )
