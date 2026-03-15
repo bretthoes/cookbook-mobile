@@ -200,6 +200,12 @@ export class Api {
     return recipeWrappers.extractRecipeFromUrl(url)
   }
 
+  async extractRecipeFromVoice(
+    transcript: string,
+  ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
+    return recipeWrappers.extractRecipeFromVoice(transcript)
+  }
+
   async extractRecipeFromImage(
     image: ImagePickerAsset,
   ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {

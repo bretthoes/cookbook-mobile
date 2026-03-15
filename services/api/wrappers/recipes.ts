@@ -120,6 +120,23 @@ export async function extractRecipeFromUrl(
   }
 }
 
+export async function extractRecipeFromVoice(
+  transcript: string,
+): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+  try {
+    const { data, error, response } = await client.POST(
+      "/api/Recipes/parse-recipe-voice" as never,
+      { body: { transcript } } as never,
+    )
+    if (!response.ok)
+      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    if (!data) return { kind: "not-found" }
+    return toOkResult({ recipe: data as unknown as RecipeToAddSnapshotIn })
+  } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
 export async function extractRecipeFromImage(
   image: ImagePickerAsset,
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {

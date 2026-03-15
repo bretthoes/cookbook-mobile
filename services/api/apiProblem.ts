@@ -34,6 +34,10 @@ export type GeneralApiProblem =
    */
   | { kind: "conflict"; detail?: string }
   /**
+   * An upstream service quota has been exceeded. This is a 429.
+   */
+  | { kind: "rate-limited" }
+  /**
    * All other 4xx series errors.
    */
   | { kind: "rejected" }
@@ -72,6 +76,8 @@ export function getGeneralApiProblemFromResponse(
         return { kind: "not-found" }
       case 409:
         return { kind: "conflict", detail: data?.detail }
+      case 429:
+        return { kind: "rate-limited" }
       default:
         return { kind: "rejected" }
     }
