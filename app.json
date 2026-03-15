@@ -83,7 +83,13 @@
           "iosUrlScheme": "com.googleusercontent.apps.855003467457-0np16tdr82tqvulovp4mjsfmi2ulf84r"
         }
       ],
-      "expo-speech-recognition"
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to use your microphone to add recipes by voice.",
+          "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to recognize your speech to add recipes by voice."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
