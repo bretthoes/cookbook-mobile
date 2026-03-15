@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { useTranslation } from "react-i18next"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
