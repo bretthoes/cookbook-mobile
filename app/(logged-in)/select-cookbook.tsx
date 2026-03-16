@@ -126,6 +126,7 @@ export default observer(function SelectCookbookScreen() {
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [autoSelecting, setAutoSelecting] = useState(false)
 
   // Reset selection state when screen comes into focus
   useFocusEffect(
@@ -146,22 +147,31 @@ export default observer(function SelectCookbookScreen() {
     onLeftPress: () => router.back(),
   })
 
-  // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    // declare the data fetching function
     const fetchData = async () => {
       setIsLoading(true)
       try {
         await cookbookStore.fetch()
       } catch (error) {
         console.error(error)
-      } finally {
-        setIsLoading(false)
       }
+
+      if (cookbookStore.cookbooks.length === 1) {
+        const singleCookbook = cookbookStore.cookbooks[0]
+        cookbookStore.setSelectedById(singleCookbook.id)
+        setAutoSelecting(true)
+        if (params.onSelect === "handleAddRecipeFromCamera") {
+          addRecipeFromCamera()
+        } else {
+          router.replace(params.nextRoute as any)
+        }
+        return
+      }
+
+      setIsLoading(false)
     }
-    // call the function
     fetchData()
-  }, [cookbookStore])
+  }, [cookbookStore, params.onSelect, params.nextRoute, addRecipeFromCamera])
 
   const handleItemPress = useCallback(
     (cookbookId: number) => {
@@ -179,6 +189,10 @@ export default observer(function SelectCookbookScreen() {
     },
     [cookbookStore, params.onSelect, params.nextRoute, addRecipeFromCamera],
   )
+
+  if (autoSelecting) {
+    return null
+  }
 
   return (
     <Screen preset="scroll" style={$themedRoot}>
