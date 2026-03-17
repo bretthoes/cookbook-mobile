@@ -275,6 +275,7 @@ const en = {
     preferences: "Preferences",
     customize: "Customize your experience.",
     darkMode: "Dark Mode",
+    largeFont: "Large Font",
     preferredLanguage: "Choose your preferred language",
     setName: "Set your display name",
     floatingTabBar: "Floating Tab Bar",
