@@ -8,10 +8,7 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import {
-  ExpoSpeechRecognitionModule,
-  useSpeechRecognitionEvent,
-} from "expo-speech-recognition"
+import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from "expo-speech-recognition"
 import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -27,7 +24,7 @@ import Animated, {
 type Phase = "idle" | "recording" | "processing"
 
 export default observer(function AddRecipeVoiceScreen() {
-  const { themed, theme } = useAppTheme()
+  const { themed } = useAppTheme()
   const { t } = useTranslation()
   const {
     recipeStore: { setRecipeToAdd },
@@ -189,20 +186,23 @@ export default observer(function AddRecipeVoiceScreen() {
           onPress={isRecording ? handleStop : handleStart}
           activeOpacity={0.8}
           accessibilityRole="button"
-          accessibilityLabel={isRecording ? t("recipeAddVoiceScreen:stopButton") : t("recipeAddVoiceScreen:startButton")}
+          accessibilityLabel={
+            isRecording
+              ? t("recipeAddVoiceScreen:stopButton")
+              : t("recipeAddVoiceScreen:startButton")
+          }
         >
           <Animated.View style={[$ring, themed($ringThemed), $animatedRing]}>
             <View style={[themed($micCircle), isRecording && themed($micCircleActive)]}>
-              <Text
-                text="🎙"
-                style={$micEmoji}
-              />
+              <Text text="🎙" style={$micEmoji} />
             </View>
           </Animated.View>
         </TouchableOpacity>
 
         <Text
-          text={isRecording ? t("recipeAddVoiceScreen:listening") : t("recipeAddVoiceScreen:tapToStart")}
+          text={
+            isRecording ? t("recipeAddVoiceScreen:listening") : t("recipeAddVoiceScreen:tapToStart")
+          }
           style={themed($statusText)}
           preset={isRecording ? "bold" : "default"}
         />
@@ -221,9 +221,7 @@ export default observer(function AddRecipeVoiceScreen() {
         </View>
       ) : null}
 
-      {errorMsg ? (
-        <Text text={errorMsg} style={themed($errorText)} />
-      ) : null}
+      {errorMsg ? <Text text={errorMsg} style={themed($errorText)} /> : null}
 
       {isRecording && (
         <>

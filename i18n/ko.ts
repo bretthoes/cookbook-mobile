@@ -422,7 +422,8 @@ const ko: Translations = {
     noTranscript: "___No speech detected. Please try again.",
     parseFailed: "___Couldn't build a recipe from that. Please try again.",
     rateLimited: "___The AI service is temporarily unavailable. Please try again later.",
-    microphonePermissionDenied: "___Microphone access is required. Please allow it in your device settings.",
+    microphonePermissionDenied:
+      "___Microphone access is required. Please allow it in your device settings.",
     unknownError: "___Something went wrong. Please try again.",
   },
   recipeSelectUrlScreen: {

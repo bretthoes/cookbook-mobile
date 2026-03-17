@@ -424,7 +424,8 @@ const en = {
     noTranscript: "No speech detected. Please try again.",
     parseFailed: "Couldn't build a recipe from that. Please try again.",
     rateLimited: "The AI service is temporarily unavailable. Please try again later.",
-    microphonePermissionDenied: "Microphone access is required. Please allow it in your device settings.",
+    microphonePermissionDenied:
+      "Microphone access is required. Please allow it in your device settings.",
     unknownError: "Something went wrong. Please try again.",
   },
   recipeSelectUrlScreen: {

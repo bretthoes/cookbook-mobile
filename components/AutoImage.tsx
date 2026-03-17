@@ -76,7 +76,5 @@ export function AutoImage(props: AutoImageProps) {
   const displayDimensions =
     dimensions ?? getFallbackDimensions(maxWidth, maxHeight, fallbackAspectRatio)
 
-  return (
-    <Image {...rest} style={[displayDimensions, style]} onLoad={onLoad} contentFit="contain" />
-  )
+  return <Image {...rest} style={[displayDimensions, style]} onLoad={onLoad} contentFit="contain" />
 }
