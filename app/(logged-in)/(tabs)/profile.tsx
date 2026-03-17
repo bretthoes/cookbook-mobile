@@ -33,8 +33,8 @@ export default observer(function ProfileScreen() {
 
   const router = useRouter()
 
-  const { themed } = useAppTheme()
-  const { themeContext, setThemeContextOverride } = useAppTheme()
+  const { themed, themeContext, setThemeContextOverride, largeFontEnabled, setLargeFontEnabled } =
+    useAppTheme()
   const isDark = themeContext === "dark"
 
   // Fetch invitations when the profile tab is focused
@@ -139,13 +139,20 @@ export default observer(function ProfileScreen() {
             </View>
           }
         />
-        {/* <View style={$themeRow}> // TODO see above
-        <Text tx="profileScreen:floatingTabBar" />
-        <Switch
-          value={useFloatingTabBar}
-          onValueChange={toggleFloatingTabBar}
+        <ListItem
+          tx="profileScreen:largeFont"
+          bottomSeparator
+          LeftComponent={
+            <View style={$iconContainer}>
+              <Icon icon="view" size={30} color={isDark ? colors.border : colors.text} />
+            </View>
+          }
+          RightComponent={
+            <View style={$iconContainer}>
+              <Switch value={largeFontEnabled} onValueChange={setLargeFontEnabled} />
+            </View>
+          }
         />
-      </View> */}
         <ListItem
           tx="profileScreen:preferredLanguage"
           // leftIcon="components"

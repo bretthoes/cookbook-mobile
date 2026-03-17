@@ -13,7 +13,7 @@ import {
   DefaultTheme as NavDefaultTheme,
   Theme as NavTheme,
 } from "@react-navigation/native"
-import { useMMKVString } from "react-native-mmkv"
+import { useMMKVBoolean, useMMKVString } from "react-native-mmkv"
 
 import { storage } from "../utils/storage"
 
@@ -29,7 +29,9 @@ import type {
 } from "./types"
 
 export type ThemeContextType = {
+  largeFontEnabled: boolean
   navigationTheme: NavTheme
+  setLargeFontEnabled: (enabled: boolean) => void
   setThemeContextOverride: (newTheme: ThemeContextModeT) => void
   theme: Theme
   themeContext: ImmutableThemeContextModeT
@@ -59,6 +61,10 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   const systemColorScheme = useColorScheme()
   // Our saved theme context: can be "light", "dark", or undefined (system theme)
   const [themeScheme, setThemeScheme] = useMMKVString("ignite.themeScheme", storage)
+  const [largeFontEnabled = false, setLargeFontEnabled] = useMMKVBoolean(
+    "ignite.largeFontEnabled",
+    storage,
+  )
 
   /**
    * This function is used to set the theme context and is exported from the useAppTheme() hook.
@@ -122,10 +128,12 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
   )
 
   const value = {
+    largeFontEnabled,
     navigationTheme,
+    setLargeFontEnabled,
+    setThemeContextOverride,
     theme,
     themeContext,
-    setThemeContextOverride,
     themed,
   }
 

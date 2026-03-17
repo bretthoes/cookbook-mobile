@@ -57,18 +57,21 @@ export interface TextProps extends RNTextProps {
  */
 export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<RNText>) {
   const { weight, size, tx, txOptions, text, children, style: $styleOverride, ...rest } = props
-  const { themed } = useAppTheme()
+  const { themed, largeFontEnabled } = useAppTheme()
   const { t } = useTranslation()
 
   const i18nText = tx && t(tx, txOptions)
   const content = i18nText || text || children
 
+  const activePresets = largeFontEnabled ? $largePresets : $presets
+  const activeSizeStyles = largeFontEnabled ? $largeSizeStyles : $sizeStyles
+
   const preset: Presets = props.preset ?? "default"
   const $styles: StyleProp<TextStyle> = [
     $rtlStyle,
-    themed($presets[preset]),
+    themed(activePresets[preset]),
     weight && $fontWeightStyles[weight],
-    size && $sizeStyles[size],
+    size && activeSizeStyles[size],
     $styleOverride,
   ]
 
@@ -89,28 +92,46 @@ const $sizeStyles = {
   xxs: { fontSize: 12, lineHeight: 18 } satisfies TextStyle,
 }
 
+const LARGE_FONT_MULTIPLIER = 1.22
+
+function scaleSizes(sizes: typeof $sizeStyles): typeof $sizeStyles {
+  return Object.fromEntries(
+    Object.entries(sizes).map(([key, style]) => [
+      key,
+      {
+        fontSize: Math.round(style.fontSize * LARGE_FONT_MULTIPLIER),
+        lineHeight: Math.round(style.lineHeight * LARGE_FONT_MULTIPLIER),
+      } satisfies TextStyle,
+    ]),
+  ) as typeof $sizeStyles
+}
+
+const $largeSizeStyles = scaleSizes($sizeStyles)
+
 const $fontWeightStyles = Object.entries(typography.primary).reduce((acc, [weight, fontFamily]) => {
   return { ...acc, [weight]: { fontFamily } }
 }, {}) as Record<Weights, TextStyle>
 
-const $baseStyle: ThemedStyle<TextStyle> = (theme) => ({
-  ...$sizeStyles.sm,
-  ...$fontWeightStyles.normal,
-  color: theme.colors.text,
-})
-
-const $presets: Record<Presets, ThemedStyleArray<TextStyle>> = {
-  default: [$baseStyle],
-  bold: [$baseStyle, { ...$fontWeightStyles.bold }],
-  heading: [
-    $baseStyle,
-    {
-      ...$sizeStyles.xxl,
-      ...$fontWeightStyles.bold,
-    },
-  ],
-  subheading: [$baseStyle, { ...$sizeStyles.lg, ...$fontWeightStyles.medium }],
-  formLabel: [$baseStyle, { ...$fontWeightStyles.medium }],
-  formHelper: [$baseStyle, { ...$sizeStyles.sm, ...$fontWeightStyles.normal }],
+function makeBaseStyle(sizes: typeof $sizeStyles): ThemedStyle<TextStyle> {
+  return (theme) => ({
+    ...sizes.sm,
+    ...$fontWeightStyles.normal,
+    color: theme.colors.text,
+  })
 }
+
+function makePresets(sizes: typeof $sizeStyles): Record<Presets, ThemedStyleArray<TextStyle>> {
+  const base = makeBaseStyle(sizes)
+  return {
+    default: [base],
+    bold: [base, { ...$fontWeightStyles.bold }],
+    heading: [base, { ...sizes.xxl, ...$fontWeightStyles.bold }],
+    subheading: [base, { ...sizes.lg, ...$fontWeightStyles.medium }],
+    formLabel: [base, { ...$fontWeightStyles.medium }],
+    formHelper: [base, { ...sizes.sm, ...$fontWeightStyles.normal }],
+  }
+}
+
+const $presets = makePresets($sizeStyles)
+const $largePresets = makePresets($largeSizeStyles)
 const $rtlStyle: TextStyle = isRTL ? { writingDirection: "rtl" } : {}
