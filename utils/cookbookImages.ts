@@ -1,5 +1,3 @@
-import { ImageSourcePropType } from "react-native"
-
 const missingCookbookImage = require("../assets/images/cookbooks/missing.png")
 const orangeCookbookImage = require("../assets/images/cookbooks/orange.png")
 const yellowCookbookImage = require("../assets/images/cookbooks/yellow.png")
@@ -16,7 +14,7 @@ const tealCookbookImage = require("../assets/images/cookbooks/teal.png")
  * Returns a consistent image for a cookbook based on its ID.
  * The image is determined by the last digit of the ID to ensure persistence.
  */
-export const getCookbookImage = (id: number): ImageSourcePropType => {
+export const getCookbookImage = (id: number): number => {
   const lastDigit = id % 10
 
   switch (lastDigit) {

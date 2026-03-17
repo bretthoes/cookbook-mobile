@@ -20,8 +20,6 @@ import {
   AccessibilityProps,
   ActivityIndicator,
   FlatList,
-  Image,
-  ImageSourcePropType,
   ImageStyle,
   Platform,
   StyleSheet,
@@ -29,6 +27,7 @@ import {
   View,
   ViewStyle,
 } from "react-native"
+import { Image, ImageSource } from "expo-image"
 import { useTranslation } from "react-i18next"
 import Animated, {
   Extrapolate,
@@ -148,7 +147,7 @@ const CookbookCard = observer(function CookbookCard({
   const { t } = useTranslation()
   const liked = useSharedValue(isFavorite ? 1 : 0)
 
-  const imageUri = useMemo<ImageSourcePropType>(() => {
+  const imageUri = useMemo<ImageSource | number>(() => {
     if (cookbook.image) {
       return { uri: cookbook.image }
     }
@@ -273,7 +272,14 @@ const CookbookCard = observer(function CookbookCard({
       content={cookbook.parsedTitleAndSubtitle.title}
       contentStyle={$themedMetadataText}
       {...accessibilityHintProps}
-      RightComponent={<Image source={imageUri} style={$themedItemThumbnail} />}
+      RightComponent={
+        <Image
+          source={imageUri}
+          style={$themedItemThumbnail}
+          contentFit="cover"
+          recyclingKey={cookbook.id.toString()}
+        />
+      }
       FooterComponent={
         <Button
           onPress={handlePressFavorite}
@@ -327,7 +333,6 @@ const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
   height: 120,
   width: 90,
   alignSelf: "flex-start",
-  resizeMode: "cover",
   borderRadius: 8,
 })
 
