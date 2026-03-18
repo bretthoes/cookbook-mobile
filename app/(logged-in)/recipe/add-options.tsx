@@ -10,6 +10,10 @@ import { useTranslation } from "react-i18next"
 import { useMemo } from "react"
 import { View } from "react-native"
 
+const tiktokLogo = require("@/assets/images/tiktok.png")
+const instagramLogo = require("@/assets/images/instagram.png")
+const pinterestLogo = require("@/assets/images/pinterest.png")
+
 export default observer(function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
@@ -64,6 +68,39 @@ export default observer(function AddRecipeOptionsScreen() {
           description={t("recipeAddOptionsScreen:optionFromVoiceDesc")}
           leftIcon="menu"
           onPress={() => router.replace("../recipe/add-voice")}
+        />
+        <OptionListItem
+          title={t("recipeAddOptionsScreen:optionFromTiktok")}
+          description={t("recipeAddOptionsScreen:optionFromTiktokDesc")}
+          leftImage={tiktokLogo}
+          onPress={() =>
+            router.replace({
+              pathname: "../recipe/add-social-import",
+              params: { platform: "tiktok" },
+            })
+          }
+        />
+        <OptionListItem
+          title={t("recipeAddOptionsScreen:optionFromInstagram")}
+          description={t("recipeAddOptionsScreen:optionFromInstagramDesc")}
+          leftImage={instagramLogo}
+          onPress={() =>
+            router.replace({
+              pathname: "../recipe/add-social-import",
+              params: { platform: "instagram" },
+            })
+          }
+        />
+        <OptionListItem
+          title={t("recipeAddOptionsScreen:optionFromPinterest")}
+          description={t("recipeAddOptionsScreen:optionFromPinterestDesc")}
+          leftImage={pinterestLogo}
+          onPress={() =>
+            router.replace({
+              pathname: "../recipe/add-social-import",
+              params: { platform: "pinterest" },
+            })
+          }
         />
       </View>
     </Screen>

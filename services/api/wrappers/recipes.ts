@@ -1,3 +1,4 @@
+import Config from "@/config"
 import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "@/models/Recipe"
 import { RecipeListSnapshotIn } from "@/models/generics"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
@@ -9,6 +10,7 @@ import {
   toProblemFromResponse,
 } from "@/services/api/toApiResult"
 import { ImagePickerAsset } from "expo-image-picker"
+import * as SecureStore from "expo-secure-store"
 
 const { client } = apiClientInstance
 
@@ -133,6 +135,40 @@ export async function extractRecipeFromVoice(
     if (!data) return { kind: "not-found" }
     return toOkResult({ recipe: data as unknown as RecipeToAddSnapshotIn })
   } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
+const SOCIAL_IMPORT_TIMEOUT_MS = 35_000
+
+export async function extractRecipeFromSocialUrl(
+  url: string,
+  platform: string,
+): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+  const baseUrl = Config.API_URL.replace(/\/api\/?$/, "")
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), SOCIAL_IMPORT_TIMEOUT_MS)
+
+  try {
+    const accessToken = await SecureStore.getItemAsync("accessToken")
+    const response = await fetch(`${baseUrl}/api/Recipes/parse-recipe-social`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      body: JSON.stringify({ url, platform }),
+      signal: controller.signal,
+    })
+    clearTimeout(timeoutId)
+
+    if (!response.ok) return toProblemFromResponse(response, null)
+    const data = await response.json()
+    if (!data) return { kind: "not-found" }
+    return toOkResult({ recipe: data as RecipeToAddSnapshotIn })
+  } catch (e) {
+    clearTimeout(timeoutId)
     return toProblemFromError(e)
   }
 }

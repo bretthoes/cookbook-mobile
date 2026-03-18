@@ -244,6 +244,38 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/Recipes/parse-recipe-voice": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["RecipesParseFromVoice"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/Recipes/parse-recipe-social": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["RecipesParseFromSocialUrl"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/Users/update": {
     parameters: {
       query?: never
@@ -302,6 +334,22 @@ export interface paths {
     get?: never
     put?: never
     post: operations["UsersLoginApple"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/Users/login-facebook": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["UsersLoginFacebook"]
     delete?: never
     options?: never
     head?: never
@@ -671,6 +719,13 @@ export interface components {
     ParseRecipeFromUrlCommand: {
       url?: string
     }
+    ParseRecipeFromVoiceCommand: {
+      transcript?: string
+    }
+    ParseRecipeFromSocialUrlCommand: {
+      url?: string
+      platform?: string
+    }
     UpdateUserCommand: {
       displayName?: string
     }
@@ -682,6 +737,9 @@ export interface components {
     }
     LoginWithAppleCommand: {
       identityToken?: string
+    }
+    LoginWithFacebookCommand: {
+      accessToken?: string
     }
     HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
       ({
@@ -1319,6 +1377,52 @@ export interface operations {
       }
     }
   }
+  RecipesParseFromVoice: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ParseRecipeFromVoiceCommand"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["CreateRecipeDto"]
+        }
+      }
+    }
+  }
+  RecipesParseFromSocialUrl: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ParseRecipeFromSocialUrlCommand"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["CreateRecipeDto"]
+        }
+      }
+    }
+  }
   UsersUpdate: {
     parameters: {
       query?: never
@@ -1390,6 +1494,27 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["LoginWithAppleCommand"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+    }
+  }
+  UsersLoginFacebook: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["LoginWithFacebookCommand"]
       }
     }
     responses: {
