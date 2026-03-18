@@ -33,6 +33,12 @@ const PLATFORM_SUBTITLES: Record<Platform, string> = {
   pinterest: "recipeAddSocialImportScreen:subtitlePinterest",
 }
 
+const PLATFORM_PLACEHOLDERS: Record<Platform, string> = {
+  tiktok: "recipeAddSocialImportScreen:urlPlaceholderTiktok",
+  instagram: "recipeAddSocialImportScreen:urlPlaceholderInstagram",
+  pinterest: "recipeAddSocialImportScreen:urlPlaceholderPinterest",
+}
+
 const MINIMUM_LOADING_TIME_MS = 1500
 
 export default observer(function AddSocialImportScreen() {
@@ -131,7 +137,7 @@ export default observer(function AddSocialImportScreen() {
           autoCorrect={false}
           keyboardType="url"
           labelTx="recipeAddSocialImportScreen:urlLabel"
-          placeholderTx="recipeAddSocialImportScreen:urlPlaceholder"
+          placeholderTx={PLATFORM_PLACEHOLDERS[platform] as never}
           helper={validationError}
           status={validationError ? "error" : undefined}
         />
