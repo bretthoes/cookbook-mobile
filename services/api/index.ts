@@ -208,9 +208,8 @@ export class Api {
 
   async extractRecipeFromSocialUrl(
     url: string,
-    platform: string,
   ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
-    return recipeWrappers.extractRecipeFromSocialUrl(url, platform)
+    return recipeWrappers.extractRecipeFromSocialUrl(url)
   }
 
   async extractRecipeFromImage(

@@ -12,6 +12,8 @@ import {
 import { ImagePickerAsset } from "expo-image-picker"
 import * as SecureStore from "expo-secure-store"
 
+const SOCIAL_IMPORT_TIMEOUT_MS = 35_000
+
 const { client } = apiClientInstance
 
 export async function getRecipes(
@@ -139,11 +141,8 @@ export async function extractRecipeFromVoice(
   }
 }
 
-const SOCIAL_IMPORT_TIMEOUT_MS = 35_000
-
 export async function extractRecipeFromSocialUrl(
   url: string,
-  platform: string,
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
   const baseUrl = Config.API_URL.replace(/\/api\/?$/, "")
   const controller = new AbortController()
@@ -151,14 +150,14 @@ export async function extractRecipeFromSocialUrl(
 
   try {
     const accessToken = await SecureStore.getItemAsync("accessToken")
-    const response = await fetch(`${baseUrl}/api/Recipes/parse-recipe-social`, {
+    const response = await fetch(`${baseUrl}/api/Recipes/parse-recipe-url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-      body: JSON.stringify({ url, platform }),
+      body: JSON.stringify({ url, extractFromVideo: true }),
       signal: controller.signal,
     })
     clearTimeout(timeoutId)

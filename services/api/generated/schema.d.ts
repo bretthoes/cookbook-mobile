@@ -260,22 +260,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  "/api/Recipes/parse-recipe-social": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations["RecipesParseFromSocialUrl"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   "/api/Users/update": {
     parameters: {
       query?: never
@@ -718,13 +702,10 @@ export interface components {
     }
     ParseRecipeFromUrlCommand: {
       url?: string
+      extractFromVideo?: boolean
     }
     ParseRecipeFromVoiceCommand: {
       transcript?: string
-    }
-    ParseRecipeFromSocialUrlCommand: {
-      url?: string
-      platform?: string
     }
     UpdateUserCommand: {
       displayName?: string
@@ -1387,29 +1368,6 @@ export interface operations {
     requestBody: {
       content: {
         "application/json": components["schemas"]["ParseRecipeFromVoiceCommand"]
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["CreateRecipeDto"]
-        }
-      }
-    }
-  }
-  RecipesParseFromSocialUrl: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ParseRecipeFromSocialUrlCommand"]
       }
     }
     responses: {

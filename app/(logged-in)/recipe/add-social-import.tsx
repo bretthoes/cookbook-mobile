@@ -78,7 +78,7 @@ export default observer(function AddSocialImportScreen() {
     setIsLoading(true)
     const startTime = Date.now()
 
-    const response = await api.extractRecipeFromSocialUrl(url, platform)
+    const response = await api.extractRecipeFromSocialUrl(url)
 
     const elapsed = Date.now() - startTime
     if (elapsed < MINIMUM_LOADING_TIME_MS) {
