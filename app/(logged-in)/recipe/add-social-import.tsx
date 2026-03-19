@@ -116,7 +116,7 @@ export default observer(function AddSocialImportScreen() {
   )
 
   if (isLoading) {
-    return <LoadingScreen />
+    return <LoadingScreen estimatedDurationMs={25_000} />
   }
 
   return (

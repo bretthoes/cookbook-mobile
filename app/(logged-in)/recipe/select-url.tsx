@@ -86,7 +86,7 @@ export default observer(function RecipeUrlScreen() {
   )
 
   if (isLoading) {
-    return <LoadingScreen />
+    return <LoadingScreen estimatedDurationMs={8_000} />
   }
 
   return (

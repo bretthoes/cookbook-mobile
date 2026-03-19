@@ -1,7 +1,8 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
+  Easing,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -10,7 +11,8 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
-import { spacing } from "@/theme"
+import { ThemedStyle, spacing } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 
 import { Screen } from "./Screen"
 import { Text } from "./Text"
@@ -23,6 +25,12 @@ export interface LoadingScreenProps {
    * @default translate("common:loading")
    */
   text?: string
+  /**
+   * When provided, shows an estimated progress bar that fills to ~90% over
+   * this duration, then holds until the screen unmounts. Useful for long
+   * operations where real progress is unavailable.
+   */
+  estimatedDurationMs?: number
 }
 
 /**
@@ -30,11 +38,13 @@ export interface LoadingScreenProps {
  */
 export function LoadingScreen(props: LoadingScreenProps) {
   const { t } = useTranslation()
+  const { themed } = useAppTheme()
   const text = props.text ?? t("common:loading")
-  // Animation for the typing dots
+
   const dot1Y = useSharedValue(0)
   const dot2Y = useSharedValue(0)
   const dot3Y = useSharedValue(0)
+  const progressWidth = useSharedValue(0)
 
   const dot1Style = useAnimatedStyle(() => ({
     transform: [{ translateY: dot1Y.value }],
@@ -48,17 +58,32 @@ export function LoadingScreen(props: LoadingScreenProps) {
     transform: [{ translateY: dot3Y.value }],
   }))
 
+  const $progressFillAnimated = useAnimatedStyle(() => ({
+    width: `${progressWidth.value}%`,
+  }))
+
   useEffect(() => {
     const bounce = withRepeat(
       withSequence(withTiming(-6, { duration: 200 }), withTiming(0, { duration: 200 })),
       -1,
       false,
     )
-    // Stagger each dot's animation
     dot1Y.value = bounce
     dot2Y.value = withDelay(150, bounce)
     dot3Y.value = withDelay(300, bounce)
   }, [dot1Y, dot2Y, dot3Y])
+
+  useEffect(() => {
+    if (!props.estimatedDurationMs) return
+
+    progressWidth.value = withTiming(90, {
+      duration: props.estimatedDurationMs,
+      easing: Easing.out(Easing.cubic),
+    })
+  }, [props.estimatedDurationMs, progressWidth])
+
+  const $themedProgressTrack = useMemo(() => themed($progressTrack), [themed])
+  const $themedProgressFill = useMemo(() => themed($progressFill), [themed])
 
   return (
     <Screen style={$root} preset="fixed" contentContainerStyle={$container}>
@@ -69,6 +94,11 @@ export function LoadingScreen(props: LoadingScreenProps) {
         <Animated.Text style={[dot2Style, $dot]}>.</Animated.Text>
         <Animated.Text style={[dot3Style, $dot]}>.</Animated.Text>
       </View>
+      {props.estimatedDurationMs != null && (
+        <View style={$themedProgressTrack}>
+          <Animated.View style={[$themedProgressFill, $progressFillAnimated]} />
+        </View>
+      )}
     </Screen>
   )
 }
@@ -99,3 +129,18 @@ const $dot: TextStyle = {
   fontWeight: "bold",
   marginLeft: 2,
 }
+
+const $progressTrack: ThemedStyle<ViewStyle> = (theme) => ({
+  width: "70%",
+  height: 6,
+  borderRadius: 3,
+  backgroundColor: theme.colors.tintInactive,
+  marginTop: spacing.lg,
+  overflow: "hidden",
+})
+
+const $progressFill: ThemedStyle<ViewStyle> = (theme) => ({
+  height: "100%",
+  borderRadius: 3,
+  backgroundColor: theme.colors.tint,
+})
