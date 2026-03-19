@@ -1,3 +1,4 @@
+import { AutoImage } from "@/components/AutoImage"
 import { Popover } from "@/components/Popover"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
@@ -20,7 +21,7 @@ import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, Alert, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Alert, ImageStyle, View, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default observer(function Recipe() {
@@ -206,11 +207,19 @@ export default observer(function Recipe() {
                   onPress={() => toggleDirectionCompleted(index)}
                   style={{ padding: spacing.sm }}
                   LeftComponent={
-                    <DirectionText
-                      ordinal={item?.ordinal}
-                      text={item?.text ?? ""}
-                      completed={completedDirections.has(index)}
-                    />
+                    <View style={{ flex: 1 }}>
+                      <DirectionText
+                        ordinal={item?.ordinal}
+                        text={item?.text ?? ""}
+                        completed={completedDirections.has(index)}
+                      />
+                      {item?.image ? (
+                        <AutoImage
+                          source={{ uri: item.image }}
+                          style={$directionImage as ImageStyle}
+                        />
+                      ) : null}
+                    </View>
                   }
                   height={spacing.xl}
                   bottomSeparator={index !== selected.directions.length - 1}
@@ -265,5 +274,12 @@ const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   paddingTop: theme.spacing.lg,
   paddingBottom: theme.spacing.lg,
 })
+
+const $directionImage: ImageStyle = {
+  width: 160,
+  height: 160,
+  borderRadius: 8,
+  marginTop: spacing.sm,
+}
 
 // #endregion

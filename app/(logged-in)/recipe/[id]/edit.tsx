@@ -54,7 +54,7 @@ export default observer(function EditRecipe() {
         id: 0,
         text: direction.text?.trim() ?? "",
         ordinal: index + 1,
-        image: null,
+        image: direction.image || null,
       })),
       ingredients: formData.ingredients.map((ingredient, index) => ({
         id: 0,

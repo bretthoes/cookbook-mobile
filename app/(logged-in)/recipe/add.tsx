@@ -82,7 +82,7 @@ export default observer(function AddRecipeScreen() {
           id: 0,
           text: direction.text.trim(),
           ordinal: index + 1,
-          image: null,
+          image: direction.image || null,
         }))
 
       const validIngredients = formData.ingredients

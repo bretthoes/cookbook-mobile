@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
-import { ActivityIndicator, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export interface RecipeFormInputs {
   title: string
@@ -89,6 +89,43 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
   // Map uploaded key → local file URI so we can display new images before save (keys are not full URLs)
   const [newImageKeysToLocalUri, setNewImageKeysToLocalUri] = useState<Record<string, string>>({})
+  const [uploadingDirectionIndex, setUploadingDirectionIndex] = useState<number | null>(null)
+
+  const pickDirectionImage = async (directionIndex: number) => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (status !== "granted") {
+      alert(translate("recipeFormScreen:allowCameraRollAccess"))
+      return
+    }
+
+    setUploadingDirectionIndex(directionIndex)
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsMultipleSelection: false,
+        aspect: [1, 1],
+      })
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const uploadResponse = await api.uploadImage(result.assets)
+        if (uploadResponse.kind === "ok" && uploadResponse.keys.length > 0) {
+          const key = uploadResponse.keys[0]
+          setValue(`directions.${directionIndex}.image`, key)
+          if (result.assets[0]?.uri) {
+            setNewImageKeysToLocalUri((prev) => ({ ...prev, [key]: result.assets[0].uri }))
+          }
+        } else {
+          alert(translate("recipeFormScreen:imageUploadFailed"))
+        }
+      }
+    } finally {
+      setUploadingDirectionIndex(null)
+    }
+  }
+
+  const removeDirectionImage = (directionIndex: number) => {
+    setValue(`directions.${directionIndex}.image`, null)
+  }
 
   useHeader({
     titleTx: isEdit ? "recipeListScreen:edit" : "recipeListScreen:add",
@@ -367,43 +404,73 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
             <Text text={errors.directions.message} style={{ color: "red" }} />
           )}
           <Divider size={spacing.md} />
-          {directionFields.map((item, index) => (
-            <View key={item.id || String(index)}>
-              {index > 0 && <Divider size={spacing.sm} />}
-              <View style={$themedDirectionItemContainer}>
-                <Text text={`${index + 1}.`} style={$themedDirectionIndex} />
-                <Controller
-                  control={control}
-                  name={`directions.${index}.text`}
-                  render={({ field }) => (
-                    <TextField
-                      value={field.value}
-                      onChangeText={field.onChange}
-                      placeholderTx="recipeFormScreen:directionPlaceholder"
-                      containerStyle={$themedTextFieldContainer}
-                      helper={errors.directions?.[index]?.text?.message ?? ""}
-                      status="error"
-                      maxLength={2048}
-                      multiline
-                      RightAccessory={() => (
-                        <PressableIcon icon="x" onPress={() => removeDirection(index)} />
-                      )}
+          {directionFields.map((item, index) => {
+            const directionImage = watch(`directions.${index}.image`)
+            const directionImageUri = directionImage
+              ? getImageDisplayUri(directionImage)
+              : null
+            return (
+              <View key={item.id || String(index)}>
+                {index > 0 && <Divider size={spacing.sm} />}
+                <View style={$themedDirectionItemContainer}>
+                  <Text text={`${index + 1}.`} style={$themedDirectionIndex} />
+                  <Controller
+                    control={control}
+                    name={`directions.${index}.text`}
+                    render={({ field }) => (
+                      <TextField
+                        value={field.value}
+                        onChangeText={field.onChange}
+                        placeholderTx="recipeFormScreen:directionPlaceholder"
+                        containerStyle={$themedTextFieldContainer}
+                        helper={errors.directions?.[index]?.text?.message ?? ""}
+                        status="error"
+                        maxLength={2048}
+                        multiline
+                        RightAccessory={() => (
+                          <View style={$directionAccessoryRow}>
+                            <PressableIcon
+                              icon="camera"
+                              onPress={() => pickDirectionImage(index)}
+                              size={20}
+                            />
+                            <PressableIcon icon="x" onPress={() => removeDirection(index)} />
+                          </View>
+                        )}
+                      />
+                    )}
+                  />
+                </View>
+                {uploadingDirectionIndex === index && <ActivityIndicator style={{ marginLeft: spacing.xl }} />}
+                {directionImageUri && (
+                  <View style={$directionImagePreviewContainer}>
+                    <AutoImage
+                      source={{ uri: directionImageUri }}
+                      style={$directionImagePreview as ImageStyle}
                     />
-                  )}
-                />
+                    <View style={$directionImageRemoveButton}>
+                      <PressableIcon
+                        icon="x"
+                        onPress={() => removeDirectionImage(index)}
+                        color="#fff"
+                        size={14}
+                      />
+                    </View>
+                  </View>
+                )}
+                {errors.directions?.[index]?.text?.message && (
+                  <Text
+                    text={errors.directions[index].text.message}
+                    style={[$errorText, { marginLeft: spacing.xl }]}
+                  />
+                )}
               </View>
-              {errors.directions?.[index]?.text?.message && (
-                <Text
-                  text={errors.directions[index].text.message}
-                  style={[$errorText, { marginLeft: spacing.xl }]}
-                />
-              )}
-            </View>
-          ))}
+            )
+          })}
           <Divider size={spacing.md} />
           <Button
             tx="recipeFormScreen:addAnotherDirection"
-            onPress={() => addDirection({ text: "", image: "" })}
+            onPress={() => addDirection({ text: "", image: null })}
             style={$themedButtonHeightOverride}
             disabled={directionFields.length >= 20}
           />
@@ -433,6 +500,33 @@ const $textFieldContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
   minHeight: 50,
 })
+
+const $directionAccessoryRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: 4,
+}
+
+const $directionImagePreviewContainer: ViewStyle = {
+  marginLeft: spacing.xl,
+  marginTop: spacing.xs,
+  alignSelf: "flex-start",
+}
+
+const $directionImagePreview: ImageStyle = {
+  width: 80,
+  height: 80,
+  borderRadius: 8,
+}
+
+const $directionImageRemoveButton: ViewStyle = {
+  position: "absolute",
+  top: 2,
+  right: 2,
+  backgroundColor: "rgba(0,0,0,0.5)",
+  borderRadius: 10,
+  padding: 2,
+}
 
 const $errorText: TextStyle = {
   color: "red",
