@@ -12,7 +12,9 @@
       "icon": "./assets/images/app-icon-ios.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
-      "associatedDomains": ["applinks:sharedcookbook.com"]
+      "associatedDomains": [
+        "applinks:sharedcookbook.com"
+      ]
     },
     "android": {
       "icon": "./assets/images/app-icon-android-legacy.png",
@@ -27,7 +29,10 @@
               "pathPrefix": "/i"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "adaptiveIcon": {
@@ -88,6 +93,18 @@
         {
           "microphonePermission": "Allow $(PRODUCT_NAME) to use your microphone to add recipes by voice.",
           "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to recognize your speech to add recipes by voice."
+        }
+      ],
+      [
+        "react-native-fbsdk-next",
+        {
+          "appID": "2506708179750622",
+          "clientToken": "946570d05c5182a39adde764a32c7b62",
+          "displayName": "cookbook-mobile",
+          "scheme": "fb2506708179750622",
+          "advertiserIDCollectionEnabled": false,
+          "autoLogAppEventsEnabled": false,
+          "isAutoInitEnabled": true
         }
       ]
     ],

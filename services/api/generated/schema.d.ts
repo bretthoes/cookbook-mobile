@@ -707,6 +707,9 @@ export interface components {
     ParseRecipeFromVoiceCommand: {
       transcript?: string
     }
+    ParseRecipeFromVoiceCommand: {
+      transcript?: string
+    }
     UpdateUserCommand: {
       displayName?: string
     }

@@ -261,6 +261,12 @@ export class Api {
     return userWrappers.loginWithApple(identityToken)
   }
 
+  async loginWithFacebook(
+    accessToken: string,
+  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
+    return userWrappers.loginWithFacebook(accessToken)
+  }
+
   async register(email: string, password: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return userWrappers.register(email, password)
   }

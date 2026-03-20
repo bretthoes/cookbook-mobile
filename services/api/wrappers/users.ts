@@ -71,6 +71,26 @@ export async function loginWithApple(
   }
 }
 
+export async function loginWithFacebook(
+  accessToken: string,
+): Promise<ApiResult<{ authResult: AuthResultSnapshotIn }>> {
+  try {
+    const { data, error, response } = await client.POST("/api/Users/login-facebook", {
+      body: { accessToken },
+    })
+    if (!response.ok)
+      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    if (!data) return { kind: "bad-data" }
+    const { tokenType, accessToken: token, expiresIn, refreshToken } = data
+    if (!tokenType || !token || !expiresIn || !refreshToken) return { kind: "bad-data" }
+    return toOkResult({
+      authResult: { tokenType, accessToken: token, expiresIn, refreshToken },
+    })
+  } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
 export async function register(
   email: string,
   password: string,

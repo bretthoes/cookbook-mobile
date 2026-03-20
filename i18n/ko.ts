@@ -87,6 +87,8 @@ const ko: Translations = {
     optionAppleDesc: "___Sign up with your Apple ID",
     optionGoogle: "___Continue with Google",
     optionGoogleDesc: "___Sign up with your Google account",
+    optionFacebook: "___Continue with Facebook",
+    optionFacebookDesc: "___Sign up with your Facebook account",
   },
   errorScreen: {
     title: "뭔가 잘못되었습니다!",

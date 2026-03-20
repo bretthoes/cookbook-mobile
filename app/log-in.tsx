@@ -7,6 +7,7 @@ import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
 import { useAppleSignIn } from "@/hooks/useAppleSignIn"
+import { useFacebookSignIn } from "@/hooks/useFacebookSignIn"
 import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
 import { useStores } from "@/models/helpers/useStores"
 import { router } from "expo-router"
@@ -18,6 +19,7 @@ import { colors, spacing } from "../theme"
 
 const googleLogo = require("@/assets/images/google.png")
 const appleLogo = require("@/assets/images/apple.png")
+const facebookLogo = require("@/assets/images/facebook.png")
 
 function GoogleLogoAccessory({ style }: { style?: unknown }) {
   return <Image source={googleLogo} style={[$ssoLogo, style as ImageStyle]} />
@@ -25,6 +27,10 @@ function GoogleLogoAccessory({ style }: { style?: unknown }) {
 
 function AppleLogoAccessory({ style }: { style?: unknown }) {
   return <Image source={appleLogo} style={[$ssoLogo, style as ImageStyle]} />
+}
+
+function FacebookLogoAccessory({ style }: { style?: unknown }) {
+  return <Image source={facebookLogo} style={[$ssoLogo, style as ImageStyle]} />
 }
 
 const REMEMBER_ME_EMAIL_KEY = "login_remember_email"
@@ -44,6 +50,7 @@ export default observer(function Login(_props) {
       login,
       loginWithGoogle,
       loginWithApple,
+      loginWithFacebook,
       authEmail,
       setAuthEmail,
       validationError,
@@ -54,8 +61,10 @@ export default observer(function Login(_props) {
   } = useStores()
   const { signIn: googleSignIn } = useGoogleSignIn()
   const { signIn: appleSignIn } = useAppleSignIn()
+  const { signIn: facebookSignIn } = useFacebookSignIn()
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [isAppleLoading, setIsAppleLoading] = useState(false)
+  const [isFacebookLoading, setIsFacebookLoading] = useState(false)
 
   useEffect(() => {
     setResult("")
@@ -220,6 +229,24 @@ export default observer(function Login(_props) {
             setIsGoogleLoading(false)
           }}
           disabled={isGoogleLoading}
+        />
+
+        <Button
+          tx="registerOptionsScreen:optionFacebook"
+          preset="default"
+          style={$tapButton}
+          LeftAccessory={FacebookLogoAccessory}
+          onPress={async () => {
+            if (isFacebookLoading) return
+            setIsFacebookLoading(true)
+            const credential = await facebookSignIn()
+            if (credential) {
+              const success = await loginWithFacebook(credential.accessToken)
+              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+            }
+            setIsFacebookLoading(false)
+          }}
+          disabled={isFacebookLoading}
         />
 
         {Platform.OS === "ios" && (

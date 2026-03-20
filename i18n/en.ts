@@ -84,6 +84,8 @@ const en = {
     optionAppleDesc: "Sign up with your Apple ID",
     optionGoogle: "Continue with Google",
     optionGoogleDesc: "Sign up with your Google account",
+    optionFacebook: "Continue with Facebook",
+    optionFacebookDesc: "Sign up with your Facebook account",
   },
   errorScreen: {
     title: "Something went wrong!",
