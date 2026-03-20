@@ -78,6 +78,7 @@ const en = {
   },
   registerOptionsScreen: {
     title: "Create account",
+    subtitle: "Choose how you'd like to get started.",
     optionEmail: "Continue with email",
     optionEmailDesc: "Sign up using your email address",
     optionApple: "Continue with Apple",
@@ -120,6 +121,19 @@ const en = {
     maxDirections: "Cannot have more than 40 directions",
     maxImages: "Cannot have more than 6 images",
     imageMaxLength: "Image cannot be longer than 2048 characters",
+  },
+  loginOptionsScreen: {
+    title: "Log in",
+    subtitle: "Welcome back. Choose how you'd like to sign in.",
+    optionEmail: "Continue with email",
+    optionEmailDesc: "Log in with your email and password",
+    optionGoogle: "Continue with Google",
+    optionGoogleDesc: "Log in with your Google account",
+    optionApple: "Continue with Apple",
+    optionAppleDesc: "Log in with your Apple ID",
+    optionFacebook: "Continue with Facebook",
+    optionFacebookDesc: "Log in with your Facebook account",
+    register: "No account? Register",
   },
   loginScreen: {
     logIn: "Log In",

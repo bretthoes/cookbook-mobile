@@ -128,7 +128,7 @@ export default observer(function ResetPassword() {
         tx="resetPasswordScreen:backToLogin"
         style={$loginButton}
         preset="reversed"
-        onPress={() => router.push("/log-in")}
+        onPress={() => router.push("/login-options")}
       />
     </Screen>
   )

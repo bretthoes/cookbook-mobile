@@ -48,7 +48,7 @@ export default observer(function WelcomeScreen() {
           <Button
             tx="welcomeScreen:loginButton"
             preset="default"
-            onPress={() => router.push("/log-in")}
+            onPress={() => router.push("/login-options")}
             style={$loginButton}
           />
         </View>

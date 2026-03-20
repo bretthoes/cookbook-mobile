@@ -6,32 +6,13 @@ import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
-import { useAppleSignIn } from "@/hooks/useAppleSignIn"
-import { useFacebookSignIn } from "@/hooks/useFacebookSignIn"
-import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
 import { useStores } from "@/models/helpers/useStores"
 import { router } from "expo-router"
 import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
-import { Image, ImageStyle, Platform, TextInput, TextStyle, View, ViewStyle } from "react-native"
+import { TextInput, TextStyle, View, ViewStyle } from "react-native"
 import { colors, spacing } from "../theme"
-
-const googleLogo = require("@/assets/images/google.png")
-const appleLogo = require("@/assets/images/apple.png")
-const facebookLogo = require("@/assets/images/facebook.png")
-
-function GoogleLogoAccessory({ style }: { style?: unknown }) {
-  return <Image source={googleLogo} style={[$ssoLogo, style as ImageStyle]} />
-}
-
-function AppleLogoAccessory({ style }: { style?: unknown }) {
-  return <Image source={appleLogo} style={[$ssoLogo, style as ImageStyle]} />
-}
-
-function FacebookLogoAccessory({ style }: { style?: unknown }) {
-  return <Image source={facebookLogo} style={[$ssoLogo, style as ImageStyle]} />
-}
 
 const REMEMBER_ME_EMAIL_KEY = "login_remember_email"
 const REMEMBER_ME_PASSWORD_KEY = "login_remember_password"
@@ -48,9 +29,6 @@ export default observer(function Login(_props) {
   const {
     authenticationStore: {
       login,
-      loginWithGoogle,
-      loginWithApple,
-      loginWithFacebook,
       authEmail,
       setAuthEmail,
       validationError,
@@ -59,12 +37,6 @@ export default observer(function Login(_props) {
       isAuthenticated,
     },
   } = useStores()
-  const { signIn: googleSignIn } = useGoogleSignIn()
-  const { signIn: appleSignIn } = useAppleSignIn()
-  const { signIn: facebookSignIn } = useFacebookSignIn()
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const [isAppleLoading, setIsAppleLoading] = useState(false)
-  const [isFacebookLoading, setIsFacebookLoading] = useState(false)
 
   useEffect(() => {
     setResult("")
@@ -207,68 +179,6 @@ export default observer(function Login(_props) {
           onPress={authenticate}
         />
 
-        <View style={$orContainer}>
-          <View style={$orLine} />
-          <Text tx="loginScreen:or" style={$orLabel} size="sm" />
-          <View style={$orLine} />
-        </View>
-
-        <Button
-          tx="registerOptionsScreen:optionGoogle"
-          preset="default"
-          style={$tapButton}
-          LeftAccessory={GoogleLogoAccessory}
-          onPress={async () => {
-            if (isGoogleLoading) return
-            setIsGoogleLoading(true)
-            const credential = await googleSignIn()
-            if (credential) {
-              const success = await loginWithGoogle(credential.idToken)
-              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
-            }
-            setIsGoogleLoading(false)
-          }}
-          disabled={isGoogleLoading}
-        />
-
-        <Button
-          tx="registerOptionsScreen:optionFacebook"
-          preset="default"
-          style={$tapButton}
-          LeftAccessory={FacebookLogoAccessory}
-          onPress={async () => {
-            if (isFacebookLoading) return
-            setIsFacebookLoading(true)
-            const credential = await facebookSignIn()
-            if (credential) {
-              const success = await loginWithFacebook(credential.accessToken)
-              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
-            }
-            setIsFacebookLoading(false)
-          }}
-          disabled={isFacebookLoading}
-        />
-
-        {Platform.OS === "ios" && (
-          <Button
-            tx="registerOptionsScreen:optionApple"
-            preset="default"
-            style={$tapButton}
-            LeftAccessory={AppleLogoAccessory}
-            onPress={async () => {
-              if (isAppleLoading) return
-              setIsAppleLoading(true)
-              const credential = await appleSignIn()
-              if (credential) {
-                const success = await loginWithApple(credential.identityToken)
-                if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
-              }
-              setIsAppleLoading(false)
-            }}
-            disabled={isAppleLoading}
-          />
-        )}
-
         <Text
           tx="loginScreen:register"
           style={$register}
@@ -319,25 +229,3 @@ const $forgotPasswordInline: TextStyle = {
   textDecorationLine: "underline",
 }
 
-const $orContainer: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  marginTop: spacing.sm,
-  marginBottom: spacing.xs,
-}
-
-const $orLine: ViewStyle = {
-  flex: 1,
-  height: 1,
-  backgroundColor: colors.border,
-}
-
-const $orLabel: TextStyle = {
-  marginHorizontal: spacing.sm,
-  color: colors.textDim,
-}
-
-const $ssoLogo: ImageStyle = {
-  width: 20,
-  height: 20,
-}

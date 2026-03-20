@@ -81,6 +81,7 @@ const fr: Translations = {
   },
   registerOptionsScreen: {
     title: "___Create account",
+    subtitle: "___Choose how you'd like to get started.",
     optionEmail: "___Continue with email",
     optionEmailDesc: "___Sign up using your email address",
     optionApple: "___Continue with Apple",
@@ -125,6 +126,19 @@ const fr: Translations = {
     maxDirections: "___Cannot have more than 40 directions",
     maxImages: "___Cannot have more than 6 images",
     imageMaxLength: "___Image cannot be longer than 2048 characters",
+  },
+  loginOptionsScreen: {
+    title: "___Log in",
+    subtitle: "___Welcome back. Choose how you'd like to sign in.",
+    optionEmail: "___Continue with email",
+    optionEmailDesc: "___Log in with your email and password",
+    optionGoogle: "___Continue with Google",
+    optionGoogleDesc: "___Log in with your Google account",
+    optionApple: "___Continue with Apple",
+    optionAppleDesc: "___Log in with your Apple ID",
+    optionFacebook: "___Continue with Facebook",
+    optionFacebookDesc: "___Log in with your Facebook account",
+    register: "___No account? Register",
   },
   loginScreen: {
     logIn: "Se connecter",

@@ -97,7 +97,7 @@ export default observer(function InvitationTokenScreen() {
           { text: translate("common:cancel"), style: "cancel" },
           {
             text: translate("invitationLinkScreen:loginButton"),
-            onPress: () => router.push("/log-in"),
+            onPress: () => router.push("/login-options"),
           },
         ],
       )
@@ -295,7 +295,7 @@ export default observer(function InvitationTokenScreen() {
         />
         <Button
           tx="invitationLinkScreen:loginButton"
-          onPress={() => router.push("/log-in")}
+          onPress={() => router.push("/login-options")}
           style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
         />
         <Button

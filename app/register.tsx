@@ -275,7 +275,7 @@ export default observer(function Register() {
             <Text
               tx="registerScreen:alreadyHaveAccount"
               style={$register}
-              onPress={() => router.push("/log-in")}
+              onPress={() => router.push("/login-options")}
             />
           </View>
         </>
@@ -313,7 +313,7 @@ export default observer(function Register() {
             <Text
               tx="registerScreen:alreadyHaveAccount"
               style={$register}
-              onPress={() => router.push("/log-in")}
+              onPress={() => router.push("/login-options")}
             />
           </View>
         </>

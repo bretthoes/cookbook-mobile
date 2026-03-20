@@ -18,7 +18,7 @@ const appleLogo = require("@/assets/images/apple.png")
 const facebookLogo = require("@/assets/images/facebook.png")
 const googleLogo = require("@/assets/images/google.png")
 
-export default observer(function RegisterOptionsScreen() {
+export default observer(function LoginOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const { signIn: googleSignIn } = useGoogleSignIn()
@@ -32,7 +32,7 @@ export default observer(function RegisterOptionsScreen() {
 
   useHeader({
     leftIcon: "back",
-    titleTx: "registerOptionsScreen:title",
+    titleTx: "loginOptionsScreen:title",
     onLeftPress: () => router.back(),
   })
 
@@ -42,20 +42,20 @@ export default observer(function RegisterOptionsScreen() {
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
       <View style={$heading}>
-        <Text tx="registerOptionsScreen:title" preset="heading" />
-        <Text tx="registerOptionsScreen:subtitle" preset="subheading" style={$subtitle} />
+        <Text tx="loginOptionsScreen:title" preset="heading" />
+        <Text tx="loginOptionsScreen:subtitle" preset="subheading" style={$subtitle} />
       </View>
       <View style={$themedListContainer}>
         <OptionListItem
-          title={t("registerOptionsScreen:optionEmail")}
-          description={t("registerOptionsScreen:optionEmailDesc")}
+          title={t("loginOptionsScreen:optionEmail")}
+          description={t("loginOptionsScreen:optionEmailDesc")}
           leftIcon="mail"
-          onPress={() => router.replace("/register")}
+          onPress={() => router.push("/log-in")}
         />
         {Platform.OS === "ios" && (
           <OptionListItem
-            title={t("registerOptionsScreen:optionApple")}
-            description={t("registerOptionsScreen:optionAppleDesc")}
+            title={t("loginOptionsScreen:optionApple")}
+            description={t("loginOptionsScreen:optionAppleDesc")}
             leftImage={appleLogo}
             onPress={async () => {
               if (isAppleLoading) return
@@ -70,8 +70,8 @@ export default observer(function RegisterOptionsScreen() {
           />
         )}
         <OptionListItem
-          title={t("registerOptionsScreen:optionGoogle")}
-          description={t("registerOptionsScreen:optionGoogleDesc")}
+          title={t("loginOptionsScreen:optionGoogle")}
+          description={t("loginOptionsScreen:optionGoogleDesc")}
           leftImage={googleLogo}
           onPress={async () => {
             if (isGoogleLoading) return
@@ -85,8 +85,8 @@ export default observer(function RegisterOptionsScreen() {
           }}
         />
         <OptionListItem
-          title={t("registerOptionsScreen:optionFacebook")}
-          description={t("registerOptionsScreen:optionFacebookDesc")}
+          title={t("loginOptionsScreen:optionFacebook")}
+          description={t("loginOptionsScreen:optionFacebookDesc")}
           leftImage={facebookLogo}
           onPress={async () => {
             if (isFacebookLoading) return
@@ -103,9 +103,9 @@ export default observer(function RegisterOptionsScreen() {
       {result ? <Text text={result} preset="formHelper" style={$errorText} /> : null}
       <View style={$footer}>
         <Text
-          tx="registerScreen:alreadyHaveAccount"
-          style={$loginLink}
-          onPress={() => router.replace("/login-options")}
+          tx="loginOptionsScreen:register"
+          style={$registerLink}
+          onPress={() => router.replace("/register-options")}
         />
       </View>
     </Screen>
@@ -127,7 +127,7 @@ const $footer: ViewStyle = {
   alignItems: "center",
 }
 
-const $loginLink: TextStyle = {
+const $registerLink: TextStyle = {
   textDecorationLine: "underline",
 }
 
