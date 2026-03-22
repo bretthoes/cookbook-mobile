@@ -16,6 +16,7 @@ import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { usePrintRecipe } from "@/hooks/usePrintRecipe"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
@@ -33,6 +34,7 @@ export default observer(function Recipe() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
+  const printRecipe = usePrintRecipe()
   const [isLoading, setIsLoading] = useState(false)
   const [popoverVisible, setPopoverVisible] = useState(false)
   const isRecipeAuthor =
@@ -121,8 +123,7 @@ export default observer(function Recipe() {
         key: "printRecipe",
         tx: "recipeDetailsScreen:printRecipe" as const,
         leftIcon: "printer" as const,
-        disabled: true,
-        onPress: () => {},
+        onPress: () => { if (selected) printRecipe(selected) },
       },
       {
         key: "deleteRecipe",
@@ -132,7 +133,7 @@ export default observer(function Recipe() {
         onPress: handlePressDelete,
       },
     ],
-    [canEdit, handlePressEdit, handlePressDelete],
+    [canEdit, handlePressEdit, handlePressDelete, printRecipe, selected],
   )
 
   if (!selected && !isLoading)
