@@ -119,6 +119,18 @@ export default observer(function ProfileScreen() {
             })
           }
         />
+        <ListItem
+          tx="profileScreen:setName"
+          bottomSeparator
+          rightIcon={isRTL ? "caretLeft" : "caretRight"}
+          rightIconColor={isDark ? colors.border : colors.text}
+          LeftComponent={
+            <View style={$iconContainer}>
+              <Icon icon="user" size={30} color={isDark ? colors.border : colors.text} />
+            </View>
+          }
+          onPress={() => router.push("../set-display-name")}
+        />
       </UseCase>
       <UseCase tx="profileScreen:preferences">
         <Text tx="profileScreen:customize" style={$description} />
@@ -165,18 +177,6 @@ export default observer(function ProfileScreen() {
           rightIcon={isRTL ? "caretLeft" : "caretRight"}
           rightIconColor={isDark ? colors.border : colors.text}
           bottomSeparator
-        />
-        <ListItem
-          tx="profileScreen:setName"
-          bottomSeparator
-          rightIcon={isRTL ? "caretLeft" : "caretRight"}
-          rightIconColor={isDark ? colors.border : colors.text}
-          LeftComponent={
-            <View style={$iconContainer}>
-              <Icon icon="user" size={30} color={isDark ? colors.border : colors.text} />
-            </View>
-          }
-          onPress={() => router.push("../set-display-name")}
         />
       </UseCase>
       <View style={$buttonContainer}>
