@@ -7,12 +7,22 @@ import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
+
+function navigateAfterAuth() {
+  if (storage.getBoolean("hasCompletedOnboarding")) {
+    router.replace("/(logged-in)/(tabs)/cookbooks")
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    router.replace({ pathname: "/(logged-in)/onboarding" as any })
+  }
+}
 
 const appleLogo = require("@/assets/images/apple.png")
 const facebookLogo = require("@/assets/images/facebook.png")
@@ -63,7 +73,7 @@ export default observer(function LoginOptionsScreen() {
               const credential = await appleSignIn()
               if (credential) {
                 const success = await authenticationStore.loginWithApple(credential.identityToken)
-                if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+                if (success) navigateAfterAuth()
               }
               setIsAppleLoading(false)
             }}
@@ -79,7 +89,7 @@ export default observer(function LoginOptionsScreen() {
             const credential = await googleSignIn()
             if (credential) {
               const success = await authenticationStore.loginWithGoogle(credential.idToken)
-              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+              if (success) navigateAfterAuth()
             }
             setIsGoogleLoading(false)
           }}
@@ -94,7 +104,7 @@ export default observer(function LoginOptionsScreen() {
             const credential = await facebookSignIn()
             if (credential) {
               const success = await authenticationStore.loginWithFacebook(credential.accessToken)
-              if (success) router.replace("/(logged-in)/(tabs)/cookbooks")
+              if (success) navigateAfterAuth()
             }
             setIsFacebookLoading(false)
           }}

@@ -13,6 +13,7 @@ import { useStores } from "@/models/helpers/useStores"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
 import { colors, spacing } from "@/theme"
 import * as SecureStore from "expo-secure-store"
+import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router, useNavigation } from "expo-router"
 import { observer } from "mobx-react-lite"
@@ -180,7 +181,8 @@ export default observer(function Register() {
   useEffect(() => {
     if (currentStep === 5) {
       const t = setTimeout(() => {
-        router.replace("/(logged-in)/(tabs)/cookbooks")
+        storage.set("onboarding.skipDisplayName", true)
+        router.replace({ pathname: "/(logged-in)/onboarding", params: {} })
       }, SUCCESS_DELAY_MS)
       return () => clearTimeout(t)
     }

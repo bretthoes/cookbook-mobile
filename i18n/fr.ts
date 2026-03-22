@@ -669,6 +669,17 @@ const fr: Translations = {
       "Si vous souhaitez demander la prise en charge d'une langue qui n'est pas répertoriée, veuillez utiliser le lien 'Signaler des bugs' dans l'onglet profil.",
     note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",
   },
+  onboardingScreen: {
+    displayNameTitle: "___What should we call you?",
+    displayNameDescription: "___Your display name is how you appear to other cookbook members.",
+    darkModeTitle: "___Choose your look",
+    darkModeDescription: "___Would you like to use dark mode? You can always change this later.",
+    largeFontTitle: "___Text size",
+    largeFontDescription: "___Would you like larger text for easier reading?",
+    doneTitle: "___You're all set!",
+    doneMessage: "___You can change these preferences any time in your Profile.",
+    gettingReady: "___Getting things ready...",
+  },
 }
 
 export default fr

@@ -666,6 +666,17 @@ const en = {
       "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab.",
     note: "Note: You may need to log out and back in for the changes to take effect.",
   },
+  onboardingScreen: {
+    displayNameTitle: "What should we call you?",
+    displayNameDescription: "Your display name is how you appear to other cookbook members.",
+    darkModeTitle: "Choose your look",
+    darkModeDescription: "Would you like to use dark mode? You can always change this later.",
+    largeFontTitle: "Text size",
+    largeFontDescription: "Would you like larger text for easier reading?",
+    doneTitle: "You're all set!",
+    doneMessage: "You can change these preferences any time in your Profile.",
+    gettingReady: "Getting things ready...",
+  },
 }
 
 export default en

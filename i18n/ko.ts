@@ -665,6 +665,17 @@ const ko: Translations = {
       "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
     note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
   },
+  onboardingScreen: {
+    displayNameTitle: "___What should we call you?",
+    displayNameDescription: "___Your display name is how you appear to other cookbook members.",
+    darkModeTitle: "___Choose your look",
+    darkModeDescription: "___Would you like to use dark mode? You can always change this later.",
+    largeFontTitle: "___Text size",
+    largeFontDescription: "___Would you like larger text for easier reading?",
+    doneTitle: "___You're all set!",
+    doneMessage: "___You can change these preferences any time in your Profile.",
+    gettingReady: "___Getting things ready...",
+  },
 }
 
 export default ko
