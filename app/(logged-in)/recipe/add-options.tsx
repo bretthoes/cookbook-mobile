@@ -113,7 +113,7 @@ export default observer(function AddRecipeOptionsScreen() {
   const $themedGrid = useMemo(() => themed($grid), [themed])
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedScreenContainer}>
+    <Screen preset="scroll" contentContainerStyle={$themedScreenContainer}>
       <View style={$themedGrid}>
         {options.map((option, index) => (
           <OptionTile key={index} {...option} />
@@ -157,7 +157,7 @@ function OptionTile({ title, icon, image, onPress }: OptionTileProps) {
 // #region Styles
 
 const $screenContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  paddingTop: theme.spacing.lg,
+  paddingTop: theme.spacing.sm,
   paddingHorizontal: theme.spacing.sm,
   paddingBottom: theme.spacing.xl,
 })
