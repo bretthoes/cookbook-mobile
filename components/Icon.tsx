@@ -125,6 +125,7 @@ export const iconRegistry = {
   heart: require("../assets/icons/heart.png"),
   hidden: require("../assets/icons/hidden.png"),
   pen: require("../assets/icons/pen.png"),
+  printer: require("../assets/icons/printer.png"),
   languages: require("../assets/icons/languages.png"),
   lock: require("../assets/icons/lock.png"),
   mail: require("../assets/icons/mail.png"),

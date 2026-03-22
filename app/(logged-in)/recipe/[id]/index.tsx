@@ -120,7 +120,7 @@ export default observer(function Recipe() {
       {
         key: "printRecipe",
         tx: "recipeDetailsScreen:printRecipe" as const,
-        leftIcon: "view" as const,
+        leftIcon: "printer" as const,
         disabled: true,
         onPress: () => {},
       },
