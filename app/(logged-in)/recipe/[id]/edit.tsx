@@ -34,6 +34,19 @@ export default observer(function EditRecipe() {
           image: direction.image,
         })) ?? [],
       images: selected.images?.map((image) => image.name) ?? [],
+      isVegetarian: selected.isVegetarian ?? null,
+      isVegan: selected.isVegan ?? null,
+      isGlutenFree: selected.isGlutenFree ?? null,
+      isDairyFree: selected.isDairyFree ?? null,
+      isCheap: selected.isCheap ?? null,
+      isHealthy: selected.isHealthy ?? null,
+      isLowFodmap: selected.isLowFodmap ?? null,
+      isHighProtein: selected.isHighProtein ?? null,
+      isBreakfast: selected.isBreakfast ?? null,
+      isLunch: selected.isLunch ?? null,
+      isDinner: selected.isDinner ?? null,
+      isDessert: selected.isDessert ?? null,
+      isSnack: selected.isSnack ?? null,
     }
   }
 
@@ -71,6 +84,19 @@ export default observer(function EditRecipe() {
           ordinal: index + 1,
         }
       }),
+      isVegetarian: formData.isVegetarian ?? null,
+      isVegan: formData.isVegan ?? null,
+      isGlutenFree: formData.isGlutenFree ?? null,
+      isDairyFree: formData.isDairyFree ?? null,
+      isCheap: formData.isCheap ?? null,
+      isHealthy: formData.isHealthy ?? null,
+      isLowFodmap: formData.isLowFodmap ?? null,
+      isHighProtein: formData.isHighProtein ?? null,
+      isBreakfast: formData.isBreakfast ?? null,
+      isLunch: formData.isLunch ?? null,
+      isDinner: formData.isDinner ?? null,
+      isDessert: formData.isDessert ?? null,
+      isSnack: formData.isSnack ?? null,
     }
 
     try {

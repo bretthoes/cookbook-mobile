@@ -65,6 +65,19 @@ export default observer(function AddRecipeScreen() {
           image: direction.image,
         })) ?? [],
       images: recipeToAdd.images?.map((image) => image.name) ?? [],
+      isVegetarian: recipeToAdd.isVegetarian ?? null,
+      isVegan: recipeToAdd.isVegan ?? null,
+      isGlutenFree: recipeToAdd.isGlutenFree ?? null,
+      isDairyFree: recipeToAdd.isDairyFree ?? null,
+      isCheap: recipeToAdd.isCheap ?? null,
+      isHealthy: recipeToAdd.isHealthy ?? null,
+      isLowFodmap: recipeToAdd.isLowFodmap ?? null,
+      isHighProtein: recipeToAdd.isHighProtein ?? null,
+      isBreakfast: recipeToAdd.isBreakfast ?? null,
+      isLunch: recipeToAdd.isLunch ?? null,
+      isDinner: recipeToAdd.isDinner ?? null,
+      isDessert: recipeToAdd.isDessert ?? null,
+      isSnack: recipeToAdd.isSnack ?? null,
     }
   }
 
@@ -115,6 +128,19 @@ export default observer(function AddRecipeScreen() {
         directions: validDirections,
         ingredients: validIngredients,
         images: validImages,
+        isVegetarian: formData.isVegetarian ?? null,
+        isVegan: formData.isVegan ?? null,
+        isGlutenFree: formData.isGlutenFree ?? null,
+        isDairyFree: formData.isDairyFree ?? null,
+        isCheap: formData.isCheap ?? null,
+        isHealthy: formData.isHealthy ?? null,
+        isLowFodmap: formData.isLowFodmap ?? null,
+        isHighProtein: formData.isHighProtein ?? null,
+        isBreakfast: formData.isBreakfast ?? null,
+        isLunch: formData.isLunch ?? null,
+        isDinner: formData.isDinner ?? null,
+        isDessert: formData.isDessert ?? null,
+        isSnack: formData.isSnack ?? null,
       }
 
       try {
