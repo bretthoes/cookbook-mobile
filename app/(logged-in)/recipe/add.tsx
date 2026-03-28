@@ -44,8 +44,10 @@ export default observer(function AddRecipeScreen() {
   useEffect(() => {
     return () => {
       clearRecipeToAdd()
-      // Save draft on unmount if the form is dirty and a cookbook is selected
       if (selectedCookbook && formRef.current?.isDirty) {
+        // formRef is a plain value ref (not a JSX ref prop), so React never nulls it out.
+        // Reading .current in the cleanup intentionally captures the latest form state at unmount.
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         saveDraft(selectedCookbook.id, formRef.current.getValues())
       }
     }
