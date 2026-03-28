@@ -84,15 +84,21 @@ const defaultForm: RecipeFormInputs = {
   isSnack: null,
 }
 
+export interface RecipeFormHandle {
+  getValues: () => RecipeFormInputs
+  isDirty: boolean
+}
+
 export interface RecipeFormProps {
   formValues?: RecipeFormInputs
   onSubmit: (formData: RecipeFormInputs) => void
   onError: (errors: any) => void
   isEdit?: boolean
+  formRef?: React.MutableRefObject<RecipeFormHandle | null>
 }
 
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
-  const { onSubmit, onError, formValues = defaultForm, isEdit = false } = props
+  const { onSubmit, onError, formValues = defaultForm, isEdit = false, formRef } = props
   const { themed } = useAppTheme()
   const [isLoading, _] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
@@ -108,7 +114,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     setValue,
     watch,
     getValues,
@@ -117,6 +123,12 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     mode: "onSubmit",
     defaultValues: formValues,
   })
+
+  // Keep formRef in sync so the parent can read current values and dirty state
+  // (including inside useEffect cleanup callbacks on unmount)
+  if (formRef) {
+    formRef.current = { getValues, isDirty }
+  }
 
   const currentImages = watch("images") ?? []
 

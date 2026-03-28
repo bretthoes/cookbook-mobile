@@ -417,6 +417,8 @@ const ko: Translations = {
   },
   recipeAddOptionsScreen: {
     title: "___Add Recipe",
+    continueDraft: "___Continue Draft",
+    continueDraftDesc: "___Pick up where you left off",
     optionManual: "___Add Recipe Manually",
     optionManualDesc: "___Create a new recipe from scratch",
     optionFromUrl: "___Add Recipe from a website",
@@ -492,6 +494,7 @@ const ko: Translations = {
     addingTo: "___Adding recipe to:",
     noCookbookSelected: "___No cookbook selected",
     createFailed: "___Failed to create recipe",
+    draftRestored: "___Draft restored",
   },
   selectCookbookScreen: {
     title: "___Select a Cookbook",

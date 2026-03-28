@@ -1,4 +1,4 @@
-import { RecipeForm, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
+import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
@@ -7,29 +7,34 @@ import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
-import { router } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useCallback, useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, useRef } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export default observer(function AddRecipeScreen() {
-  // Pull in one of our MST stores
   const {
-    recipeStore: { recipeToAdd, clearRecipeToAdd, create },
+    recipeStore,
     cookbookStore,
   } = useStores()
+  const { recipeToAdd, clearRecipeToAdd, create, saveDraft, deleteDraft, getDraftForCookbook } = recipeStore
   const { themed } = useAppTheme()
+
+  // Only restore a draft when the user explicitly tapped "Continue Draft"
+  const { continueDraft } = useLocalSearchParams<{ continueDraft?: string }>()
+  const shouldRestoreDraft = continueDraft === "1"
+
+  // Ref exposing the live form state to unmount cleanup without needing a re-render
+  const formRef = useRef<RecipeFormHandle | null>(null)
 
   // The selected cookbook comes from cookbookStore (set by select-cookbook screen)
   const selectedCookbook = cookbookStore.selected
 
-  // Memoize themed styles
   const $themedCookbookLabel = useMemo(() => themed($cookbookLabel), [themed])
   const $themedCookbookHeader = useMemo(() => themed($cookbookHeader), [themed])
   const $themedCookbookImage = useMemo(() => themed($cookbookImage), [themed])
   const $themedCookbookTitle = useMemo(() => themed($cookbookTitle), [themed])
 
-  // Get cookbook image source
   const cookbookImageSource = useMemo(() => {
     if (!selectedCookbook) return null
     if (selectedCookbook.image) {
@@ -39,13 +44,18 @@ export default observer(function AddRecipeScreen() {
   }, [selectedCookbook])
 
   useEffect(() => {
-    // Return a "cleanup" function that React will run when the component unmounts
     return () => {
       clearRecipeToAdd()
+      // Save draft on unmount if the form is dirty and a cookbook is selected
+      if (selectedCookbook && formRef.current?.isDirty) {
+        saveDraft(selectedCookbook.id, formRef.current.getValues())
+      }
     }
-  }, [clearRecipeToAdd])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
+  /** Map recipeToAdd (from social/URL/voice imports) to form inputs — takes priority over draft */
+  const mapRecipeToAddToFormInputs = (): RecipeFormInputs | null => {
     if (!recipeToAdd) return null
     return {
       title: recipeToAdd.title,
@@ -81,6 +91,47 @@ export default observer(function AddRecipeScreen() {
     }
   }
 
+  /** Map a saved draft to form inputs */
+  const mapDraftToFormInputs = (cookbookId: number): RecipeFormInputs | null => {
+    const draft = getDraftForCookbook(cookbookId)
+    if (!draft) return null
+    return {
+      title: draft.title,
+      summary: draft.summary,
+      preparationTimeInMinutes: draft.preparationTimeInMinutes,
+      cookingTimeInMinutes: draft.cookingTimeInMinutes,
+      bakingTimeInMinutes: draft.bakingTimeInMinutes,
+      servings: draft.servings,
+      ingredients: draft.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
+      directions: draft.directions.map((d) => ({ text: d.text, image: d.image })),
+      images: draft.images.map((img) => img.name),
+      isVegetarian: draft.isVegetarian ?? null,
+      isVegan: draft.isVegan ?? null,
+      isGlutenFree: draft.isGlutenFree ?? null,
+      isDairyFree: draft.isDairyFree ?? null,
+      isCheap: draft.isCheap ?? null,
+      isHealthy: draft.isHealthy ?? null,
+      isLowFodmap: draft.isLowFodmap ?? null,
+      isHighProtein: draft.isHighProtein ?? null,
+      isBreakfast: draft.isBreakfast ?? null,
+      isLunch: draft.isLunch ?? null,
+      isDinner: draft.isDinner ?? null,
+      isDessert: draft.isDessert ?? null,
+      isSnack: draft.isSnack ?? null,
+    }
+  }
+
+  /** Resolve initial form values: recipeToAdd (import) > draft (only when explicitly continuing) > nothing */
+  const resolveFormValues = (): RecipeFormInputs | undefined => {
+    const fromImport = mapRecipeToAddToFormInputs()
+    if (fromImport) return fromImport
+    if (shouldRestoreDraft && selectedCookbook) {
+      const fromDraft = mapDraftToFormInputs(selectedCookbook.id)
+      if (fromDraft) return fromDraft
+    }
+    return undefined
+  }
+
   const onPressSend = useCallback(
     async (formData: RecipeFormInputs) => {
       if (!selectedCookbook) {
@@ -88,7 +139,6 @@ export default observer(function AddRecipeScreen() {
         return
       }
 
-      // Filter out empty directions and ingredients, then map to recipe format
       const validDirections = formData.directions
         .filter((direction) => direction.text?.trim())
         .map((direction, index) => ({
@@ -119,8 +169,8 @@ export default observer(function AddRecipeScreen() {
         title: formData.title.trim(),
         cookbookId: selectedCookbook.id,
         summary: formData.summary?.trim() || null,
-        thumbnail: null, // TODO handle thumbnail logic
-        videoPath: null, // TODO handle videoPath logic
+        thumbnail: null,
+        videoPath: null,
         preparationTimeInMinutes: formData.preparationTimeInMinutes,
         cookingTimeInMinutes: formData.cookingTimeInMinutes,
         bakingTimeInMinutes: formData.bakingTimeInMinutes,
@@ -146,8 +196,12 @@ export default observer(function AddRecipeScreen() {
       try {
         const success = await create(newRecipe)
         if (success) {
+          // Clear the draft on successful submit
+          deleteDraft(selectedCookbook.id)
           router.replace(`../../cookbook/${selectedCookbook.id}`)
         } else {
+          // Save draft when create returns false (non-throwing failure)
+          saveDraft(selectedCookbook.id, formData)
           alert(translate("recipeAddScreen:createFailed"))
         }
       } catch (e) {
@@ -158,10 +212,12 @@ export default observer(function AddRecipeScreen() {
           console.error("Stack trace:", e.stack)
         } else console.error("Non-standard error:", JSON.stringify(e, null, 2))
 
+        // Save draft when create throws
+        saveDraft(selectedCookbook.id, formData)
         alert(translate("recipeAddScreen:createFailed"))
       }
     },
-    [create, selectedCookbook],
+    [create, deleteDraft, saveDraft, selectedCookbook],
   )
 
   const onError = (errors: any) => {
@@ -181,8 +237,9 @@ export default observer(function AddRecipeScreen() {
       )}
       <RecipeForm
         onSubmit={onPressSend}
-        formValues={mapRecipeToFormInputs() ?? undefined}
+        formValues={resolveFormValues()}
         onError={onError}
+        formRef={formRef}
       />
     </Screen>
   )

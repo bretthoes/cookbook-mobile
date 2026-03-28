@@ -419,6 +419,8 @@ const en = {
   },
   recipeAddOptionsScreen: {
     title: "Add Recipe",
+    continueDraft: "Continue Draft",
+    continueDraftDesc: "Pick up where you left off",
     optionManual: "Add Recipe Manually",
     optionManualDesc: "Create a new recipe from scratch",
     optionFromUrl: "Add Recipe from a website",
@@ -494,6 +496,7 @@ const en = {
     addingTo: "Adding recipe to:",
     noCookbookSelected: "No cookbook selected",
     createFailed: "Failed to create recipe",
+    draftRestored: "Draft restored",
   },
   selectCookbookScreen: {
     title: "Select a Cookbook",

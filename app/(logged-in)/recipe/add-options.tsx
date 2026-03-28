@@ -26,6 +26,16 @@ const tiktokLogo = require("@/assets/images/tiktok.png")
 const instagramLogo = require("@/assets/images/instagram.png")
 const pinterestLogo = require("@/assets/images/pinterest.png")
 
+type RecipeAddOption = {
+  title: string
+  description?: string
+  icon?: IconTypes
+  image?: ImageSourcePropType
+  isPremium: boolean
+  showDraftBadge?: boolean
+  action: () => void
+}
+
 export default observer(function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
@@ -55,8 +65,16 @@ export default observer(function AddRecipeOptionsScreen() {
     action()
   }
 
-  const options = useMemo(
-    () => [
+  // Most recently saved draft (if any) — used to surface the "Continue Draft" tile
+  const latestDraft = useMemo(() => {
+    if (recipeStore.drafts.length === 0) return null
+    return recipeStore.drafts.reduce((latest, d) =>
+      d.savedAt > latest.savedAt ? d : latest,
+    )
+  }, [recipeStore.drafts, recipeStore.drafts.length])
+
+  const options = useMemo(() => {
+    const baseOptions: RecipeAddOption[] = [
       {
         title: t("recipeAddOptionsScreen:optionFromTiktok"),
         description: t("recipeAddOptionsScreen:optionFromTiktokDesc"),
@@ -131,9 +149,24 @@ export default observer(function AddRecipeOptionsScreen() {
         isPremium: false,
         action: () => router.replace("../recipe/add"),
       },
-    ],
-    [t, cookbookStore.selected, addRecipeFromCamera],
-  )
+    ]
+
+    if (!latestDraft) return baseOptions
+
+    const draftOption: RecipeAddOption = {
+      title: t("recipeAddOptionsScreen:continueDraft"),
+      description: t("recipeAddOptionsScreen:continueDraftDesc"),
+      icon: "progressPen" as IconTypes,
+      isPremium: false,
+      showDraftBadge: true,
+      action: () => {
+        cookbookStore.setSelectedById(latestDraft.cookbookId)
+        router.replace({ pathname: "../recipe/add", params: { continueDraft: "1" } })
+      },
+    }
+
+    return [...baseOptions, draftOption]
+  }, [t, cookbookStore.selected, addRecipeFromCamera, latestDraft])
 
   const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
   const $themedGrid = useMemo(() => themed($grid), [themed])
@@ -148,6 +181,7 @@ export default observer(function AddRecipeOptionsScreen() {
             icon={option.icon}
             image={option.image}
             isPremium={option.isPremium}
+            showDraftBadge={option.showDraftBadge}
             isDisabled={option.isPremium && isAtLimit}
             onPress={() => {
               if (option.isPremium) {
@@ -211,11 +245,12 @@ interface OptionTileProps {
   icon?: IconTypes
   image?: ImageSourcePropType
   isPremium?: boolean
+  showDraftBadge?: boolean
   isDisabled?: boolean
   onPress: () => void
 }
 
-function OptionTile({ title, icon, image, isPremium, isDisabled, onPress }: OptionTileProps) {
+function OptionTile({ title, icon, image, isPremium, showDraftBadge, isDisabled, onPress }: OptionTileProps) {
   const { themed } = useAppTheme()
   const $themedTileOuter = useMemo(() => themed($tileOuter), [themed])
   const $themedIconBox = useMemo(() => themed($iconBox), [themed])
@@ -239,6 +274,9 @@ function OptionTile({ title, icon, image, isPremium, isDisabled, onPress }: Opti
           <View style={themed($premiumBadge)}>
             <Icon icon="lock" size={11} color={colors.palette.accent500} />
           </View>
+        )}
+        {showDraftBadge && (
+          <Icon icon="notification" size={22} color={colors.palette.angry500} containerStyle={themed($draftBadge)} />
         )}
         <View style={$themedIconBox}>
           {icon ? (
@@ -309,6 +347,12 @@ const $premiumBadge: ThemedStyle<ViewStyle> = (theme) => ({
   justifyContent: "center",
   borderWidth: 1,
   borderColor: colors.palette.accent400,
+})
+
+const $draftBadge: ThemedStyle<ViewStyle> = (theme) => ({
+  position: "absolute",
+  top: theme.spacing.xs,
+  right: theme.spacing.xs,
 })
 
 const $iconBox: ThemedStyle<ViewStyle> = (theme) => ({
