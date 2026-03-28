@@ -436,15 +436,19 @@ const ko: Translations = {
     titleTiktok: "___Import from TikTok",
     titleInstagram: "___Import from Instagram",
     titlePinterest: "___Import from Pinterest",
-    subtitleTiktok: "___Paste the link to a TikTok video that contains a recipe. We'll extract the recipe details automatically.",
-    subtitleInstagram: "___Paste the link to an Instagram post that contains a recipe. We'll extract the recipe details automatically.",
-    subtitlePinterest: "___Paste the link to a Pinterest pin that contains a recipe. We'll extract the recipe details automatically.",
+    subtitleTiktok:
+      "___Paste the link to a TikTok video that contains a recipe. We'll extract the recipe details automatically.",
+    subtitleInstagram:
+      "___Paste the link to an Instagram post that contains a recipe. We'll extract the recipe details automatically.",
+    subtitlePinterest:
+      "___Paste the link to a Pinterest pin that contains a recipe. We'll extract the recipe details automatically.",
     urlLabel: "___Link",
     urlPlaceholderTiktok: "https://www.tiktok.com/@user/video/...",
     urlPlaceholderInstagram: "https://www.instagram.com/reel/...",
     urlPlaceholderPinterest: "https://pin.it/...",
     import: "___Import",
-    extractFailed: "___Could not extract a recipe from this link. Make sure the post contains recipe details and try again.",
+    extractFailed:
+      "___Could not extract a recipe from this link. Make sure the post contains recipe details and try again.",
     rateLimited: "___Too many requests. Please wait a moment and try again.",
     validation: {
       cantBeBlank: "___Please enter a URL",

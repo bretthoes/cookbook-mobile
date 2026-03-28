@@ -55,16 +55,13 @@ export default observer(function AddSocialImportScreen() {
   const [isLoading, setIsLoading] = useState(false)
   const [result, setResult] = useState("")
 
-  const getValidationError = useCallback(
-    (urlToValidate: string) => {
-      if (urlToValidate.length === 0)
-        return translate("recipeAddSocialImportScreen:validation.cantBeBlank")
-      if (!isValidUrl(urlToValidate))
-        return translate("recipeAddSocialImportScreen:validation.mustBeValidUrl")
-      return ""
-    },
-    [],
-  )
+  const getValidationError = useCallback((urlToValidate: string) => {
+    if (urlToValidate.length === 0)
+      return translate("recipeAddSocialImportScreen:validation.cantBeBlank")
+    if (!isValidUrl(urlToValidate))
+      return translate("recipeAddSocialImportScreen:validation.mustBeValidUrl")
+    return ""
+  }, [])
 
   const validationError = useMemo(
     () => (isSubmitted ? getValidationError(url) : ""),
@@ -121,10 +118,7 @@ export default observer(function AddSocialImportScreen() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text
-        tx={PLATFORM_SUBTITLES[platform] as never}
-        style={{ paddingHorizontal: spacing.md }}
-      />
+      <Text tx={PLATFORM_SUBTITLES[platform] as never} style={{ paddingHorizontal: spacing.md }} />
       <UseCase>
         <TextField
           value={url}

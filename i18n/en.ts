@@ -438,15 +438,19 @@ const en = {
     titleTiktok: "Import from TikTok",
     titleInstagram: "Import from Instagram",
     titlePinterest: "Import from Pinterest",
-    subtitleTiktok: "Paste the link to a TikTok video that contains a recipe. We'll extract the recipe details automatically.",
-    subtitleInstagram: "Paste the link to an Instagram post that contains a recipe. We'll extract the recipe details automatically.",
-    subtitlePinterest: "Paste the link to a Pinterest pin that contains a recipe. We'll extract the recipe details automatically.",
+    subtitleTiktok:
+      "Paste the link to a TikTok video that contains a recipe. We'll extract the recipe details automatically.",
+    subtitleInstagram:
+      "Paste the link to an Instagram post that contains a recipe. We'll extract the recipe details automatically.",
+    subtitlePinterest:
+      "Paste the link to a Pinterest pin that contains a recipe. We'll extract the recipe details automatically.",
     urlLabel: "Link",
     urlPlaceholderTiktok: "https://www.tiktok.com/@user/video/...",
     urlPlaceholderInstagram: "https://www.instagram.com/reel/...",
     urlPlaceholderPinterest: "https://pin.it/...",
     import: "Import",
-    extractFailed: "Could not extract a recipe from this link. Make sure the post contains recipe details and try again.",
+    extractFailed:
+      "Could not extract a recipe from this link. Make sure the post contains recipe details and try again.",
     rateLimited: "Too many requests. Please wait a moment and try again.",
     validation: {
       cantBeBlank: "Please enter a URL",

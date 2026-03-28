@@ -228,4 +228,3 @@ const $forgotPasswordInline: TextStyle = {
   fontSize: spacing.sm,
   textDecorationLine: "underline",
 }
-

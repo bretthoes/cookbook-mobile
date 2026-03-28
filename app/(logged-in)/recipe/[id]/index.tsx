@@ -21,7 +21,14 @@ import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ActivityIndicator, Alert, ImageStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  Alert,
+  ImageStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default observer(function Recipe() {
@@ -123,7 +130,9 @@ export default observer(function Recipe() {
         key: "printRecipe",
         tx: "recipeDetailsScreen:printRecipe" as const,
         leftIcon: "printer" as const,
-        onPress: () => { if (selected) printRecipe(selected) },
+        onPress: () => {
+          if (selected) printRecipe(selected)
+        },
       },
       {
         key: "deleteRecipe",
@@ -217,10 +226,7 @@ export default observer(function Recipe() {
                     completed={completedDirections.has(index)}
                   />
                   {item?.image ? (
-                    <AutoImage
-                      source={{ uri: item.image }}
-                      style={$directionImage as ImageStyle}
-                    />
+                    <AutoImage source={{ uri: item.image }} style={$directionImage as ImageStyle} />
                   ) : null}
                 </TouchableOpacity>
               </View>

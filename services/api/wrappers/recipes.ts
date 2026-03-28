@@ -154,7 +154,7 @@ export async function extractRecipeFromSocialUrl(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Accept: "application/json",
+        "Accept": "application/json",
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
       body: JSON.stringify({ url, extractFromVideo: true }),

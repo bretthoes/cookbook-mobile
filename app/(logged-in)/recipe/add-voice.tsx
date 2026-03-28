@@ -174,7 +174,9 @@ export default observer(function AddRecipeVoiceScreen() {
   }
 
   if (phase === "processing") {
-    return <LoadingScreen text={t("recipeAddVoiceScreen:processing")} estimatedDurationMs={10_000} />
+    return (
+      <LoadingScreen text={t("recipeAddVoiceScreen:processing")} estimatedDurationMs={10_000} />
+    )
   }
 
   const isRecording = phase === "recording"

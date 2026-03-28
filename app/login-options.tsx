@@ -19,7 +19,6 @@ function navigateAfterAuth() {
   if (storage.getBoolean("hasCompletedOnboarding")) {
     router.replace("/(logged-in)/(tabs)/cookbooks")
   } else {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     router.replace({ pathname: "/(logged-in)/onboarding" as any })
   }
 }

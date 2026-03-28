@@ -19,7 +19,14 @@ import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
-import { ActivityIndicator, ImageStyle, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  ImageStyle,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
 
 export interface RecipeFormInputs {
   title: string
@@ -432,9 +439,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           <Divider size={spacing.md} />
           {directionFields.map((item, index) => {
             const directionImage = watch(`directions.${index}.image`)
-            const directionImageUri = directionImage
-              ? getImageDisplayUri(directionImage)
-              : null
+            const directionImageUri = directionImage ? getImageDisplayUri(directionImage) : null
             return (
               <View key={item.id || String(index)}>
                 {index > 0 && <Divider size={spacing.sm} />}
@@ -467,7 +472,9 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                     )}
                   />
                 </View>
-                {uploadingDirectionIndex === index && <ActivityIndicator style={{ marginLeft: spacing.xl }} />}
+                {uploadingDirectionIndex === index && (
+                  <ActivityIndicator style={{ marginLeft: spacing.xl }} />
+                )}
                 {directionImageUri && (
                   <View style={$directionImagePreviewContainer}>
                     <AutoImage

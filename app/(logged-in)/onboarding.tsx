@@ -125,10 +125,11 @@ export default observer(function OnboardingScreen() {
       titleTx: headerTitle as any,
       leftIcon: "back",
       onLeftPress: handleBack,
-      ...(!skipDisplayName && currentStep === STEP_DISPLAY_NAME && {
-        rightTx: "setDisplayNameScreen:continue" as any,
-        onRightPress: handleDisplayNameContinue,
-      }),
+      ...(!skipDisplayName &&
+        currentStep === STEP_DISPLAY_NAME && {
+          rightTx: "setDisplayNameScreen:continue" as any,
+          onRightPress: handleDisplayNameContinue,
+        }),
     },
     [currentStep, localDisplayName],
   )
@@ -196,7 +197,12 @@ export default observer(function OnboardingScreen() {
             </View>
           </FormCard>
           <View style={$content}>
-            <Button tx="common:next" preset="reversed" onPress={advanceStep} style={$actionButton} />
+            <Button
+              tx="common:next"
+              preset="reversed"
+              onPress={advanceStep}
+              style={$actionButton}
+            />
           </View>
         </>
       )}
@@ -215,7 +221,12 @@ export default observer(function OnboardingScreen() {
             </View>
           </FormCard>
           <View style={$content}>
-            <Button tx="common:next" preset="reversed" onPress={advanceStep} style={$actionButton} />
+            <Button
+              tx="common:next"
+              preset="reversed"
+              onPress={advanceStep}
+              style={$actionButton}
+            />
           </View>
         </>
       )}

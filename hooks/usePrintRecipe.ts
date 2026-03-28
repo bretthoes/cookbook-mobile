@@ -6,7 +6,9 @@ import { useCallback } from "react"
 function buildRecipeHtml(recipe: Recipe): string {
   const metaItems: string[] = []
   if (recipe.preparationTimeInMinutes) {
-    metaItems.push(`${translate("recipeDetailsScreen:prep")}: ${recipe.preparationTimeInMinutes} min`)
+    metaItems.push(
+      `${translate("recipeDetailsScreen:prep")}: ${recipe.preparationTimeInMinutes} min`,
+    )
   }
   if (recipe.cookingTimeInMinutes) {
     metaItems.push(`${translate("recipeDetailsScreen:cook")}: ${recipe.cookingTimeInMinutes} min`)
@@ -18,9 +20,7 @@ function buildRecipeHtml(recipe: Recipe): string {
     metaItems.push(`${translate("recipeDetailsScreen:servings")}: ${recipe.servings}`)
   }
 
-  const metaHtml = metaItems
-    .map((item) => `<span class="meta">${item}</span>`)
-    .join("")
+  const metaHtml = metaItems.map((item) => `<span class="meta">${item}</span>`).join("")
 
   const ingredients = recipe.ingredients
     .slice()
