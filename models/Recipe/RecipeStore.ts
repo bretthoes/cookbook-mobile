@@ -6,12 +6,29 @@ import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
 
 import { withSetPropAction } from "../helpers/withSetPropAction"
 
+export const WEEKLY_IMPORT_LIMIT = 5
+
+/**
+ * Returns an ISO date string for the Monday of the current week (e.g. "2026-03-23").
+ * Used as a stable weekly key for resetting the import count.
+ */
+export function getCurrentWeekKey(): string {
+  const now = new Date()
+  const day = now.getDay() // 0 = Sunday
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1)
+  const monday = new Date(now)
+  monday.setDate(diff)
+  return monday.toISOString().split("T")[0]
+}
+
 export const RecipeStoreModel = types
   .model("RecipeStore")
   .props({
     recipes: types.array(RecipeBriefModel),
     selected: types.maybeNull(RecipeModel),
     recipeToAdd: types.maybeNull(RecipeToAddModel),
+    weeklyImportCount: types.optional(types.number, 0),
+    weeklyImportWeekStart: types.optional(types.string, ""),
   })
   .actions(withSetPropAction)
   .actions((self) => ({
@@ -115,6 +132,14 @@ export const RecipeStoreModel = types
     },
     clearselected() {
       self.selected = null
+    },
+    incrementImportCount() {
+      const currentWeek = getCurrentWeekKey()
+      if (self.weeklyImportWeekStart !== currentWeek) {
+        self.weeklyImportCount = 0
+        self.weeklyImportWeekStart = currentWeek
+      }
+      self.weeklyImportCount += 1
     },
   }))
 
