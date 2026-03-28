@@ -62,4 +62,17 @@ export const recipeSchema = yup.object({
     .array()
     .of(yup.string().required())
     .max(6, () => translate("validation:maxImages")),
+  isVegetarian: yup.bool().nullable().default(null),
+  isVegan: yup.bool().nullable().default(null),
+  isGlutenFree: yup.bool().nullable().default(null),
+  isDairyFree: yup.bool().nullable().default(null),
+  isCheap: yup.bool().nullable().default(null),
+  isHealthy: yup.bool().nullable().default(null),
+  isLowFodmap: yup.bool().nullable().default(null),
+  isHighProtein: yup.bool().nullable().default(null),
+  isBreakfast: yup.bool().nullable().default(null),
+  isLunch: yup.bool().nullable().default(null),
+  isDinner: yup.bool().nullable().default(null),
+  isDessert: yup.bool().nullable().default(null),
+  isSnack: yup.bool().nullable().default(null),
 }) as yup.ObjectSchema<RecipeFormInputs>

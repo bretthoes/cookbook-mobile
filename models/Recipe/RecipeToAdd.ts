@@ -22,6 +22,19 @@ export const RecipeToAddModel = types
     directions: types.array(RecipeDirectionModel) ?? [],
     images: types.array(RecipeImageModel) ?? [],
     ingredients: types.array(RecipeIngredientModel) ?? [],
+    isVegetarian: types.maybeNull(types.boolean),
+    isVegan: types.maybeNull(types.boolean),
+    isGlutenFree: types.maybeNull(types.boolean),
+    isDairyFree: types.maybeNull(types.boolean),
+    isCheap: types.maybeNull(types.boolean),
+    isHealthy: types.maybeNull(types.boolean),
+    isLowFodmap: types.maybeNull(types.boolean),
+    isHighProtein: types.maybeNull(types.boolean),
+    isBreakfast: types.maybeNull(types.boolean),
+    isLunch: types.maybeNull(types.boolean),
+    isDinner: types.maybeNull(types.boolean),
+    isDessert: types.maybeNull(types.boolean),
+    isSnack: types.maybeNull(types.boolean),
   })
   .actions(withSetPropAction)
 

@@ -32,6 +32,12 @@ export const RecipeModel = types
     isCheap: types.maybeNull(types.boolean),
     isHealthy: types.maybeNull(types.boolean),
     isLowFodmap: types.maybeNull(types.boolean),
+    isHighProtein: types.maybeNull(types.boolean),
+    isBreakfast: types.maybeNull(types.boolean),
+    isLunch: types.maybeNull(types.boolean),
+    isDinner: types.maybeNull(types.boolean),
+    isDessert: types.maybeNull(types.boolean),
+    isSnack: types.maybeNull(types.boolean),
   })
   .actions(withSetPropAction)
   .actions((self) => ({
@@ -54,6 +60,12 @@ export const RecipeModel = types
       self.setProp("isCheap", updatedRecipe.isCheap)
       self.setProp("isHealthy", updatedRecipe.isHealthy)
       self.setProp("isLowFodmap", updatedRecipe.isLowFodmap)
+      self.setProp("isHighProtein", updatedRecipe.isHighProtein)
+      self.setProp("isBreakfast", updatedRecipe.isBreakfast)
+      self.setProp("isLunch", updatedRecipe.isLunch)
+      self.setProp("isDinner", updatedRecipe.isDinner)
+      self.setProp("isDessert", updatedRecipe.isDessert)
+      self.setProp("isSnack", updatedRecipe.isSnack)
     },
   }))
   .views((recipe) => ({

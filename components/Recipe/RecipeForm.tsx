@@ -19,7 +19,7 @@ import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
-import { ActivityIndicator, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 
 export interface RecipeFormInputs {
   title: string
@@ -37,6 +37,19 @@ export interface RecipeFormInputs {
     image: string | null
   }[]
   images: string[]
+  isVegetarian: boolean | null
+  isVegan: boolean | null
+  isGlutenFree: boolean | null
+  isDairyFree: boolean | null
+  isCheap: boolean | null
+  isHealthy: boolean | null
+  isLowFodmap: boolean | null
+  isHighProtein: boolean | null
+  isBreakfast: boolean | null
+  isLunch: boolean | null
+  isDinner: boolean | null
+  isDessert: boolean | null
+  isSnack: boolean | null
 }
 
 const defaultForm: RecipeFormInputs = {
@@ -49,6 +62,19 @@ const defaultForm: RecipeFormInputs = {
   ingredients: [{ name: "", optional: null }],
   directions: [{ text: "", image: null }],
   images: [],
+  isVegetarian: null,
+  isVegan: null,
+  isGlutenFree: null,
+  isDairyFree: null,
+  isCheap: null,
+  isHealthy: null,
+  isLowFodmap: null,
+  isHighProtein: null,
+  isBreakfast: null,
+  isLunch: null,
+  isDinner: null,
+  isDessert: null,
+  isSnack: null,
 }
 
 export interface RecipeFormProps {
@@ -477,6 +503,33 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           <Divider size={spacing.xl} />
         </View>
 
+        {/* Tags Section */}
+        <View>
+          <Text tx="recipeFormScreen:tagsLabel" preset="bold" />
+          <Divider size={spacing.md} />
+          <View style={$tagRow}>
+            {RECIPE_TAGS.map(({ key, labelTx }) => (
+              <Controller
+                key={key}
+                control={control}
+                name={key}
+                render={({ field: { value, onChange } }) => (
+                  <TouchableOpacity
+                    onPress={() => onChange(value === true ? null : true)}
+                    style={[themed($tagChip), value === true && themed($tagChipActive)]}
+                  >
+                    <Text
+                      tx={labelTx}
+                      style={themed(value === true ? $tagChipTextActive : $tagChipText)}
+                    />
+                  </TouchableOpacity>
+                )}
+              />
+            ))}
+          </View>
+          <Divider size={spacing.xl} />
+        </View>
+
         {isLoading && <ActivityIndicator />}
       </UseCase>
     </View>
@@ -533,3 +586,67 @@ const $errorText: TextStyle = {
   fontSize: 12,
   marginTop: 4,
 }
+
+const RECIPE_TAGS: {
+  key: keyof Pick<
+    RecipeFormInputs,
+    | "isVegetarian"
+    | "isVegan"
+    | "isGlutenFree"
+    | "isDairyFree"
+    | "isCheap"
+    | "isHealthy"
+    | "isLowFodmap"
+    | "isHighProtein"
+    | "isBreakfast"
+    | "isLunch"
+    | "isDinner"
+    | "isDessert"
+    | "isSnack"
+  >
+  labelTx: Parameters<typeof Text>[0]["tx"]
+}[] = [
+  { key: "isVegetarian", labelTx: "recipeTags:isVegetarian" },
+  { key: "isVegan", labelTx: "recipeTags:isVegan" },
+  { key: "isGlutenFree", labelTx: "recipeTags:isGlutenFree" },
+  { key: "isDairyFree", labelTx: "recipeTags:isDairyFree" },
+  { key: "isCheap", labelTx: "recipeTags:isCheap" },
+  { key: "isHealthy", labelTx: "recipeTags:isHealthy" },
+  { key: "isLowFodmap", labelTx: "recipeTags:isLowFodmap" },
+  { key: "isHighProtein", labelTx: "recipeTags:isHighProtein" },
+  { key: "isBreakfast", labelTx: "recipeTags:isBreakfast" },
+  { key: "isLunch", labelTx: "recipeTags:isLunch" },
+  { key: "isDinner", labelTx: "recipeTags:isDinner" },
+  { key: "isDessert", labelTx: "recipeTags:isDessert" },
+  { key: "isSnack", labelTx: "recipeTags:isSnack" },
+]
+
+const $tagRow: ViewStyle = {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: spacing.sm,
+}
+
+const $tagChip: ThemedStyle<ViewStyle> = (theme) => ({
+  borderWidth: 1,
+  borderColor: theme.colors.separator,
+  borderRadius: theme.spacing.xl,
+  paddingHorizontal: theme.spacing.sm,
+  paddingVertical: theme.spacing.xs,
+  backgroundColor: theme.colors.background,
+})
+
+const $tagChipActive: ThemedStyle<ViewStyle> = (theme) => ({
+  borderColor: theme.colors.tint,
+  backgroundColor: theme.colors.tint,
+})
+
+const $tagChipText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  fontSize: 13,
+})
+
+const $tagChipTextActive: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.background,
+  fontSize: 13,
+})

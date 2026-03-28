@@ -626,6 +626,12 @@ export interface components {
       isHealthy?: boolean | null
       isCheap?: boolean | null
       isLowFodmap?: boolean | null
+      isHighProtein?: boolean | null
+      isBreakfast?: boolean | null
+      isLunch?: boolean | null
+      isDinner?: boolean | null
+      isDessert?: boolean | null
+      isSnack?: boolean | null
       directions?: components["schemas"]["RecipeDirectionDto"][]
       images?: components["schemas"]["RecipeImageDto"][]
       ingredients?: components["schemas"]["RecipeIngredientDto"][]
@@ -689,6 +695,19 @@ export interface components {
       bakingTimeInMinutes?: number | null
       /** Format: int32 */
       servings?: number | null
+      isVegetarian?: boolean | null
+      isVegan?: boolean | null
+      isGlutenFree?: boolean | null
+      isDairyFree?: boolean | null
+      isHealthy?: boolean | null
+      isCheap?: boolean | null
+      isLowFodmap?: boolean | null
+      isHighProtein?: boolean | null
+      isBreakfast?: boolean | null
+      isLunch?: boolean | null
+      isDinner?: boolean | null
+      isDessert?: boolean | null
+      isSnack?: boolean | null
       directions?: components["schemas"]["RecipeDirectionDto"][]
       images?: components["schemas"]["RecipeImageDto"][]
       ingredients?: components["schemas"]["RecipeIngredientDto"][]
@@ -703,9 +722,6 @@ export interface components {
     ParseRecipeFromUrlCommand: {
       url?: string
       extractFromVideo?: boolean
-    }
-    ParseRecipeFromVoiceCommand: {
-      transcript?: string
     }
     ParseRecipeFromVoiceCommand: {
       transcript?: string
