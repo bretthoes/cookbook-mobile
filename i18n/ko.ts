@@ -431,6 +431,11 @@ const ko: Translations = {
     optionFromInstagramDesc: "___Paste a link to an Instagram recipe post",
     optionFromPinterest: "___Import from Pinterest",
     optionFromPinterestDesc: "___Paste a link to a Pinterest recipe pin",
+    weeklyUsageLabel: "___{{used}} / {{limit}} imports used this week",
+    weeklyLimitReachedTitle: "___Weekly Limit Reached",
+    weeklyLimitReachedMessage:
+      "___You've used all {{limit}} imports for this week. Come back next Monday, or add a recipe manually.",
+    weeklyLimitResetInfo: "___Resets every Monday",
   },
   recipeAddSocialImportScreen: {
     titleTiktok: "___Import from TikTok",

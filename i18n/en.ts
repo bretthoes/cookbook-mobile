@@ -433,6 +433,11 @@ const en = {
     optionFromInstagramDesc: "Paste a link to an Instagram recipe post",
     optionFromPinterest: "Import from Pinterest",
     optionFromPinterestDesc: "Paste a link to a Pinterest recipe pin",
+    weeklyUsageLabel: "{{used}} / {{limit}} imports used this week",
+    weeklyLimitReachedTitle: "Weekly Limit Reached",
+    weeklyLimitReachedMessage:
+      "You've used all {{limit}} imports for this week. Come back next Monday, or add a recipe manually.",
+    weeklyLimitResetInfo: "Resets every Monday",
   },
   recipeAddSocialImportScreen: {
     titleTiktok: "Import from TikTok",
