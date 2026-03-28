@@ -3,7 +3,6 @@ import { Popover } from "@/components/Popover"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { ListItem } from "@/components/ListItem"
 import { MoreButton } from "@/components/MoreButton"
 import { DirectionText } from "@/components/Recipe/DirectionText"
 import { IngredientItem } from "@/components/Recipe/IngredientItem"
@@ -22,7 +21,7 @@ import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, Alert, ImageStyle, View, ViewStyle } from "react-native"
+import { ActivityIndicator, Alert, ImageStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default observer(function Recipe() {
@@ -47,6 +46,7 @@ export default observer(function Recipe() {
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
   const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
   const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
+  const $themedSeparator = React.useMemo(() => themed($separator), [themed])
   const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
   const [cookMode, setCookMode] = useState(false)
@@ -204,28 +204,25 @@ export default observer(function Recipe() {
                   index === selected.directions.length - 1 && $themedBorderBottom,
                 ]}
               >
-                <ListItem
+                <TouchableOpacity
                   onPress={() => toggleDirectionCompleted(index)}
-                  style={{ padding: spacing.sm }}
-                  LeftComponent={
-                    <View style={{ flex: 1 }}>
-                      <DirectionText
-                        ordinal={item?.ordinal}
-                        text={item?.text ?? ""}
-                        completed={completedDirections.has(index)}
-                      />
-                      {item?.image ? (
-                        <AutoImage
-                          source={{ uri: item.image }}
-                          style={$directionImage as ImageStyle}
-                        />
-                      ) : null}
-                    </View>
-                  }
-                  height={spacing.xl}
-                  bottomSeparator={index !== selected.directions.length - 1}
-                  topSeparator={index !== 0}
-                />
+                  style={[
+                    $directionItem,
+                    index !== selected.directions.length - 1 && $themedSeparator,
+                  ]}
+                >
+                  <DirectionText
+                    ordinal={item?.ordinal}
+                    text={item?.text ?? ""}
+                    completed={completedDirections.has(index)}
+                  />
+                  {item?.image ? (
+                    <AutoImage
+                      source={{ uri: item.image }}
+                      style={$directionImage as ImageStyle}
+                    />
+                  ) : null}
+                </TouchableOpacity>
               </View>
             ))}
           </View>
@@ -274,6 +271,15 @@ const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
   paddingTop: theme.spacing.lg,
   paddingBottom: theme.spacing.lg,
+})
+
+const $directionItem: ViewStyle = {
+  padding: spacing.sm,
+}
+
+const $separator: ThemedStyle<ViewStyle> = (theme) => ({
+  borderBottomWidth: 1,
+  borderBottomColor: theme.colors.separator,
 })
 
 const $directionImage: ImageStyle = {
