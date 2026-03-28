@@ -419,7 +419,7 @@ const ko: Translations = {
     title: "___Add Recipe",
     optionManual: "___Add Recipe Manually",
     optionManualDesc: "___Create a new recipe from scratch",
-    optionFromUrl: "___Add Recipe from URL",
+    optionFromUrl: "___Add Recipe from a website",
     optionFromUrlDesc: "___Import a recipe from a website",
     optionFromPhoto: "___Add Recipe from Photo",
     optionFromPhotoDesc: "___Import a recipe from a photo",

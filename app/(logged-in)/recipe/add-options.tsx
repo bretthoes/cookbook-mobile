@@ -69,17 +69,6 @@ export default observer(function AddRecipeOptionsScreen() {
           }),
       },
       {
-        title: t("recipeAddOptionsScreen:optionFromInstagram"),
-        description: t("recipeAddOptionsScreen:optionFromInstagramDesc"),
-        image: instagramLogo as ImageSourcePropType,
-        isPremium: true,
-        action: () =>
-          router.replace({
-            pathname: "../recipe/add-social-import",
-            params: { platform: "instagram" },
-          }),
-      },
-      {
         title: t("recipeAddOptionsScreen:optionFromPinterest"),
         description: t("recipeAddOptionsScreen:optionFromPinterestDesc"),
         image: pinterestLogo as ImageSourcePropType,
@@ -88,6 +77,17 @@ export default observer(function AddRecipeOptionsScreen() {
           router.replace({
             pathname: "../recipe/add-social-import",
             params: { platform: "pinterest" },
+          }),
+      },
+      {
+        title: t("recipeAddOptionsScreen:optionFromInstagram"),
+        description: t("recipeAddOptionsScreen:optionFromInstagramDesc"),
+        image: instagramLogo as ImageSourcePropType,
+        isPremium: true,
+        action: () =>
+          router.replace({
+            pathname: "../recipe/add-social-import",
+            params: { platform: "instagram" },
           }),
       },
       {

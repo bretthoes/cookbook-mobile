@@ -421,7 +421,7 @@ const en = {
     title: "Add Recipe",
     optionManual: "Add Recipe Manually",
     optionManualDesc: "Create a new recipe from scratch",
-    optionFromUrl: "Add Recipe from URL",
+    optionFromUrl: "Add Recipe from a website",
     optionFromUrlDesc: "Import a recipe from a website",
     optionFromPhoto: "Add Recipe from Photo",
     optionFromPhotoDesc: "Import a recipe from a photo",
