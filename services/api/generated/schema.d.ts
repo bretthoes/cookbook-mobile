@@ -674,6 +674,19 @@ export interface components {
       /** Format: int32 */
       id?: number
       title?: string
+      isVegetarian?: boolean | null
+      isVegan?: boolean | null
+      isGlutenFree?: boolean | null
+      isDairyFree?: boolean | null
+      isHealthy?: boolean | null
+      isCheap?: boolean | null
+      isLowFodmap?: boolean | null
+      isHighProtein?: boolean | null
+      isBreakfast?: boolean | null
+      isLunch?: boolean | null
+      isDinner?: boolean | null
+      isDessert?: boolean | null
+      isSnack?: boolean | null
     }
     CreateRecipeCommand: {
       recipe?: components["schemas"]["CreateRecipeDto"]
