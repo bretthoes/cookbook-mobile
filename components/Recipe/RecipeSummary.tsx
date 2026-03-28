@@ -6,7 +6,7 @@ import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import React from "react"
-import { View, ViewStyle } from "react-native"
+import { TextStyle, View, ViewStyle } from "react-native"
 import { UseCase } from "../UseCase"
 
 const $titleContainer: ThemedStyle<ViewStyle> = (theme) => ({
@@ -66,6 +66,60 @@ const $timeItemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   justifyContent: "flex-start",
 })
 
+const $tagsRow: ViewStyle = {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: spacing.sm,
+  marginHorizontal: spacing.sm,
+  marginTop: spacing.xs,
+  marginBottom: spacing.xs,
+}
+
+const $tagChip: ThemedStyle<ViewStyle> = (theme) => ({
+  borderWidth: 1,
+  borderColor: theme.colors.tint,
+  borderRadius: theme.spacing.xl,
+  paddingHorizontal: theme.spacing.sm,
+  paddingVertical: theme.spacing.xs,
+  backgroundColor: theme.colors.tint,
+})
+
+const $tagChipText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.background,
+  fontSize: 13,
+})
+
+type TagKey =
+  | "isVegetarian"
+  | "isVegan"
+  | "isGlutenFree"
+  | "isDairyFree"
+  | "isCheap"
+  | "isHealthy"
+  | "isLowFodmap"
+  | "isHighProtein"
+  | "isBreakfast"
+  | "isLunch"
+  | "isDinner"
+  | "isDessert"
+  | "isSnack"
+
+const RECIPE_TAGS: { key: TagKey; labelTx: Parameters<typeof Text>[0]["tx"] }[] = [
+  { key: "isVegetarian", labelTx: "recipeTags:isVegetarian" },
+  { key: "isVegan", labelTx: "recipeTags:isVegan" },
+  { key: "isGlutenFree", labelTx: "recipeTags:isGlutenFree" },
+  { key: "isDairyFree", labelTx: "recipeTags:isDairyFree" },
+  { key: "isCheap", labelTx: "recipeTags:isCheap" },
+  { key: "isHealthy", labelTx: "recipeTags:isHealthy" },
+  { key: "isLowFodmap", labelTx: "recipeTags:isLowFodmap" },
+  { key: "isHighProtein", labelTx: "recipeTags:isHighProtein" },
+  { key: "isBreakfast", labelTx: "recipeTags:isBreakfast" },
+  { key: "isLunch", labelTx: "recipeTags:isLunch" },
+  { key: "isDinner", labelTx: "recipeTags:isDinner" },
+  { key: "isDessert", labelTx: "recipeTags:isDessert" },
+  { key: "isSnack", labelTx: "recipeTags:isSnack" },
+]
+
 export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
@@ -101,6 +155,16 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       <View style={$themedSubtitleContainer}>
         <Text preset="subheading" weight="light" text={recipe.author ?? ""} />
       </View>
+
+      {RECIPE_TAGS.some(({ key }) => recipe[key] === true) && (
+        <View style={$tagsRow}>
+          {RECIPE_TAGS.filter(({ key }) => recipe[key] === true).map(({ key, labelTx }) => (
+            <View key={key} style={themed($tagChip)}>
+              <Text tx={labelTx} style={themed($tagChipText)} />
+            </View>
+          ))}
+        </View>
+      )}
 
       {hasTimeOrServings && (
         <View style={$themedDetailsContainer}>
