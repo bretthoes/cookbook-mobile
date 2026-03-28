@@ -69,7 +69,7 @@ export default observer(function AddRecipeOptionsScreen() {
   const latestDraft = useMemo(() => {
     if (recipeStore.drafts.length === 0) return null
     return recipeStore.drafts.reduce((latest, d) => (d.savedAt > latest.savedAt ? d : latest))
-  }, [recipeStore.drafts, recipeStore.drafts.length])
+  }, [recipeStore.drafts])
 
   const options = useMemo(() => {
     const baseOptions: RecipeAddOption[] = [
@@ -164,7 +164,7 @@ export default observer(function AddRecipeOptionsScreen() {
     }
 
     return [...baseOptions, draftOption]
-  }, [t, cookbookStore.selected, addRecipeFromCamera, latestDraft])
+  }, [t, cookbookStore, addRecipeFromCamera, latestDraft])
 
   const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
   const $themedGrid = useMemo(() => themed($grid), [themed])

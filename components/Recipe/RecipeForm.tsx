@@ -94,7 +94,7 @@ export interface RecipeFormProps {
   onSubmit: (formData: RecipeFormInputs) => void
   onError: (errors: any) => void
   isEdit?: boolean
-  formRef?: React.MutableRefObject<RecipeFormHandle | null>
+  formRef?: React.RefObject<RecipeFormHandle | null>
 }
 
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {

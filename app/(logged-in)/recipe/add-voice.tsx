@@ -106,7 +106,7 @@ export default observer(function AddRecipeVoiceScreen() {
       setErrorMsg(t("recipeAddVoiceScreen:parseFailed"))
       updatePhase("idle")
     }
-  }, [t, updatePhase, setRecipeToAdd])
+  }, [t, recipeStore, updatePhase, setRecipeToAdd])
 
   useSpeechRecognitionEvent("result", (event) => {
     const segment = event.results[0]?.transcript ?? ""
