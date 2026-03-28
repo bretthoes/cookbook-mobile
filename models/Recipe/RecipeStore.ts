@@ -176,7 +176,12 @@ export const RecipeStoreModel = types
       const existing = self.drafts.find((d) => d.cookbookId === cookbookId)
       const validIngredients = formData.ingredients
         .filter((i) => i.name?.trim())
-        .map((i, idx) => ({ id: 0, name: i.name.trim(), optional: i.optional ?? false, ordinal: idx + 1 }))
+        .map((i, idx) => ({
+          id: 0,
+          name: i.name.trim(),
+          optional: i.optional ?? false,
+          ordinal: idx + 1,
+        }))
       const validDirections = formData.directions
         .filter((d) => d.text?.trim())
         .map((d, idx) => ({ id: 0, text: d.text.trim(), ordinal: idx + 1, image: d.image ?? null }))

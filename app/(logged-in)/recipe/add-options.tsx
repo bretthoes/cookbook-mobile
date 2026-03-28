@@ -68,9 +68,7 @@ export default observer(function AddRecipeOptionsScreen() {
   // Most recently saved draft (if any) — used to surface the "Continue Draft" tile
   const latestDraft = useMemo(() => {
     if (recipeStore.drafts.length === 0) return null
-    return recipeStore.drafts.reduce((latest, d) =>
-      d.savedAt > latest.savedAt ? d : latest,
-    )
+    return recipeStore.drafts.reduce((latest, d) => (d.savedAt > latest.savedAt ? d : latest))
   }, [recipeStore.drafts, recipeStore.drafts.length])
 
   const options = useMemo(() => {
@@ -220,17 +218,19 @@ function WeeklyUsageBanner({ used, limit, progressRatio, isAtLimit }: WeeklyUsag
   return (
     <View style={themed($bannerContainer)}>
       <View style={themed($progressTrack)}>
-        <View style={[themed($progressFill), { width: `${progressRatio * 100}%`, backgroundColor: fillColor }]} />
+        <View
+          style={[
+            themed($progressFill),
+            { width: `${progressRatio * 100}%`, backgroundColor: fillColor },
+          ]}
+        />
       </View>
       <Text
         tx="recipeAddOptionsScreen:weeklyUsageLabel"
         txOptions={{ used, limit }}
         style={themed($usageText)}
       />
-      <Text
-        tx="recipeAddOptionsScreen:weeklyLimitResetInfo"
-        style={themed($resetInfoText)}
-      />
+      <Text tx="recipeAddOptionsScreen:weeklyLimitResetInfo" style={themed($resetInfoText)} />
     </View>
   )
 }
@@ -250,7 +250,15 @@ interface OptionTileProps {
   onPress: () => void
 }
 
-function OptionTile({ title, icon, image, isPremium, showDraftBadge, isDisabled, onPress }: OptionTileProps) {
+function OptionTile({
+  title,
+  icon,
+  image,
+  isPremium,
+  showDraftBadge,
+  isDisabled,
+  onPress,
+}: OptionTileProps) {
   const { themed } = useAppTheme()
   const $themedTileOuter = useMemo(() => themed($tileOuter), [themed])
   const $themedIconBox = useMemo(() => themed($iconBox), [themed])
@@ -276,7 +284,12 @@ function OptionTile({ title, icon, image, isPremium, showDraftBadge, isDisabled,
           </View>
         )}
         {showDraftBadge && (
-          <Icon icon="notification" size={22} color={colors.palette.angry500} containerStyle={themed($draftBadge)} />
+          <Icon
+            icon="notification"
+            size={22}
+            color={colors.palette.angry500}
+            containerStyle={themed($draftBadge)}
+          />
         )}
         <View style={$themedIconBox}>
           {icon ? (
@@ -289,7 +302,11 @@ function OptionTile({ title, icon, image, isPremium, showDraftBadge, isDisabled,
             />
           ) : null}
         </View>
-        <Text preset="subheading" text={title} style={[$themedTitle, isDisabled && themed($disabledTitle)]} />
+        <Text
+          preset="subheading"
+          text={title}
+          style={[$themedTitle, isDisabled && themed($disabledTitle)]}
+        />
       </TouchableOpacity>
     </View>
   )

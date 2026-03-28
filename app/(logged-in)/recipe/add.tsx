@@ -13,11 +13,9 @@ import { useCallback, useEffect, useMemo, useRef } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export default observer(function AddRecipeScreen() {
-  const {
-    recipeStore,
-    cookbookStore,
-  } = useStores()
-  const { recipeToAdd, clearRecipeToAdd, create, saveDraft, deleteDraft, getDraftForCookbook } = recipeStore
+  const { recipeStore, cookbookStore } = useStores()
+  const { recipeToAdd, clearRecipeToAdd, create, saveDraft, deleteDraft, getDraftForCookbook } =
+    recipeStore
   const { themed } = useAppTheme()
 
   // Only restore a draft when the user explicitly tapped "Continue Draft"

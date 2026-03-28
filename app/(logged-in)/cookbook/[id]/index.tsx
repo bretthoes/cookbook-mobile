@@ -284,9 +284,7 @@ export default observer(function Cookbook() {
                 onChangeText={setSearchQuery}
                 placeholder={t("recipeListScreen:searchPlaceholder")}
                 leftIcon={filterExpanded ? "filterFilled" : "filter"}
-                leftIconColor={
-                  selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim
-                }
+                leftIconColor={selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim}
                 onLeftIconPress={() => setFilterExpanded((v) => !v)}
               />
               {filterExpanded && (
