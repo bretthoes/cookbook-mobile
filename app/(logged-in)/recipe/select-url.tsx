@@ -21,9 +21,8 @@ const isValidUrl = (input: string) => {
 const MINIMUM_LOADING_TIME_MS = 1500
 
 export default observer(function RecipeUrlScreen() {
-  const {
-    recipeStore: { setRecipeToAdd },
-  } = useStores()
+  const { recipeStore } = useStores()
+  const { setRecipeToAdd } = recipeStore
 
   const [url, setUrl] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -66,6 +65,7 @@ export default observer(function RecipeUrlScreen() {
     setIsLoading(false)
 
     if (uploadResponse.kind === "ok") {
+      recipeStore.incrementImportCount()
       setRecipeToAdd(uploadResponse.recipe)
       router.replace("../recipe/add")
     } else {

@@ -46,9 +46,8 @@ export default observer(function AddSocialImportScreen() {
   const platform = (rawPlatform ?? "tiktok") as Platform
   const { t } = useTranslation()
 
-  const {
-    recipeStore: { setRecipeToAdd },
-  } = useStores()
+  const { recipeStore } = useStores()
+  const { setRecipeToAdd } = recipeStore
 
   const [url, setUrl] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -91,6 +90,7 @@ export default observer(function AddSocialImportScreen() {
     setIsLoading(false)
 
     if (response.kind === "ok") {
+      recipeStore.incrementImportCount()
       setRecipeToAdd(response.recipe)
       router.replace("../recipe/add")
     } else if (response.kind === "rate-limited") {

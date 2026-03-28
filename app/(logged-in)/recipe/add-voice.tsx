@@ -26,9 +26,8 @@ type Phase = "idle" | "recording" | "processing"
 export default observer(function AddRecipeVoiceScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const {
-    recipeStore: { setRecipeToAdd },
-  } = useStores()
+  const { recipeStore } = useStores()
+  const { setRecipeToAdd } = recipeStore
 
   const [phase, setPhase] = useState<Phase>("idle")
   const [displayTranscript, setDisplayTranscript] = useState("")
@@ -97,6 +96,7 @@ export default observer(function AddRecipeVoiceScreen() {
     const result = await api.extractRecipeFromVoice(text)
 
     if (result.kind === "ok") {
+      recipeStore.incrementImportCount()
       setRecipeToAdd(result.recipe)
       router.replace("/(logged-in)/recipe/add")
     } else if (result.kind === "rate-limited") {

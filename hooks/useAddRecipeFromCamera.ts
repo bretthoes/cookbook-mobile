@@ -13,7 +13,7 @@ import { useCallback } from "react"
  */
 export function useAddRecipeFromCamera() {
   const { recipeStore } = useStores()
-  const { setRecipeToAdd } = recipeStore
+  const { setRecipeToAdd, incrementImportCount } = recipeStore
   const { showActionSheetWithOptions } = useActionSheet()
 
   return useCallback(async () => {
@@ -39,6 +39,7 @@ export function useAddRecipeFromCamera() {
         if (!result.canceled && result.assets?.length) {
           const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
           if (uploadResponse.kind === "ok") {
+            incrementImportCount()
             setRecipeToAdd(uploadResponse.recipe)
             router.replace("/(logged-in)/recipe/add")
           } else {
@@ -54,6 +55,7 @@ export function useAddRecipeFromCamera() {
         if (!result.canceled && result.assets?.length) {
           const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
           if (uploadResponse.kind === "ok") {
+            incrementImportCount()
             setRecipeToAdd(uploadResponse.recipe)
             router.replace("/(logged-in)/recipe/add")
           } else {
@@ -62,5 +64,5 @@ export function useAddRecipeFromCamera() {
         }
       }
     })
-  }, [showActionSheetWithOptions, setRecipeToAdd])
+  }, [showActionSheetWithOptions, setRecipeToAdd, incrementImportCount])
 }
