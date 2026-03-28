@@ -18,7 +18,34 @@ import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { ActivityIndicator, Alert, FlatList, ImageStyle, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  ImageStyle,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native"
+
+type TagKey = keyof typeof TAG_DEFINITIONS
+
+const TAG_DEFINITIONS = {
+  isVegetarian: "Vegetarian",
+  isVegan: "Vegan",
+  isGlutenFree: "Gluten Free",
+  isDairyFree: "Dairy Free",
+  isHealthy: "Healthy",
+  isCheap: "Cheap",
+  isLowFodmap: "Low FODMAP",
+  isHighProtein: "High Protein",
+  isBreakfast: "Breakfast",
+  isLunch: "Lunch",
+  isDinner: "Dinner",
+  isDessert: "Dessert",
+  isSnack: "Snack",
+} as const
 
 export default observer(function Cookbook() {
   const {
@@ -27,7 +54,7 @@ export default observer(function Cookbook() {
     membershipStore,
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { themed } = useAppTheme()
+  const { themed, theme } = useAppTheme()
   const { t } = useTranslation()
 
   const isAuthor = membershipStore.ownMembership?.isOwner
@@ -36,6 +63,8 @@ export default observer(function Cookbook() {
   const [popoverVisible, setPopoverVisible] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [selectedTags, setSelectedTags] = useState<Set<TagKey>>(new Set())
+  const [filterExpanded, setFilterExpanded] = useState(false)
   //const debouncedSearchQuery = useDebounce(searchQuery)
 
   // Memoize themed styles
@@ -47,10 +76,28 @@ export default observer(function Cookbook() {
   const $themedRoot = useMemo(() => themed($root), [themed])
   const $themedListFooter = useMemo(() => themed($listFooter), [themed])
 
+  const toggleTag = useCallback((tag: TagKey) => {
+    setSelectedTags((prev) => {
+      const next = new Set(prev)
+      if (next.has(tag)) {
+        next.delete(tag)
+      } else {
+        next.add(tag)
+      }
+      return next
+    })
+  }, [])
+
   const q = searchQuery.trim().toLowerCase()
-  const filteredItems = q
-    ? recipeStore.recipes.filter((r) => r.title.toLowerCase().includes(q)).slice()
-    : recipeStore.recipes.slice()
+  let filteredItems = recipeStore.recipes.slice()
+  if (q) {
+    filteredItems = filteredItems.filter((r) => r.title.toLowerCase().includes(q))
+  }
+  if (selectedTags.size > 0) {
+    filteredItems = filteredItems.filter((r) =>
+      Array.from(selectedTags).every((tag) => r[tag] === true),
+    )
+  }
 
   const handlePressEdit = useCallback(() => {
     if (!isAuthor) return
@@ -236,7 +283,34 @@ export default observer(function Cookbook() {
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholder={t("recipeListScreen:searchPlaceholder")}
+                leftIcon={filterExpanded ? "filterFilled" : "filter"}
+                leftIconColor={
+                  selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim
+                }
+                onLeftIconPress={() => setFilterExpanded((v) => !v)}
               />
+              {filterExpanded && (
+                <View style={themed($tagChipContainer)}>
+                  {(Object.keys(TAG_DEFINITIONS) as TagKey[]).map((tag) => {
+                    const isSelected = selectedTags.has(tag)
+                    return (
+                      <TouchableOpacity
+                        key={tag}
+                        onPress={() => toggleTag(tag)}
+                        style={[themed($tagChip), isSelected && themed($tagChipSelected)]}
+                        activeOpacity={0.7}
+                      >
+                        <Text
+                          size="xs"
+                          weight={isSelected ? "semiBold" : "normal"}
+                          text={TAG_DEFINITIONS[tag]}
+                          style={isSelected ? themed($tagChipTextSelected) : undefined}
+                        />
+                      </TouchableOpacity>
+                    )
+                  })}
+                </View>
+              )}
               <Divider size={spacing.sm} />
             </View>
           }
@@ -309,4 +383,35 @@ const $listFooter: ThemedStyle<ViewStyle> = (theme) => ({
   height: theme.spacing.xxxl,
   alignItems: "center",
   justifyContent: "center",
+})
+
+const $tagChipContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  flexDirection: "row",
+  flexWrap: "wrap",
+  gap: theme.spacing.xs,
+  paddingHorizontal: theme.spacing.sm,
+  paddingTop: theme.spacing.xs,
+  paddingBottom: theme.spacing.sm,
+  marginHorizontal: theme.spacing.sm,
+  backgroundColor: theme.colors.backgroundDim,
+  borderBottomLeftRadius: theme.spacing.xs,
+  borderBottomRightRadius: theme.spacing.xs,
+})
+
+const $tagChip: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.sm,
+  paddingVertical: theme.spacing.xxs,
+  borderRadius: theme.spacing.lg,
+  borderWidth: 1,
+  borderColor: theme.colors.border,
+  backgroundColor: theme.colors.background,
+})
+
+const $tagChipSelected: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.tint,
+  borderColor: theme.colors.tint,
+})
+
+const $tagChipTextSelected: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.background,
 })

@@ -4,20 +4,23 @@ import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
-import { TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { Icon } from "./Icon"
+import { TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { Icon, IconTypes } from "./Icon"
 
 export interface SearchBarProps {
   value: string
   onChangeText: (text: string) => void
   placeholder?: string
+  leftIcon?: IconTypes
+  leftIconColor?: string
+  onLeftIconPress?: () => void
 }
 
 /**
  * A search bar.
  */
 export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
-  const { value, onChangeText, placeholder } = props
+  const { value, onChangeText, placeholder, leftIcon, leftIconColor, onLeftIconPress } = props
   const { themed } = useAppTheme()
 
   const $themedRoot = React.useMemo(() => themed($root), [themed])
@@ -25,6 +28,7 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
 
   return (
     <View style={$themedRoot}>
+      <Icon icon="search" size={20} color={colors.textDim} containerStyle={$leftIcon} />
       <TextInput
         style={$themedSearchBar}
         placeholder={placeholder ?? translate("recipeListScreen:searchPlaceholder")}
@@ -32,7 +36,11 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
         onChangeText={onChangeText}
         placeholderTextColor={colors.border}
       />
-      <Icon icon="search" size={20} color={colors.textDim} />
+      {leftIcon && (
+        <TouchableOpacity onPress={onLeftIconPress} disabled={!onLeftIconPress}>
+          <Icon icon={leftIcon} size={20} color={leftIconColor ?? colors.textDim} />
+        </TouchableOpacity>
+      )}
     </View>
   )
 })
@@ -48,6 +56,10 @@ const $root: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.xs,
   backgroundColor: theme.colors.backgroundDim,
 })
+
+const $leftIcon: ViewStyle = {
+  marginRight: 6,
+}
 
 const $searchBar: ThemedStyle<TextStyle> = (theme) => ({
   flex: 1,
