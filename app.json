@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "cookbook-mobile",
+    "name": "Love to Cook",
     "slug": "cookbook-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,13 +9,13 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "icon": "./assets/images/app-icon-ios.png",
+      "icon": "./assets/images/app-icon-all.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
       "associatedDomains": ["applinks:sharedcookbook.com"]
     },
     "android": {
-      "icon": "./assets/images/app-icon-android-legacy.png",
+      "icon": "./assets/images/app-icon-all.png",
       "intentFilters": [
         {
           "action": "VIEW",
@@ -32,9 +32,9 @@
       ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
+        "foregroundImage": "./assets/images/splash-logo-all.png",
         "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png",
-        "monochromeImage": "./assets/images/app-icon-android-adaptive-monochrome.png"
+        "monochromeImage": "./assets/images/splash-logo-all.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
@@ -59,7 +59,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/app-icon-android-adaptive-foreground.png",
+          "image": "./assets/images/splash-logo-all.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
