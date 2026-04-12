@@ -1,9 +1,7 @@
-import { TOptions } from "i18next"
 import { ForwardedRef, forwardRef, ReactNode } from "react"
 import { Text as RNText, TextProps as RNTextProps, StyleProp, TextStyle } from "react-native"
-import { useTranslation } from "react-i18next"
 
-import { isRTL, TxKeyPath } from "@/i18n"
+import { isRTL, translate, TxKeyPath, type TranslationOptions } from "@/i18n"
 import type { ThemedStyle, ThemedStyleArray } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { typography } from "@/theme/typography"
@@ -25,7 +23,7 @@ export interface TextProps extends RNTextProps {
    * Optional options to pass to i18n. Useful for interpolation
    * as well as explicitly setting locale or translation fallbacks.
    */
-  txOptions?: TOptions
+  txOptions?: TranslationOptions
   /**
    * An optional style override useful for padding & margin.
    */
@@ -58,19 +56,21 @@ export interface TextProps extends RNTextProps {
 export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<RNText>) {
   const { weight, size, tx, txOptions, text, children, style: $styleOverride, ...rest } = props
   const { themed, largeFontEnabled } = useAppTheme()
-  const { t } = useTranslation()
 
-  const i18nText = tx && t(tx, txOptions)
+  const i18nText = tx ? translate(tx, txOptions) : undefined
   const content = i18nText || text || children
 
   const activePresets = largeFontEnabled ? $largePresets : $presets
   const activeSizeStyles = largeFontEnabled ? $largeSizeStyles : $sizeStyles
 
   const preset: Presets = props.preset ?? "default"
+  const usesSecondaryTitleFont =
+    preset === "heading" || preset === "subheading" || preset === "bold"
   const $styles: StyleProp<TextStyle> = [
     $rtlStyle,
     themed(activePresets[preset]),
-    weight && $fontWeightStyles[weight],
+    weight &&
+      (usesSecondaryTitleFont ? $secondaryFontWeightStyles : $fontWeightStyles)[weight],
     size && activeSizeStyles[size],
     $styleOverride,
   ]
@@ -112,6 +112,11 @@ const $fontWeightStyles = Object.entries(typography.primary).reduce((acc, [weigh
   return { ...acc, [weight]: { fontFamily } }
 }, {}) as Record<Weights, TextStyle>
 
+const $secondaryFontWeightStyles = Object.entries(typography.secondary).reduce(
+  (acc, [weight, fontFamily]) => ({ ...acc, [weight]: { fontFamily } }),
+  {},
+) as Record<Weights, TextStyle>
+
 function makeBaseStyle(sizes: typeof $sizeStyles): ThemedStyle<TextStyle> {
   return (theme) => ({
     ...sizes.sm,
@@ -124,9 +129,9 @@ function makePresets(sizes: typeof $sizeStyles): Record<Presets, ThemedStyleArra
   const base = makeBaseStyle(sizes)
   return {
     default: [base],
-    bold: [base, { ...$fontWeightStyles.bold }],
-    heading: [base, { ...sizes.xxl, ...$fontWeightStyles.bold }],
-    subheading: [base, { ...sizes.lg, ...$fontWeightStyles.medium }],
+    bold: [base, { ...$secondaryFontWeightStyles.bold }],
+    heading: [base, { ...sizes.xxl, ...$secondaryFontWeightStyles.bold }],
+    subheading: [base, { ...sizes.lg, ...$secondaryFontWeightStyles.medium }],
     formLabel: [base, { ...$fontWeightStyles.medium }],
     formHelper: [base, { ...sizes.sm, ...$fontWeightStyles.normal }],
   }
