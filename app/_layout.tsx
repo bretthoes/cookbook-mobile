@@ -8,7 +8,7 @@ import { useInitialRootStore } from "@/models/helpers/useStores"
 import { customFontsToLoad } from "@/theme"
 import { ThemeProvider } from "@/theme/context"
 import { loadDateFnsLocale } from "@/utils/formatDate"
-import { useFonts } from "@expo-google-fonts/space-grotesk"
+import { useFonts } from "expo-font"
 import { ActionSheetProvider } from "@expo/react-native-action-sheet"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 

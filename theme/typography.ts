@@ -3,6 +3,13 @@
 
 import { Platform } from "react-native"
 import {
+  PlaypenSans_300Light as playpenSansLight,
+  PlaypenSans_400Regular as playpenSansRegular,
+  PlaypenSans_500Medium as playpenSansMedium,
+  PlaypenSans_600SemiBold as playpenSansSemiBold,
+  PlaypenSans_700Bold as playpenSansBold,
+} from "@expo-google-fonts/playpen-sans"
+import {
   SpaceGrotesk_300Light as spaceGroteskLight,
   SpaceGrotesk_400Regular as spaceGroteskRegular,
   SpaceGrotesk_500Medium as spaceGroteskMedium,
@@ -10,7 +17,13 @@ import {
   SpaceGrotesk_700Bold as spaceGroteskBold,
 } from "@expo-google-fonts/space-grotesk"
 
+/** Pass to `useFonts` from `expo-font` — loads Playpen Sans + Space Grotesk. */
 export const customFontsToLoad = {
+  playpenSansLight,
+  playpenSansRegular,
+  playpenSansMedium,
+  playpenSansSemiBold,
+  playpenSansBold,
   spaceGroteskLight,
   spaceGroteskRegular,
   spaceGroteskMedium,
@@ -19,8 +32,14 @@ export const customFontsToLoad = {
 }
 
 const fonts = {
+  playpenSans: {
+    light: "playpenSansLight",
+    normal: "playpenSansRegular",
+    medium: "playpenSansMedium",
+    semiBold: "playpenSansSemiBold",
+    bold: "playpenSansBold",
+  },
   spaceGrotesk: {
-    // Cross-platform Google font.
     light: "spaceGroteskLight",
     normal: "spaceGroteskRegular",
     medium: "spaceGroteskMedium",
@@ -59,11 +78,12 @@ export const typography = {
   /**
    * The primary font. Used in most places.
    */
-  primary: fonts.spaceGrotesk,
+  primary: fonts.playpenSans,
   /**
-   * An alternate font used for perhaps titles and stuff.
+   * Secondary font (Space Grotesk). Use e.g. `fontFamily: theme.typography.secondary.medium`
+   * in a `ThemedStyle` for headings or emphasis.
    */
-  secondary: Platform.select({ ios: fonts.helveticaNeue, android: fonts.sansSerif }),
+  secondary: fonts.spaceGrotesk,
   /**
    * Lets get fancy with a monospace font!
    */
