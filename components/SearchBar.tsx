@@ -63,4 +63,7 @@ const $leftIcon: ViewStyle = {
 
 const $searchBar: ThemedStyle<TextStyle> = (theme) => ({
   flex: 1,
+  fontFamily: theme.typography.secondary.normal,
+  fontSize: 16,
+  color: theme.colors.text,
 })

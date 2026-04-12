@@ -66,12 +66,19 @@ const $timeItemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   justifyContent: "flex-start",
 })
 
+const $separatorBeforeTags: ThemedStyle<ViewStyle> = (theme) => ({
+  height: 1,
+  backgroundColor: theme.colors.separator,
+  marginHorizontal: theme.spacing.sm,
+  marginTop: theme.spacing.md,
+  marginBottom: theme.spacing.sm,
+})
+
 const $tagsRow: ViewStyle = {
   flexDirection: "row",
   flexWrap: "wrap",
   gap: spacing.sm,
   marginHorizontal: spacing.sm,
-  marginTop: spacing.xs,
   marginBottom: spacing.xs,
 }
 
@@ -157,20 +164,27 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       </View>
 
       {RECIPE_TAGS.some(({ key }) => recipe[key] === true) && (
-        <View style={$tagsRow}>
-          {RECIPE_TAGS.filter(({ key }) => recipe[key] === true).map(({ key, labelTx }) => (
-            <View key={key} style={themed($tagChip)}>
-              <Text tx={labelTx} style={themed($tagChipText)} />
-            </View>
-          ))}
-        </View>
+        <>
+          <View style={themed($separatorBeforeTags)} />
+          <View style={$tagsRow}>
+            {RECIPE_TAGS.filter(({ key }) => recipe[key] === true).map(({ key, labelTx }) => (
+              <View key={key} style={themed($tagChip)}>
+                <Text tx={labelTx} style={themed($tagChipText)} />
+              </View>
+            ))}
+          </View>
+        </>
       )}
 
       {hasTimeOrServings && (
         <View style={$themedDetailsContainer}>
           {!!recipe.servings && (
             <View>
-              <Text preset="subheading" weight="light" tx={"recipeDetailsScreen:servings"} />
+              <Text
+                preset="formHelper"
+                weight="light"
+                text={t("recipeDetailsScreen:servings").toUpperCase()}
+              />
               <Text
                 preset="heading"
                 weight="light"

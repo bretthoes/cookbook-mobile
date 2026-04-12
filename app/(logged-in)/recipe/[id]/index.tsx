@@ -56,6 +56,14 @@ export default observer(function Recipe() {
   const $themedSeparator = React.useMemo(() => themed($separator), [themed])
   const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
   const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
+  const $themedSeparatorAboveIngredients = React.useMemo(
+    () => themed($separatorAboveIngredients),
+    [themed],
+  )
+  const $themedSeparatorBelowImages = React.useMemo(
+    () => themed($separatorBelowImages),
+    [themed],
+  )
   const [cookMode, setCookMode] = useState(false)
   const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
 
@@ -174,7 +182,10 @@ export default observer(function Recipe() {
           <MoreButton onPress={handlePressMore} top={recipeHasImages ? spacing.xl : spacing.sm} />
         )}
         {selected?.images && <RecipeImages data={selected?.images} />}
+        {recipeHasImages && <View style={$themedSeparatorBelowImages} />}
         {selected && <RecipeSummary recipe={selected} />}
+
+        {selected && <View style={$themedSeparatorAboveIngredients} />}
 
         {selected && (
           <View style={$themedIngredientsContainer}>
@@ -273,9 +284,25 @@ const $cookModeRow: ViewStyle = {
   gap: spacing.xs,
 }
 
+const $separatorBelowImages: ThemedStyle<ViewStyle> = (theme) => ({
+  height: 1,
+  backgroundColor: theme.colors.separator,
+  marginHorizontal: theme.spacing.sm,
+  marginTop: theme.spacing.xs,
+  marginBottom: theme.spacing.sm,
+})
+
+const $separatorAboveIngredients: ThemedStyle<ViewStyle> = (theme) => ({
+  height: 1,
+  backgroundColor: theme.colors.separator,
+  marginHorizontal: theme.spacing.sm,
+  marginTop: theme.spacing.md,
+  marginBottom: theme.spacing.xs,
+})
+
 const $ingredientsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
-  paddingTop: theme.spacing.lg,
+  paddingTop: theme.spacing.xs,
   paddingBottom: theme.spacing.lg,
 })
 

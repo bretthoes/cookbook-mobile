@@ -212,7 +212,7 @@ export function Card(props: CardProps) {
           {HeadingComponent ||
             (isHeadingPresent && (
               <Text
-                weight="bold"
+                preset="bold"
                 text={heading}
                 tx={headingTx}
                 txOptions={headingTxOptions}
