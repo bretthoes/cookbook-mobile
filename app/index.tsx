@@ -1,44 +1,51 @@
 // @mst replace-next-line
 import { Button } from "@/components/Button"
-import { Text } from "@/components/Text"
-import { isRTL } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
-import { colors, spacing } from "@/theme"
+import { type ThemedStyle } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 import { Redirect, useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { useMemo } from "react"
+import { Image, ImageStyle, useWindowDimensions, View, ViewStyle } from "react-native"
 
-const welcomeLogo = require("../assets/images/logo.png")
-const welcomeFace = require("../assets/images/cookbook.png")
+const splashLogo = require("../assets/images/splash-logo-all.png")
 
 // @mst replace-next-line export default function WelcomeScreen() {
 export default observer(function WelcomeScreen() {
   const {
     authenticationStore: { isAuthenticated },
   } = useStores()
+  const { themed } = useAppTheme()
+  const { width: winWidth, height: winHeight } = useWindowDimensions()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
   const router = useRouter()
+
+  const $themedContainer = useMemo(() => themed($container), [themed])
+  const $themedCenter = useMemo(() => themed($centerArea), [themed])
+  const $themedBottom = useMemo(() => themed($bottomArea), [themed])
+  const $themedLoginButton = useMemo(() => themed($loginButton), [themed])
+  const $themedLoginButtonPressed = useMemo(() => themed($loginButtonPressed), [themed])
+
+  const $splashImage: ImageStyle = useMemo(
+    () => ({
+      width: Math.min(winWidth * 0.88, 440),
+      height: Math.min(winHeight * 0.58, 580),
+    }),
+    [winWidth, winHeight],
+  )
 
   if (isAuthenticated) {
     return <Redirect href="/(logged-in)/(tabs)/cookbooks" />
   }
 
   return (
-    <View style={$container}>
-      <View style={$topContainer}>
-        <Image style={$welcomeLogo} source={welcomeLogo} resizeMode="contain" />
-        <Text
-          testID="welcome-heading"
-          style={$welcomeHeading}
-          tx="welcomeScreen:readyForLaunch"
-          preset="heading"
-        />
-        <Text tx="welcomeScreen:exciting" preset="subheading" />
-        <Image style={$welcomeFace} source={welcomeFace} resizeMode="contain" />
+    <View style={$themedContainer}>
+      <View style={$themedCenter}>
+        <Image source={splashLogo} style={$splashImage} resizeMode="contain" />
       </View>
 
-      <View style={[$bottomContainer, $bottomContainerInsets]}>
+      <View style={[$themedBottom, $bottomContainerInsets]}>
         <View style={$buttonGroup}>
           <Button
             tx="welcomeScreen:registerButton"
@@ -49,7 +56,8 @@ export default observer(function WelcomeScreen() {
             tx="welcomeScreen:loginButton"
             preset="default"
             onPress={() => router.push("/login-options")}
-            style={$loginButton}
+            style={$themedLoginButton}
+            pressedStyle={$themedLoginButtonPressed}
           />
         </View>
       </View>
@@ -58,53 +66,35 @@ export default observer(function WelcomeScreen() {
   // @mst replace-next-line }
 })
 
-const $container: ViewStyle = {
+const $container: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-  backgroundColor: colors.background,
-}
+  backgroundColor: theme.colors.background,
+})
 
-const $topContainer: ViewStyle = {
-  flexShrink: 1,
-  flexGrow: 1,
-  flexBasis: "57%",
+const $centerArea: ThemedStyle<ViewStyle> = (theme) => ({
+  flex: 1,
   justifyContent: "center",
-  paddingHorizontal: spacing.lg,
-}
+  alignItems: "center",
+  paddingHorizontal: theme.spacing.md,
+})
 
-const $bottomContainer: ViewStyle = {
-  flexShrink: 1,
-  flexGrow: 0,
-  flexBasis: "43%",
-  borderTopLeftRadius: 16,
-  borderTopRightRadius: 16,
-  paddingHorizontal: spacing.lg,
-  paddingVertical: spacing.md,
-}
+const $bottomArea: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  paddingTop: theme.spacing.sm,
+})
 
 const $buttonGroup: ViewStyle = {
-  marginTop: "auto",
   justifyContent: "flex-end",
 }
 
-const $welcomeLogo: ImageStyle = {
-  height: 88,
-  width: "100%",
-  marginBottom: spacing.xxl,
-}
+const $loginButton: ThemedStyle<ViewStyle> = (theme) => ({
+  marginTop: theme.spacing.sm,
+  backgroundColor: theme.colors.transparent,
+  borderWidth: 2,
+  borderColor: theme.colors.text,
+})
 
-const $welcomeFace: ImageStyle = {
-  height: 169,
-  width: 269,
-  position: "absolute",
-  bottom: -220,
-  right: -60,
-  transform: [{ scaleX: isRTL ? -1 : 1 }],
-}
-
-const $welcomeHeading: TextStyle = {
-  marginBottom: spacing.md,
-}
-
-const $loginButton: ViewStyle = {
-  marginTop: spacing.sm,
-}
+const $loginButtonPressed: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.palette.overlay20,
+  borderColor: theme.colors.text,
+})
