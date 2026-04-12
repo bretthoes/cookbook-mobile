@@ -4,8 +4,8 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
-import { useTranslation } from "react-i18next"
 import React from "react"
+import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { UseCase } from "../UseCase"
 
@@ -29,8 +29,10 @@ const $detailsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   borderRadius: theme.spacing.md,
   borderColor: theme.colors.border,
   borderWidth: theme.spacing.xxxs,
-  margin: theme.spacing.sm,
-  padding: theme.spacing.md,
+  marginVertical: theme.spacing.sm,
+  marginHorizontal: theme.spacing.xs,
+  paddingVertical: theme.spacing.md,
+  paddingHorizontal: 0,
 })
 
 export interface RecipeSummaryProps {
@@ -179,7 +181,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       {hasTimeOrServings && (
         <View style={$themedDetailsContainer}>
           {!!recipe.servings && (
-            <View>
+            <View style={$themedTimeItemContainer}>
               <Text
                 preset="formHelper"
                 weight="light"
@@ -188,7 +190,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               <Text
                 preset="heading"
                 weight="light"
-                text={`${recipe.servings}${t("recipeSummary:servingsSuffix")}`}
+                text={`${recipe.servings}`}
               />
             </View>
           )}
