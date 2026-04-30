@@ -3,6 +3,14 @@ import { translate } from "@/i18n"
 import * as Print from "expo-print"
 import { useCallback } from "react"
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+}
+
 function buildRecipeHtml(recipe: Recipe): string {
   const metaItems: string[] = []
   if (recipe.preparationTimeInMinutes) {
@@ -22,10 +30,16 @@ function buildRecipeHtml(recipe: Recipe): string {
 
   const metaHtml = metaItems.map((item) => `<span class="meta">${item}</span>`).join("")
 
-  const ingredients = recipe.ingredients
-    .slice()
+  const ingredients = [...recipe.ingredientSections]
     .sort((a, b) => a.ordinal - b.ordinal)
-    .map((i) => `<li>${i.name}${i.optional ? " <em>(optional)</em>" : ""}</li>`)
+    .map((section) => {
+      const lines = [...section.ingredients]
+        .sort((a, b) => a.ordinal - b.ordinal)
+        .map((i) => `<li>${i.name}${i.optional ? " <em>(optional)</em>" : ""}</li>`)
+        .join("")
+      const heading = section.title.trim() ? `<h3>${escapeHtml(section.title)}</h3>` : ""
+      return `${heading}<ul>${lines}</ul>`
+    })
     .join("")
 
   const directions = recipe.directions

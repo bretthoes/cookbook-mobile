@@ -2,7 +2,7 @@ import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { RecipeDirectionModel } from "./RecipeDirection"
 import { RecipeImageModel } from "./RecipeImage"
-import { RecipeIngredientModel } from "./RecipeIngredient"
+import { IngredientSectionModel } from "./IngredientSection"
 
 /**
  * This represents a recipe to be added.
@@ -21,7 +21,7 @@ export const RecipeToAddModel = types
     servings: types.maybeNull(types.integer),
     directions: types.array(RecipeDirectionModel) ?? [],
     images: types.array(RecipeImageModel) ?? [],
-    ingredients: types.array(RecipeIngredientModel) ?? [],
+    ingredientSections: types.array(IngredientSectionModel) ?? [],
     isVegetarian: types.maybeNull(types.boolean),
     isVegan: types.maybeNull(types.boolean),
     isGlutenFree: types.maybeNull(types.boolean),

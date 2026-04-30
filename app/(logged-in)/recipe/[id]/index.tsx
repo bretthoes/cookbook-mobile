@@ -194,15 +194,42 @@ export default observer(function Recipe() {
               tx="recipeDetailsScreen:ingredients"
               style={{ paddingBottom: spacing.md }}
             />
-            {selected.ingredients.map((item, index) => (
-              <IngredientItem
-                key={index}
-                ingredient={item}
-                index={index}
-                isFirst={index === 0}
-                isLast={index === selected.ingredients.length - 1}
-              />
-            ))}
+            {(() => {
+              const sections = [...selected.ingredientSections].sort((a, b) => a.ordinal - b.ordinal)
+              const totalLines = sections.reduce((n, s) => n + s.ingredients.length, 0)
+              let lineIndex = 0
+              const nodes: React.ReactNode[] = []
+              for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+                const section = sections[sectionIndex]
+                const lines = [...section.ingredients].sort((a, b) => a.ordinal - b.ordinal)
+                if (section.title.trim()) {
+                  nodes.push(
+                    <Text
+                      key={`section-title-${sectionIndex}-${section.ordinal}-${section.id}`}
+                      preset="formLabel"
+                      style={{ paddingTop: spacing.sm, paddingBottom: spacing.xs }}
+                      text={section.title}
+                    />,
+                  )
+                }
+                for (let ingredientIndex = 0; ingredientIndex < lines.length; ingredientIndex++) {
+                  const item = lines[ingredientIndex]
+                  const isFirst = lineIndex === 0
+                  const isLast = lineIndex === totalLines - 1
+                  nodes.push(
+                    <IngredientItem
+                      key={`ingredient-${sectionIndex}-${ingredientIndex}-${lineIndex}-${item.id}-${item.ordinal}`}
+                      ingredient={item}
+                      index={lineIndex}
+                      isFirst={isFirst}
+                      isLast={isLast}
+                    />,
+                  )
+                  lineIndex += 1
+                }
+              }
+              return nodes
+            })()}
           </View>
         )}
 

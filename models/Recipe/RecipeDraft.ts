@@ -2,7 +2,7 @@ import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { RecipeDirectionModel } from "./RecipeDirection"
 import { RecipeImageModel } from "./RecipeImage"
-import { RecipeIngredientModel } from "./RecipeIngredient"
+import { IngredientSectionModel } from "./IngredientSection"
 
 /**
  * Represents an in-progress recipe form saved as a draft.
@@ -25,7 +25,7 @@ export const RecipeDraftModel = types
     servings: types.maybeNull(types.integer),
     directions: types.array(RecipeDirectionModel),
     images: types.array(RecipeImageModel),
-    ingredients: types.array(RecipeIngredientModel),
+    ingredientSections: types.array(IngredientSectionModel),
     isVegetarian: types.maybeNull(types.boolean),
     isVegan: types.maybeNull(types.boolean),
     isGlutenFree: types.maybeNull(types.boolean),

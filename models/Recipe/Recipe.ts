@@ -3,7 +3,7 @@ import { Instance, SnapshotIn, SnapshotOut, types } from "mobx-state-tree"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { RecipeDirectionModel } from "./RecipeDirection"
 import { RecipeImageModel } from "./RecipeImage"
-import { RecipeIngredientModel } from "./RecipeIngredient"
+import { IngredientSectionModel } from "./IngredientSection"
 
 /**
  * This represents a recipe.
@@ -23,7 +23,7 @@ export const RecipeModel = types
     bakingTimeInMinutes: types.maybeNull(types.integer),
     servings: types.maybeNull(types.integer),
     directions: types.optional(types.array(RecipeDirectionModel), []),
-    ingredients: types.optional(types.array(RecipeIngredientModel), []),
+    ingredientSections: types.optional(types.array(IngredientSectionModel), []),
     images: types.optional(types.array(RecipeImageModel), []),
     isVegetarian: types.maybeNull(types.boolean),
     isVegan: types.maybeNull(types.boolean),
@@ -51,7 +51,7 @@ export const RecipeModel = types
       self.setProp("bakingTimeInMinutes", updatedRecipe.bakingTimeInMinutes)
       self.setProp("servings", updatedRecipe.servings)
       self.setProp("directions", updatedRecipe.directions)
-      self.setProp("ingredients", updatedRecipe.ingredients)
+      self.setProp("ingredientSections", updatedRecipe.ingredientSections)
       self.setProp("images", updatedRecipe.images)
       self.setProp("isVegetarian", updatedRecipe.isVegetarian)
       self.setProp("isVegan", updatedRecipe.isVegan)

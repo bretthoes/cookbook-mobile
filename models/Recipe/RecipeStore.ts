@@ -5,6 +5,7 @@ import { RecipeDraftModel } from "./RecipeDraft"
 import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
 
 import { withSetPropAction } from "../helpers/withSetPropAction"
+import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 
 export const WEEKLY_IMPORT_LIMIT = 5
 
@@ -29,7 +30,11 @@ export interface DraftFormData {
   cookingTimeInMinutes?: number | null
   bakingTimeInMinutes?: number | null
   servings?: number | null
-  ingredients: { name: string; optional: boolean | null }[]
+  ingredientSections: {
+    id?: number
+    title: string
+    ingredients: { name: string; optional: boolean | null }[]
+  }[]
   directions: { text: string; image: string | null }[]
   images: string[]
   isVegetarian?: boolean | null
@@ -84,7 +89,7 @@ export const RecipeStoreModel = types
           bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
           servings: recipeToAdd.servings,
           directions: recipeToAdd.directions,
-          ingredients: recipeToAdd.ingredients,
+          ingredientSections: recipeToAdd.ingredientSections,
           images: recipeToAdd.images,
         })
         self.recipes.push(
@@ -124,7 +129,7 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         if (self.selected) self.selected.update(updatedRecipe)
         else console.error(`Error updating recipe: ${JSON.stringify(response)}`)
-        var brief = self.recipes.find((recipe) => recipe.id === updatedRecipe.id)
+        const brief = self.recipes.find((recipe) => recipe.id === updatedRecipe.id)
         brief?.update(updatedRecipe.title)
 
         return true
@@ -174,14 +179,10 @@ export const RecipeStoreModel = types
     },
     saveDraft(cookbookId: number, formData: DraftFormData) {
       const existing = self.drafts.find((d) => d.cookbookId === cookbookId)
-      const validIngredients = formData.ingredients
-        .filter((i) => i.name?.trim())
-        .map((i, idx) => ({
-          id: 0,
-          name: i.name.trim(),
-          optional: i.optional ?? false,
-          ordinal: idx + 1,
-        }))
+      const validIngredientSections = formDataToIngredientSectionsSnapshot(
+        { ingredientSections: formData.ingredientSections },
+        { sectionIds: "reset" },
+      )
       const validDirections = formData.directions
         .filter((d) => d.text?.trim())
         .map((d, idx) => ({ id: 0, text: d.text.trim(), ordinal: idx + 1, image: d.image ?? null }))
@@ -197,7 +198,7 @@ export const RecipeStoreModel = types
         existing.setProp("cookingTimeInMinutes", formData.cookingTimeInMinutes ?? null)
         existing.setProp("bakingTimeInMinutes", formData.bakingTimeInMinutes ?? null)
         existing.setProp("servings", formData.servings ?? null)
-        existing.setProp("ingredients", validIngredients)
+        existing.setProp("ingredientSections", validIngredientSections)
         existing.setProp("directions", validDirections)
         existing.setProp("images", validImages)
         existing.setProp("isVegetarian", formData.isVegetarian ?? null)
@@ -227,7 +228,7 @@ export const RecipeStoreModel = types
             cookingTimeInMinutes: formData.cookingTimeInMinutes ?? null,
             bakingTimeInMinutes: formData.bakingTimeInMinutes ?? null,
             servings: formData.servings ?? null,
-            ingredients: validIngredients,
+            ingredientSections: validIngredientSections,
             directions: validDirections,
             images: validImages,
             isVegetarian: formData.isVegetarian ?? null,

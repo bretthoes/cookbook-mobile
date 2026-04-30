@@ -4,6 +4,7 @@ import { Screen } from "@/components/Screen"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { RecipeSnapshotIn } from "@/models/Recipe"
+import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React from "react"
@@ -23,10 +24,14 @@ export default observer(function EditRecipe() {
       cookingTimeInMinutes: selected.cookingTimeInMinutes,
       bakingTimeInMinutes: selected.bakingTimeInMinutes,
       servings: selected.servings,
-      ingredients:
-        selected.ingredients?.map((ingredient) => ({
-          name: ingredient.name,
-          optional: ingredient.optional,
+      ingredientSections:
+        selected.ingredientSections?.map((section) => ({
+          id: section.id,
+          title: section.title,
+          ingredients: section.ingredients.map((ingredient) => ({
+            name: ingredient.name,
+            optional: ingredient.optional,
+          })),
         })) ?? [],
       directions:
         selected.directions?.map((direction) => ({
@@ -69,12 +74,9 @@ export default observer(function EditRecipe() {
         ordinal: index + 1,
         image: direction.image || null,
       })),
-      ingredients: formData.ingredients.map((ingredient, index) => ({
-        id: 0,
-        name: ingredient.name?.trim() ?? "",
-        optional: false,
-        ordinal: index + 1,
-      })),
+      ingredientSections: formDataToIngredientSectionsSnapshot(formData, {
+        sectionIds: "preserve",
+      }),
       images: formData.images.map((name, index) => {
         const trimmed = name?.trim() ?? ""
         const existing = selected?.images?.find((img) => img.name === trimmed)

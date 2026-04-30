@@ -40,15 +40,35 @@ export const recipeSchema = yup.object({
     .typeError(() => translate("validation:mustBeNumber"))
     .min(0, () => translate("validation:mustBeGreaterThanZero"))
     .max(10080, () => translate("validation:maxMinutesExceeded")),
-  ingredients: yup
+  ingredientSections: yup
     .array()
     .of(
       yup.object({
-        name: yup.string().max(255, () => translate("validation:ingredientNameMaxLength")),
-        optional: yup.bool().nullable().default(false),
+        id: yup.number().optional(),
+        title: yup.string().max(255, () => translate("validation:sectionTitleMaxLength")),
+        ingredients: yup
+          .array()
+          .of(
+            yup.object({
+              name: yup.string().max(255, () => translate("validation:ingredientNameMaxLength")),
+              optional: yup.bool().nullable().default(false),
+            }),
+          ),
       }),
     )
-    .max(40, () => translate("validation:maxIngredients")),
+    .max(6, () => translate("validation:maxIngredientSections"))
+    .test(
+      "maxTotalIngredients",
+      () => translate("validation:maxIngredients"),
+      (sections) => {
+        if (!sections) return true
+        const n = sections.reduce(
+          (acc, s) => acc + (s.ingredients?.filter((i) => i.name?.trim()).length ?? 0),
+          0,
+        )
+        return n <= 40
+      },
+    ),
   directions: yup
     .array()
     .of(

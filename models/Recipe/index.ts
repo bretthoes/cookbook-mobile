@@ -3,6 +3,7 @@ export * from "./RecipeDraft"
 export * from "./RecipeDirection"
 export * from "./RecipeImage"
 export * from "./RecipeIngredient"
+export * from "./IngredientSection"
 export * from "./RecipeStore"
 export * from "./RecipeToAdd"
 

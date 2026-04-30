@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
 import { RecipeToAddSnapshotIn } from "@/models/Recipe"
+import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -64,10 +65,14 @@ export default observer(function AddRecipeScreen() {
       cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes,
       bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
       servings: recipeToAdd.servings,
-      ingredients:
-        recipeToAdd.ingredients?.map((ingredient) => ({
-          name: ingredient.name,
-          optional: ingredient.optional,
+      ingredientSections:
+        recipeToAdd.ingredientSections?.map((section) => ({
+          id: section.id,
+          title: section.title,
+          ingredients: section.ingredients.map((ingredient) => ({
+            name: ingredient.name,
+            optional: ingredient.optional,
+          })),
         })) ?? [],
       directions:
         recipeToAdd.directions?.map((direction) => ({
@@ -102,7 +107,11 @@ export default observer(function AddRecipeScreen() {
       cookingTimeInMinutes: draft.cookingTimeInMinutes,
       bakingTimeInMinutes: draft.bakingTimeInMinutes,
       servings: draft.servings,
-      ingredients: draft.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
+      ingredientSections: draft.ingredientSections.map((section) => ({
+        id: section.id,
+        title: section.title,
+        ingredients: section.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
+      })),
       directions: draft.directions.map((d) => ({ text: d.text, image: d.image })),
       images: draft.images.map((img) => img.name),
       isVegetarian: draft.isVegetarian ?? null,
@@ -148,14 +157,9 @@ export default observer(function AddRecipeScreen() {
           image: direction.image || null,
         }))
 
-      const validIngredients = formData.ingredients
-        .filter((ingredient) => ingredient.name?.trim())
-        .map((ingredient, index) => ({
-          id: 0,
-          name: ingredient.name.trim(),
-          optional: false,
-          ordinal: index + 1,
-        }))
+      const validIngredientSections = formDataToIngredientSectionsSnapshot(formData, {
+        sectionIds: "reset",
+      })
 
       const validImages = formData.images
         .filter((image) => image?.trim())
@@ -176,7 +180,7 @@ export default observer(function AddRecipeScreen() {
         bakingTimeInMinutes: formData.bakingTimeInMinutes,
         servings: formData.servings,
         directions: validDirections,
-        ingredients: validIngredients,
+        ingredientSections: validIngredientSections,
         images: validImages,
         isVegetarian: formData.isVegetarian ?? null,
         isVegan: formData.isVegan ?? null,

@@ -634,7 +634,7 @@ export interface components {
       isSnack?: boolean | null
       directions?: components["schemas"]["RecipeDirectionDto"][]
       images?: components["schemas"]["RecipeImageDto"][]
-      ingredients?: components["schemas"]["RecipeIngredientDto"][]
+      ingredientSections?: components["schemas"]["IngredientSectionDto"][]
     }
     RecipeDirectionDto: {
       /** Format: int32 */
@@ -650,6 +650,14 @@ export interface components {
       name?: string
       /** Format: int32 */
       ordinal?: number
+    }
+    IngredientSectionDto: {
+      /** Format: int32 */
+      id?: number
+      title?: string
+      /** Format: int32 */
+      ordinal?: number
+      ingredients?: components["schemas"]["RecipeIngredientDto"][]
     }
     RecipeIngredientDto: {
       /** Format: int32 */
@@ -723,7 +731,7 @@ export interface components {
       isSnack?: boolean | null
       directions?: components["schemas"]["RecipeDirectionDto"][]
       images?: components["schemas"]["RecipeImageDto"][]
-      ingredients?: components["schemas"]["RecipeIngredientDto"][]
+      ingredientSections?: components["schemas"]["IngredientSectionDto"][]
     }
     UpdateRecipeCommand: {
       recipe?: components["schemas"]["UpdateRecipeDto"]
