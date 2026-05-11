@@ -9,6 +9,7 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
+      "buildNumber": "6",
       "icon": "./assets/images/app-icon-all.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
@@ -90,7 +91,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-logo-all.png",
-          "imageWidth": 200,
+          "imageWidth": 186,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {

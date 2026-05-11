@@ -9,7 +9,7 @@ import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { Image, ImageStyle, useWindowDimensions, View, ViewStyle } from "react-native"
 
-const splashLogo = require("../assets/images/splash-logo-all.png")
+const welcomeLogo = require("../assets/images/logo.png")
 
 // @mst replace-next-line export default function WelcomeScreen() {
 export default observer(function WelcomeScreen() {
@@ -27,13 +27,12 @@ export default observer(function WelcomeScreen() {
   const $themedLoginButton = useMemo(() => themed($loginButton), [themed])
   const $themedLoginButtonPressed = useMemo(() => themed($loginButtonPressed), [themed])
 
-  const $splashImage: ImageStyle = useMemo(
-    () => ({
-      width: Math.min(winWidth * 0.88, 440),
-      height: Math.min(winHeight * 0.58, 580),
-    }),
-    [winWidth, winHeight],
-  )
+  const $welcomeLogo: ImageStyle = useMemo(() => {
+    const w = Math.min(winWidth * 0.9, 420)
+    const h = Math.min(winHeight * 0.22, 140)
+    const s = 2 / 3
+    return { width: w * s, height: h * s }
+  }, [winWidth, winHeight])
 
   if (isAuthenticated) {
     return <Redirect href="/(logged-in)/(tabs)/cookbooks" />
@@ -42,7 +41,7 @@ export default observer(function WelcomeScreen() {
   return (
     <View style={$themedContainer}>
       <View style={$themedCenter}>
-        <Image source={splashLogo} style={$splashImage} resizeMode="contain" />
+        <Image source={welcomeLogo} style={$welcomeLogo} resizeMode="contain" />
       </View>
 
       <View style={[$themedBottom, $bottomContainerInsets]}>

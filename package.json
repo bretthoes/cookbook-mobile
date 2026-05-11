@@ -9,6 +9,8 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "prebuild:ios": "expo prebuild --platform ios --no-install",
+    "ios:reinstall": "expo run:ios --no-build-cache",
     "web": "expo start --web",
     "lint": "expo lint",
     "generate:api": "openapi-typescript ../SharedCookbook/src/Web/wwwroot/api/specification.json -o services/api/generated/schema.d.ts && prettier --write services/api/generated/schema.d.ts"
