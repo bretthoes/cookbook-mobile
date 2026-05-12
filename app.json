@@ -58,9 +58,9 @@
       ],
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/splash-logo-all.png",
+        "foregroundImage": "./assets/images/app-icon-android-adaptive-foreground.png",
         "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png",
-        "monochromeImage": "./assets/images/splash-logo-all.png"
+        "monochromeImage": "./assets/images/app-icon-android-adaptive-foreground.png"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
