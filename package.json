@@ -94,10 +94,11 @@
     }
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.13.0"
   },
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@11.1.0",
   "pnpm": {
-    "nodeLinker": "hoisted"
+    "nodeLinker": "hoisted",
+    "shamefullyHoist": true
   }
 }
