@@ -6,8 +6,16 @@ import { useAppTheme } from "@/theme/context"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 import { Redirect, useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useMemo } from "react"
-import { Image, ImageStyle, useWindowDimensions, View, ViewStyle } from "react-native"
+import { DrawRevealImage } from "@/components/DrawRevealImage"
+import { useEffect, useMemo } from "react"
+import { useWindowDimensions, View, ViewStyle } from "react-native"
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from "react-native-reanimated"
 
 const welcomeLogo = require("../assets/images/logo.png")
 
@@ -27,12 +35,33 @@ export default observer(function WelcomeScreen() {
   const $themedLoginButton = useMemo(() => themed($loginButton), [themed])
   const $themedLoginButtonPressed = useMemo(() => themed($loginButtonPressed), [themed])
 
-  const $welcomeLogo: ImageStyle = useMemo(() => {
+  const logoSize = useMemo(() => {
     const w = Math.min(winWidth * 0.9, 420)
     const h = Math.min(winHeight * 0.22, 140)
     const s = 2 / 3
     return { width: w * s, height: h * s }
   }, [winWidth, winHeight])
+
+  const buttonsOpacity = useSharedValue(0)
+  const buttonsTranslateY = useSharedValue(20)
+
+  useEffect(() => {
+    buttonsOpacity.value = 0
+    buttonsTranslateY.value = 20
+    buttonsOpacity.value = withDelay(
+      1100,
+      withTiming(1, { duration: 450, easing: Easing.out(Easing.cubic) }),
+    )
+    buttonsTranslateY.value = withDelay(
+      1100,
+      withTiming(0, { duration: 450, easing: Easing.out(Easing.cubic) }),
+    )
+  }, [buttonsOpacity, buttonsTranslateY])
+
+  const $buttonsAnimated = useAnimatedStyle(() => ({
+    opacity: buttonsOpacity.value,
+    transform: [{ translateY: buttonsTranslateY.value }],
+  }))
 
   if (isAuthenticated) {
     return <Redirect href="/(logged-in)/(tabs)/cookbooks" />
@@ -41,10 +70,16 @@ export default observer(function WelcomeScreen() {
   return (
     <View style={$themedContainer}>
       <View style={$themedCenter}>
-        <Image source={welcomeLogo} style={$welcomeLogo} resizeMode="contain" />
+        <DrawRevealImage
+          source={welcomeLogo}
+          width={logoSize.width}
+          height={logoSize.height}
+          duration={1200}
+          delay={250}
+        />
       </View>
 
-      <View style={[$themedBottom, $bottomContainerInsets]}>
+      <Animated.View style={[$themedBottom, $bottomContainerInsets, $buttonsAnimated]}>
         <View style={$buttonGroup}>
           <Button
             tx="welcomeScreen:registerButton"
@@ -59,7 +94,7 @@ export default observer(function WelcomeScreen() {
             pressedStyle={$themedLoginButtonPressed}
           />
         </View>
-      </View>
+      </Animated.View>
     </View>
   )
   // @mst replace-next-line }
