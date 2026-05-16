@@ -1,5 +1,6 @@
 import Config from "@/config"
 import { useCallback } from "react"
+import { Platform } from "react-native"
 import { GoogleSignin } from "@react-native-google-signin/google-signin"
 
 let isConfigured = false
@@ -7,10 +8,15 @@ let isConfigured = false
 function ensureConfigured() {
   if (isConfigured) return
   const webClientId = (Config as { GOOGLE_WEB_CLIENT_ID?: string }).GOOGLE_WEB_CLIENT_ID
-  if (webClientId && webClientId !== "CHANGEME") {
-    GoogleSignin.configure({ webClientId })
-    isConfigured = true
-  }
+  const iosClientId = (Config as { GOOGLE_IOS_CLIENT_ID?: string }).GOOGLE_IOS_CLIENT_ID
+  if (!webClientId || webClientId === "CHANGEME") return
+  if (Platform.OS === "ios" && (!iosClientId || iosClientId === "CHANGEME")) return
+
+  GoogleSignin.configure({
+    webClientId,
+    ...(Platform.OS === "ios" ? { iosClientId } : {}),
+  })
+  isConfigured = true
 }
 
 /**
