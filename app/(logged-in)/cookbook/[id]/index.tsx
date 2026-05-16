@@ -3,6 +3,10 @@ import { Divider } from "@/components/Divider"
 import { EmptyState } from "@/components/EmptyState"
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { RecipeListItem } from "@/components/Recipe/RecipeListItem"
+import {
+  getRecipeTagChipColor,
+  RECIPE_TAG_CHIP_TEXT_COLOR,
+} from "@/components/Recipe/recipeTagColors"
 import { Screen } from "@/components/Screen"
 import { SearchBar } from "@/components/SearchBar"
 import { Text } from "@/components/Text"
@@ -291,18 +295,25 @@ export default observer(function Cookbook() {
                 <View style={themed($tagChipContainer)}>
                   {(Object.keys(TAG_DEFINITIONS) as TagKey[]).map((tag) => {
                     const isSelected = selectedTags.has(tag)
+                    const chipColor = isSelected ? getRecipeTagChipColor(tag) : undefined
                     return (
                       <TouchableOpacity
                         key={tag}
                         onPress={() => toggleTag(tag)}
-                        style={[themed($tagChip), isSelected && themed($tagChipSelected)]}
+                        style={[
+                          themed($tagChip),
+                          chipColor && {
+                            backgroundColor: chipColor,
+                            borderColor: chipColor,
+                          },
+                        ]}
                         activeOpacity={0.7}
                       >
                         <Text
                           size="xs"
                           weight={isSelected ? "semiBold" : "normal"}
                           text={TAG_DEFINITIONS[tag]}
-                          style={isSelected ? themed($tagChipTextSelected) : undefined}
+                          style={chipColor ? { color: RECIPE_TAG_CHIP_TEXT_COLOR } : undefined}
                         />
                       </TouchableOpacity>
                     )
@@ -405,11 +416,3 @@ const $tagChip: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.background,
 })
 
-const $tagChipSelected: ThemedStyle<ViewStyle> = (theme) => ({
-  backgroundColor: theme.colors.tint,
-  borderColor: theme.colors.tint,
-})
-
-const $tagChipTextSelected: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.background,
-})
