@@ -5,6 +5,10 @@ import { PressableIcon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import {
+  getRecipeTagChipColor,
+  RECIPE_TAG_CHIP_TEXT_COLOR,
+} from "@/components/Recipe/recipeTagColors"
 import { translate } from "@/i18n"
 import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
@@ -683,17 +687,28 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
                 key={key}
                 control={control}
                 name={key}
-                render={({ field: { value, onChange } }) => (
-                  <TouchableOpacity
-                    onPress={() => onChange(value === true ? null : true)}
-                    style={[themed($tagChip), value === true && themed($tagChipActive)]}
-                  >
-                    <Text
-                      tx={labelTx}
-                      style={themed(value === true ? $tagChipTextActive : $tagChipText)}
-                    />
-                  </TouchableOpacity>
-                )}
+                render={({ field: { value, onChange } }) => {
+                  const chipColor = value === true ? getRecipeTagChipColor(key)! : undefined
+                  return (
+                    <TouchableOpacity
+                      onPress={() => onChange(value === true ? null : true)}
+                      style={[
+                        themed($tagChip),
+                        chipColor
+                          ? { backgroundColor: chipColor, borderColor: chipColor }
+                          : undefined,
+                      ]}
+                    >
+                      <Text
+                        tx={labelTx}
+                        style={[
+                          themed($tagChipText),
+                          chipColor && { color: RECIPE_TAG_CHIP_TEXT_COLOR },
+                        ]}
+                      />
+                    </TouchableOpacity>
+                  )
+                }}
               />
             ))}
           </View>
@@ -806,17 +821,7 @@ const $tagChip: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.background,
 })
 
-const $tagChipActive: ThemedStyle<ViewStyle> = (theme) => ({
-  borderColor: theme.colors.tint,
-  backgroundColor: theme.colors.tint,
-})
-
 const $tagChipText: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
-  fontSize: 13,
-})
-
-const $tagChipTextActive: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.background,
   fontSize: 13,
 })

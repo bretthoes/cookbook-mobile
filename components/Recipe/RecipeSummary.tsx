@@ -8,6 +8,11 @@ import React from "react"
 import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
 import { UseCase } from "../UseCase"
+import {
+  getRecipeTagChipColor,
+  RECIPE_TAG_CHIP_TEXT_COLOR,
+  type RecipeTagKey,
+} from "./recipeTagColors"
 
 const $titleContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
@@ -98,22 +103,7 @@ const $tagChipText: ThemedStyle<TextStyle> = (theme) => ({
   fontSize: 13,
 })
 
-type TagKey =
-  | "isVegetarian"
-  | "isVegan"
-  | "isGlutenFree"
-  | "isDairyFree"
-  | "isCheap"
-  | "isHealthy"
-  | "isLowFodmap"
-  | "isHighProtein"
-  | "isBreakfast"
-  | "isLunch"
-  | "isDinner"
-  | "isDessert"
-  | "isSnack"
-
-const RECIPE_TAGS: { key: TagKey; labelTx: Parameters<typeof Text>[0]["tx"] }[] = [
+const RECIPE_TAGS: { key: RecipeTagKey; labelTx: Parameters<typeof Text>[0]["tx"] }[] = [
   { key: "isVegetarian", labelTx: "recipeTags:isVegetarian" },
   { key: "isVegan", labelTx: "recipeTags:isVegan" },
   { key: "isGlutenFree", labelTx: "recipeTags:isGlutenFree" },
@@ -149,13 +139,15 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
   const $themedDetailsContainer = React.useMemo(() => themed($detailsContainer), [themed])
   const $themedTimeItemContainer = React.useMemo(() => themed($timeItemContainer), [themed])
+  const $defaultTagChip = React.useMemo(() => themed($tagChip), [themed])
+  const $defaultTagChipText = React.useMemo(() => themed($tagChipText), [themed])
 
   return (
     <View>
       <View style={$themedTitleContainer}>
         <Text
           preset="heading"
-          weight="normal"
+          weight="normal" 
           text={recipe.title}
           style={{ marginTop: hasImages ? 0 : spacing.xxxl }}
         />
@@ -169,11 +161,23 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
         <>
           <View style={themed($separatorBeforeTags)} />
           <View style={$tagsRow}>
-            {RECIPE_TAGS.filter(({ key }) => recipe[key] === true).map(({ key, labelTx }) => (
-              <View key={key} style={themed($tagChip)}>
-                <Text tx={labelTx} style={themed($tagChipText)} />
-              </View>
-            ))}
+            {RECIPE_TAGS.filter(({ key }) => recipe[key] === true).map(({ key, labelTx }) => {
+              const chipColor = getRecipeTagChipColor(key)!
+              return (
+                <View
+                  key={key}
+                  style={[
+                    $defaultTagChip,
+                    { backgroundColor: chipColor, borderColor: chipColor },
+                  ]}
+                >
+                  <Text
+                    tx={labelTx}
+                    style={[$defaultTagChipText, { color: RECIPE_TAG_CHIP_TEXT_COLOR }]}
+                  />
+                </View>
+              )
+            })}
           </View>
         </>
       )}
