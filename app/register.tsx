@@ -218,16 +218,8 @@ export default observer(function Register() {
       titleTx: headerTitle,
       leftIcon: "back",
       onLeftPress: handleBack,
-      ...(currentStep === 3 && {
-        rightTx: "emailVerificationScreen:iveVerified",
-        onRightPress: handleVerify,
-      }),
-      ...(currentStep === 4 && {
-        rightTx: "common:next",
-        onRightPress: handleStep3Continue,
-      }),
     },
-    [currentStep, localDisplayName],
+    [currentStep, headerTitle],
   )
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -393,7 +385,7 @@ export default observer(function Register() {
           </FormCard>
           <View style={$content}>
             <Button
-              tx="setDisplayNameScreen:continue"
+              tx="common:next"
               preset="reversed"
               onPress={handleStep3Continue}
               style={$tapButton}

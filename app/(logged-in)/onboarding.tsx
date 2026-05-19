@@ -125,13 +125,8 @@ export default observer(function OnboardingScreen() {
       titleTx: headerTitle as any,
       leftIcon: "back",
       onLeftPress: handleBack,
-      ...(!skipDisplayName &&
-        currentStep === STEP_DISPLAY_NAME && {
-          rightTx: "common:next" as any,
-          onRightPress: handleDisplayNameContinue,
-        }),
     },
-    [currentStep, localDisplayName],
+    [currentStep, headerTitle],
   )
 
   const $themedToggleRow = useMemo(() => themed($toggleRow), [themed])
@@ -171,7 +166,7 @@ export default observer(function OnboardingScreen() {
           </FormCard>
           <View style={$content}>
             <Button
-              tx="setDisplayNameScreen:continue"
+              tx="common:next"
               preset="reversed"
               onPress={handleDisplayNameContinue}
               style={$actionButton}
