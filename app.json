@@ -14,7 +14,6 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
       "associatedDomains": [
-        "applinks:sharedcookbook.com",
         "applinks:sharedcookbook.com"
       ],
       "infoPlist": {
