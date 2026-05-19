@@ -61,6 +61,7 @@ const ko: Translations = {
     emailFieldLabel: "___Let's start with your email.",
     emailPlaceholder: "___you@example.com",
     passwordStepTitle: "___Choose a password",
+    displayNameStepTitle: "___Your name",
     subtitle: "___Create your account in a few steps.",
     tapToRegister: "___Tap to register!",
     createAccount: "___Create account",
@@ -703,7 +704,7 @@ const ko: Translations = {
     note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
   },
   onboardingScreen: {
-    displayNameTitle: "___What should we call you?",
+    displayNameTitle: "___Your name",
     displayNameDescription: "___Your display name is how you appear to other cookbook members.",
     darkModeTitle: "___Choose your look",
     darkModeDescription: "___Would you like to use dark mode? You can always change this later.",

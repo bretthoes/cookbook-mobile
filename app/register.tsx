@@ -201,7 +201,9 @@ export default observer(function Register() {
       ? "registerScreen:emailStepTitle"
       : currentStep === 2
         ? "registerScreen:passwordStepTitle"
-        : "registerScreen:title"
+        : currentStep === 4
+          ? "registerScreen:displayNameStepTitle"
+          : "registerScreen:title"
 
   useEffect(() => {
     if (currentStep === 5) {
@@ -221,7 +223,7 @@ export default observer(function Register() {
         onRightPress: handleVerify,
       }),
       ...(currentStep === 4 && {
-        rightTx: "setDisplayNameScreen:continue",
+        rightTx: "common:next",
         onRightPress: handleStep3Continue,
       }),
     },

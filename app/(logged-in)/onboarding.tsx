@@ -127,7 +127,7 @@ export default observer(function OnboardingScreen() {
       onLeftPress: handleBack,
       ...(!skipDisplayName &&
         currentStep === STEP_DISPLAY_NAME && {
-          rightTx: "setDisplayNameScreen:continue" as any,
+          rightTx: "common:next" as any,
           onRightPress: handleDisplayNameContinue,
         }),
     },

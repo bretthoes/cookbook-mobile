@@ -58,6 +58,7 @@ const en = {
     emailFieldLabel: "Let's start with your email.",
     emailPlaceholder: "you@example.com",
     passwordStepTitle: "Choose a password",
+    displayNameStepTitle: "Your name",
     subtitle: "Create your account in a few steps.",
     tapToRegister: "Tap to register!",
     createAccount: "Create account",
@@ -704,7 +705,7 @@ const en = {
     note: "Note: You may need to log out and back in for the changes to take effect.",
   },
   onboardingScreen: {
-    displayNameTitle: "What should we call you?",
+    displayNameTitle: "Your name",
     displayNameDescription: "Your display name is how you appear to other cookbook members.",
     darkModeTitle: "Choose your look",
     darkModeDescription: "Would you like to use dark mode? You can always change this later.",

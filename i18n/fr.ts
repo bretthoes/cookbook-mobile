@@ -61,6 +61,7 @@ const fr: Translations = {
     emailFieldLabel: "___Let's start with your email.",
     emailPlaceholder: "___you@example.com",
     passwordStepTitle: "___Choose a password",
+    displayNameStepTitle: "___Your name",
     subtitle: "___Create your account in a few steps.",
     tapToRegister: "___Tap to register!",
     createAccount: "___Create account",
@@ -707,7 +708,7 @@ const fr: Translations = {
     note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",
   },
   onboardingScreen: {
-    displayNameTitle: "___What should we call you?",
+    displayNameTitle: "___Your name",
     displayNameDescription: "___Your display name is how you appear to other cookbook members.",
     darkModeTitle: "___Choose your look",
     darkModeDescription: "___Would you like to use dark mode? You can always change this later.",
