@@ -1,14 +1,14 @@
 /**
- * These are configuration settings for the production environment.
+ * Production-only overrides (merged on top of config.base.ts).
  *
  * Do not include API secrets in this file or anywhere in your JS.
  *
  * https://reactnative.dev/docs/security#storing-sensitive-info
  */
-export default {
-  API_URL: "CHANGEME",
-  INVITE_BASE_URL: "CHANGEME",
-  SUPPORT_EMAIL: "CHANGEME",
-  GOOGLE_WEB_CLIENT_ID: "CHANGEME",
-  GOOGLE_IOS_CLIENT_ID: "CHANGEME",
+import type { EnvConfigProps } from "./config.base"
+
+const ProdConfig: EnvConfigProps = {
+  API_URL: "https://sharedcookbook-api.fly.dev/api",
 }
+
+export default ProdConfig

@@ -6,7 +6,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
-import config from "@/config/config.dev"
+import Config from "@/config"
 import { isRTL, translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -73,7 +73,7 @@ export default observer(function ProfileScreen() {
           style={$reportBugsLink}
           tx="profileScreen:reportBugs"
           onPress={() =>
-            openLinkInBrowser(`mailto:${config.SUPPORT_EMAIL}?subject=Language%20Support%20Request`)
+            openLinkInBrowser(`mailto:${Config.SUPPORT_EMAIL}?subject=Language%20Support%20Request`)
           }
         />
         <Text preset="heading" tx="profileScreen:title" />
