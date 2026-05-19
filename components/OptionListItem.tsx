@@ -1,6 +1,5 @@
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Text } from "@/components/Text"
-import { colors } from "@/theme"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useMemo } from "react"
@@ -32,8 +31,10 @@ export function OptionListItem({
   leftIcon,
   leftImage,
 }: OptionListItemProps) {
-  const { themeContext, themed } = useAppTheme()
-  const isDark = themeContext === "dark"
+  const {
+    theme: { colors },
+    themed,
+  } = useAppTheme()
 
   const $themedItemContainer = useMemo(() => themed($itemContainer), [themed])
   const $themedIconContainer = useMemo(() => themed($iconContainer), [themed])
@@ -59,7 +60,7 @@ export function OptionListItem({
         <Text preset="subheading" text={title} style={$themedItemTitle} />
         <Text preset="formHelper" text={description} style={$themedItemDescription} />
       </View>
-      <Icon icon="caretRight" size={CARET_SIZE} color={isDark ? colors.border : colors.text} />
+      <Icon icon="caretRight" size={CARET_SIZE} color={colors.textDim} />
     </TouchableOpacity>
   )
 }

@@ -11,7 +11,9 @@ import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
-import { colors, spacing } from "@/theme"
+import type { ThemedStyle } from "@/theme"
+import { spacing } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 import * as SecureStore from "expo-secure-store"
 import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
@@ -25,6 +27,10 @@ const SUCCESS_DELAY_MS = 1000
 const isValidDisplayName = (input: string) => /^[\p{L}\p{M} \-']+$/u.test(input)
 
 export default observer(function Register() {
+  const {
+    theme: { colors },
+    themed,
+  } = useAppTheme()
   const authPasswordInput = useRef<TextInput>(null)
   const [currentStep, setCurrentStep] = useState(1)
   const [password, setPassword] = useState("")
@@ -235,7 +241,7 @@ export default observer(function Register() {
           />
         )
       },
-    [isPasswordHidden],
+    [isPasswordHidden, colors.text],
   )
 
   if (currentStep === 5) {
@@ -330,7 +336,7 @@ export default observer(function Register() {
             <Text tx="emailVerificationScreen:sentToSuffix" preset="formHelper" />
             <Text tx="emailVerificationScreen:returnHereHint" preset="formHelper" style={$hint} />
             {result && !errorMessage ? (
-              <Text text={result} preset="formHelper" style={$formHelper} />
+              <Text text={result} preset="formHelper" style={themed($formHelper)} />
             ) : null}
             {isVerifying && (
               <React.Fragment>
@@ -339,7 +345,7 @@ export default observer(function Register() {
               </React.Fragment>
             )}
             {errorMessage ? (
-              <Text text={errorMessage} preset="formHelper" style={$errorText} />
+              <Text text={errorMessage} preset="formHelper" style={themed($errorText)} />
             ) : null}
           </FormCard>
           <View style={$content}>
@@ -426,12 +432,12 @@ const $hint: TextStyle = {
   marginTop: spacing.sm,
 }
 
-const $formHelper: TextStyle = {
-  color: colors.error,
-  marginTop: spacing.xs,
-}
+const $formHelper: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+  marginTop: theme.spacing.xs,
+})
 
-const $errorText: TextStyle = {
-  color: colors.error,
-  marginTop: spacing.xs,
-}
+const $errorText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+  marginTop: theme.spacing.xs,
+})

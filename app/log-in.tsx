@@ -12,12 +12,18 @@ import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
-import { colors, spacing } from "../theme"
+import type { ThemedStyle } from "@/theme"
+import { spacing } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 
 const REMEMBER_ME_EMAIL_KEY = "login_remember_email"
 const REMEMBER_ME_PASSWORD_KEY = "login_remember_password"
 
 export default observer(function Login(_props) {
+  const {
+    theme: { colors },
+    themed,
+  } = useAppTheme()
   const authPasswordInput = useRef<TextInput>(null)
   const hasLoadedCredentials = useRef(false)
 
@@ -109,7 +115,7 @@ export default observer(function Login(_props) {
           />
         )
       },
-    [isAuthPasswordHidden],
+    [isAuthPasswordHidden, colors.text],
   )
 
   return (
@@ -117,7 +123,9 @@ export default observer(function Login(_props) {
       <View style={$content}>
         <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" />
         <Text tx="loginScreen:enterDetails" preset="subheading" style={$enterDetails} />
-        {attemptsCount > 2 && <Text tx="loginScreen:hint" size="sm" weight="light" style={$hint} />}
+        {attemptsCount > 2 && (
+          <Text tx="loginScreen:hint" size="sm" weight="light" style={themed($hint)} />
+        )}
       </View>
 
       <UseCase>
@@ -160,7 +168,7 @@ export default observer(function Login(_props) {
           RightAccessory={PasswordRightAccessory}
         />
 
-        <Text text={`${result}`} preset="formHelper" style={$result} />
+        <Text text={`${result}`} preset="formHelper" style={themed($result)} />
       </UseCase>
 
       <View style={$content}>
@@ -198,18 +206,18 @@ const $content: ViewStyle = {
   paddingHorizontal: spacing.md,
 }
 
-const $result: TextStyle = {
-  color: colors.error,
-}
+const $result: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+})
 
 const $enterDetails: TextStyle = {
   marginBottom: spacing.lg,
 }
 
-const $hint: TextStyle = {
-  color: colors.tint,
-  marginBottom: spacing.md,
-}
+const $hint: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.tint,
+  marginBottom: theme.spacing.md,
+})
 
 const $rememberMeRow: ViewStyle = {
   marginBottom: spacing.sm,

@@ -5,13 +5,17 @@ import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
-import { colors, spacing } from "@/theme"
+import { spacing } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, View, ViewStyle } from "react-native"
 
 export default observer(function ResetPassword() {
+  const {
+    theme: { colors },
+  } = useAppTheme()
   const {
     authenticationStore: { authEmail, resetPassword, result, setResult, setAuthEmail },
   } = useStores()
@@ -68,7 +72,7 @@ export default observer(function ResetPassword() {
           />
         )
       },
-    [isPasswordHidden],
+    [isPasswordHidden, colors.text],
   )
 
   // TODO determine 200 in a less hacky way; just to disable button to prevent multiple reset submits

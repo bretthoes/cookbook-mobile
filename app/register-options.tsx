@@ -5,7 +5,8 @@ import { useAppleSignIn } from "@/hooks/useAppleSignIn"
 import { useFacebookSignIn } from "@/hooks/useFacebookSignIn"
 import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
 import { useStores } from "@/models/helpers/useStores"
-import { colors, spacing } from "@/theme"
+import type { ThemedStyle } from "@/theme"
+import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
@@ -47,6 +48,7 @@ export default observer(function RegisterOptionsScreen() {
 
   const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedListContainer = useMemo(() => themed($listContainer), [themed])
+  const $themedErrorText = useMemo(() => themed($errorText), [themed])
 
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
@@ -109,7 +111,7 @@ export default observer(function RegisterOptionsScreen() {
           }}
         />
       </View>
-      {result ? <Text text={result} preset="formHelper" style={$errorText} /> : null}
+      {result ? <Text text={result} preset="formHelper" style={$themedErrorText} /> : null}
       <View style={$footer}>
         <Text
           tx="registerScreen:alreadyHaveAccount"
@@ -140,8 +142,8 @@ const $loginLink: TextStyle = {
   textDecorationLine: "underline",
 }
 
-const $errorText: TextStyle = {
-  color: colors.error,
-  marginTop: spacing.sm,
-  paddingHorizontal: spacing.md,
-}
+const $errorText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+  marginTop: theme.spacing.sm,
+  paddingHorizontal: theme.spacing.md,
+})
