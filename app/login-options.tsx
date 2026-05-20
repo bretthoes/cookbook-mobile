@@ -41,9 +41,9 @@ export default observer(function LoginOptionsScreen() {
   const [isFacebookLoading, setIsFacebookLoading] = useState(false)
 
   useHeader({
-    leftIcon: "back",
+    leftIcon: router.canGoBack() ? "back" : undefined,
     titleTx: "loginOptionsScreen:title",
-    onLeftPress: () => router.back(),
+    onLeftPress: () => (router.canGoBack() ? router.back() : router.replace("/")),
   })
 
   const $themedContainer = useMemo(() => themed($container), [themed])

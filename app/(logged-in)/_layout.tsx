@@ -8,7 +8,7 @@ export default observer(function Layout() {
   } = useStores()
 
   if (!isAuthenticated) {
-    return <Redirect href="/log-in" />
+    return <Redirect href="/login-options" />
   }
 
   return <Stack screenOptions={{ headerShown: false }} />
