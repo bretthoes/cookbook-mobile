@@ -6,6 +6,7 @@ import { StepIndicator } from "@/components/StepIndicator"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { Switch } from "@/components/Toggle"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -47,8 +48,9 @@ export default observer(function OnboardingScreen() {
     useAppTheme()
 
   const {
-    authenticationStore: { setDisplayName, updateDisplayName },
+    authenticationStore: { updateDisplayName },
   } = useStores()
+  const { isInFlight, run } = useInFlightAction()
 
   const [localDisplayName, setLocalDisplayName] = useState("")
 
@@ -80,16 +82,17 @@ export default observer(function OnboardingScreen() {
 
   const displayNameValidationError = isSubmitted ? displayNameError : ""
 
-  const handleDisplayNameContinue = async () => {
-    setIsSubmitted(true)
-    if (displayNameError) return
-    setDisplayName(localDisplayName.trim())
-    const success = await updateDisplayName()
-    if (success) {
-      setIsSubmitted(false)
-      advanceStep()
-    }
-  }
+  const handleDisplayNameContinue = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      if (displayNameError) return
+      const success = await updateDisplayName(localDisplayName.trim())
+      if (success) {
+        setIsSubmitted(false)
+        advanceStep()
+      }
+    })
+  }, [displayNameError, localDisplayName, updateDisplayName, advanceStep, run])
 
   // Header title per step
   const headerTitle = useMemo(() => {
@@ -169,6 +172,7 @@ export default observer(function OnboardingScreen() {
               tx="common:next"
               preset="reversed"
               onPress={handleDisplayNameContinue}
+              disabled={isInFlight}
               style={$actionButton}
             />
           </View>

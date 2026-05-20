@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -11,7 +12,7 @@ import { validateInviteEmail } from "@/utils/invitations"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 
 export default observer(function AddInvitationEmailScreen() {
@@ -20,6 +21,7 @@ export default observer(function AddInvitationEmailScreen() {
     invitationStore: { invite },
   } = useStores()
   const { themed } = useAppTheme()
+  const { isInFlight, run } = useInFlightAction()
 
   const [inviteEmail, setInviteEmail] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -36,22 +38,24 @@ export default observer(function AddInvitationEmailScreen() {
     onLeftPress: () => router.back(),
   })
 
-  const onSendEmail = async () => {
-    setIsSubmitted(true)
-    setEmailMsg("")
-    const error = validateInviteEmail(inviteEmail)
-    if (error) {
+  const onSendEmail = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      setEmailMsg("")
+      const error = validateInviteEmail(inviteEmail)
+      if (error) {
+        setIsSubmitted(false)
+        return
+      }
+
+      const cookbookId = selected?.id ?? 0
+      const res = await invite(cookbookId, inviteEmail.trim())
       setIsSubmitted(false)
-      return
-    }
 
-    const cookbookId = selected?.id ?? 0
-    const res = await invite(cookbookId, inviteEmail.trim())
-    setIsSubmitted(false)
-
-    setEmailMsg(res)
-    setInviteEmail("")
-  }
+      setEmailMsg(res)
+      setInviteEmail("")
+    })
+  }, [inviteEmail, invite, selected?.id, run])
 
   const $themedIntro = useMemo(() => themed($intro), [themed])
   const $themedSection = useMemo(() => themed($section), [themed])
@@ -88,6 +92,7 @@ export default observer(function AddInvitationEmailScreen() {
           <Button
             tx="invitationAddEmailScreen:sendButton"
             onPress={onSendEmail}
+            disabled={isInFlight}
             style={$themedButton}
           />
           {!!emailMsg && <Text text={emailMsg} preset="formHelper" style={$themedHelper} />}

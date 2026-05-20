@@ -8,7 +8,7 @@ import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ViewStyle } from "react-native"
 
 const isValidDisplayName = (input: string) => {
@@ -20,8 +20,10 @@ export default observer(function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [localDisplayName, setLocalDisplayName] = useState("")
   const [result, setResult] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+  const isSavingRef = useRef(false)
   const { authenticationStore } = useStores()
-  const { displayName, setDisplayName, updateDisplayName, fetchDisplayName } = authenticationStore
+  const { updateDisplayName, fetchDisplayName } = authenticationStore
 
   const getValidationError = useCallback((name: string) => {
     if (name.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
@@ -36,15 +38,12 @@ export default observer(function SetDisplayName() {
   )
 
   useEffect(() => {
-    // Reset state when component mounts
     setLocalDisplayName("")
     setIsSubmitted(false)
     setResult("")
 
-    // Fetch the current display name
     const load = async () => {
       await fetchDisplayName()
-      // Set the local display name to the fetched value (read from store after fetch)
       setLocalDisplayName(authenticationStore.displayName)
     }
     load()
@@ -54,31 +53,35 @@ export default observer(function SetDisplayName() {
     }
   }, [fetchDisplayName, authenticationStore])
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
+    if (isSavingRef.current) return
+
     setIsSubmitted(true)
     setResult("")
     const error = getValidationError(localDisplayName)
     if (error) return
 
-    // Check if the local display name is already equal to the store's display name
-    if (localDisplayName === displayName) {
+    if (localDisplayName === authenticationStore.displayName) {
       setResult(translate("setDisplayNameScreen:noChangesToSave"))
       setIsSubmitted(false)
       return
     }
 
-    // Update the store's display name with the local value
-    setDisplayName(localDisplayName)
-
-    // Call the update function
-    const success = await updateDisplayName()
-    if (success) {
-      setResult(translate("setDisplayNameScreen:updatedSuccessfully"))
-    } else {
-      setResult(translate("setDisplayNameScreen:updateFailed"))
+    isSavingRef.current = true
+    setIsSaving(true)
+    try {
+      const success = await updateDisplayName(localDisplayName)
+      if (success) {
+        setResult(translate("setDisplayNameScreen:updatedSuccessfully"))
+      } else {
+        setResult(translate("setDisplayNameScreen:updateFailed"))
+      }
+    } finally {
+      isSavingRef.current = false
+      setIsSaving(false)
+      setIsSubmitted(false)
     }
-    setIsSubmitted(false)
-  }
+  }, [localDisplayName, authenticationStore, getValidationError, updateDisplayName])
 
   useHeader(
     {
@@ -86,9 +89,9 @@ export default observer(function SetDisplayName() {
       leftIcon: "back",
       rightTx: "common:save",
       onLeftPress: () => router.back(),
-      onRightPress: handleSave,
+      onRightPress: isSaving ? undefined : handleSave,
     },
-    [localDisplayName],
+    [handleSave, isSaving],
   )
 
   return (

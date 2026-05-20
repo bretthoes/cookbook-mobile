@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { api } from "@/services/api"
@@ -48,6 +49,7 @@ export default observer(function AddSocialImportScreen() {
 
   const { recipeStore } = useStores()
   const { setRecipeToAdd } = recipeStore
+  const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -72,44 +74,46 @@ export default observer(function AddSocialImportScreen() {
     setIsSubmitted(false)
   }, [])
 
-  const handleNext = async () => {
-    setIsSubmitted(true)
-    const error = getValidationError(url)
-    if (error) return
+  const handleNext = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      const error = getValidationError(url)
+      if (error) return
 
-    setIsLoading(true)
-    const startTime = Date.now()
+      setIsLoading(true)
+      const startTime = Date.now()
 
-    const response = await api.extractRecipeFromSocialUrl(url)
+      const response = await api.extractRecipeFromSocialUrl(url)
 
-    const elapsed = Date.now() - startTime
-    if (elapsed < MINIMUM_LOADING_TIME_MS) {
-      await new Promise((resolve) => setTimeout(resolve, MINIMUM_LOADING_TIME_MS - elapsed))
-    }
+      const elapsed = Date.now() - startTime
+      if (elapsed < MINIMUM_LOADING_TIME_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MINIMUM_LOADING_TIME_MS - elapsed))
+      }
 
-    setIsLoading(false)
+      setIsLoading(false)
 
-    if (response.kind === "ok") {
-      recipeStore.incrementImportCount()
-      setRecipeToAdd(response.recipe)
-      router.replace("../recipe/add")
-    } else if (response.kind === "rate-limited") {
-      setResult(t("recipeAddSocialImportScreen:rateLimited"))
-    } else {
-      setResult(t("recipeAddSocialImportScreen:extractFailed"))
-    }
-    setIsSubmitted(false)
-  }
+      if (response.kind === "ok") {
+        recipeStore.incrementImportCount()
+        setRecipeToAdd(response.recipe)
+        router.replace("../recipe/add")
+      } else if (response.kind === "rate-limited") {
+        setResult(t("recipeAddSocialImportScreen:rateLimited"))
+      } else {
+        setResult(t("recipeAddSocialImportScreen:extractFailed"))
+      }
+      setIsSubmitted(false)
+    })
+  }, [url, getValidationError, recipeStore, setRecipeToAdd, run, t])
 
   useHeader(
     {
       titleTx: PLATFORM_TITLES[platform] as never,
       onLeftPress: () => router.back(),
       leftIcon: "back",
-      onRightPress: handleNext,
+      onRightPress: isInFlight ? undefined : handleNext,
       rightTx: "recipeAddSocialImportScreen:import",
     },
-    [url],
+    [handleNext, isInFlight, platform],
   )
 
   if (isLoading) {

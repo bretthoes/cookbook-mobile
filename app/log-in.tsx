@@ -6,11 +6,12 @@ import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
 import { UseCase } from "@/components/UseCase"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { useStores } from "@/models/helpers/useStores"
 import { router } from "expo-router"
 import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
-import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
+import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -43,6 +44,7 @@ export default observer(function Login(_props) {
       isAuthenticated,
     },
   } = useStores()
+  const { isInFlight, run } = useInFlightAction()
 
   useEffect(() => {
     setResult("")
@@ -92,15 +94,16 @@ export default observer(function Login(_props) {
 
   const error = isSubmitted ? validationError : ""
 
-  async function authenticate() {
-    setIsSubmitted(true)
-    setAttemptsCount(attemptsCount + 1)
+  const authenticate = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      setAttemptsCount((c) => c + 1)
 
-    if (validationError) return
+      if (validationError) return
 
-    // Make a request to your server to get an authentication token.
-    await login(authPassword)
-  }
+      await login(authPassword)
+    })
+  }, [authPassword, login, run, validationError])
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
     () =>
@@ -185,6 +188,7 @@ export default observer(function Login(_props) {
           style={$tapButton}
           preset="reversed"
           onPress={authenticate}
+          disabled={isInFlight}
         />
 
         <Text

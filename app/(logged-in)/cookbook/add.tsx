@@ -5,6 +5,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { CookbookToAddSnapshotIn } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
@@ -16,7 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { View, ViewStyle } from "react-native"
 
@@ -29,6 +30,7 @@ export default observer(function AddCookbookScreen() {
   const {
     cookbookStore: { create },
   } = useStores()
+  const { isInFlight, run } = useInFlightAction()
 
   const {
     control,
@@ -72,35 +74,45 @@ export default observer(function AddCookbookScreen() {
     }
   }
 
-  const onPressSend = async (formData: CookbookFormInputs) => {
-    setCreateError(null)
-    const newCookbook: CookbookToAddSnapshotIn = {
-      title: formData.title.trim(),
-      image: formData.image,
-    }
-    try {
-      const success = await create(newCookbook)
-      if (success) {
-        router.replace("../../(tabs)/cookbooks")
-      } else {
+  const onPressSend = useCallback(
+    async (formData: CookbookFormInputs) => {
+      setCreateError(null)
+      const newCookbook: CookbookToAddSnapshotIn = {
+        title: formData.title.trim(),
+        image: formData.image,
+      }
+      try {
+        const success = await create(newCookbook)
+        if (success) {
+          router.replace("../../(tabs)/cookbooks")
+        } else {
+          setCreateError(translate("cookbookAddScreen:createFailed"))
+        }
+      } catch {
         setCreateError(translate("cookbookAddScreen:createFailed"))
       }
-    } catch {
-      setCreateError(translate("cookbookAddScreen:createFailed"))
-    }
-  }
+    },
+    [create],
+  )
 
-  const onError = (errors: any) => {
+  const onError = useCallback((errors: unknown) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
-  }
+  }, [])
 
-  useHeader({
-    titleTx: "cookbookAddScreen:title",
-    leftIcon: "back",
-    rightTx: "common:save",
-    onRightPress: () => handleSubmit(onPressSend, onError)(),
-    onLeftPress: () => router.back(),
-  })
+  const handleSave = useCallback(() => {
+    handleSubmit((data) => run(() => onPressSend(data)), onError)()
+  }, [handleSubmit, onPressSend, onError, run])
+
+  useHeader(
+    {
+      titleTx: "cookbookAddScreen:title",
+      leftIcon: "back",
+      rightTx: "common:save",
+      onRightPress: isInFlight ? undefined : handleSave,
+      onLeftPress: () => router.back(),
+    },
+    [handleSave, isInFlight],
+  )
 
   return (
     <Screen preset="scroll" contentContainerStyle={$root}>

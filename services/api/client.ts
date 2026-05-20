@@ -40,6 +40,48 @@ export function createApiClient(
   const fetchWithTimeout = createFetchWithTimeout(config.timeout)
 
   let onSessionExpired: (() => void) | undefined
+  let refreshInFlight: Promise<string | null> | null = null
+
+  async function refreshAccessToken(): Promise<string | null> {
+    if (refreshInFlight) return refreshInFlight
+
+    refreshInFlight = (async () => {
+      const refreshToken = await SecureStore.getItemAsync("refreshToken")
+      if (!refreshToken) {
+        onSessionExpired?.()
+        return null
+      }
+
+      const refreshResponse = await fetchWithTimeout(`${baseUrl}/api/Users/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ refreshToken }),
+      })
+
+      if (!refreshResponse.ok) {
+        onSessionExpired?.()
+        return null
+      }
+
+      const authData = await refreshResponse.json()
+      if (!authData?.accessToken) {
+        onSessionExpired?.()
+        return null
+      }
+
+      await SecureStore.setItemAsync("accessToken", authData.accessToken)
+      if (authData.refreshToken) {
+        await SecureStore.setItemAsync("refreshToken", authData.refreshToken)
+      }
+      return authData.accessToken as string
+    })()
+
+    try {
+      return await refreshInFlight
+    } finally {
+      refreshInFlight = null
+    }
+  }
 
   async function authFetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
     const url =
@@ -62,32 +104,10 @@ export function createApiClient(
     let response = await fetchWithTimeout(input, requestInit)
 
     if (response.status === 401 && !url.includes("/Users/refresh")) {
-      const refreshToken = await SecureStore.getItemAsync("refreshToken")
-      if (!refreshToken) {
-        onSessionExpired?.()
-        return response
-      }
+      const newAccessToken = await refreshAccessToken()
+      if (!newAccessToken) return response
 
-      const refreshResponse = await fetchWithTimeout(`${baseUrl}/api/Users/refresh`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ refreshToken }),
-      })
-
-      if (!refreshResponse.ok) {
-        onSessionExpired?.()
-        return response
-      }
-
-      const authData = await refreshResponse.json()
-      if (authData?.accessToken) {
-        await SecureStore.setItemAsync("accessToken", authData.accessToken)
-        if (authData.refreshToken) {
-          await SecureStore.setItemAsync("refreshToken", authData.refreshToken)
-        }
-      }
-
-      headers.set("Authorization", `Bearer ${authData.accessToken}`)
+      headers.set("Authorization", `Bearer ${newAccessToken}`)
       const retryInit: RequestInit = { ...init, headers }
       response = await fetchWithTimeout(input, retryInit)
     }

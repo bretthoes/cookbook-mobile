@@ -3,6 +3,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { api } from "@/services/api"
@@ -23,6 +24,7 @@ const MINIMUM_LOADING_TIME_MS = 1500
 export default observer(function RecipeUrlScreen() {
   const { recipeStore } = useStores()
   const { setRecipeToAdd } = recipeStore
+  const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -46,43 +48,44 @@ export default observer(function RecipeUrlScreen() {
     setIsSubmitted(false)
   }, [])
 
-  const handleNext = async () => {
-    setIsSubmitted(true)
-    const error = getValidationError(url)
-    if (error) return
+  const handleNext = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      const error = getValidationError(url)
+      if (error) return
 
-    setIsLoading(true)
-    const startTime = Date.now()
+      setIsLoading(true)
+      const startTime = Date.now()
 
-    const uploadResponse = await api.extractRecipeFromUrl(url)
+      const uploadResponse = await api.extractRecipeFromUrl(url)
 
-    // Ensure minimum loading time of 1.5 seconds
-    const elapsed = Date.now() - startTime
-    if (elapsed < MINIMUM_LOADING_TIME_MS) {
-      await new Promise((resolve) => setTimeout(resolve, MINIMUM_LOADING_TIME_MS - elapsed))
-    }
+      const elapsed = Date.now() - startTime
+      if (elapsed < MINIMUM_LOADING_TIME_MS) {
+        await new Promise((resolve) => setTimeout(resolve, MINIMUM_LOADING_TIME_MS - elapsed))
+      }
 
-    setIsLoading(false)
+      setIsLoading(false)
 
-    if (uploadResponse.kind === "ok") {
-      recipeStore.incrementImportCount()
-      setRecipeToAdd(uploadResponse.recipe)
-      router.replace("../recipe/add")
-    } else {
-      setResult(translate("recipeSelectUrlScreen:extractFailed"))
-    }
-    setIsSubmitted(false)
-  }
+      if (uploadResponse.kind === "ok") {
+        recipeStore.incrementImportCount()
+        setRecipeToAdd(uploadResponse.recipe)
+        router.replace("../recipe/add")
+      } else {
+        setResult(translate("recipeSelectUrlScreen:extractFailed"))
+      }
+      setIsSubmitted(false)
+    })
+  }, [url, getValidationError, recipeStore, setRecipeToAdd, run])
 
   useHeader(
     {
       titleTx: "recipeSelectUrlScreen:title",
       onLeftPress: () => router.back(),
       leftIcon: "back",
-      onRightPress: handleNext,
+      onRightPress: isInFlight ? undefined : handleNext,
       rightTx: "recipeSelectUrlScreen:next",
     },
-    [url],
+    [handleNext, isInFlight],
   )
 
   if (isLoading) {

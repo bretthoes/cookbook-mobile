@@ -143,19 +143,20 @@ const InvitationCard = observer(function InvitationCard({
   const acceptPressed = useSharedValue(0)
   const rejectPressed = useSharedValue(0)
   const cardOpacity = useSharedValue(1)
+  const isRespondingRef = React.useRef(false)
 
   const handleRespond = (accepted: boolean) => {
-    // first, fade out
+    if (isRespondingRef.current) return
+    isRespondingRef.current = true
+
     if (accepted) acceptPressed.value = withSpring(1)
     else rejectPressed.value = withSpring(1)
     cardOpacity.value = withSpring(0)
 
-    // once opacity anim is done, trigger layout animation + remove item
     setTimeout(() => {
-      // animate the list collapsing
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
       invitationStore.respond(invitation.id, accepted)
-    }, 500) // match your spring duration
+    }, 500)
   }
 
   const animatedCardStyle = useAnimatedStyle(() => {

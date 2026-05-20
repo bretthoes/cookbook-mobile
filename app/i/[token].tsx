@@ -4,6 +4,7 @@ import { Header } from "@/components/Header"
 import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { isRTL, translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -12,7 +13,7 @@ import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
@@ -32,7 +33,7 @@ export default observer(function InvitationTokenScreen() {
   const { themed, theme } = useAppTheme()
 
   const [isLoading, setIsLoading] = useState(true)
-  const [processingAction, setProcessingAction] = useState<"accept" | "decline" | null>(null)
+  const { isInFlight, run } = useInFlightAction()
   const [error, setError] = useState<string | null>(null)
   const [invitation, setInvitation] = useState<any>(null)
   const [actionError, setActionError] = useState<string | null>(null)
@@ -88,71 +89,71 @@ export default observer(function InvitationTokenScreen() {
     loadInvitation()
   }, [token, isAuthenticated, invitationStore])
 
-  const handleAccept = async () => {
-    if (!isAuthenticated) {
-      Alert.alert(
-        translate("invitationLinkScreen:loginRequiredTitle"),
-        translate("invitationLinkScreen:loginRequiredMessage"),
-        [
-          { text: translate("common:cancel"), style: "cancel" },
-          {
-            text: translate("invitationLinkScreen:loginButton"),
-            onPress: () => router.push("/login-options"),
-          },
-        ],
-      )
-      return
-    }
+  const handleAccept = useCallback(() => {
+    run(async () => {
+      if (!isAuthenticated) {
+        Alert.alert(
+          translate("invitationLinkScreen:loginRequiredTitle"),
+          translate("invitationLinkScreen:loginRequiredMessage"),
+          [
+            { text: translate("common:cancel"), style: "cancel" },
+            {
+              text: translate("invitationLinkScreen:loginButton"),
+              onPress: () => router.push("/login-options"),
+            },
+          ],
+        )
+        return
+      }
 
-    if (!token) return
+      if (!token) return
 
-    setActionError(null)
-    setProcessingAction("accept")
-    const startTime = Date.now()
-    const success = await invitationStore.respond(token, true)
-    const elapsedTime = Date.now() - startTime
-    const minDelay = 1000 // 1 second minimum
-    if (elapsedTime < minDelay) {
-      await new Promise((resolve) => setTimeout(resolve, minDelay - elapsedTime))
-    }
-    setProcessingAction(null)
+      setActionError(null)
+      const startTime = Date.now()
+      const success = await invitationStore.respond(token, true)
+      const elapsedTime = Date.now() - startTime
+      const minDelay = 1000
+      if (elapsedTime < minDelay) {
+        await new Promise((resolve) => setTimeout(resolve, minDelay - elapsedTime))
+      }
 
-    if (success === true) {
-      setAcceptedSuccessfully(true)
-    } else {
-      setActionError(
-        success?.conflict
-          ? translate("invitationLinkScreen:alreadyRedeemed")
-          : translate("invitationLinkScreen:acceptFailed"),
-      )
-    }
-  }
+      if (success === true) {
+        setAcceptedSuccessfully(true)
+      } else {
+        setActionError(
+          success?.conflict
+            ? translate("invitationLinkScreen:alreadyRedeemed")
+            : translate("invitationLinkScreen:acceptFailed"),
+        )
+      }
+    })
+  }, [isAuthenticated, token, invitationStore, run])
 
-  const handleReject = async () => {
-    if (!token) return
+  const handleReject = useCallback(() => {
+    run(async () => {
+      if (!token) return
 
-    setActionError(null)
-    setProcessingAction("decline")
-    const startTime = Date.now()
-    const success = await invitationStore.respond(token, false)
-    const elapsedTime = Date.now() - startTime
-    const minDelay = 1000 // 1 second minimum
-    if (elapsedTime < minDelay) {
-      await new Promise((resolve) => setTimeout(resolve, minDelay - elapsedTime))
-    }
-    setProcessingAction(null)
-    if (success === true) {
-      setDeclinedSuccessfully(true)
-    } else {
-      setActionError(
-        success?.conflict
-          ? translate("invitationLinkScreen:alreadyRedeemed")
-          : translate("invitationLinkScreen:declineFailed"),
-      )
-    }
-  }
+      setActionError(null)
+      const startTime = Date.now()
+      const success = await invitationStore.respond(token, false)
+      const elapsedTime = Date.now() - startTime
+      const minDelay = 1000
+      if (elapsedTime < minDelay) {
+        await new Promise((resolve) => setTimeout(resolve, minDelay - elapsedTime))
+      }
+      if (success === true) {
+        setDeclinedSuccessfully(true)
+      } else {
+        setActionError(
+          success?.conflict
+            ? translate("invitationLinkScreen:alreadyRedeemed")
+            : translate("invitationLinkScreen:declineFailed"),
+        )
+      }
+    })
+  }, [token, invitationStore, run])
 
-  if (processingAction) {
+  if (isInFlight) {
     return <LoadingScreen text={translate("invitationLinkScreen:loadingShort")} />
   }
 
@@ -362,6 +363,7 @@ export default observer(function InvitationTokenScreen() {
             : "invitationLinkScreen:loginToAcceptButton"
         }
         onPress={handleAccept}
+        disabled={isInFlight}
         style={{ marginTop: spacing.xl, marginHorizontal: spacing.md }}
       />
 
@@ -369,6 +371,7 @@ export default observer(function InvitationTokenScreen() {
         <Button
           tx="invitationLinkScreen:declineButton"
           onPress={handleReject}
+          disabled={isInFlight}
           style={{ marginTop: spacing.md, marginHorizontal: spacing.md }}
           preset="reversed"
         />

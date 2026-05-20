@@ -9,6 +9,7 @@ import {
   getRecipeTagChipColor,
   RECIPE_TAG_CHIP_TEXT_COLOR,
 } from "@/components/Recipe/recipeTagColors"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
@@ -26,7 +27,7 @@ import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
-import { useState } from "react"
+import { useCallback, useState } from "react"
 import type { Control, FieldErrors } from "react-hook-form"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import {
@@ -245,7 +246,7 @@ export interface RecipeFormProps {
 export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   const { onSubmit, onError, formValues = defaultForm, isEdit = false, formRef } = props
   const { themed, theme } = useAppTheme()
-  const [isLoading] = useState(false)
+  const { isInFlight, run } = useInFlightAction()
   const [isUploading, setIsUploading] = useState(false)
 
   const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])
@@ -317,13 +318,27 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
     setValue(`directions.${directionIndex}.image`, null)
   }
 
-  useHeader({
-    titleTx: isEdit ? "recipeListScreen:edit" : "recipeListScreen:add",
-    leftIcon: "back",
-    onLeftPress: () => router.back(),
-    rightTx: "common:save",
-    onRightPress: () => handleSubmit(onSubmit, onError)(),
-  })
+  const handleSave = useCallback(() => {
+    handleSubmit(
+      (formData) => {
+        run(async () => {
+          await onSubmit(formData)
+        })
+      },
+      onError,
+    )()
+  }, [handleSubmit, onSubmit, onError, run])
+
+  useHeader(
+    {
+      titleTx: isEdit ? "recipeListScreen:edit" : "recipeListScreen:add",
+      leftIcon: "back",
+      onLeftPress: () => router.back(),
+      rightTx: "common:save",
+      onRightPress: isInFlight ? undefined : handleSave,
+    },
+    [handleSave, isInFlight, isEdit],
+  )
 
   const {
     fields: ingredientSectionFields,
@@ -715,7 +730,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
           <Divider size={spacing.xl} />
         </View>
 
-        {isLoading && <ActivityIndicator />}
+        {isInFlight && <ActivityIndicator />}
       </UseCase>
     </View>
   )

@@ -4,6 +4,7 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { UseCase } from "@/components/UseCase"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
@@ -13,7 +14,7 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { ActivityIndicator, Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
@@ -30,6 +31,7 @@ export default observer(function EditCookbookScreen() {
   const [result, setResult] = useState<string>("")
   const [resultIsSuccess, setResultIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const { isInFlight, run } = useInFlightAction()
   cookbookStore.setSelectedById(Number(id))
 
   const {
@@ -53,20 +55,9 @@ export default observer(function EditCookbookScreen() {
     }
   }, [cookbookStore.selected, setValue])
 
-  const onError = (errors: any) => {
+  const onError = useCallback((errors: unknown) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
-  }
-
-  useHeader(
-    {
-      titleTx: "cookbookEditScreen:title",
-      leftIcon: "back",
-      onLeftPress: () => router.back(),
-      rightTx: "common:save",
-      onRightPress: () => handleSubmit(onPressSend, onError)(),
-    },
-    [handleSubmit],
-  )
+  }, [])
 
   const pickImage = async () => {
     setIsLoading(true)
@@ -88,46 +79,63 @@ export default observer(function EditCookbookScreen() {
     }
   }
 
-  const onPressSend = async (data: CookbookFormInputs) => {
-    if (!cookbookStore.selected) return
+  const onPressSend = useCallback(
+    async (data: CookbookFormInputs) => {
+      if (!cookbookStore.selected) return
 
-    // Check if there are any changes
-    if (
-      data.title === cookbookStore.selected.title &&
-      data.image === cookbookStore.selected.image
-    ) {
-      setResult(translate("cookbookEditScreen:noChangesToSave"))
-      setResultIsSuccess(false)
-      return
-    }
-
-    setIsLoading(true)
-    try {
-      const success = await cookbookStore.update({
-        id: cookbookStore.selected.id,
-        title: data.title,
-        image: data.image,
-        author: cookbookStore.selected.author,
-        authorEmail: cookbookStore.selected.authorEmail,
-        membersCount: cookbookStore.selected.membersCount,
-        recipeCount: cookbookStore.selected.recipeCount,
-      })
-
-      if (success) {
-        setResult(translate("cookbookEditScreen:updatedSuccessfully"))
-        setResultIsSuccess(true)
-      } else {
-        setResult(translate("cookbookEditScreen:failedToUpdate"))
+      if (
+        data.title === cookbookStore.selected.title &&
+        data.image === cookbookStore.selected.image
+      ) {
+        setResult(translate("cookbookEditScreen:noChangesToSave"))
         setResultIsSuccess(false)
+        return
       }
-    } catch (error) {
-      console.error("Error updating cookbook:", error)
-      setResult(translate("cookbookEditScreen:errorUpdating"))
-      setResultIsSuccess(false)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+
+      setIsLoading(true)
+      try {
+        const success = await cookbookStore.update({
+          id: cookbookStore.selected.id,
+          title: data.title,
+          image: data.image,
+          author: cookbookStore.selected.author,
+          authorEmail: cookbookStore.selected.authorEmail,
+          membersCount: cookbookStore.selected.membersCount,
+          recipeCount: cookbookStore.selected.recipeCount,
+        })
+
+        if (success) {
+          setResult(translate("cookbookEditScreen:updatedSuccessfully"))
+          setResultIsSuccess(true)
+        } else {
+          setResult(translate("cookbookEditScreen:failedToUpdate"))
+          setResultIsSuccess(false)
+        }
+      } catch (error) {
+        console.error("Error updating cookbook:", error)
+        setResult(translate("cookbookEditScreen:errorUpdating"))
+        setResultIsSuccess(false)
+      } finally {
+        setIsLoading(false)
+      }
+    },
+    [cookbookStore],
+  )
+
+  const handleSave = useCallback(() => {
+    handleSubmit((data) => run(() => onPressSend(data)), onError)()
+  }, [handleSubmit, onPressSend, onError, run])
+
+  useHeader(
+    {
+      titleTx: "cookbookEditScreen:title",
+      leftIcon: "back",
+      onLeftPress: () => router.back(),
+      rightTx: "common:save",
+      onRightPress: isInFlight || isLoading ? undefined : handleSave,
+    },
+    [handleSave, isInFlight, isLoading],
+  )
 
   if (!cookbookStore.selected) {
     return <ItemNotFound message={translate("cookbookEditScreen:notFound")} />

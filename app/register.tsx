@@ -11,6 +11,7 @@ import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -37,7 +38,7 @@ export default observer(function Register() {
   const [localDisplayName, setLocalDisplayName] = useState("")
   const [isPasswordHidden, setIsPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [isVerifying, setIsVerifying] = useState(false)
+  const { isInFlight, run } = useInFlightAction()
   const [errorMessage, setErrorMessage] = useState("")
   const [isCooldown, setIsCooldown] = useState(false)
   const [cooldownTime, setCooldownTime] = useState(0)
@@ -50,7 +51,6 @@ export default observer(function Register() {
       resendConfirmationEmail,
       authEmail,
       setAuthEmail,
-      setDisplayName,
       updateDisplayName,
       validationError,
       result,
@@ -113,38 +113,39 @@ export default observer(function Register() {
     setIsSubmitted(false)
   }
 
-  const handlePasswordStepSubmit = async () => {
-    setIsSubmitted(true)
-    if (passwordValidationError) return
-    const success = await register(password)
-    if (success) {
-      setPassword("")
-      setVerificationEmail(authEmail)
-      advanceStep()
-    }
-    setIsSubmitted(false)
-  }
+  const handlePasswordStepSubmit = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      if (passwordValidationError) return
+      const success = await register(password)
+      if (success) {
+        setPassword("")
+        setVerificationEmail(authEmail)
+        advanceStep()
+      }
+      setIsSubmitted(false)
+    })
+  }, [passwordValidationError, register, password, authEmail, advanceStep, run])
 
-  const handleVerify = async () => {
-    setIsVerifying(true)
-    setErrorMessage("")
-    setResult("")
+  const handleVerify = useCallback(() => {
+    run(async () => {
+      setErrorMessage("")
+      setResult("")
 
-    // Ensure store has email for login API — it may have been cleared (e.g. rehydration)
-    if (!authEmail) {
-      const emailToUse = verificationEmail || (await SecureStore.getItemAsync("email"))
-      if (emailToUse) setAuthEmail(emailToUse)
-    }
+      if (!authEmail) {
+        const emailToUse = verificationEmail || (await SecureStore.getItemAsync("email"))
+        if (emailToUse) setAuthEmail(emailToUse)
+      }
 
-    const storedPassword = await SecureStore.getItemAsync("password")
-    const loginSuccess = await login(storedPassword ?? "", true, true)
-    if (loginSuccess) {
-      advanceStep()
-    } else {
-      setErrorMessage(translate("emailVerificationScreen:notYetVerified"))
-    }
-    setIsVerifying(false)
-  }
+      const storedPassword = await SecureStore.getItemAsync("password")
+      const loginSuccess = await login(storedPassword ?? "", true, true)
+      if (loginSuccess) {
+        advanceStep()
+      } else {
+        setErrorMessage(translate("emailVerificationScreen:notYetVerified"))
+      }
+    })
+  }, [authEmail, verificationEmail, setAuthEmail, setResult, login, advanceStep, run])
 
   const handleResendEmail = () => {
     if (isCooldown) return
@@ -164,16 +165,17 @@ export default observer(function Register() {
     }, 1000)
   }
 
-  const handleStep3Continue = async () => {
-    setIsSubmitted(true)
-    if (displayNameError) return
-    setDisplayName(localDisplayName.trim())
-    const success = await updateDisplayName()
-    if (success) {
-      advanceStep()
-    }
-    setIsSubmitted(false)
-  }
+  const handleStep3Continue = useCallback(() => {
+    run(async () => {
+      setIsSubmitted(true)
+      if (displayNameError) return
+      const success = await updateDisplayName(localDisplayName.trim())
+      if (success) {
+        advanceStep()
+      }
+      setIsSubmitted(false)
+    })
+  }, [displayNameError, localDisplayName, updateDisplayName, advanceStep, run])
 
   const handleBack = () => {
     if (currentStep === 1) {
@@ -311,6 +313,7 @@ export default observer(function Register() {
               style={$tapButton}
               preset="reversed"
               onPress={handlePasswordStepSubmit}
+              disabled={isInFlight}
             />
             <Text
               tx="registerScreen:alreadyHaveAccount"
@@ -332,7 +335,7 @@ export default observer(function Register() {
             {result && !errorMessage ? (
               <Text text={result} preset="formHelper" style={themed($formHelper)} />
             ) : null}
-            {isVerifying && (
+            {isInFlight && (
               <React.Fragment>
                 <Divider style={{ marginVertical: spacing.xs }} />
                 <Text tx="emailVerificationScreen:verifying" preset="formHelper" />
@@ -347,7 +350,7 @@ export default observer(function Register() {
               tx="emailVerificationScreen:iveVerified"
               preset="reversed"
               onPress={handleVerify}
-              disabled={isVerifying}
+              disabled={isInFlight}
               style={$tapButton}
             />
             <Button
@@ -388,6 +391,7 @@ export default observer(function Register() {
               tx="common:next"
               preset="reversed"
               onPress={handleStep3Continue}
+              disabled={isInFlight}
               style={$tapButton}
             />
           </View>

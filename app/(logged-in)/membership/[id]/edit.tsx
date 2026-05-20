@@ -8,11 +8,12 @@ import type { TxKeyPath } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
 import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Alert, FlatList, TextStyle, View, ViewStyle } from "react-native"
 
 type MembershipProperty =
@@ -41,6 +42,7 @@ export default observer(function MembershipEditScreen() {
   const [email, setEmail] = useState<string | null>(null)
   const [isOwner, setIsOwner] = useState<boolean>(false)
   const { themed } = useAppTheme()
+  const { isInFlight, run } = useInFlightAction()
 
   // Memoize themed styles
   const $themedScreenContentContainer = React.useMemo(
@@ -68,12 +70,8 @@ export default observer(function MembershipEditScreen() {
     }
   }, [email, membershipStore.memberships?.items])
 
-  useHeader({
-    titleTx: "membershipScreen:editTitle",
-    leftIcon: "back",
-    rightTx: "common:save",
-    onLeftPress: () => router.back(),
-    onRightPress: async () => {
+  const handleSave = useCallback(() => {
+    run(async () => {
       const result = await membershipStore.update(parseInt(id))
       if (result) {
         setResultMessage(translate("membershipScreen:updateSuccess"))
@@ -82,8 +80,19 @@ export default observer(function MembershipEditScreen() {
         setResultMessage(translate("membershipScreen:updateFailed"))
         setResultIsSuccess(false)
       }
+    })
+  }, [id, membershipStore, run])
+
+  useHeader(
+    {
+      titleTx: "membershipScreen:editTitle",
+      leftIcon: "back",
+      rightTx: "common:save",
+      onLeftPress: () => router.back(),
+      onRightPress: isInFlight ? undefined : handleSave,
     },
-  })
+    [handleSave, isInFlight],
+  )
 
   if (!membership) return <ItemNotFound message={translate("membershipScreen:notFound")} />
 

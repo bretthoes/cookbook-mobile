@@ -49,13 +49,16 @@ export const AuthenticationStoreModel = types
       if (response.kind === "ok") store.setProp("displayName", response.displayName ?? "")
       else console.error(`Error fetching display name: ${JSON.stringify(response)}`)
     }),
-    updateDisplayName: flow(function* () {
-      const response = yield api.updateUser(store.displayName)
+    updateDisplayName: flow(function* (name?: string) {
+      const displayName = name ?? store.displayName
+      const response = yield api.updateUser(displayName)
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
         store.setProp("result", "An error occurred. Please try again.")
         return false
-      } else store.setProp("submittedSuccessfully", true)
+      }
+      store.setProp("displayName", displayName)
+      store.setProp("submittedSuccessfully", true)
       return true
     }),
     setAuthResult(value: AuthResultSnapshotIn) {
