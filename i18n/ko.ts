@@ -3,6 +3,7 @@ import { Translations } from "./en"
 const ko: Translations = {
   common: {
     loading: "___Still cooking",
+    signingIn: "___Signing you in",
     ok: "확인!",
     cancel: "취소",
     back: "뒤로",

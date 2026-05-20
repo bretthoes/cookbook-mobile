@@ -1,9 +1,8 @@
+import { LoadingScreen } from "@/components/LoadingScreen"
 import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { useAppleSignIn } from "@/hooks/useAppleSignIn"
-import { useFacebookSignIn } from "@/hooks/useFacebookSignIn"
-import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
+import { useSsoAuth } from "@/hooks/useSsoAuth"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -12,7 +11,7 @@ import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useMemo, useState } from "react"
+import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
 
@@ -31,14 +30,11 @@ const googleLogo = require("@/assets/images/google.png")
 export default observer(function LoginOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const { signIn: googleSignIn } = useGoogleSignIn()
-  const { signIn: appleSignIn } = useAppleSignIn()
-  const { signIn: facebookSignIn } = useFacebookSignIn()
   const { authenticationStore } = useStores()
   const { result } = authenticationStore
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const [isAppleLoading, setIsAppleLoading] = useState(false)
-  const [isFacebookLoading, setIsFacebookLoading] = useState(false)
+  const onAuthSuccess = useCallback(() => navigateAfterAuth(), [])
+  const { isSsoLoading, signInWithApple, signInWithGoogle, signInWithFacebook } =
+    useSsoAuth(onAuthSuccess)
 
   useHeader({
     leftIcon: router.canGoBack() ? "back" : undefined,
@@ -49,6 +45,10 @@ export default observer(function LoginOptionsScreen() {
   const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedListContainer = useMemo(() => themed($listContainer), [themed])
   const $themedErrorText = useMemo(() => themed($errorText), [themed])
+
+  if (isSsoLoading) {
+    return <LoadingScreen text={t("common:signingIn")} estimatedDurationMs={6_000} />
+  }
 
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
@@ -68,47 +68,20 @@ export default observer(function LoginOptionsScreen() {
             title={t("loginOptionsScreen:optionApple")}
             description={t("loginOptionsScreen:optionAppleDesc")}
             leftImage={appleLogo}
-            onPress={async () => {
-              if (isAppleLoading) return
-              setIsAppleLoading(true)
-              const credential = await appleSignIn()
-              if (credential) {
-                const success = await authenticationStore.loginWithApple(credential.identityToken)
-                if (success) navigateAfterAuth()
-              }
-              setIsAppleLoading(false)
-            }}
+            onPress={signInWithApple}
           />
         )}
         <OptionListItem
           title={t("loginOptionsScreen:optionGoogle")}
           description={t("loginOptionsScreen:optionGoogleDesc")}
           leftImage={googleLogo}
-          onPress={async () => {
-            if (isGoogleLoading) return
-            setIsGoogleLoading(true)
-            const credential = await googleSignIn()
-            if (credential) {
-              const success = await authenticationStore.loginWithGoogle(credential.idToken)
-              if (success) navigateAfterAuth()
-            }
-            setIsGoogleLoading(false)
-          }}
+          onPress={signInWithGoogle}
         />
         <OptionListItem
           title={t("loginOptionsScreen:optionFacebook")}
           description={t("loginOptionsScreen:optionFacebookDesc")}
           leftImage={facebookLogo}
-          onPress={async () => {
-            if (isFacebookLoading) return
-            setIsFacebookLoading(true)
-            const credential = await facebookSignIn()
-            if (credential) {
-              const success = await authenticationStore.loginWithFacebook(credential.accessToken)
-              if (success) navigateAfterAuth()
-            }
-            setIsFacebookLoading(false)
-          }}
+          onPress={signInWithFacebook}
         />
       </View>
       {result ? <Text text={result} preset="formHelper" style={$themedErrorText} /> : null}

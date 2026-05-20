@@ -1,6 +1,7 @@
 const en = {
   common: {
     loading: "Still cooking",
+    signingIn: "Signing you in",
     ok: "OK!",
     cancel: "Cancel",
     back: "Back",

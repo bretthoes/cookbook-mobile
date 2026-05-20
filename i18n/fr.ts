@@ -3,6 +3,7 @@ import { Translations } from "./en"
 const fr: Translations = {
   common: {
     loading: "___Still cooking",
+    signingIn: "___Signing you in",
     ok: "OK !",
     cancel: "Annuler",
     back: "Retour",
