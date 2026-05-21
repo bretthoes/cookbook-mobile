@@ -12,17 +12,13 @@ import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { openLinkInBrowser } from "@/utils/openLinkInBrowser"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Application from "expo-application"
 import { useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect } from "react"
-import { LayoutAnimation, Linking, TextStyle, View, ViewStyle } from "react-native"
-
-// TODO i18n
-function openLinkInBrowser(url: string) {
-  Linking.canOpenURL(url).then((canOpen) => canOpen && Linking.openURL(url))
-}
+import { LayoutAnimation, TextStyle, View, ViewStyle } from "react-native"
 
 export default observer(function ProfileScreen() {
   const {
@@ -44,10 +40,6 @@ export default observer(function ProfileScreen() {
     }
     fetchInvitations()
   }, [invitationStore])
-
-  const usingHermes = typeof HermesInternal === "object" && HermesInternal !== null
-  // @ts-expect-error
-  const usingFabric = global.nativeFabricUIManager != null
 
   useEffect(() => {
     AsyncStorage.getItem("themeContext").then((value) => {
@@ -182,56 +174,59 @@ export default observer(function ProfileScreen() {
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />
       </View>
-      <UseCase tx="demoDebugScreen:title">
-        <ListItem
-          LeftComponent={
-            <View>
-              <Text preset="bold" tx="demoDebugScreen:appId" />
-              <Text>{Application.applicationId}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View>
-              <Text preset="bold" tx="demoDebugScreen:appName" />
-              <Text>{Application.applicationName}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View>
-              <Text preset="bold" tx="demoDebugScreen:appVersion" />
-              <Text>{Application.nativeApplicationVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View>
-              <Text preset="bold" tx="demoDebugScreen:appBuildVersion" />
-              <Text>{Application.nativeBuildVersion}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View>
-              <Text preset="bold" tx="demoDebugScreen:hermesEnabled" />
-              <Text>{String(usingHermes)}</Text>
-            </View>
-          }
-        />
-        <ListItem
-          LeftComponent={
-            <View>
-              <Text preset="bold" tx="demoDebugScreen:fabricEnabled" />
-              <Text>{String(usingFabric)}</Text>
-            </View>
-          }
-        />
-      </UseCase>
+      {__DEV__ && (
+        <UseCase tx="demoDebugScreen:title">
+          <ListItem
+            LeftComponent={
+              <View>
+                <Text preset="bold" tx="demoDebugScreen:appId" />
+                <Text>{Application.applicationId}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View>
+                <Text preset="bold" tx="demoDebugScreen:appName" />
+                <Text>{Application.applicationName}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View>
+                <Text preset="bold" tx="demoDebugScreen:appVersion" />
+                <Text>{Application.nativeApplicationVersion}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View>
+                <Text preset="bold" tx="demoDebugScreen:appBuildVersion" />
+                <Text>{Application.nativeBuildVersion}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View>
+                <Text preset="bold" tx="demoDebugScreen:hermesEnabled" />
+                <Text>{String(typeof HermesInternal === "object" && HermesInternal !== null)}</Text>
+              </View>
+            }
+          />
+          <ListItem
+            LeftComponent={
+              <View>
+                <Text preset="bold" tx="demoDebugScreen:fabricEnabled" />
+                {/* @ts-expect-error */}
+                <Text>{String(global.nativeFabricUIManager != null)}</Text>
+              </View>
+            }
+          />
+        </UseCase>
+      )}
     </Screen>
   )
 })
