@@ -6,14 +6,14 @@ App state uses **MobX-State-Tree (MST)** with **mobx-react-lite** `observer()` o
 
 `RootStore.ts` composes domain stores:
 
-| Store | File | Responsibility |
-|-------|------|----------------|
-| `authenticationStore` | `AuthenticationStore.ts` | Auth token, email, display name, login/logout/SSO |
-| `cookbookStore` | `CookbookStore.ts` | Cookbook list, selection, favorites |
-| `recipeStore` | `Recipe/RecipeStore.ts` | Recipes, drafts, imports, weekly limits |
-| `membershipStore` | `MembershipStore.ts` | Cookbook members |
-| `invitationStore` | `InvitationStore.ts` | Pending invitations |
-| `episodeStore` | `EpisodeStore.ts` | Legacy Ignite demo data (unused in production flows) |
+| Store                 | File                     | Responsibility                                       |
+| --------------------- | ------------------------ | ---------------------------------------------------- |
+| `authenticationStore` | `AuthenticationStore.ts` | Auth token, email, display name, login/logout/SSO    |
+| `cookbookStore`       | `CookbookStore.ts`       | Cookbook list, selection, favorites                  |
+| `recipeStore`         | `Recipe/RecipeStore.ts`  | Recipes, drafts, imports, weekly limits              |
+| `membershipStore`     | `MembershipStore.ts`     | Cookbook members                                     |
+| `invitationStore`     | `InvitationStore.ts`     | Pending invitations                                  |
+| `episodeStore`        | `EpisodeStore.ts`        | Legacy Ignite demo data (unused in production flows) |
 
 Access stores in screens:
 
@@ -29,9 +29,9 @@ export default observer(function MyScreen() {
 
 ## Model vs store
 
-| Kind | Naming | Role |
-|------|--------|------|
-| **Model** | `Cookbook.ts` → `CookbookModel` | Single entity shape (props, views, entity actions) |
+| Kind      | Naming                                    | Role                                                          |
+| --------- | ----------------------------------------- | ------------------------------------------------------------- |
+| **Model** | `Cookbook.ts` → `CookbookModel`           | Single entity shape (props, views, entity actions)            |
 | **Store** | `CookbookStore.ts` → `CookbookStoreModel` | Collection + API `flow` actions (`fetch`, `create`, `update`) |
 
 Stores hold arrays/references to models and call `api.*` from `@/services/api`. Models mirror API DTO fields as MST `types.*` props.
@@ -82,13 +82,13 @@ MST models should reflect OpenAPI DTOs in `services/api/generated/schema.d.ts`. 
 
 `models/Recipe/` contains the largest models:
 
-| File | Purpose |
-|------|---------|
-| `Recipe.ts` | Full recipe entity |
-| `RecipeToAdd.ts` | Create/update payload |
-| `RecipeDraft.ts` | Local draft persistence |
-| `RecipeStore.ts` | Fetch, save, import, draft helpers |
-| `IngredientSection.ts`, `RecipeIngredient.ts`, `RecipeDirection.ts`, `RecipeImage.ts` | Nested recipe parts |
+| File                                                                                  | Purpose                            |
+| ------------------------------------------------------------------------------------- | ---------------------------------- |
+| `Recipe.ts`                                                                           | Full recipe entity                 |
+| `RecipeToAdd.ts`                                                                      | Create/update payload              |
+| `RecipeDraft.ts`                                                                      | Local draft persistence            |
+| `RecipeStore.ts`                                                                      | Fetch, save, import, draft helpers |
+| `IngredientSection.ts`, `RecipeIngredient.ts`, `RecipeDirection.ts`, `RecipeImage.ts` | Nested recipe parts                |
 
 `RecipeStore` exports helpers like `getCurrentWeekKey()` and `WEEKLY_IMPORT_LIMIT` used by import screens.
 
@@ -101,8 +101,8 @@ MST models should reflect OpenAPI DTOs in `services/api/generated/schema.d.ts`. 
 
 ## Related docs
 
-| Topic | Location |
-|-------|----------|
-| Screens / routing | `app/AGENTS.md` |
-| API layer | `services/api/README.md` |
+| Topic                  | Location                                  |
+| ---------------------- | ----------------------------------------- |
+| Screens / routing      | `app/AGENTS.md`                           |
+| API layer              | `services/api/README.md`                  |
 | Contract sync workflow | `.cursor/skills/sync-api-client/SKILL.md` |

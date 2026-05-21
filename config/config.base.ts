@@ -34,10 +34,8 @@ const BaseConfig: ConfigBaseProps = {
 
   INVITE_BASE_URL: "https://sharedcookbook.com",
   SUPPORT_EMAIL: "bretthoes@proton.me",
-  GOOGLE_WEB_CLIENT_ID:
-    "855003467457-e9j0dr1hl4b5uugr60e2rl310k24tb2a.apps.googleusercontent.com",
-  GOOGLE_IOS_CLIENT_ID:
-    "855003467457-0np16tdr82tqvulovp4mjsfmi2ulf84r.apps.googleusercontent.com",
+  GOOGLE_WEB_CLIENT_ID: "855003467457-e9j0dr1hl4b5uugr60e2rl310k24tb2a.apps.googleusercontent.com",
+  GOOGLE_IOS_CLIENT_ID: "855003467457-0np16tdr82tqvulovp4mjsfmi2ulf84r.apps.googleusercontent.com",
 }
 
 export default BaseConfig

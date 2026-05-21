@@ -69,8 +69,7 @@ export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef
   const $styles: StyleProp<TextStyle> = [
     $rtlStyle,
     themed(activePresets[preset]),
-    weight &&
-      (usesSecondaryTitleFont ? $secondaryFontWeightStyles : $fontWeightStyles)[weight],
+    weight && (usesSecondaryTitleFont ? $secondaryFontWeightStyles : $fontWeightStyles)[weight],
     size && activeSizeStyles[size],
     $styleOverride,
   ]

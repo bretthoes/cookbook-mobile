@@ -4,20 +4,20 @@ Expo Router file-based routes. Each `*.tsx` file under `app/` is a screen; folde
 
 ## Route tree
 
-| Path | URL (examples) | Notes |
-|------|----------------|-------|
-| `_layout.tsx` | — | Root: fonts, i18n, MST rehydration, `ThemeProvider`, renders `<Slot />` |
-| `index.tsx` | `/` | Welcome; redirects authenticated users to tabs |
-| `login-options.tsx`, `log-in.tsx`, `register*.tsx`, `forgot-password.tsx`, `reset-password.tsx` | `/login-options`, … | Unauthenticated auth flows |
-| `i/[token].tsx` | `/i/:token` | Deep link: accept cookbook invitation by token |
-| `(logged-in)/_layout.tsx` | — | Auth guard: `<Redirect href="/login-options" />` if not authenticated; else `<Stack />` |
-| `(logged-in)/index.tsx` | `/(logged-in)` | Redirects to `/(logged-in)/(tabs)/cookbooks` |
-| `(logged-in)/(tabs)/` | `/(logged-in)/(tabs)/cookbooks`, `create`, `profile` | Tab navigator; custom `TabBar` |
-| `(logged-in)/cookbook/` | `…/cookbook/:id`, `…/cookbook/add` | Cookbook detail, edit, create |
-| `(logged-in)/recipe/` | `…/recipe/:id`, `…/recipe/add`, `add-options`, … | Recipe CRUD and import flows |
-| `(logged-in)/membership/` | `…/membership/list`, `…/membership/:id` | Members list and detail |
-| `(logged-in)/invitation/` | `…/invitation`, `add-email`, `add-link` | Invite collaborators |
-| `(logged-in)/onboarding.tsx`, `set-display-name.tsx`, `language.tsx`, `select-cookbook.tsx` | various | Onboarding and settings |
+| Path                                                                                            | URL (examples)                                       | Notes                                                                                   |
+| ----------------------------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `_layout.tsx`                                                                                   | —                                                    | Root: fonts, i18n, MST rehydration, `ThemeProvider`, renders `<Slot />`                 |
+| `index.tsx`                                                                                     | `/`                                                  | Welcome; redirects authenticated users to tabs                                          |
+| `login-options.tsx`, `log-in.tsx`, `register*.tsx`, `forgot-password.tsx`, `reset-password.tsx` | `/login-options`, …                                  | Unauthenticated auth flows                                                              |
+| `i/[token].tsx`                                                                                 | `/i/:token`                                          | Deep link: accept cookbook invitation by token                                          |
+| `(logged-in)/_layout.tsx`                                                                       | —                                                    | Auth guard: `<Redirect href="/login-options" />` if not authenticated; else `<Stack />` |
+| `(logged-in)/index.tsx`                                                                         | `/(logged-in)`                                       | Redirects to `/(logged-in)/(tabs)/cookbooks`                                            |
+| `(logged-in)/(tabs)/`                                                                           | `/(logged-in)/(tabs)/cookbooks`, `create`, `profile` | Tab navigator; custom `TabBar`                                                          |
+| `(logged-in)/cookbook/`                                                                         | `…/cookbook/:id`, `…/cookbook/add`                   | Cookbook detail, edit, create                                                           |
+| `(logged-in)/recipe/`                                                                           | `…/recipe/:id`, `…/recipe/add`, `add-options`, …     | Recipe CRUD and import flows                                                            |
+| `(logged-in)/membership/`                                                                       | `…/membership/list`, `…/membership/:id`              | Members list and detail                                                                 |
+| `(logged-in)/invitation/`                                                                       | `…/invitation`, `add-email`, `add-link`              | Invite collaborators                                                                    |
+| `(logged-in)/onboarding.tsx`, `set-display-name.tsx`, `language.tsx`, `select-cookbook.tsx`     | various                                              | Onboarding and settings                                                                 |
 
 **Route groups** `(logged-in)` and `(tabs)` do **not** appear in the URL.
 
@@ -31,11 +31,11 @@ Expo Router file-based routes. Each `*.tsx` file under `app/` is a screen; folde
 
 Use `router` from `expo-router` (`push`, `replace`, `back`).
 
-| Pattern | When to use |
-|---------|-------------|
+| Pattern               | When to use                                                                        |
+| --------------------- | ---------------------------------------------------------------------------------- |
 | `router.replace(...)` | After login, after creating a resource when the user should not return to the form |
-| `router.push(...)` | Drill-down (detail → edit, list → detail) |
-| `router.back()` | Close a pushed screen |
+| `router.push(...)`    | Drill-down (detail → edit, list → detail)                                          |
+| `router.back()`       | Close a pushed screen                                                              |
 
 **Absolute paths** (from app root) are clearest for cross-group navigation:
 
@@ -75,9 +75,9 @@ Full examples: `.cursor/rules/screen-structure.mdc`.
 
 ## Related docs
 
-| Topic | Location |
-|-------|----------|
-| MobX stores | `models/AGENTS.md` |
-| API calls | `services/api/README.md` |
-| Reusable UI | `.cursor/skills/add-component/SKILL.md` |
+| Topic                | Location                                  |
+| -------------------- | ----------------------------------------- |
+| MobX stores          | `models/AGENTS.md`                        |
+| API calls            | `services/api/README.md`                  |
+| Reusable UI          | `.cursor/skills/add-component/SKILL.md`   |
 | API contract changes | `.cursor/skills/sync-api-client/SKILL.md` |

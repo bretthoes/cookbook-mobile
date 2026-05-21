@@ -54,7 +54,7 @@ export function createApiClient(
 
       const refreshResponse = await fetchWithTimeout(`${baseUrl}/api/Users/refresh`, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify({ refreshToken }),
       })
 

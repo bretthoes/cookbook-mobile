@@ -8,7 +8,7 @@ export function useInFlightAction() {
   const inFlightRef = useRef(false)
   const [isInFlight, setIsInFlight] = useState(false)
 
-  const run = useCallback(async <T,>(action: () => Promise<T>): Promise<T | undefined> => {
+  const run = useCallback(async <T>(action: () => Promise<T>): Promise<T | undefined> => {
     if (inFlightRef.current) return undefined
     inFlightRef.current = true
     setIsInFlight(true)

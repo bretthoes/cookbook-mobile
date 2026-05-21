@@ -414,4 +414,3 @@ const $tagChip: ThemedStyle<ViewStyle> = (theme) => ({
   borderColor: theme.colors.border,
   backgroundColor: theme.colors.background,
 })
-

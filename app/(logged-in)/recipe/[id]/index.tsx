@@ -60,10 +60,7 @@ export default observer(function Recipe() {
     () => themed($separatorAboveIngredients),
     [themed],
   )
-  const $themedSeparatorBelowImages = React.useMemo(
-    () => themed($separatorBelowImages),
-    [themed],
-  )
+  const $themedSeparatorBelowImages = React.useMemo(() => themed($separatorBelowImages), [themed])
   const [cookMode, setCookMode] = useState(false)
   const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
 
@@ -195,7 +192,9 @@ export default observer(function Recipe() {
               style={{ paddingBottom: spacing.md }}
             />
             {(() => {
-              const sections = [...selected.ingredientSections].sort((a, b) => a.ordinal - b.ordinal)
+              const sections = [...selected.ingredientSections].sort(
+                (a, b) => a.ordinal - b.ordinal,
+              )
               const totalLines = sections.reduce((n, s) => n + s.ingredients.length, 0)
               let lineIndex = 0
               const nodes: React.ReactNode[] = []

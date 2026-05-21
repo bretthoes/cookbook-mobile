@@ -46,14 +46,12 @@ export const recipeSchema = yup.object({
       yup.object({
         id: yup.number().optional(),
         title: yup.string().max(255, () => translate("validation:sectionTitleMaxLength")),
-        ingredients: yup
-          .array()
-          .of(
-            yup.object({
-              name: yup.string().max(255, () => translate("validation:ingredientNameMaxLength")),
-              optional: yup.bool().nullable().default(false),
-            }),
-          ),
+        ingredients: yup.array().of(
+          yup.object({
+            name: yup.string().max(255, () => translate("validation:ingredientNameMaxLength")),
+            optional: yup.bool().nullable().default(false),
+          }),
+        ),
       }),
     )
     .max(6, () => translate("validation:maxIngredientSections"))

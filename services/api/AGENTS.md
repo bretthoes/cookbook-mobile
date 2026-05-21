@@ -4,13 +4,13 @@ OpenAPI-typed HTTP client for SharedCookbook. **Full reference: [`README.md`](./
 
 ## Quick reference
 
-| File | Purpose |
-|------|---------|
-| `generated/schema.d.ts` | Generated types — **do not edit** |
-| `client.ts` | openapi-fetch client, auth middleware, token refresh |
-| `wrappers/*.ts` | Per-domain typed methods |
-| `index.ts` | `Api` class / `api` singleton |
-| `toApiResult.ts`, `apiProblem.ts` | Response → `{ kind: "ok", … } \| GeneralApiProblem` |
+| File                              | Purpose                                              |
+| --------------------------------- | ---------------------------------------------------- |
+| `generated/schema.d.ts`           | Generated types — **do not edit**                    |
+| `client.ts`                       | openapi-fetch client, auth middleware, token refresh |
+| `wrappers/*.ts`                   | Per-domain typed methods                             |
+| `index.ts`                        | `Api` class / `api` singleton                        |
+| `toApiResult.ts`, `apiProblem.ts` | Response → `{ kind: "ok", … } \| GeneralApiProblem`  |
 
 ## Regenerate types
 

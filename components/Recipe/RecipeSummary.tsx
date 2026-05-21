@@ -147,7 +147,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       <View style={$themedTitleContainer}>
         <Text
           preset="heading"
-          weight="normal" 
+          weight="normal"
           text={recipe.title}
           style={{ marginTop: hasImages ? 0 : spacing.xxxl }}
         />
@@ -166,10 +166,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               return (
                 <View
                   key={key}
-                  style={[
-                    $defaultTagChip,
-                    { backgroundColor: chipColor, borderColor: chipColor },
-                  ]}
+                  style={[$defaultTagChip, { backgroundColor: chipColor, borderColor: chipColor }]}
                 >
                   <Text
                     tx={labelTx}
@@ -191,11 +188,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
                 weight="light"
                 text={t("recipeDetailsScreen:servings").toUpperCase()}
               />
-              <Text
-                preset="heading"
-                weight="light"
-                text={`${recipe.servings}`}
-              />
+              <Text preset="heading" weight="light" text={`${recipe.servings}`} />
             </View>
           )}
 

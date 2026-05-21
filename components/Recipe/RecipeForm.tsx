@@ -16,10 +16,7 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
-import {
-  MAX_INGREDIENT_SECTIONS,
-  MAX_INGREDIENTS_TOTAL,
-} from "@/utils/recipeIngredientSections"
+import { MAX_INGREDIENT_SECTIONS, MAX_INGREDIENTS_TOTAL } from "@/utils/recipeIngredientSections"
 import { recipeSchema } from "@/validators/recipeSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Ionicons } from "@expo/vector-icons"
@@ -319,14 +316,11 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
   }
 
   const handleSave = useCallback(() => {
-    handleSubmit(
-      (formData) => {
-        run(async () => {
-          await onSubmit(formData)
-        })
-      },
-      onError,
-    )()
+    handleSubmit((formData) => {
+      run(async () => {
+        await onSubmit(formData)
+      })
+    }, onError)()
   }, [handleSubmit, onSubmit, onError, run])
 
   useHeader(
@@ -573,11 +567,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
               accessibilityLabel={translate("recipeFormScreen:ingredientSectionsInfoA11y")}
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
-              <Ionicons
-                name="information-circle-outline"
-                size={22}
-                color={theme.colors.textDim}
-              />
+              <Ionicons name="information-circle-outline" size={22} color={theme.colors.textDim} />
             </TouchableOpacity>
           </View>
           {errors.ingredientSections?.message && (

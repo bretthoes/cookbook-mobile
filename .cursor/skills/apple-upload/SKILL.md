@@ -13,16 +13,16 @@ Expo app **Love to Cook** (`com.cookbookmobile`). Builds run on EAS; upload uses
 
 ## Project constants
 
-| Item | Value |
-|------|--------|
-| Bundle ID | `com.cookbookmobile` |
-| ASC App ID (`ascAppId`) | `6771159239` (in `eas.json` → `submit.production.ios`) |
-| TestFlight | https://appstoreconnect.apple.com/apps/6771159239/testflight/ios |
-| EAS project | `app.json` → `extra.eas.projectId` |
-| Build profile | `production` (`eas.json`) |
-| Submit profile | `production` |
-| Marketing version | `app.json` → `expo.version` (bump for user-facing releases) |
-| Build number | Auto-incremented by EAS (`production.autoIncrement`) |
+| Item                    | Value                                                            |
+| ----------------------- | ---------------------------------------------------------------- |
+| Bundle ID               | `com.cookbookmobile`                                             |
+| ASC App ID (`ascAppId`) | `6771159239` (in `eas.json` → `submit.production.ios`)           |
+| TestFlight              | https://appstoreconnect.apple.com/apps/6771159239/testflight/ios |
+| EAS project             | `app.json` → `extra.eas.projectId`                               |
+| Build profile           | `production` (`eas.json`)                                        |
+| Submit profile          | `production`                                                     |
+| Marketing version       | `app.json` → `expo.version` (bump for user-facing releases)      |
+| Build number            | Auto-incremented by EAS (`production.autoIncrement`)             |
 
 Production API: `config/config.prod.ts` → `API_URL` (must not be `CHANGEME`).
 
@@ -107,13 +107,13 @@ After a successful submit, report:
 
 ## Troubleshooting
 
-| Symptom | Action |
-|---------|--------|
-| Empty bundle ID in App Store Connect | Register `com.cookbookmobile` in Apple Developer → Identifiers |
-| `eas: command not found` | `pnpm add -g eas-cli` or `npm i -g eas-cli` |
-| Signing / credentials errors | `eas credentials` → iOS → production |
-| Build not in TestFlight | Wait for processing; check email from Apple for compliance issues |
-| `CHANGEME` in prod config | Fix `config.prod.ts` and rebuild — do not submit |
+| Symptom                              | Action                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------- |
+| Empty bundle ID in App Store Connect | Register `com.cookbookmobile` in Apple Developer → Identifiers            |
+| `eas: command not found`             | `pnpm add -g eas-cli` or `npm i -g eas-cli`                               |
+| Signing / credentials errors         | `eas credentials` → iOS → production                                      |
+| Build not in TestFlight              | Wait for processing; check email from Apple for compliance issues         |
+| `CHANGEME` in prod config            | Fix `config.prod.ts` and rebuild — do not submit                          |
 | `Set ascAppId in the submit profile` | Add `submit.production.ios.ascAppId` in `eas.json` (already `6771159239`) |
 
 ## Commands reference
