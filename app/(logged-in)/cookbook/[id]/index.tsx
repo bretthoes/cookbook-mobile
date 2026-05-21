@@ -152,10 +152,7 @@ export default observer(function Cookbook() {
           style: "destructive",
           onPress: async () => {
             if (!membershipStore.ownMembership?.id) return
-            const result = await membershipStore.delete(
-              membershipStore.ownMembership?.id,
-              Number(id),
-            )
+            const result = await membershipStore.delete(membershipStore.ownMembership?.id)
             if (result) {
               remove()
             } else {
