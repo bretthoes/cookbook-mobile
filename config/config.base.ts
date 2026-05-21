@@ -10,6 +10,8 @@ export interface ConfigBaseProps {
 
 export interface EnvConfigProps {
   API_URL: string
+  /** Sentry DSN; set via EXPO_PUBLIC_SENTRY_DSN at build time. Use CHANGEME to disable. */
+  SENTRY_DSN: string
 }
 
 export type PersistNavigationConfig = ConfigBaseProps["persistNavigation"]

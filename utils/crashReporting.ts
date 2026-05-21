@@ -1,31 +1,44 @@
-/**
- * If you're using Sentry
- *   Expo https://docs.expo.dev/guides/using-sentry/
- */
-// import * as Sentry from "@sentry/react-native"
+import * as Sentry from "@sentry/react-native"
+import type { NavigationContainerRef, ParamListBase } from "@react-navigation/native"
+import Config from "@/config"
+
+const navigationIntegration = Sentry.reactNavigationIntegration({
+  enableTimeToInitialDisplay: true,
+})
+
+function isSentryEnabled(): boolean {
+  const dsn = Config.SENTRY_DSN
+  return Boolean(dsn && dsn !== "CHANGEME")
+}
 
 /**
- * If you're using Crashlytics: https://rnfirebase.io/crashlytics/usage
+ * Initialize Sentry. Call once at app startup (before the root component renders).
  */
-// import crashlytics from "@react-native-firebase/crashlytics"
+export const initCrashReporting = (): void => {
+  if (!isSentryEnabled()) {
+    return
+  }
 
-/**
- * If you're using Bugsnag:
- *   RN   https://docs.bugsnag.com/platforms/react-native/)
- *   Expo https://docs.bugsnag.com/platforms/react-native/expo/
- */
-// import Bugsnag from "@bugsnag/react-native"
-// import Bugsnag from "@bugsnag/expo"
+  Sentry.init({
+    dsn: Config.SENTRY_DSN,
+    debug: __DEV__,
+    enabled: true,
+    tracesSampleRate: __DEV__ ? 1.0 : 0.2,
+    integrations: [navigationIntegration],
+    enableNative: true,
+    enableNativeCrashHandling: true,
+    enableAutoSessionTracking: true,
+  })
+}
 
-/**
- *  This is where you put your crash reporting service initialization code to call in `./app/app.tsx`
- */
-export const initCrashReporting = () => {
-  // Sentry.init({
-  //   dsn: "YOUR DSN HERE",
-  //   debug: true, // If `true`, Sentry will try to print out useful debugging information if something goes wrong with sending the event. Set it to `false` in production
-  // })
-  // Bugsnag.start("YOUR API KEY")
+export function registerNavigationContainer(
+  containerRef: NavigationContainerRef<ParamListBase> | null,
+): void {
+  if (!isSentryEnabled() || !containerRef) {
+    return
+  }
+
+  navigationIntegration.registerNavigationContainer(containerRef)
 }
 
 /**
@@ -46,17 +59,28 @@ export enum ErrorType {
 /**
  * Manually report a handled error.
  */
-export const reportCrash = (error: Error, type: ErrorType = ErrorType.FATAL) => {
+export const reportCrash = (
+  error: Error,
+  type: ErrorType = ErrorType.FATAL,
+  componentStack?: string | null,
+): void => {
   if (__DEV__) {
-    // Log to console and Reactotron in development
     const message = error.message || "Unknown"
     console.error(error)
     console.log(message, type)
-  } else {
-    // In production, utilize crash reporting service of choice below:
-    // RN
-    // Sentry.captureException(error)
-    // crashlytics().recordError(error)
-    // Bugsnag.notify(error)
   }
+
+  if (!isSentryEnabled()) {
+    return
+  }
+
+  Sentry.withScope((scope) => {
+    scope.setTag("errorType", type)
+    if (componentStack) {
+      scope.setContext("react", { componentStack })
+    }
+    Sentry.captureException(error)
+  })
 }
+
+export { Sentry }

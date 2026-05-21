@@ -61,3 +61,17 @@ After regeneration, update `services/api/wrappers/*.ts` and `services/api/index.
 pnpm run lint
 pnpm run format:check
 ```
+
+## Crash reporting (Sentry)
+
+Production builds report to Sentry when configured:
+
+1. Create a Sentry project and copy the **DSN**.
+2. Set EAS environment variables for the `production` profile (Expo dashboard or CLI):
+   - `EXPO_PUBLIC_SENTRY_DSN` — project DSN
+   - `SENTRY_AUTH_TOKEN` — org auth token (source maps; keep secret)
+   - `SENTRY_ORG` — organization slug
+   - `SENTRY_PROJECT` — project slug
+3. Rebuild with `eas build --platform ios --profile production` so symbols upload.
+
+Init lives in `utils/crashReporting.ts`; root layout calls it from `app/_layout.tsx`.

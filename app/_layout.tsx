@@ -1,8 +1,12 @@
-import { Slot, SplashScreen } from "expo-router"
+import "@/instrumentation"
+import { registerNavigationContainer, Sentry } from "@/utils/crashReporting"
+import { Slot, SplashScreen, useNavigationContainerRef } from "expo-router"
 import { useEffect, useState } from "react"
 import { ViewStyle } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 // @mst replace-next-line
+import { ErrorBoundary } from "@/components/ErrorBoundary/ErrorBoundary"
+import Config from "@/config"
 import { initI18n } from "@/i18n"
 import { useInitialRootStore } from "@/models/helpers/useStores"
 import { customFontsToLoad } from "@/theme"
@@ -14,7 +18,8 @@ import { KeyboardProvider } from "react-native-keyboard-controller"
 
 SplashScreen.preventAutoHideAsync()
 
-export default function Root() {
+function Root() {
+  const navigationContainerRef = useNavigationContainerRef()
   // @mst remove-block-start
   // Wait for stores to load and render our layout inside of it so we have access
   // to auth info etc
@@ -23,6 +28,10 @@ export default function Root() {
 
   const [fontsLoaded, fontError] = useFonts(customFontsToLoad)
   const [isI18nInitialized, setIsI18nInitialized] = useState(false)
+
+  useEffect(() => {
+    registerNavigationContainer(navigationContainerRef)
+  }, [navigationContainerRef])
 
   useEffect(() => {
     initI18n()
@@ -47,16 +56,20 @@ export default function Root() {
   }
 
   return (
-    <GestureHandlerRootView style={$root}>
-      <ThemeProvider>
-        <ActionSheetProvider>
-          <KeyboardProvider>
-            <Slot />
-          </KeyboardProvider>
-        </ActionSheetProvider>
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <ErrorBoundary catchErrors={Config.catchErrors}>
+      <GestureHandlerRootView style={$root}>
+        <ThemeProvider>
+          <ActionSheetProvider>
+            <KeyboardProvider>
+              <Slot />
+            </KeyboardProvider>
+          </ActionSheetProvider>
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </ErrorBoundary>
   )
 }
+
+export default Sentry.wrap(Root)
 
 const $root: ViewStyle = { flex: 1 }
