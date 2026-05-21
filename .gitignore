@@ -55,3 +55,4 @@ web-build/
 
 ## vscode
 .vscode/**/*
+.env.local

@@ -27,7 +27,6 @@ import {
   Alert,
   FlatList,
   ImageStyle,
-  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
