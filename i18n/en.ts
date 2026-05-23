@@ -256,7 +256,9 @@ const en = {
     inviteLinkLabel: "Invite link",
     generatingLink: "Generating link...",
     linkPlaceholder: "Link will be generated...",
-    shareButton: "Share",
+    shareButton: "Share Link",
+    copyButton: "Copy Link",
+    linkCopied: "Copied to clipboard",
     failedToCreateLink: "Failed to create link.",
   },
   demoDebugScreen: {

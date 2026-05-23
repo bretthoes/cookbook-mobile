@@ -1,12 +1,13 @@
-import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
+import { $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
+import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { useMemo } from "react"
-import { View } from "react-native"
+import { View, type ViewStyle } from "react-native"
 
 export default observer(function AddInvitationOptionsScreen() {
   const { themed } = useAppTheme()
@@ -18,11 +19,11 @@ export default observer(function AddInvitationOptionsScreen() {
     onLeftPress: () => router.back(),
   })
 
-  const $themedContainer = useMemo(() => themed($container), [themed])
+  const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
   const $themedListContainer = useMemo(() => themed($listContainer), [themed])
 
   return (
-    <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={$themedContainer}>
+    <Screen preset="scroll" contentContainerStyle={$themedScreenContainer}>
       <View style={$themedListContainer}>
         <OptionListItem
           title={t("invitationAddOptionsScreen:inviteByEmail")}
@@ -39,4 +40,8 @@ export default observer(function AddInvitationOptionsScreen() {
       </View>
     </Screen>
   )
+})
+
+const $screenContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingTop: theme.spacing.sm,
 })

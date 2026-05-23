@@ -1,8 +1,8 @@
-import * as Linking from "expo-linking"
+import Config from "@/config"
 
-/** Create an invite URL for the given token */
+/** Create a shareable invite URL for the given token */
 export function toInviteUrl(token: string): string {
-  return Linking.createURL(`/i/${token}`)
+  return `${Config.INVITE_BASE_URL}/i/${token}`
 }
 
 /**

@@ -259,7 +259,9 @@ const ko: Translations = {
     inviteLinkLabel: "___Invite link",
     generatingLink: "___Generating link...",
     linkPlaceholder: "___Link will be generated...",
-    shareButton: "___Share",
+    shareButton: "___Share Link",
+    copyButton: "___Copy Link",
+    linkCopied: "___Copied to clipboard",
     failedToCreateLink: "___Failed to create link.",
   },
   demoDebugScreen: {
