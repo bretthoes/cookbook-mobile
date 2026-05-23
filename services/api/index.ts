@@ -39,6 +39,10 @@ export class Api {
     apiClientInstance.setSessionExpiredCallback(callback)
   }
 
+  setOnAccessTokenRefreshed(callback: (accessToken: string) => void) {
+    apiClientInstance.setOnAccessTokenRefreshed(callback)
+  }
+
   /**
    * Gets a list of cookbooks with pagination.
    */

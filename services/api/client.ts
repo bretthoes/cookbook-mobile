@@ -8,11 +8,26 @@ import type { ApiConfig } from "@/services/api/types"
 import createClient from "openapi-fetch"
 import * as SecureStore from "expo-secure-store"
 
+/** In-memory access token — updated synchronously on login so requests never read stale SecureStore. */
+let memoryAccessToken: string | null = null
+
+/** Bumped on login/logout so stale in-flight 401 refresh cannot log out a new session. */
+let authSessionId = 0
+
+export function setAccessToken(token: string | null) {
+  memoryAccessToken = token
+}
+
+export function bumpAuthSession() {
+  authSessionId += 1
+}
+
 /** Paths that do not require Authorization header */
 const UNPROTECTED_PATHS = [
   "/api/Users/login",
   "/api/Users/login-google",
   "/api/Users/login-apple",
+  "/api/Users/login-facebook",
   "/api/Users/register",
   "/api/Users/resendConfirmationEmail",
   "/api/Users/forgotPassword",
@@ -40,15 +55,29 @@ export function createApiClient(
   const fetchWithTimeout = createFetchWithTimeout(config.timeout)
 
   let onSessionExpired: (() => void) | undefined
+  let onAccessTokenRefreshed: ((accessToken: string) => void) | undefined
   let refreshInFlight: Promise<string | null> | null = null
+
+  async function resolveAccessToken(): Promise<string | null> {
+    if (memoryAccessToken) return memoryAccessToken
+    const stored = await SecureStore.getItemAsync("accessToken")
+    if (stored) memoryAccessToken = stored
+    return stored
+  }
+
+  function expireSessionIfCurrent(sessionAtStart: number) {
+    if (sessionAtStart === authSessionId) onSessionExpired?.()
+  }
 
   async function refreshAccessToken(): Promise<string | null> {
     if (refreshInFlight) return refreshInFlight
 
+    const sessionAtStart = authSessionId
+
     refreshInFlight = (async () => {
       const refreshToken = await SecureStore.getItemAsync("refreshToken")
       if (!refreshToken) {
-        onSessionExpired?.()
+        expireSessionIfCurrent(sessionAtStart)
         return null
       }
 
@@ -59,21 +88,26 @@ export function createApiClient(
       })
 
       if (!refreshResponse.ok) {
-        onSessionExpired?.()
+        expireSessionIfCurrent(sessionAtStart)
         return null
       }
 
       const authData = await refreshResponse.json()
       if (!authData?.accessToken) {
-        onSessionExpired?.()
+        expireSessionIfCurrent(sessionAtStart)
         return null
       }
 
-      await SecureStore.setItemAsync("accessToken", authData.accessToken)
+      if (sessionAtStart !== authSessionId) return null
+
+      const accessToken = authData.accessToken as string
+      setAccessToken(accessToken)
+      await SecureStore.setItemAsync("accessToken", accessToken)
       if (authData.refreshToken) {
         await SecureStore.setItemAsync("refreshToken", authData.refreshToken)
       }
-      return authData.accessToken as string
+      onAccessTokenRefreshed?.(accessToken)
+      return accessToken
     })()
 
     try {
@@ -92,7 +126,7 @@ export function createApiClient(
       init?.headers ?? (input instanceof Request ? (input as Request).headers : undefined)
     const headers = new Headers(existingHeaders)
     if (!isUnprotected) {
-      const accessToken = await SecureStore.getItemAsync("accessToken")
+      const accessToken = await resolveAccessToken()
       if (accessToken) {
         headers.set("Authorization", `Bearer ${accessToken}`)
       }
@@ -124,6 +158,9 @@ export function createApiClient(
     client,
     setSessionExpiredCallback(callback: () => void) {
       onSessionExpired = callback
+    },
+    setOnAccessTokenRefreshed(callback: (accessToken: string) => void) {
+      onAccessTokenRefreshed = callback
     },
   }
 }

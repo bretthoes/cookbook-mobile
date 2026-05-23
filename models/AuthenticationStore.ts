@@ -1,8 +1,23 @@
 import { AuthResultModel, AuthResultSnapshotIn } from "@/models/AuthResult"
 import { withSetPropAction } from "@/models/helpers/withSetPropAction"
 import { api } from "@/services/api"
+import { bumpAuthSession, setAccessToken } from "@/services/api/client"
 import * as SecureStore from "expo-secure-store"
 import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+
+type SessionTokenStore = {
+  setProp(key: "authResult", value: ReturnType<typeof AuthResultModel.create>): void
+  setProp(key: "authToken", value: string | undefined): void
+}
+
+function* writeSessionTokens(store: SessionTokenStore, authResult: AuthResultSnapshotIn) {
+  bumpAuthSession()
+  setAccessToken(authResult.accessToken)
+  store.setProp("authResult", AuthResultModel.create(authResult))
+  store.setProp("authToken", authResult.accessToken)
+  yield SecureStore.setItemAsync("accessToken", authResult.accessToken)
+  yield SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
+}
 
 export const AuthenticationStoreModel = types
   .model("AuthenticationStore")
@@ -30,6 +45,7 @@ export const AuthenticationStoreModel = types
   .actions((store) => ({
     setAuthToken(value?: string) {
       store.setProp("authToken", value)
+      setAccessToken(value ?? null)
     },
     setSubmittedSuccessfully(value: boolean) {
       store.setProp("submittedSuccessfully", value)
@@ -64,14 +80,11 @@ export const AuthenticationStoreModel = types
     setAuthResult(value: AuthResultSnapshotIn) {
       store.setProp("authResult", AuthResultModel.create(value))
       store.setProp("authToken", value.accessToken)
+      setAccessToken(value.accessToken)
     },
-    saveTokens: flow(function* (authResult: AuthResultSnapshotIn) {
-      store.setProp("authResult", AuthResultModel.create(authResult))
-      store.setProp("authToken", authResult.accessToken)
-      yield SecureStore.setItemAsync("accessToken", authResult.accessToken)
-      yield SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
-    }),
     logout: flow(function* () {
+      bumpAuthSession()
+      setAccessToken(null)
       store.setProp("authToken", undefined)
       store.setProp("authEmail", "")
       store.setProp("authResult", undefined)
@@ -79,22 +92,13 @@ export const AuthenticationStoreModel = types
       yield SecureStore.deleteItemAsync("refreshToken")
       yield SecureStore.deleteItemAsync("email")
     }),
-    loadStoredTokens() {
-      const accessToken = SecureStore.getItem("accessToken")
-      if (accessToken) {
-        store.setProp("authToken", accessToken)
-      }
-    },
     login: flow(function* (password: string, isFirstLogin = false, silent = false) {
       if (!silent) store.setProp("result", "")
       const response = yield api.login(store.authEmail, password)
       switch (response.kind) {
         case "ok":
           yield SecureStore.setItemAsync("email", store.authEmail)
-          store.setProp("authResult", AuthResultModel.create(response.authResult))
-          store.setProp("authToken", response.authResult.accessToken)
-          yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
-          yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+          yield* writeSessionTokens(store, response.authResult)
           if (isFirstLogin) {
             yield SecureStore.deleteItemAsync("password")
             if (store.displayName) {
@@ -169,10 +173,7 @@ export const AuthenticationStoreModel = types
         console.error(`Error logging in with Google: ${JSON.stringify(response)}`)
         return false
       }
-      store.setProp("authResult", AuthResultModel.create(response.authResult))
-      store.setProp("authToken", response.authResult.accessToken)
-      yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
-      yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+      yield* writeSessionTokens(store, response.authResult)
       return true
     }),
     loginWithApple: flow(function* (identityToken: string) {
@@ -183,10 +184,7 @@ export const AuthenticationStoreModel = types
         console.error(`Error logging in with Apple: ${JSON.stringify(response)}`)
         return false
       }
-      store.setProp("authResult", AuthResultModel.create(response.authResult))
-      store.setProp("authToken", response.authResult.accessToken)
-      yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
-      yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+      yield* writeSessionTokens(store, response.authResult)
       return true
     }),
     loginWithFacebook: flow(function* (accessToken: string) {
@@ -197,10 +195,7 @@ export const AuthenticationStoreModel = types
         console.error(`Error logging in with Facebook: ${JSON.stringify(response)}`)
         return false
       }
-      store.setProp("authResult", AuthResultModel.create(response.authResult))
-      store.setProp("authToken", response.authResult.accessToken)
-      yield SecureStore.setItemAsync("accessToken", response.authResult.accessToken)
-      yield SecureStore.setItemAsync("refreshToken", response.authResult.refreshToken)
+      yield* writeSessionTokens(store, response.authResult)
       return true
     }),
     resetPassword: flow(function* (resetCode: string, password: string) {
@@ -220,6 +215,11 @@ export const AuthenticationStoreModel = types
       } else {
         store.setProp("result", "Successfully updated.")
       }
+    }),
+  }))
+  .actions((store) => ({
+    saveTokens: flow(function* (authResult: AuthResultSnapshotIn) {
+      yield* writeSessionTokens(store, authResult)
     }),
   }))
 
