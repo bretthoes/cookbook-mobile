@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/allow-apple-deploy.sh",
+        "matcher": "apple-upload/scripts/deploy\\.sh|pnpm (run )?deploy:ios:prod|eas build --platform ios --profile production|eas submit --platform ios --profile production"
+      }
+    ]
+  }
+}
