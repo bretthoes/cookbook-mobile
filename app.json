@@ -70,7 +70,6 @@
       "favicon": "./assets/images/app-icon-web-favicon.png"
     },
     "plugins": [
-      "react-native-purchases",
       [
         "expo-camera",
         {

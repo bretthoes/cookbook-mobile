@@ -12,6 +12,13 @@ export interface EnvConfigProps {
   API_URL: string
   /** Sentry DSN; set via EXPO_PUBLIC_SENTRY_DSN at build time. Use CHANGEME to disable. */
   SENTRY_DSN: string
+  /**
+   * RevenueCat public API key for the current platform.
+   * Set via EXPO_PUBLIC_REVENUECAT_API_KEY environment variable.
+   * iOS keys start with "appl_", Android with "goog_".
+   * Leave empty to skip RevenueCat initialization (e.g. in CI or simulators without StoreKit).
+   */
+  REVENUECAT_API_KEY: string
 }
 
 export type PersistNavigationConfig = ConfigBaseProps["persistNavigation"]

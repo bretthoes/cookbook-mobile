@@ -4,6 +4,7 @@ import { EpisodeStoreModel } from "@/models/EpisodeStore"
 import { InvitationStoreModel } from "@/models/InvitationStore"
 import { MembershipStoreModel } from "@/models/MembershipStore"
 import { RecipeStoreModel } from "@/models/Recipe/RecipeStore"
+import { SubscriptionStoreModel } from "@/models/SubscriptionStore"
 import { Instance, SnapshotOut, types } from "mobx-state-tree"
 /**
  * A RootStore model.
@@ -15,6 +16,7 @@ export const RootStoreModel = types.model("RootStore").props({
   recipeStore: types.optional(RecipeStoreModel, {}),
   membershipStore: types.optional(MembershipStoreModel, {}),
   invitationStore: types.optional(InvitationStoreModel, {}),
+  subscriptionStore: types.optional(SubscriptionStoreModel, {}),
 })
 
 /**

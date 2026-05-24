@@ -446,6 +446,7 @@ const fr: Translations = {
     optionFromInstagramDesc: "___Paste a link to an Instagram recipe post",
     optionFromPinterest: "___Import from Pinterest",
     optionFromPinterestDesc: "___Paste a link to a Pinterest recipe pin",
+    proUnlimitedLabel: "___Pro — Unlimited imports",
     weeklyUsageLabel: "___{{used}} / {{limit}} imports used this week",
     weeklyLimitReachedTitle: "___Weekly Limit Reached",
     weeklyLimitReachedMessage:
@@ -709,6 +710,32 @@ const fr: Translations = {
     support:
       "Si vous souhaitez demander la prise en charge d'une langue qui n'est pas répertoriée, veuillez utiliser le lien 'Signaler des bugs' dans l'onglet profil.",
     note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",
+  },
+  paywallScreen: {
+    title: "___Go Pro",
+    tagline: "___Unlimited recipe imports",
+    featureImports: "___Import unlimited recipes every week",
+    featureAllMethods: "___URL, photo, voice, TikTok, Instagram & Pinterest",
+    featureSupport: "___Support an independent developer",
+    monthlyLabel: "___Monthly",
+    annualLabel: "___Annual",
+    annualSavings: "___Save {{percent}}%",
+    subscribeButton: "___Subscribe",
+    restoreButton: "___Restore Purchases",
+    alreadyPro: "___You already have Pro!",
+    purchaseError: "___Purchase failed. Please try again.",
+    restoreError: "___Could not restore purchases. Please try again.",
+    restoreSuccess: "___Purchases restored successfully!",
+    terms: "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
+    loadingOfferings: "___Loading plans...",
+    noOfferings: "___Plans unavailable. Please check back later.",
+  },
+  recipeAddOptionsScreen_weeklyLimitReached: {
+    upgradeTitle: "___Weekly Limit Reached",
+    upgradeMessage:
+      "___You've used all {{limit}} free imports this week. Upgrade to Pro for unlimited imports.",
+    upgradeButton: "___Upgrade to Pro",
+    laterButton: "___Not Now",
   },
   onboardingScreen: {
     displayNameTitle: "___Your name",

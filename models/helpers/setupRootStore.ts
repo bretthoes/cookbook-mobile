@@ -10,8 +10,9 @@
  * @refresh reset
  */
 import { api } from "@/services/api"
+import Config from "@/config"
 import { setAccessToken } from "@/services/api/client"
-import { applySnapshot, IDisposer, onSnapshot } from "mobx-state-tree"
+import { applySnapshot, IDisposer, onSnapshot, reaction } from "mobx-state-tree"
 import * as SecureStore from "expo-secure-store"
 import * as storage from "../../utils/storage"
 import { RootStore, RootStoreSnapshot } from "../RootStore"
@@ -20,6 +21,36 @@ import { RootStore, RootStoreSnapshot } from "../RootStore"
  * The key we'll be saving our state as within async storage.
  */
 const ROOT_STATE_STORAGE_KEY = "root-v1"
+
+/**
+ * Decode the payload of a JWT without verifying the signature.
+ * Used only to read the `sub` claim (user ID) for RevenueCat identification.
+ */
+function getUserIdFromToken(token: string): string | null {
+  try {
+    const parts = token.split(".")
+    if (parts.length !== 3) return null
+    const payload = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")))
+    return payload.sub ?? null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Initialize RevenueCat with the configured API key.
+ * Safe to call multiple times; skipped when no key is configured.
+ */
+async function initRevenueCat(): Promise<void> {
+  const apiKey = Config.REVENUECAT_API_KEY
+  if (!apiKey) return
+  try {
+    const Purchases = (await import("react-native-purchases")).default
+    Purchases.configure({ apiKey })
+  } catch (e) {
+    console.warn("RevenueCat init failed:", e)
+  }
+}
 
 /**
  * Auth tokens live in SecureStore only — do not persist them in the MST AsyncStorage snapshot.
@@ -76,6 +107,15 @@ export async function setupRootStore(rootStore: RootStore) {
 
   await syncAuthFromSecureStore(rootStore)
 
+  await initRevenueCat()
+
+  if (rootStore.authenticationStore.authToken) {
+    const userId = getUserIdFromToken(rootStore.authenticationStore.authToken)
+    if (userId) {
+      await rootStore.subscriptionStore.hydrate(userId)
+    }
+  }
+
   // stop tracking state changes if we've already setup
   if (_disposer) _disposer()
 
@@ -87,15 +127,30 @@ export async function setupRootStore(rootStore: RootStore) {
   // Wire up the API's session expired callback to logout
   api.setSessionExpiredCallback(() => {
     rootStore.authenticationStore.logout()
+    rootStore.subscriptionStore.reset()
   })
 
   api.setOnAccessTokenRefreshed((accessToken) => {
     rootStore.authenticationStore.setAuthToken(accessToken)
   })
 
+  // When the user logs in after the store is set up, hydrate subscription state.
+  const _subscriptionDisposer = reaction(
+    () => rootStore.authenticationStore.authToken,
+    (token) => {
+      if (token) {
+        const userId = getUserIdFromToken(token)
+        if (userId) rootStore.subscriptionStore.hydrate(userId)
+      } else {
+        rootStore.subscriptionStore.reset()
+      }
+    },
+  )
+
   const unsubscribe = () => {
     _disposer?.()
     _disposer = undefined
+    _subscriptionDisposer()
   }
 
   return { rootStore, restoredState, unsubscribe }

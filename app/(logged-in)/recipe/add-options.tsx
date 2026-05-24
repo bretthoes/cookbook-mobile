@@ -13,7 +13,6 @@ import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import {
-  Alert,
   Image,
   TouchableOpacity,
   View,
@@ -39,7 +38,7 @@ type RecipeAddOption = {
 export default observer(function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const { cookbookStore, recipeStore } = useStores()
+  const { cookbookStore, recipeStore, subscriptionStore } = useStores()
   const addRecipeFromCamera = useAddRecipeFromCamera()
 
   useHeader({
@@ -48,18 +47,16 @@ export default observer(function AddRecipeOptionsScreen() {
     onLeftPress: () => router.back(),
   })
 
+  const isPro = subscriptionStore.isPro
   const currentWeek = getCurrentWeekKey()
   const effectiveImportCount =
     recipeStore.weeklyImportWeekStart === currentWeek ? recipeStore.weeklyImportCount : 0
-  const isAtLimit = effectiveImportCount >= WEEKLY_IMPORT_LIMIT
+  const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
   const progressRatio = Math.min(effectiveImportCount / WEEKLY_IMPORT_LIMIT, 1)
 
   const handlePremiumPress = (action: () => void) => {
     if (isAtLimit) {
-      Alert.alert(
-        t("recipeAddOptionsScreen:weeklyLimitReachedTitle"),
-        t("recipeAddOptionsScreen:weeklyLimitReachedMessage", { limit: WEEKLY_IMPORT_LIMIT }),
-      )
+      router.push("../recipe/paywall")
       return
     }
     action()
@@ -178,7 +175,7 @@ export default observer(function AddRecipeOptionsScreen() {
             title={option.title}
             icon={option.icon}
             image={option.image}
-            isPremium={option.isPremium}
+            isPremium={option.isPremium && !isPro}
             showDraftBadge={option.showDraftBadge}
             isDisabled={option.isPremium && isAtLimit}
             onPress={() => {
@@ -191,15 +188,32 @@ export default observer(function AddRecipeOptionsScreen() {
           />
         ))}
       </View>
-      <WeeklyUsageBanner
-        used={effectiveImportCount}
-        limit={WEEKLY_IMPORT_LIMIT}
-        progressRatio={progressRatio}
-        isAtLimit={isAtLimit}
-      />
+      {isPro ? (
+        <ProBanner />
+      ) : (
+        <WeeklyUsageBanner
+          used={effectiveImportCount}
+          limit={WEEKLY_IMPORT_LIMIT}
+          progressRatio={progressRatio}
+          isAtLimit={isAtLimit}
+        />
+      )}
     </Screen>
   )
 })
+
+// #region ProBanner
+
+function ProBanner() {
+  const { themed } = useAppTheme()
+  return (
+    <View style={themed($proBannerContainer)}>
+      <Text tx="recipeAddOptionsScreen:proUnlimitedLabel" style={themed($proUnlimitedText)} />
+    </View>
+  )
+}
+
+// #endregion
 
 // #region WeeklyUsageBanner
 
@@ -389,6 +403,19 @@ const $tileTitle: ThemedStyle<TextStyle> = () => ({
 
 const $disabledTitle: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
+})
+
+const $proBannerContainer: ThemedStyle<ViewStyle> = (theme) => ({
+  marginTop: theme.spacing.md,
+  paddingHorizontal: theme.spacing.xs,
+  alignItems: "center",
+})
+
+const $proUnlimitedText: ThemedStyle<TextStyle> = (theme) => ({
+  fontSize: 13,
+  color: colors.palette.accent500,
+  textAlign: "center",
+  fontWeight: "600",
 })
 
 const $bannerContainer: ThemedStyle<ViewStyle> = (theme) => ({

@@ -439,6 +439,7 @@ const ko: Translations = {
     optionFromInstagramDesc: "___Paste a link to an Instagram recipe post",
     optionFromPinterest: "___Import from Pinterest",
     optionFromPinterestDesc: "___Paste a link to a Pinterest recipe pin",
+    proUnlimitedLabel: "___Pro — Unlimited imports",
     weeklyUsageLabel: "___{{used}} / {{limit}} imports used this week",
     weeklyLimitReachedTitle: "___Weekly Limit Reached",
     weeklyLimitReachedMessage:
@@ -705,6 +706,32 @@ const ko: Translations = {
     support:
       "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
     note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
+  },
+  paywallScreen: {
+    title: "___Go Pro",
+    tagline: "___Unlimited recipe imports",
+    featureImports: "___Import unlimited recipes every week",
+    featureAllMethods: "___URL, photo, voice, TikTok, Instagram & Pinterest",
+    featureSupport: "___Support an independent developer",
+    monthlyLabel: "___Monthly",
+    annualLabel: "___Annual",
+    annualSavings: "___Save {{percent}}%",
+    subscribeButton: "___Subscribe",
+    restoreButton: "___Restore Purchases",
+    alreadyPro: "___You already have Pro!",
+    purchaseError: "___Purchase failed. Please try again.",
+    restoreError: "___Could not restore purchases. Please try again.",
+    restoreSuccess: "___Purchases restored successfully!",
+    terms: "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
+    loadingOfferings: "___Loading plans...",
+    noOfferings: "___Plans unavailable. Please check back later.",
+  },
+  recipeAddOptionsScreen_weeklyLimitReached: {
+    upgradeTitle: "___Weekly Limit Reached",
+    upgradeMessage:
+      "___You've used all {{limit}} free imports this week. Upgrade to Pro for unlimited imports.",
+    upgradeButton: "___Upgrade to Pro",
+    laterButton: "___Not Now",
   },
   onboardingScreen: {
     displayNameTitle: "___Your name",

@@ -15,6 +15,7 @@ const DEV_API_HOST = Platform.OS === "android" ? "10.0.2.2" : "127.0.0.1"
 const DevConfig: EnvConfigProps = {
   API_URL: `http://${DEV_API_HOST}:${DEV_API_PORT}/api`,
   SENTRY_DSN: process.env.EXPO_PUBLIC_SENTRY_DSN ?? "",
+  REVENUECAT_API_KEY: process.env.EXPO_PUBLIC_REVENUECAT_API_KEY ?? "",
 }
 
 export default DevConfig
