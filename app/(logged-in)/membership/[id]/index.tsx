@@ -10,9 +10,8 @@ import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { router, useLocalSearchParams } from "expo-router"
-import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
-import React, { useEffect, useState } from "react"
+import React, { useCallback, useEffect } from "react"
 import { Alert, FlatList, View, ViewStyle } from "react-native"
 
 type DataItem = {
@@ -21,15 +20,20 @@ type DataItem = {
 }
 
 export default observer(function MembershipScreen() {
-  const { membershipStore } = useStores()
+  const { authenticationStore, cookbookStore, membershipStore } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
   const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
+  const ownMembership = membershipStore.ownMembership
   const { showActionSheetWithOptions } = useActionSheet()
-  const [email, setEmail] = useState<string | null>(null)
-  const [isOwner, setIsOwner] = useState<boolean>(false)
   const { themed } = useAppTheme()
 
-  // Memoize themed styles
+  const cookbookId = cookbookStore.selected?.id ?? 0
+  const canManageMembers = ownMembership?.canRemoveMember ?? false
+  const isViewingOwnMembership =
+    !!authenticationStore.authEmail &&
+    membership?.email?.toLowerCase() === authenticationStore.authEmail.toLowerCase()
+  const canShowActions = canManageMembers && !isViewingOwnMembership
+
   const $themedScreenContentContainer = React.useMemo(
     () => themed($screenContentContainer),
     [themed],
@@ -37,16 +41,18 @@ export default observer(function MembershipScreen() {
   const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
   const $themedItem = React.useMemo(() => themed($item), [themed])
 
-  const handlePressMore = () => {
-    const options = isOwner
-      ? [
-          translate("membershipScreen:actionEdit"),
-          translate("membershipScreen:actionDelete"),
-          translate("membershipScreen:actionCancel"),
-        ]
-      : [translate("membershipScreen:actionDelete"), translate("membershipScreen:actionCancel")]
+  useEffect(() => {
+    if (!cookbookId) return
+    void membershipStore.singleByCookbookId(cookbookId)
+  }, [cookbookId, membershipStore])
+
+  const handlePressMore = useCallback(() => {
+    const editLabel = translate("membershipScreen:actionEdit")
+    const deleteLabel = translate("membershipScreen:actionDelete")
+    const cancelLabel = translate("membershipScreen:actionCancel")
+    const options = [editLabel, deleteLabel, cancelLabel]
     const cancelButtonIndex = options.length - 1
-    const destructiveButtonIndex = options.indexOf(translate("membershipScreen:actionDelete"))
+    const destructiveButtonIndex = options.indexOf(deleteLabel)
 
     showActionSheetWithOptions(
       {
@@ -57,15 +63,15 @@ export default observer(function MembershipScreen() {
       (selectedIndex) => {
         if (selectedIndex === undefined || selectedIndex === cancelButtonIndex) return
 
-        if (selectedIndex === 0 && isOwner) {
+        if (selectedIndex === 0) {
           router.push(`../membership/${id}/edit`)
-        } else if (selectedIndex === (isOwner ? 1 : 0)) {
+        } else if (selectedIndex === 1) {
           Alert.alert(
             translate("membershipScreen:deleteMemberTitle"),
             translate("membershipScreen:deleteMemberMessage"),
             [
               {
-                text: translate("membershipScreen:actionCancel"),
+                text: cancelLabel,
                 style: "cancel",
               },
               {
@@ -73,8 +79,7 @@ export default observer(function MembershipScreen() {
                 style: "destructive",
                 onPress: async () => {
                   const result = await membershipStore.delete(parseInt(id))
-                  if (result) {
-                  } else {
+                  if (!result) {
                     Alert.alert(
                       translate("membershipScreen:errorTitle"),
                       translate("membershipScreen:deleteFailed"),
@@ -87,32 +92,17 @@ export default observer(function MembershipScreen() {
         }
       },
     )
-  }
-
-  useEffect(() => {
-    SecureStore.getItemAsync("email").then((result) => {
-      setEmail(result)
-    })
-  }, [])
-
-  useEffect(() => {
-    if (email && membershipStore.memberships?.items) {
-      const userMembership = membershipStore.memberships.items.find(
-        (m) => m.email === email && m.isOwner,
-      )
-      setIsOwner(!!userMembership)
-    }
-  }, [email, membershipStore.memberships?.items])
+  }, [id, membershipStore, showActionSheetWithOptions])
 
   useHeader(
     {
       leftIcon: "back",
       titleTx: "membershipScreen:detailTitle",
       onLeftPress: () => router.back(),
-      rightIcon: isOwner ? "more" : undefined,
-      onRightPress: isOwner ? handlePressMore : undefined,
+      rightIcon: canShowActions ? "more" : undefined,
+      onRightPress: canShowActions ? handlePressMore : undefined,
     },
-    [isOwner],
+    [canShowActions, handlePressMore],
   )
 
   if (!membership) {

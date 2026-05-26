@@ -11,7 +11,6 @@ import { useAppTheme } from "@/theme/context"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
-import * as SecureStore from "expo-secure-store"
 import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
 import { Alert, FlatList, TextStyle, View, ViewStyle } from "react-native"
@@ -35,14 +34,17 @@ type DataItem = {
 
 export default observer(function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { membershipStore, cookbookStore } = useStores()
+  const { authenticationStore, membershipStore, cookbookStore } = useStores()
   const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
+  const ownMembership = membershipStore.ownMembership
   const [resultMessage, setResultMessage] = useState<string | null>(null)
   const [resultIsSuccess, setResultIsSuccess] = useState(false)
-  const [email, setEmail] = useState<string | null>(null)
-  const [isOwner, setIsOwner] = useState<boolean>(false)
   const { themed } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
+
+  const cookbookId = cookbookStore.selected?.id ?? 0
+  const isOwner = ownMembership?.isOwner ?? false
+  const canManageMembers = ownMembership?.canRemoveMember ?? false
 
   // Memoize themed styles
   const $themedScreenContentContainer = React.useMemo(
@@ -56,19 +58,9 @@ export default observer(function MembershipEditScreen() {
   const $themedErrorMessage = React.useMemo(() => themed($errorMessage), [themed])
 
   useEffect(() => {
-    SecureStore.getItemAsync("email").then((result) => {
-      setEmail(result)
-    })
-  }, [])
-
-  useEffect(() => {
-    if (email && membershipStore.memberships?.items) {
-      const userMembership = membershipStore.memberships.items.find(
-        (m) => m.email === email && m.isOwner,
-      )
-      setIsOwner(!!userMembership)
-    }
-  }, [email, membershipStore.memberships?.items])
+    if (!cookbookId) return
+    void membershipStore.singleByCookbookId(cookbookId)
+  }, [cookbookId, membershipStore])
 
   const handleSave = useCallback(() => {
     run(async () => {
@@ -96,7 +88,15 @@ export default observer(function MembershipEditScreen() {
 
   if (!membership) return <ItemNotFound message={translate("membershipScreen:notFound")} />
 
-  const isCurrentUserMembership = membership.email?.toLowerCase() === email?.toLowerCase()
+  const isCurrentUserMembership =
+    !!authenticationStore.authEmail &&
+    membership.email?.toLowerCase() === authenticationStore.authEmail.toLowerCase()
+  const canEditMembership = canManageMembers && !isCurrentUserMembership
+
+  if (!canEditMembership) {
+    return <ItemNotFound message={translate("membershipScreen:notFound")} />
+  }
+
   const canToggleOwner = isOwner && !isCurrentUserMembership
 
   const handleToggleOwner = (newValue: boolean) => {
