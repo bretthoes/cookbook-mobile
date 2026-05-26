@@ -303,11 +303,14 @@ const ko: Translations = {
     largeFont: "큰 글꼴",
     preferredLanguage: "선호하는 언어 선택",
     setName: "표시 이름 설정",
+    upgradeToPro: "___Upgrade to Love To Cook Pro",
+    manageSubscription: "___Manage subscription",
+    customerCenterError: "___Could not open subscription settings. Please try again.",
     floatingTabBar: "___Floating Tab Bar",
     tagLine:
       "축하합니다! 고급 React Native 앱 템플릿을 가지고 계시네요. 이 보일러플레이트를 최대한 활용하세요!",
     reactotron: "Reactotron으로 전송",
-    reportBugs: "버그 신고",
+    reportBugs: "___Send feedback",
     demoList: "데모 목록",
     demoPodcastList: "데모 팟캐스트 목록",
     androidReactotronHint:
@@ -566,6 +569,8 @@ const ko: Translations = {
     failedToUpdate: "___Failed to update cookbook",
     errorUpdating: "___An error occurred while updating the cookbook",
     notFound: "___Cookbook not found",
+    allowCameraRollAccess: "___Please allow access to your camera roll to change the cover photo.",
+    imageUploadFailed: "___Failed to upload image. Please try again.",
   },
   recipeDetailScreen: {
     notFound: "___Recipe not found",
@@ -704,12 +709,13 @@ const ko: Translations = {
   languageScreen: {
     title: "___Select Language",
     support:
-      "목록에 없는 언어 지원을 요청하고 싶다면, 프로필 탭에 있는 '버그 신고' 링크를 사용해 주세요.",
+      "___If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
     note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
   },
   paywallScreen: {
-    title: "___Go Pro",
+    title: "___Love To Cook Pro",
     tagline: "___Unlimited recipe imports",
+    subtitle: "___Unlock every import method with no weekly limits.",
     featureImports: "___Import unlimited recipes every week",
     featureAllMethods: "___URL, photo, voice, TikTok, Instagram & Pinterest",
     featureSupport: "___Support an independent developer",
@@ -725,6 +731,16 @@ const ko: Translations = {
     terms: "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
     loadingOfferings: "___Loading plans...",
     noOfferings: "___Plans unavailable. Please check back later.",
+    noOfferingsNotConfigured:
+      "___Subscriptions are not configured in this build. Add EXPO_PUBLIC_REVENUECAT_API_KEY to .env.local and restart Metro.",
+    noOfferingsInvalidApiKey:
+      "___RevenueCat rejected the API key. In the RevenueCat dashboard, open Project Settings → API keys, copy the Test Store key (test_…) or your Android key (goog_…), update .env.local, then restart Metro.",
+    noOfferingsNotLoggedIn: "___Sign in to view subscription plans.",
+    noOfferingsNoUserId:
+      "___We could not identify your account for subscriptions. Try signing out and back in.",
+    noOfferingsDashboard:
+      "___Plans are not set up in RevenueCat yet. In the dashboard, add Test Store products monthly and yearly, attach them to entitlement pro, and mark an offering as Current with Monthly and Annual packages.",
+    retryOfferings: "___Try again",
   },
   recipeAddOptionsScreen_weeklyLimitReached: {
     upgradeTitle: "___Weekly Limit Reached",

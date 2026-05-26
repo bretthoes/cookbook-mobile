@@ -300,11 +300,14 @@ const en = {
     largeFont: "Large Font",
     preferredLanguage: "Choose your preferred language",
     setName: "Set your display name",
+    upgradeToPro: "Upgrade to Love To Cook Pro",
+    manageSubscription: "Manage subscription",
+    customerCenterError: "Could not open subscription settings. Please try again.",
     floatingTabBar: "Floating Tab Bar",
     tagLine:
       "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
     reactotron: "Send to Reactotron",
-    reportBugs: "Report Bugs",
+    reportBugs: "Send feedback",
     demoList: "Demo List",
     demoPodcastList: "Demo Podcast List",
     androidReactotronHint:
@@ -567,6 +570,8 @@ const en = {
     failedToUpdate: "Failed to update cookbook",
     errorUpdating: "An error occurred while updating the cookbook",
     notFound: "Cookbook not found",
+    allowCameraRollAccess: "Please allow access to your camera roll to change the cover photo.",
+    imageUploadFailed: "Failed to upload image. Please try again.",
   },
   recipeDetailScreen: {
     notFound: "Recipe not found",
@@ -705,12 +710,13 @@ const en = {
   languageScreen: {
     title: "Select Language",
     support:
-      "If you would like to request support for a language that is not listed, please use the 'Report Bugs' link in the profile tab.",
+      "If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
     note: "Note: You may need to log out and back in for the changes to take effect.",
   },
   paywallScreen: {
-    title: "Go Pro",
+    title: "Love To Cook Pro",
     tagline: "Unlimited recipe imports",
+    subtitle: "Unlock every import method with no weekly limits.",
     featureImports: "Import unlimited recipes every week",
     featureAllMethods: "URL, photo, voice, TikTok, Instagram & Pinterest",
     featureSupport: "Support an independent developer",
@@ -726,6 +732,16 @@ const en = {
     terms: "By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
     loadingOfferings: "Loading plans...",
     noOfferings: "Plans unavailable. Please check back later.",
+    noOfferingsNotConfigured:
+      "Subscriptions are not configured in this build. Add EXPO_PUBLIC_REVENUECAT_API_KEY to .env.local and restart Metro.",
+    noOfferingsInvalidApiKey:
+      "RevenueCat rejected the API key. In the RevenueCat dashboard, open Project Settings → API keys, copy the Test Store key (test_…) or your Android key (goog_…), update .env.local, then restart Metro.",
+    noOfferingsNotLoggedIn: "Sign in to view subscription plans.",
+    noOfferingsNoUserId:
+      "We could not identify your account for subscriptions. Try signing out and back in.",
+    noOfferingsDashboard:
+      "Plans are not set up in RevenueCat yet. In the dashboard, add Test Store products monthly and yearly, attach them to entitlement pro, and mark an offering as Current with Monthly and Annual packages.",
+    retryOfferings: "Try again",
   },
   recipeAddOptionsScreen_weeklyLimitReached: {
     upgradeTitle: "Weekly Limit Reached",

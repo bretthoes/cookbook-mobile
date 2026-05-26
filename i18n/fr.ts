@@ -306,11 +306,14 @@ const fr: Translations = {
     largeFont: "Grande Police",
     preferredLanguage: "Choisissez votre langue préférée",
     setName: "Définir votre nom d'affichage",
+    upgradeToPro: "___Upgrade to Love To Cook Pro",
+    manageSubscription: "___Manage subscription",
+    customerCenterError: "___Could not open subscription settings. Please try again.",
     floatingTabBar: "___Floating Tab Bar",
     tagLine:
       "Félicitations, vous avez un modèle d'application React Native très avancé ici. Profitez de cette base de code !",
     reactotron: "Envoyer à Reactotron",
-    reportBugs: "Signaler des bugs",
+    reportBugs: "___Send feedback",
     demoList: "Liste de démonstration",
     demoPodcastList: "Liste de podcasts de démonstration",
     androidReactotronHint:
@@ -571,6 +574,8 @@ const fr: Translations = {
     failedToUpdate: "___Failed to update cookbook",
     errorUpdating: "___An error occurred while updating the cookbook",
     notFound: "___Cookbook not found",
+    allowCameraRollAccess: "___Please allow access to your camera roll to change the cover photo.",
+    imageUploadFailed: "___Failed to upload image. Please try again.",
   },
   recipeDetailScreen: {
     notFound: "___Recipe not found",
@@ -708,12 +713,13 @@ const fr: Translations = {
   languageScreen: {
     title: "___Select Language",
     support:
-      "Si vous souhaitez demander la prise en charge d'une langue qui n'est pas répertoriée, veuillez utiliser le lien 'Signaler des bugs' dans l'onglet profil.",
+      "___If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
     note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",
   },
   paywallScreen: {
-    title: "___Go Pro",
+    title: "___Love To Cook Pro",
     tagline: "___Unlimited recipe imports",
+    subtitle: "___Unlock every import method with no weekly limits.",
     featureImports: "___Import unlimited recipes every week",
     featureAllMethods: "___URL, photo, voice, TikTok, Instagram & Pinterest",
     featureSupport: "___Support an independent developer",
@@ -729,6 +735,16 @@ const fr: Translations = {
     terms: "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
     loadingOfferings: "___Loading plans...",
     noOfferings: "___Plans unavailable. Please check back later.",
+    noOfferingsNotConfigured:
+      "___Subscriptions are not configured in this build. Add EXPO_PUBLIC_REVENUECAT_API_KEY to .env.local and restart Metro.",
+    noOfferingsInvalidApiKey:
+      "___RevenueCat rejected the API key. In the RevenueCat dashboard, open Project Settings → API keys, copy the Test Store key (test_…) or your Android key (goog_…), update .env.local, then restart Metro.",
+    noOfferingsNotLoggedIn: "___Sign in to view subscription plans.",
+    noOfferingsNoUserId:
+      "___We could not identify your account for subscriptions. Try signing out and back in.",
+    noOfferingsDashboard:
+      "___Plans are not set up in RevenueCat yet. In the dashboard, add Test Store products monthly and yearly, attach them to entitlement pro, and mark an offering as Current with Monthly and Annual packages.",
+    retryOfferings: "___Try again",
   },
   recipeAddOptionsScreen_weeklyLimitReached: {
     upgradeTitle: "___Weekly Limit Reached",
