@@ -88,6 +88,11 @@ export interface ListItemProps extends TouchableOpacityProps {
    * Overrides `leftIcon`.
    */
   LeftComponent?: ReactElement
+  /**
+   * Custom center content.
+   * Overrides `text`, `tx`, and `children`.
+   */
+  CenterComponent?: ReactElement
 }
 
 interface ListItemActionProps {
@@ -112,6 +117,7 @@ export const ListItem = forwardRef<View, ListItemProps>(function ListItem(
     bottomSeparator,
     children,
     height = 56,
+    CenterComponent,
     LeftComponent,
     leftIcon,
     leftIconColor,
@@ -151,9 +157,11 @@ export const ListItem = forwardRef<View, ListItemProps>(function ListItem(
           Component={LeftComponent}
         />
 
-        <Text {...TextProps} tx={tx} text={text} txOptions={txOptions} style={themed($textStyles)}>
-          {children}
-        </Text>
+        {CenterComponent ?? (
+          <Text {...TextProps} tx={tx} text={text} txOptions={txOptions} style={themed($textStyles)}>
+            {children}
+          </Text>
+        )}
 
         <ListItemAction
           side="right"

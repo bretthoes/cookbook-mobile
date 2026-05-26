@@ -15,16 +15,15 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import React, { useEffect, useState } from "react"
 import { ActivityIndicator, FlatList, ImageStyle, View, ViewStyle } from "react-native"
-import * as SecureStore from "expo-secure-store"
 
 export default observer(function Cookbook() {
-  const { cookbookStore, membershipStore } = useStores()
+  const { authenticationStore, cookbookStore, membershipStore } = useStores()
   const id = cookbookStore.selected?.id ?? 0
   const { themed } = useAppTheme()
 
   const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null)
+  const currentUserEmail = authenticationStore.authEmail
 
   // Memoize themed styles
   const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
@@ -39,12 +38,6 @@ export default observer(function Cookbook() {
     titleTx: "membershipScreen:listTitle",
     onLeftPress: () => router.back(),
   })
-
-  useEffect(() => {
-    SecureStore.getItemAsync("email").then((email) => {
-      setCurrentUserEmail(email)
-    })
-  }, [])
 
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
@@ -116,7 +109,9 @@ export default observer(function Cookbook() {
         onRefresh={manualRefresh}
         refreshing={refreshing}
         renderItem={({ item, index }) => {
-          const isCurrentUser = item.email?.toLowerCase() === currentUserEmail?.toLowerCase()
+          const isCurrentUser =
+            !!currentUserEmail &&
+            item.email?.toLowerCase() === currentUserEmail.toLowerCase()
           return (
             <View
               style={[
@@ -129,10 +124,11 @@ export default observer(function Cookbook() {
                 index={index}
                 lastIndex={membershipStore.memberships?.items?.length - 1}
                 text={`${item.name ?? item.email}`}
+                isOwner={item.isOwner}
                 onPress={async () => {
                   router.push(`../membership/${item.id}`)
                 }}
-                TextProps={isCurrentUser ? { weight: "bold" as const } : undefined}
+                TextProps={isCurrentUser ? { weight: "bold" } : undefined}
               />
             </View>
           )

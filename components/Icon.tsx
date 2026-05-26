@@ -119,6 +119,7 @@ export const iconRegistry = {
   caretDown: require("../assets/icons/caretDown.png"),
   check: require("../assets/icons/check.png"),
   copy: require("../assets/icons/copy.png"),
+  crown: require("../assets/icons/crown.png"),
   cookbooks: require("../assets/icons/cookbooks.png"),
   create: require("../assets/icons/create.png"),
   darkMode: require("../assets/icons/darkMode.png"),
