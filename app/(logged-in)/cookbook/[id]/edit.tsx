@@ -7,6 +7,7 @@ import { UseCase } from "@/components/UseCase"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
+import { api } from "@/services/api"
 import { colors, spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { cookbookSchema } from "@/validators/cookbookSchema"
@@ -60,6 +61,12 @@ export default observer(function EditCookbookScreen() {
   }, [])
 
   const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
+    if (status !== "granted") {
+      alert(translate("cookbookEditScreen:allowCameraRollAccess"))
+      return
+    }
+
     setIsLoading(true)
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -69,10 +76,18 @@ export default observer(function EditCookbookScreen() {
         quality: 1,
       })
 
-      if (!result.canceled) {
-        const imageUri = result.assets[0].uri
-        setLocalImage(imageUri)
-        setValue("image", imageUri)
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const previousImage = cookbookStore.selected?.image ?? null
+        // Show local URI immediately for a snappy preview while the upload runs.
+        setLocalImage(result.assets[0].uri)
+
+        const uploadResponse = await api.uploadImage(result.assets)
+        if (uploadResponse.kind === "ok" && uploadResponse.keys.length > 0) {
+          setValue("image", uploadResponse.keys[uploadResponse.keys.length - 1] ?? "")
+        } else {
+          alert(translate("cookbookEditScreen:imageUploadFailed"))
+          setLocalImage(previousImage)
+        }
       }
     } finally {
       setIsLoading(false)
