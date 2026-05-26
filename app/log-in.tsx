@@ -31,7 +31,6 @@ export default observer(function Login(_props) {
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [attemptsCount, setAttemptsCount] = useState(0)
   const [rememberMe, setRememberMe] = useState(true)
   const {
     authenticationStore: {
@@ -97,7 +96,6 @@ export default observer(function Login(_props) {
   const authenticate = useCallback(() => {
     run(async () => {
       setIsSubmitted(true)
-      setAttemptsCount((c) => c + 1)
 
       if (validationError) return
 
@@ -126,9 +124,6 @@ export default observer(function Login(_props) {
       <View style={$content}>
         <Text testID="login-heading" tx="loginScreen:logIn" preset="heading" />
         <Text tx="loginScreen:enterDetails" preset="subheading" style={$enterDetails} />
-        {attemptsCount > 2 && (
-          <Text tx="loginScreen:hint" size="sm" weight="light" style={themed($hint)} />
-        )}
       </View>
 
       <UseCase>
@@ -217,11 +212,6 @@ const $result: ThemedStyle<TextStyle> = (theme) => ({
 const $enterDetails: TextStyle = {
   marginBottom: spacing.lg,
 }
-
-const $hint: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.tint,
-  marginBottom: theme.spacing.md,
-})
 
 const $rememberMeRow: ViewStyle = {
   marginBottom: spacing.sm,
