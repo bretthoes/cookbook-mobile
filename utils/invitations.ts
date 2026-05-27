@@ -2,7 +2,7 @@ import Config from "@/config"
 
 /** Create a shareable invite URL for the given token */
 export function toInviteUrl(token: string): string {
-  return `${Config.INVITE_BASE_URL}/i/${token}`
+  return `${Config.INVITE_BASE_URL}/invite/?t=${encodeURIComponent(token)}`
 }
 
 /**
