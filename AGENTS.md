@@ -17,6 +17,15 @@ Expo (dev client) + React Native app using **expo-router** file-based routing. T
 - **Node.js** >= 20 (`package.json` `engines`).
 - **pnpm** — repo uses `packageManager: pnpm@9.x` and `pnpm-lock.yaml`; prefer pnpm over npm for installs.
 
+## RevenueCat (subscriptions)
+
+Optional keys via Expo env (local: `.env.local`, CI/TestFlight: [EAS env vars](https://docs.expo.dev/eas/environment-variables/)):
+
+- `EXPO_PUBLIC_REVENUECAT_API_KEY` — Test Store `test_…` for local dev; or shared fallback
+- `EXPO_PUBLIC_REVENUECAT_API_KEY_IOS` / `_ANDROID` — `appl_…` / `goog_…` for store builds (never `test_…` on TestFlight)
+
+Dashboard: products `monthly` / `yearly`, entitlement `pro`. After upgrading `react-native-purchases`, rebuild the dev client (`pnpm run ios` / `android`).
+
 ## Install and dev server
 
 ```bash

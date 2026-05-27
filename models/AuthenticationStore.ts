@@ -8,13 +8,22 @@ import { flow, Instance, SnapshotOut, types } from "mobx-state-tree"
 type SessionTokenStore = {
   setProp(key: "authResult", value: ReturnType<typeof AuthResultModel.create>): void
   setProp(key: "authToken", value: string | undefined): void
+  setProp(key: "userId", value: string | undefined): void
 }
 
-function* writeSessionTokens(store: SessionTokenStore, authResult: AuthResultSnapshotIn) {
+function syncRevenueCatAppUserId(store: SessionTokenStore & { authEmail: string }) {
+  const email = store.authEmail.trim()
+  if (email) {
+    store.setProp("userId", email.toLowerCase())
+  }
+}
+
+function* writeSessionTokens(store: SessionTokenStore & { authEmail: string }, authResult: AuthResultSnapshotIn) {
   bumpAuthSession()
   setAccessToken(authResult.accessToken)
   store.setProp("authResult", AuthResultModel.create(authResult))
   store.setProp("authToken", authResult.accessToken)
+  syncRevenueCatAppUserId(store)
   yield SecureStore.setItemAsync("accessToken", authResult.accessToken)
   yield SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
 }
@@ -23,6 +32,8 @@ export const AuthenticationStoreModel = types
   .model("AuthenticationStore")
   .props({
     authToken: types.maybe(types.string),
+    /** RevenueCat app user id (login email). */
+    userId: types.maybe(types.string),
     authEmail: "",
     result: "",
     displayName: "",
@@ -46,12 +57,14 @@ export const AuthenticationStoreModel = types
     setAuthToken(value?: string) {
       store.setProp("authToken", value)
       setAccessToken(value ?? null)
+      if (!value) store.setProp("userId", undefined)
     },
     setSubmittedSuccessfully(value: boolean) {
       store.setProp("submittedSuccessfully", value)
     },
     setAuthEmail(value: string) {
       store.setProp("authEmail", value.replace(/ /g, ""))
+      if (store.authToken) syncRevenueCatAppUserId(store)
     },
     setResult(value: string) {
       store.setProp("result", value)
@@ -81,11 +94,13 @@ export const AuthenticationStoreModel = types
       store.setProp("authResult", AuthResultModel.create(value))
       store.setProp("authToken", value.accessToken)
       setAccessToken(value.accessToken)
+      syncRevenueCatAppUserId(store)
     },
     logout: flow(function* () {
       bumpAuthSession()
       setAccessToken(null)
       store.setProp("authToken", undefined)
+      store.setProp("userId", undefined)
       store.setProp("authEmail", "")
       store.setProp("authResult", undefined)
       yield SecureStore.deleteItemAsync("accessToken")

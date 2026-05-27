@@ -561,7 +561,7 @@ const fr: Translations = {
     titleLabel: "___Title",
     titlePlaceholder: "___Enter cookbook title",
     allowCameraRollAccess: "___Please allow camera roll access in settings.",
-    imageSelectionFailed: "___Image selection failed",
+    imageUploadFailed: "___Failed to upload image. Please try again.",
     createFailed: "___Failed to create cookbook",
   },
   cookbookEditScreen: {
@@ -735,10 +735,9 @@ const fr: Translations = {
     terms: "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
     loadingOfferings: "___Loading plans...",
     noOfferings: "___Plans unavailable. Please check back later.",
-    noOfferingsNotConfigured:
-      "___Subscriptions are not configured in this build. Add EXPO_PUBLIC_REVENUECAT_API_KEY to .env.local and restart Metro.",
+    noOfferingsNotConfigured: "___Subscriptions are not configured in this build.",
     noOfferingsInvalidApiKey:
-      "___RevenueCat rejected the API key. In the RevenueCat dashboard, open Project Settings → API keys, copy the Test Store key (test_…) or your Android key (goog_…), update .env.local, then restart Metro.",
+      "___Subscription setup is invalid. Check the RevenueCat API key for this build.",
     noOfferingsNotLoggedIn: "___Sign in to view subscription plans.",
     noOfferingsNoUserId:
       "___We could not identify your account for subscriptions. Try signing out and back in.",

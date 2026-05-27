@@ -10,47 +10,24 @@
  * @refresh reset
  */
 import { api } from "@/services/api"
-import Config from "@/config"
 import { setAccessToken } from "@/services/api/client"
-import { applySnapshot, IDisposer, onSnapshot, reaction } from "mobx-state-tree"
+import { reaction } from "mobx"
+import { applySnapshot, IDisposer, onSnapshot } from "mobx-state-tree"
 import * as SecureStore from "expo-secure-store"
 import * as storage from "../../utils/storage"
 import { RootStore, RootStoreSnapshot } from "../RootStore"
+import {
+  ensureRevenueCatConfigured,
+  teardownRevenueCatListener,
+  setRevenueCatCustomerInfoHandler,
+  hasProEntitlement,
+} from "@/services/subscription/revenueCat"
+import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 
 /**
  * The key we'll be saving our state as within async storage.
  */
 const ROOT_STATE_STORAGE_KEY = "root-v1"
-
-/**
- * Decode the payload of a JWT without verifying the signature.
- * Used only to read the `sub` claim (user ID) for RevenueCat identification.
- */
-function getUserIdFromToken(token: string): string | null {
-  try {
-    const parts = token.split(".")
-    if (parts.length !== 3) return null
-    const payload = JSON.parse(atob(parts[1].replace(/-/g, "+").replace(/_/g, "/")))
-    return payload.sub ?? null
-  } catch {
-    return null
-  }
-}
-
-/**
- * Initialize RevenueCat with the configured API key.
- * Safe to call multiple times; skipped when no key is configured.
- */
-async function initRevenueCat(): Promise<void> {
-  const apiKey = Config.REVENUECAT_API_KEY
-  if (!apiKey) return
-  try {
-    const Purchases = (await import("react-native-purchases")).default
-    Purchases.configure({ apiKey })
-  } catch (e) {
-    console.warn("RevenueCat init failed:", e)
-  }
-}
 
 /**
  * Auth tokens live in SecureStore only — do not persist them in the MST AsyncStorage snapshot.
@@ -76,14 +53,25 @@ async function syncAuthFromSecureStore(rootStore: RootStore) {
   const accessToken = await SecureStore.getItemAsync("accessToken")
   const refreshToken = await SecureStore.getItemAsync("refreshToken")
 
+  const storedEmail = await SecureStore.getItemAsync("email")
+
   if (accessToken && refreshToken) {
     setAccessToken(accessToken)
     rootStore.authenticationStore.setAuthToken(accessToken)
+    if (storedEmail) {
+      if (!rootStore.authenticationStore.authEmail) {
+        rootStore.authenticationStore.setProp("authEmail", storedEmail)
+      }
+      if (!rootStore.authenticationStore.userId) {
+        rootStore.authenticationStore.setProp("userId", storedEmail.trim().toLowerCase())
+      }
+    }
     return
   }
 
   setAccessToken(null)
   rootStore.authenticationStore.setAuthToken(undefined)
+  rootStore.authenticationStore.setProp("userId", undefined)
   rootStore.authenticationStore.setProp("authResult", undefined)
 }
 
@@ -107,13 +95,21 @@ export async function setupRootStore(rootStore: RootStore) {
 
   await syncAuthFromSecureStore(rootStore)
 
-  await initRevenueCat()
+  setRevenueCatCustomerInfoHandler((customerInfo) => {
+    rootStore.subscriptionStore.setProp("isPro", hasProEntitlement(customerInfo))
+  })
 
-  if (rootStore.authenticationStore.authToken) {
-    const userId = getUserIdFromToken(rootStore.authenticationStore.authToken)
-    if (userId) {
-      await rootStore.subscriptionStore.hydrate(userId)
+  await ensureRevenueCatConfigured()
+
+  const appUserId = await resolveRevenueCatAppUserId({
+    storedUserId: rootStore.authenticationStore.userId,
+    authEmail: rootStore.authenticationStore.authEmail,
+  })
+  if (appUserId) {
+    if (!rootStore.authenticationStore.userId) {
+      rootStore.authenticationStore.setProp("userId", appUserId)
     }
+    await rootStore.subscriptionStore.hydrate(appUserId)
   }
 
   // stop tracking state changes if we've already setup
@@ -139,8 +135,15 @@ export async function setupRootStore(rootStore: RootStore) {
     () => rootStore.authenticationStore.authToken,
     (token) => {
       if (token) {
-        const userId = getUserIdFromToken(token)
-        if (userId) rootStore.subscriptionStore.hydrate(userId)
+        void resolveRevenueCatAppUserId({
+          storedUserId: rootStore.authenticationStore.userId,
+          authEmail: rootStore.authenticationStore.authEmail,
+        }).then((userId) => {
+          if (userId) {
+            rootStore.authenticationStore.setProp("userId", userId)
+            rootStore.subscriptionStore.hydrate(userId)
+          }
+        })
       } else {
         rootStore.subscriptionStore.reset()
       }
@@ -151,6 +154,7 @@ export async function setupRootStore(rootStore: RootStore) {
     _disposer?.()
     _disposer = undefined
     _subscriptionDisposer()
+    teardownRevenueCatListener()
   }
 
   return { rootStore, restoredState, unsubscribe }

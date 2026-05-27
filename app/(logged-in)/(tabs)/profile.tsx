@@ -12,19 +12,25 @@ import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import {
+  isRevenueCatConfigured,
+  presentCustomerCenter,
+} from "@/services/subscription/revenueCat"
 import { openLinkInBrowser } from "@/utils/openLinkInBrowser"
+import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Application from "expo-application"
 import { useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useEffect } from "react"
-import { LayoutAnimation, TextStyle, View, ViewStyle } from "react-native"
+import React, { useCallback, useEffect } from "react"
+import { Alert, LayoutAnimation, TextStyle, View, ViewStyle } from "react-native"
 
 export default observer(function ProfileScreen() {
   const {
-    authenticationStore: { logout },
+    authenticationStore,
     membershipStore: { email },
     invitationStore,
+    subscriptionStore,
   } = useStores()
 
   const router = useRouter()
@@ -55,6 +61,35 @@ export default observer(function ProfileScreen() {
     setThemeContextOverride(newTheme)
     await AsyncStorage.setItem("themeContext", newTheme)
   }
+
+  const { logout, authEmail, userId } = authenticationStore
+
+  const handleSubscriptionPress = useCallback(async () => {
+    if (!isRevenueCatConfigured()) {
+      router.push("/(logged-in)/recipe/paywall")
+      return
+    }
+
+    if (subscriptionStore.isPro) {
+      const appUserId = await resolveRevenueCatAppUserId({
+        storedUserId: userId,
+        authEmail,
+      })
+      if (!appUserId) {
+        router.push("/(logged-in)/recipe/paywall")
+        return
+      }
+      try {
+        await presentCustomerCenter(appUserId)
+        await subscriptionStore.refresh(appUserId)
+      } catch {
+        Alert.alert(translate("profileScreen:customerCenterError"))
+      }
+      return
+    }
+
+    router.push("/(logged-in)/recipe/paywall")
+  }, [router, subscriptionStore, authEmail, userId])
 
   const $themedRoot = React.useMemo(() => themed($root), [themed])
 
@@ -123,6 +158,24 @@ export default observer(function ProfileScreen() {
           }
           onPress={() => router.push("../set-display-name")}
         />
+        {isRevenueCatConfigured() && (
+          <ListItem
+            tx={
+              subscriptionStore.isPro
+                ? "profileScreen:manageSubscription"
+                : "profileScreen:upgradeToPro"
+            }
+            bottomSeparator
+            rightIcon={isRTL ? "caretLeft" : "caretRight"}
+            rightIconColor={isDark ? colors.border : colors.text}
+            LeftComponent={
+              <View style={$iconContainer}>
+                <Icon icon="heart" size={30} color={isDark ? colors.border : colors.text} />
+              </View>
+            }
+            onPress={handleSubscriptionPress}
+          />
+        )}
       </UseCase>
       <UseCase tx="profileScreen:preferences">
         <Text tx="profileScreen:customize" style={$description} />

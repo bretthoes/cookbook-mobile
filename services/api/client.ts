@@ -18,6 +18,10 @@ export function setAccessToken(token: string | null) {
   memoryAccessToken = token
 }
 
+export function getAccessToken(): string | null {
+  return memoryAccessToken
+}
+
 export function bumpAuthSession() {
   authSessionId += 1
 }

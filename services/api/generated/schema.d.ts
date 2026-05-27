@@ -260,6 +260,38 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/Subscriptions/status": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["SubscriptionsGetStatus"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/Subscriptions/webhook/revenuecat": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["SubscriptionsRevenueCatWebhook"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/Users/update": {
     parameters: {
       query?: never
@@ -501,8 +533,8 @@ export interface components {
     }
     CookbookBriefDto: {
       /** Format: int32 */
-      id?: number
-      title?: string
+      id: number
+      title: string
       image?: string | null
       author?: string | null
       authorEmail?: string | null
@@ -539,7 +571,7 @@ export interface components {
       cookbookId?: number | null
       senderName?: string | null
       senderEmail?: string | null
-      cookbookTitle?: string
+      cookbookTitle: string
       cookbookImage?: string | null
       /** Format: date-time */
       created?: string
@@ -572,13 +604,13 @@ export interface components {
       id?: number
       name?: string | null
       email?: string | null
-      isOwner?: boolean
-      canAddRecipe?: boolean
-      canUpdateRecipe?: boolean
-      canDeleteRecipe?: boolean
-      canSendInvite?: boolean
-      canRemoveMember?: boolean
-      canEditCookbookDetails?: boolean
+      isOwner: boolean
+      canAddRecipe: boolean
+      canUpdateRecipe: boolean
+      canDeleteRecipe: boolean
+      canSendInvite: boolean
+      canRemoveMember: boolean
+      canEditCookbookDetails: boolean
     }
     PaginatedListOfMembershipDto: {
       items?: components["schemas"]["MembershipDto"][]
@@ -593,19 +625,19 @@ export interface components {
     }
     UpdateMembershipCommand: {
       /** Format: int32 */
-      id?: number
-      isOwner?: boolean
-      canAddRecipe?: boolean
-      canUpdateRecipe?: boolean
-      canDeleteRecipe?: boolean
-      canSendInvite?: boolean
-      canRemoveMember?: boolean
-      canEditCookbookDetails?: boolean
+      id: number
+      isOwner: boolean
+      canAddRecipe: boolean
+      canUpdateRecipe: boolean
+      canDeleteRecipe: boolean
+      canSendInvite: boolean
+      canRemoveMember: boolean
+      canEditCookbookDetails: boolean
     }
     RecipeDetailedDto: {
       /** Format: int32 */
-      id?: number
-      title?: string
+      id: number
+      title: string
       author?: string | null
       authorEmail?: string | null
       summary?: string | null
@@ -639,33 +671,33 @@ export interface components {
     RecipeDirectionDto: {
       /** Format: int32 */
       id?: number
-      text?: string
+      text: string
       /** Format: int32 */
-      ordinal?: number
+      ordinal: number
       image?: string | null
     }
     RecipeImageDto: {
       /** Format: int32 */
       id?: number
-      name?: string
+      name: string
       /** Format: int32 */
-      ordinal?: number
+      ordinal: number
     }
     IngredientSectionDto: {
       /** Format: int32 */
       id?: number
-      title?: string
+      title: string
       /** Format: int32 */
-      ordinal?: number
-      ingredients?: components["schemas"]["RecipeIngredientDto"][]
+      ordinal: number
+      ingredients: components["schemas"]["RecipeIngredientDto"][]
     }
     RecipeIngredientDto: {
       /** Format: int32 */
       id?: number
-      name?: string
-      optional?: boolean
+      name: string
+      optional: boolean
       /** Format: int32 */
-      ordinal?: number
+      ordinal: number
     }
     PaginatedListOfRecipeBriefDto: {
       items?: components["schemas"]["RecipeBriefDto"][]
@@ -680,8 +712,8 @@ export interface components {
     }
     RecipeBriefDto: {
       /** Format: int32 */
-      id?: number
-      title?: string
+      id: number
+      title: string
       isVegetarian?: boolean | null
       isVegan?: boolean | null
       isGlutenFree?: boolean | null
@@ -697,14 +729,14 @@ export interface components {
       isSnack?: boolean | null
     }
     CreateRecipeCommand: {
-      recipe?: components["schemas"]["CreateRecipeDto"]
+      recipe: components["schemas"]["CreateRecipeDto"]
     }
     CreateRecipeDto: components["schemas"]["RecipeDto"] & {
       /** Format: int32 */
-      cookbookId?: number
+      cookbookId: number
     }
     RecipeDto: {
-      title?: string
+      title: string
       summary?: string | null
       thumbnail?: string | null
       videoPath?: string | null
@@ -738,7 +770,7 @@ export interface components {
     }
     UpdateRecipeDto: components["schemas"]["RecipeDto"] & {
       /** Format: int32 */
-      id?: number
+      id: number
     }
     ParseRecipeFromUrlCommand: {
       url?: string
@@ -746,6 +778,17 @@ export interface components {
     }
     ParseRecipeFromVoiceCommand: {
       transcript?: string
+    }
+    SubscriptionStatusDto: {
+      isPro?: boolean
+    }
+    RevenueCatWebhookPayload: {
+      event?: components["schemas"]["RevenueCatEvent"] | null
+    }
+    RevenueCatEvent: {
+      type?: string | null
+      app_user_id?: string | null
+      original_app_user_id?: string | null
     }
     UpdateUserCommand: {
       displayName?: string
@@ -781,43 +824,43 @@ export interface components {
       [key: string]: unknown
     }
     RegisterRequest: {
-      email?: string
-      password?: string
+      email: string
+      password: string
     }
     AccessTokenResponse: {
       tokenType?: string
-      accessToken?: string
+      accessToken: string
       /** Format: int64 */
-      expiresIn?: number
-      refreshToken?: string
+      expiresIn: number
+      refreshToken: string
     }
     LoginRequest: {
-      email?: string
-      password?: string
+      email: string
+      password: string
       twoFactorCode?: string | null
       twoFactorRecoveryCode?: string | null
     }
     RefreshRequest: {
-      refreshToken?: string
+      refreshToken: string
     }
     ResendConfirmationEmailRequest: {
-      email?: string
+      email: string
     }
     ForgotPasswordRequest: {
-      email?: string
+      email: string
     }
     ResetPasswordRequest: {
-      email?: string
-      resetCode?: string
-      newPassword?: string
+      email: string
+      resetCode: string
+      newPassword: string
     }
     TwoFactorResponse: {
-      sharedKey?: string
+      sharedKey: string
       /** Format: int32 */
-      recoveryCodesLeft?: number
+      recoveryCodesLeft: number
       recoveryCodes?: string[] | null
-      isTwoFactorEnabled?: boolean
-      isMachineRemembered?: boolean
+      isTwoFactorEnabled: boolean
+      isMachineRemembered: boolean
     }
     TwoFactorRequest: {
       enable?: boolean | null
@@ -827,8 +870,8 @@ export interface components {
       forgetMachine?: boolean
     }
     InfoResponse: {
-      email?: string
-      isEmailConfirmed?: boolean
+      email: string
+      isEmailConfirmed: boolean
     }
     InfoRequest: {
       newEmail?: string | null
@@ -1418,6 +1461,46 @@ export interface operations {
         content: {
           "application/json": components["schemas"]["CreateRecipeDto"]
         }
+      }
+    }
+  }
+  SubscriptionsGetStatus: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["SubscriptionStatusDto"]
+        }
+      }
+    }
+  }
+  SubscriptionsRevenueCatWebhook: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: {
+      content: {
+        "application/json": components["schemas"]["RevenueCatWebhookPayload"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
       }
     }
   }

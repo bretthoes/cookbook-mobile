@@ -19,7 +19,7 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useCallback, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
-import { View, ViewStyle } from "react-native"
+import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
 
 interface CookbookFormInputs {
   title: string
@@ -46,10 +46,10 @@ export default observer(function AddCookbookScreen() {
     },
   })
 
-  const [imageLocal, setImageLocal] = useState("")
+  const [imageLocal, setImageLocal] = useState<string | null>(null)
   const [createError, setCreateError] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
-  // Image picker function
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
@@ -57,20 +57,27 @@ export default observer(function AddCookbookScreen() {
       return
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: true,
-      aspect: [3, 4],
-    })
+    setIsUploading(true)
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [3, 4],
+      })
 
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setImageLocal(result.assets[0]?.uri ?? "")
-      const uploadResponse = await api.uploadImage(result.assets)
-      if (uploadResponse.kind === "ok") {
-        setValue("image", uploadResponse?.keys?.pop() ?? "")
-      } else {
-        alert(translate("cookbookAddScreen:imageSelectionFailed"))
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setImageLocal(result.assets[0]?.uri ?? null)
+        const uploadResponse = await api.uploadImage(result.assets)
+        if (uploadResponse.kind === "ok" && uploadResponse.keys.length > 0) {
+          setValue("image", uploadResponse.keys.at(-1) ?? "")
+        } else {
+          setImageLocal(null)
+          setValue("image", null)
+          alert(translate("cookbookAddScreen:imageUploadFailed"))
+        }
       }
+    } finally {
+      setIsUploading(false)
     }
   }
 
@@ -108,26 +115,29 @@ export default observer(function AddCookbookScreen() {
       titleTx: "cookbookAddScreen:title",
       leftIcon: "back",
       rightTx: "common:save",
-      onRightPress: isInFlight ? undefined : handleSave,
+      onRightPress: isInFlight || isUploading ? undefined : handleSave,
       onLeftPress: () => router.back(),
     },
-    [handleSave, isInFlight],
+    [handleSave, isInFlight, isUploading],
   )
 
   return (
     <Screen preset="scroll" contentContainerStyle={$root}>
       <Text tx="cookbookAddScreen:subtitle" />
       <UseCase>
-        {imageLocal.length > 0 && (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
-            <AutoImage
-              source={{ uri: imageLocal }}
-              style={{ width: 200, height: 266, margin: 5, borderRadius: 8 }}
-            />
+        {imageLocal && (
+          <View style={$imagePreviewContainer}>
+            <AutoImage source={{ uri: imageLocal }} style={$imagePreview} />
           </View>
         )}
 
-        <Button tx="cookbookAddScreen:addCoverPhoto" onPress={pickImage} />
+        <Button
+          tx="cookbookAddScreen:addCoverPhoto"
+          onPress={pickImage}
+          disabled={isUploading}
+        />
+
+        {isUploading && <ActivityIndicator style={$uploadIndicator} />}
 
         <Divider size={spacing.xxl} line />
 
@@ -156,4 +166,21 @@ export default observer(function AddCookbookScreen() {
 const $root: ViewStyle = {
   flex: 1,
   marginHorizontal: spacing.md,
+}
+
+const $imagePreviewContainer: ViewStyle = {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  justifyContent: "center",
+}
+
+const $imagePreview: ImageStyle = {
+  width: 200,
+  height: 266,
+  margin: 5,
+  borderRadius: 8,
+}
+
+const $uploadIndicator: ViewStyle = {
+  marginTop: spacing.sm,
 }

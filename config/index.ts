@@ -16,6 +16,7 @@
 import BaseConfig, { type ConfigBaseProps, type EnvConfigProps } from "./config.base"
 import ProdConfig from "./config.prod"
 import DevConfig from "./config.dev"
+import { Platform } from "react-native"
 
 export type AppConfig = ConfigBaseProps & EnvConfigProps
 
@@ -25,6 +26,21 @@ if (__DEV__) {
   ExtraConfig = DevConfig
 }
 
-const Config: AppConfig = { ...BaseConfig, ...ExtraConfig }
+function revenueCatApiKey(): string {
+  const shared = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY?.trim() ?? ""
+  if (Platform.OS === "ios") {
+    return process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS?.trim() || shared
+  }
+  if (Platform.OS === "android") {
+    return process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_ANDROID?.trim() || shared
+  }
+  return shared
+}
+
+const Config: AppConfig = {
+  ...BaseConfig,
+  ...ExtraConfig,
+  REVENUECAT_API_KEY: revenueCatApiKey(),
+}
 
 export default Config
