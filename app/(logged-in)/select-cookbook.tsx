@@ -270,12 +270,13 @@ const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   justifyContent: "center",
   marginRight: theme.spacing.md,
   overflow: "hidden",
+  borderRadius: 8,
 })
 
 const $cookbookImage: ThemedStyle<ImageStyle> = () => ({
   width: 48,
   height: 48,
-  borderRadius: 24,
+  borderRadius: 8,
 })
 
 const $textContainer: ThemedStyle<ViewStyle> = (theme) => ({
