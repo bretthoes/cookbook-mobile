@@ -62,10 +62,11 @@ export default observer(function AddRecipeOptionsScreen() {
     action()
   }
 
-  // Most recently saved draft (if any) — used to surface the "Continue Draft" tile
+  // Most recently saved draft with real in-progress content — surfaces "Continue Draft"
   const latestDraft = useMemo(() => {
-    if (recipeStore.drafts.length === 0) return null
-    return recipeStore.drafts.reduce((latest, d) => (d.savedAt > latest.savedAt ? d : latest))
+    const pendingDrafts = recipeStore.drafts.filter((draft) => draft.hasContent)
+    if (pendingDrafts.length === 0) return null
+    return pendingDrafts.reduce((latest, d) => (d.savedAt > latest.savedAt ? d : latest))
   }, [recipeStore.drafts])
 
   const options = useMemo(() => {

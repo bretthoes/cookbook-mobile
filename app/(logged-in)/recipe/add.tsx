@@ -25,6 +25,8 @@ export default observer(function AddRecipeScreen() {
 
   // Ref exposing the live form state to unmount cleanup without needing a re-render
   const formRef = useRef<RecipeFormHandle | null>(null)
+  // Prevents unmount cleanup from re-saving a draft after successful submit
+  const submittedSuccessfullyRef = useRef(false)
 
   // The selected cookbook comes from cookbookStore (set by select-cookbook screen)
   const selectedCookbook = cookbookStore.selected
@@ -45,6 +47,7 @@ export default observer(function AddRecipeScreen() {
   useEffect(() => {
     return () => {
       clearRecipeToAdd()
+      if (submittedSuccessfullyRef.current) return
       if (selectedCookbook && formRef.current?.isDirty) {
         // formRef is a plain value ref (not a JSX ref prop), so React never nulls it out.
         // Reading .current in the cleanup intentionally captures the latest form state at unmount.
@@ -200,7 +203,7 @@ export default observer(function AddRecipeScreen() {
       try {
         const success = await create(newRecipe)
         if (success) {
-          // Clear the draft on successful submit
+          submittedSuccessfullyRef.current = true
           deleteDraft(selectedCookbook.id)
           router.replace(`../../cookbook/${selectedCookbook.id}`)
         } else {

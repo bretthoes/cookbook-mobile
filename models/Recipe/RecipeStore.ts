@@ -56,6 +56,17 @@ function makeDraftId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2)
 }
 
+/** True when the form has enough content to represent an abandoned in-progress recipe. */
+export function hasDraftContent(formData: DraftFormData): boolean {
+  if (formData.title?.trim()) return true
+  if (formData.summary?.trim()) return true
+  if (formData.images.some((img) => img?.trim())) return true
+  if (formData.directions.some((d) => d.text?.trim() || d.image)) return true
+  return formData.ingredientSections.some((section) =>
+    section.ingredients.some((ingredient) => ingredient.name?.trim()),
+  )
+}
+
 export const RecipeStoreModel = types
   .model("RecipeStore")
   .props({
@@ -178,6 +189,12 @@ export const RecipeStoreModel = types
       self.weeklyImportCount += 1
     },
     saveDraft(cookbookId: number, formData: DraftFormData) {
+      if (!hasDraftContent(formData)) {
+        const emptyIdx = self.drafts.findIndex((d) => d.cookbookId === cookbookId)
+        if (emptyIdx !== -1) self.drafts.splice(emptyIdx, 1)
+        return
+      }
+
       const existing = self.drafts.find((d) => d.cookbookId === cookbookId)
       const validIngredientSections = formDataToIngredientSectionsSnapshot(
         { ingredientSections: formData.ingredientSections },

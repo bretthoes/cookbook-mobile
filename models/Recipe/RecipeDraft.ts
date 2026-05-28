@@ -41,6 +41,17 @@ export const RecipeDraftModel = types
     isSnack: types.maybeNull(types.boolean),
   })
   .actions(withSetPropAction)
+  .views((draft) => ({
+    get hasContent(): boolean {
+      if (draft.title?.trim()) return true
+      if (draft.summary?.trim()) return true
+      if (draft.images.some((img) => img.name?.trim())) return true
+      if (draft.directions.some((d) => d.text?.trim() || d.image)) return true
+      return draft.ingredientSections.some((section) =>
+        section.ingredients.some((ingredient) => ingredient.name?.trim()),
+      )
+    },
+  }))
 
 export interface RecipeDraft extends Instance<typeof RecipeDraftModel> {}
 export interface RecipeDraftSnapshotOut extends SnapshotOut<typeof RecipeDraftModel> {}
