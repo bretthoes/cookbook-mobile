@@ -17,6 +17,7 @@ import {
   TouchableOpacity,
   View,
   type ImageSourcePropType,
+  type ImageStyle,
   type TextStyle,
   type ViewStyle,
 } from "react-native"
@@ -308,11 +309,11 @@ function OptionTile({
         )}
         <View style={$themedIconBox}>
           {icon ? (
-            <Icon icon={icon} size={44} color={iconColor} />
+            <Icon icon={icon} size={40} color={iconColor} />
           ) : image ? (
             <Image
               source={image}
-              style={{ width: 62, height: 62, opacity: isDisabled ? 0.4 : 1 }}
+              style={[themed($tileImage), isDisabled && themed($tileImageDisabled)]}
               resizeMode="contain"
             />
           ) : null}
@@ -320,6 +321,7 @@ function OptionTile({
         <Text
           preset="subheading"
           text={title}
+          numberOfLines={2}
           style={[$themedTitle, isDisabled && themed($disabledTitle)]}
         />
       </TouchableOpacity>
@@ -344,16 +346,16 @@ const $grid: ThemedStyle<ViewStyle> = () => ({
 
 const $tileOuter: ThemedStyle<ViewStyle> = (theme) => ({
   width: "50%",
-  padding: theme.spacing.xs,
+  padding: theme.spacing.xxs,
 })
 
 const $tileInner: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.backgroundDim,
   borderRadius: theme.spacing.md,
   paddingHorizontal: theme.spacing.xs,
-  paddingVertical: theme.spacing.sm,
+  paddingVertical: theme.spacing.xs,
   alignItems: "center",
-  minHeight: 148,
+  height: 142,
   justifyContent: "center",
 })
 
@@ -388,17 +390,28 @@ const $draftBadge: ThemedStyle<ViewStyle> = (theme) => ({
 })
 
 const $iconBox: ThemedStyle<ViewStyle> = (theme) => ({
-  width: 76,
-  height: 76,
+  width: 68,
+  height: 68,
   backgroundColor: theme.colors.background,
-  borderRadius: 38,
+  borderRadius: 34,
   alignItems: "center",
   justifyContent: "center",
-  marginBottom: theme.spacing.sm,
+  marginBottom: theme.spacing.xs,
+})
+
+const $tileImage: ThemedStyle<ImageStyle> = () => ({
+  width: 56,
+  height: 56,
+})
+
+const $tileImageDisabled: ThemedStyle<ImageStyle> = () => ({
+  opacity: 0.4,
 })
 
 const $tileTitle: ThemedStyle<TextStyle> = () => ({
   fontSize: 15,
+  lineHeight: 18,
+  minHeight: 36,
   textAlign: "center",
 })
 
