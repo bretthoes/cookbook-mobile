@@ -73,6 +73,7 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
             <View style={$tabBarItemContent}>
               {Icon}
               <Text
+                size="xs"
                 style={{
                   color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
                 }}

@@ -138,9 +138,11 @@ export const RecipeStoreModel = types
         })
         const newIdStr = String(response.recipeId)
         self.recipeCache.set(newIdStr, newRecipe)
-        self.recipes.push(
-          RecipeBriefModel.create({ id: response.recipeId, title: recipeToAdd.title }),
-        )
+        if (self.listCookbookId === recipeToAdd.cookbookId) {
+          self.recipes.push(
+            RecipeBriefModel.create({ id: response.recipeId, title: recipeToAdd.title }),
+          )
+        }
         self.selected = newRecipe
         self.selectedRecipeId = response.recipeId
         self.selectedFetchState = FetchState.ready
@@ -164,6 +166,7 @@ export const RecipeStoreModel = types
 
       const response = yield api.getRecipe(id)
       if (response.kind === "ok") {
+        if (self.selectedRecipeId !== id) return true
         const existing = self.recipeCache.get(idStr)
         if (existing) {
           existing.update(response.recipe)
@@ -177,7 +180,9 @@ export const RecipeStoreModel = types
         return true
       }
       console.error(`Error fetching recipe: ${JSON.stringify(response)}`)
-      self.selectedFetchState = FetchState.ready
+      if (self.selectedRecipeId === id) {
+        self.selectedFetchState = FetchState.ready
+      }
       return false
     }),
     fetch: flow(function* (cookbookId: number, search = "", pageNumber = 1, pageSize = 999) {
@@ -194,13 +199,16 @@ export const RecipeStoreModel = types
 
       const response = yield api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
-        self.recipes.replace(response.recipes.items)
-        self.listCookbookId = cookbookId
-        self.listFetchState = FetchState.ready
+        if (self.listCookbookId === cookbookId) {
+          self.recipes.replace(response.recipes.items)
+          self.listFetchState = FetchState.ready
+        }
         return true
       }
       console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
-      self.listFetchState = FetchState.ready
+      if (self.listCookbookId === cookbookId) {
+        self.listFetchState = FetchState.ready
+      }
       return false
     }),
     update: flow(function* (updatedRecipe: RecipeSnapshotIn) {
@@ -217,7 +225,7 @@ export const RecipeStoreModel = types
       return false
     }),
     delete: flow(function* () {
-      if (!self.selected) return
+      if (!self.selected) return false
       const recipeId = self.selected.id
       const response = yield api.deleteRecipe(recipeId)
       if (response.kind === "ok") {
@@ -226,7 +234,8 @@ export const RecipeStoreModel = types
         self.recipeCache.delete(String(recipeId))
         self.recipes.replace(self.recipes.filter((r) => r.id !== recipeId))
         self.selected = null
-        self.selectedRecipeId = null
+        self.selectedFetchState = FetchState.ready
+        // Keep selectedRecipeId so detail screen can show not-found (matches prior behavior).
         // TODO remove from list?
         return true
       }

@@ -100,7 +100,8 @@ export default observer(function Recipe() {
         text: t("recipeDetailScreen:deleteButton"),
         style: "destructive",
         onPress: async () => {
-          await deleteRecipe()
+          const deleted = await deleteRecipe()
+          if (deleted) router.back()
         },
       },
     ])
