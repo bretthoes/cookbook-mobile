@@ -543,6 +543,24 @@ export interface components {
       /** Format: int32 */
       recipeCount?: number
     }
+    ProblemDetails: {
+      type?: string | null
+      title?: string | null
+      /** Format: int32 */
+      status?: number | null
+      detail?: string | null
+      instance?: string | null
+    } & {
+      [key: string]: unknown
+    }
+    HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
+      ({
+        errors?: {
+          [key: string]: string[]
+        }
+      } & {
+        [key: string]: unknown
+      })
     CreateCookbookCommand: {
       title?: string
       image?: string | null
@@ -805,24 +823,6 @@ export interface components {
     LoginWithFacebookCommand: {
       accessToken?: string
     }
-    HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
-      ({
-        errors?: {
-          [key: string]: string[]
-        }
-      } & {
-        [key: string]: unknown
-      })
-    ProblemDetails: {
-      type?: string | null
-      title?: string | null
-      /** Format: int32 */
-      status?: number | null
-      detail?: string | null
-      instance?: string | null
-    } & {
-      [key: string]: unknown
-    }
     RegisterRequest: {
       email: string
       password: string
@@ -907,6 +907,22 @@ export interface operations {
           "application/json": components["schemas"]["PaginatedListOfCookbookBriefDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   CookbooksCreate: {
@@ -930,6 +946,22 @@ export interface operations {
           "application/json": number
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   CookbooksUpdate: {
@@ -947,11 +979,43 @@ export interface operations {
       }
     }
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -966,11 +1030,43 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -997,6 +1093,30 @@ export interface operations {
           "application/json": string[]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   InvitationsList: {
@@ -1018,6 +1138,22 @@ export interface operations {
         }
         content: {
           "application/json": components["schemas"]["PaginatedListOfInvitationDto"]
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
         }
       }
     }
@@ -1043,6 +1179,46 @@ export interface operations {
           "application/json": number
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   InvitationsCount: {
@@ -1064,6 +1240,14 @@ export interface operations {
           "application/json": number
         }
       }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   InvitationsUpdate: {
@@ -1081,11 +1265,43 @@ export interface operations {
       }
     }
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1100,11 +1316,35 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1127,6 +1367,30 @@ export interface operations {
           "application/json": components["schemas"]["InvitationDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   InvitationTokensUpdate: {
@@ -1144,11 +1408,43 @@ export interface operations {
       }
     }
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      409: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1173,6 +1469,22 @@ export interface operations {
           "application/json": components["schemas"]["InvitationTokenDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   MembershipsGetById: {
@@ -1194,6 +1506,30 @@ export interface operations {
           "application/json": components["schemas"]["MembershipDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   MembershipsUpdate: {
@@ -1211,11 +1547,43 @@ export interface operations {
       }
     }
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1230,11 +1598,43 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1255,6 +1655,30 @@ export interface operations {
         }
         content: {
           "application/json": components["schemas"]["MembershipDto"]
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
         }
       }
     }
@@ -1280,6 +1704,22 @@ export interface operations {
           "application/json": components["schemas"]["PaginatedListOfMembershipDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   RecipesGetById: {
@@ -1301,6 +1741,30 @@ export interface operations {
           "application/json": components["schemas"]["RecipeDetailedDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   RecipesUpdate: {
@@ -1318,11 +1782,43 @@ export interface operations {
       }
     }
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1337,11 +1833,43 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1367,6 +1895,22 @@ export interface operations {
           "application/json": components["schemas"]["PaginatedListOfRecipeBriefDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   RecipesCreate: {
@@ -1390,6 +1934,30 @@ export interface operations {
           "application/json": number
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   RecipesParseFromUrl: {
@@ -1411,6 +1979,30 @@ export interface operations {
         }
         content: {
           "application/json": components["schemas"]["CreateRecipeDto"]
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
         }
       }
     }
@@ -1439,6 +2031,30 @@ export interface operations {
           "application/json": components["schemas"]["CreateRecipeDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   RecipesParseFromVoice: {
@@ -1462,6 +2078,30 @@ export interface operations {
           "application/json": components["schemas"]["CreateRecipeDto"]
         }
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   SubscriptionsGetStatus: {
@@ -1479,6 +2119,14 @@ export interface operations {
         }
         content: {
           "application/json": components["schemas"]["SubscriptionStatusDto"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
         }
       }
     }
@@ -1502,6 +2150,30 @@ export interface operations {
         }
         content?: never
       }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      500: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   UsersUpdate: {
@@ -1517,11 +2189,27 @@ export interface operations {
       }
     }
     responses: {
-      200: {
+      204: {
         headers: {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
@@ -1540,6 +2228,14 @@ export interface operations {
         }
         content: {
           "application/json": components["schemas"]["DisplayNameDto"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
         }
       }
     }
@@ -1563,6 +2259,14 @@ export interface operations {
         }
         content?: never
       }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   UsersLoginApple: {
@@ -1584,6 +2288,14 @@ export interface operations {
         }
         content?: never
       }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
     }
   }
   UsersLoginFacebook: {
@@ -1604,6 +2316,14 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
       }
     }
   }
