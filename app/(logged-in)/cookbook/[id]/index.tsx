@@ -94,6 +94,7 @@ export default observer(function Cookbook() {
 
   const q = searchQuery.trim().toLowerCase()
   const listForThisCookbook = recipeStore.listCookbookId === cookbookId
+  const hasActiveFilters = q.length > 0 || selectedTags.size > 0
   let filteredItems = listForThisCookbook ? recipeStore.recipes.slice() : []
   if (q) {
     filteredItems = filteredItems.filter((r) => r.title.toLowerCase().includes(q))
@@ -103,6 +104,12 @@ export default observer(function Cookbook() {
       Array.from(selectedTags).every((tag) => r[tag] === true),
     )
   }
+
+  const handleLoadMore = useCallback(() => {
+    if (!listForThisCookbook) return
+    if (!recipeStore.listHasNextPage || recipeStore.isLoadingMoreRecipes) return
+    recipeStore.fetchMore(cookbookId)
+  }, [cookbookId, listForThisCookbook, recipeStore])
 
   const handlePressEdit = useCallback(() => {
     if (!isAuthor) return
@@ -320,13 +327,30 @@ export default observer(function Cookbook() {
           }
           onRefresh={manualRefresh}
           refreshing={refreshing}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.4}
           ListFooterComponent={
             <View style={$themedListFooter}>
+              {recipeStore.isLoadingMoreRecipes && <ActivityIndicator />}
               <Text
                 weight="light"
-                text={t("cookbookDetailScreen:recipeCount", {
-                  count: filteredItems.length,
-                })}
+                tx={
+                  hasActiveFilters
+                    ? "cookbookDetailScreen:recipeCount"
+                    : recipeStore.recipeList.totalCount > recipeStore.recipes.length
+                      ? "cookbookDetailScreen:recipeCountLoaded"
+                      : "cookbookDetailScreen:recipeCount"
+                }
+                txOptions={
+                  hasActiveFilters
+                    ? { count: filteredItems.length }
+                    : recipeStore.recipeList.totalCount > recipeStore.recipes.length
+                      ? {
+                          loaded: recipeStore.recipes.length,
+                          total: recipeStore.recipeList.totalCount,
+                        }
+                      : { count: recipeStore.recipeList.totalCount }
+                }
               />
             </View>
           }
@@ -335,7 +359,7 @@ export default observer(function Cookbook() {
               style={[
                 $themedListItemStyle,
                 index === 0 && $themedBorderTop,
-                index === recipeStore.recipes?.length - 1 && $themedBorderBottom,
+                index === filteredItems.length - 1 && $themedBorderBottom,
               ]}
             >
               <RecipeListItem

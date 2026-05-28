@@ -46,16 +46,16 @@ export default observer(function DemoPodcastListScreen(_props) {
   const isDark = themeContext === "dark"
 
   const [refreshing, setRefreshing] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const isListPending = cookbookStore.isListPending
 
-  // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
-    const fetchData = async () => {
-      await cookbookStore.fetch()
-    }
-    setIsLoading(true)
-    fetchData()
-    setIsLoading(false)
+    cookbookStore.fetch()
+  }, [cookbookStore])
+
+  const handleLoadMore = useCallback(() => {
+    if (cookbookStore.favoritesOnly) return
+    if (!cookbookStore.listHasNextPage || cookbookStore.isLoadingMoreCookbooks) return
+    cookbookStore.fetchMore()
   }, [cookbookStore])
 
   // simulate a longer refresh, if the refresh is too fast for UX
@@ -73,8 +73,10 @@ export default observer(function DemoPodcastListScreen(_props) {
         extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
         refreshing={refreshing}
         onRefresh={manualRefresh}
+        onEndReached={handleLoadMore}
+        onEndReachedThreshold={0.4}
         ListEmptyComponent={
-          isLoading ? (
+          isListPending ? (
             <ActivityIndicator />
           ) : (
             <EmptyState

@@ -539,7 +539,8 @@ const en = {
     leaveCookbook: "Leave Cookbook",
     notFound: "Cookbook not found",
     noRecipesEmpty: "No recipes have been added yet.",
-    recipeCount: "{{count}} recipes.",
+    recipeCount: "{{count}} recipes",
+    recipeCountLoaded: "{{loaded}} of {{total}} recipes",
     leaveCannotRemoveFavoritesTitle: "Cannot Leave Cookbook",
     leaveCannotRemoveFavorites: "Please remove this cookbook from your favorites before leaving.",
     leaveTransferOwnershipFirst:

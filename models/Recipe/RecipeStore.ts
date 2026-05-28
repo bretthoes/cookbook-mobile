@@ -5,9 +5,12 @@ import { RecipeDraftModel } from "./RecipeDraft"
 import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
 
 import { withSetPropAction } from "../helpers/withSetPropAction"
+import { RecipeListModel } from "../generics/PaginatedListTypes"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 
 export const WEEKLY_IMPORT_LIMIT = 5
+export const RECIPE_LIST_PAGE_SIZE = 50
+export const RECIPE_LIST_MAX_COUNT = 999
 
 /**
  * Returns an ISO date string for the Monday of the current week (e.g. "2026-03-23").
@@ -78,9 +81,19 @@ export type FetchState = (typeof FetchState)[keyof typeof FetchState]
 export const RecipeStoreModel = types
   .model("RecipeStore")
   .props({
-    recipes: types.array(RecipeBriefModel),
+    recipeList: types.optional(RecipeListModel, {
+      items: [],
+      pageNumber: 1,
+      totalPages: 1,
+      totalCount: 0,
+    }),
     listCookbookId: types.maybeNull(types.number),
+    listSearch: types.optional(types.string, ""),
     listFetchState: types.optional(
+      types.enumeration<FetchState>([FetchState.idle, FetchState.loading, FetchState.ready]),
+      FetchState.idle,
+    ),
+    listLoadMoreState: types.optional(
       types.enumeration<FetchState>([FetchState.idle, FetchState.loading, FetchState.ready]),
       FetchState.idle,
     ),
@@ -109,14 +122,33 @@ export const RecipeStoreModel = types
         selected: recipeSnapshot.id,
       }
     }
+    if (Array.isArray(snapshot.recipes) && !snapshot.recipeList) {
+      const { recipes, ...rest } = snapshot
+      return {
+        ...rest,
+        recipeList: {
+          items: recipes,
+          pageNumber: 1,
+          totalPages: 1,
+          totalCount: recipes.length,
+        },
+      }
+    }
     return snapshot
   })
   .actions(withSetPropAction)
   .actions((self) => ({
     clear() {
-      self.recipes.clear()
+      self.recipeList = RecipeListModel.create({
+        items: [],
+        pageNumber: 1,
+        totalPages: 1,
+        totalCount: 0,
+      })
       self.listCookbookId = null
+      self.listSearch = ""
       self.listFetchState = FetchState.idle
+      self.listLoadMoreState = FetchState.idle
     },
     create: flow(function* (recipeToAdd: RecipeToAddSnapshotIn) {
       const response = yield api.createRecipe(recipeToAdd)
@@ -139,9 +171,10 @@ export const RecipeStoreModel = types
         const newIdStr = String(response.recipeId)
         self.recipeCache.set(newIdStr, newRecipe)
         if (self.listCookbookId === recipeToAdd.cookbookId) {
-          self.recipes.push(
+          self.recipeList.items.push(
             RecipeBriefModel.create({ id: response.recipeId, title: recipeToAdd.title }),
           )
+          self.recipeList.setProp("totalCount", self.recipeList.totalCount + 1)
         }
         self.selected = newRecipe
         self.selectedRecipeId = response.recipeId
@@ -185,30 +218,99 @@ export const RecipeStoreModel = types
       }
       return false
     }),
-    fetch: flow(function* (cookbookId: number, search = "", pageNumber = 1, pageSize = 999) {
+    fetch: flow(function* (
+      cookbookId: number,
+      search = "",
+      pageNumber = 1,
+      pageSize = RECIPE_LIST_PAGE_SIZE,
+    ) {
+      const isFirstPage = pageNumber === 1
       const hasStaleList =
-        self.listCookbookId === cookbookId && self.recipes.length > 0
+        self.listCookbookId === cookbookId && self.recipeList.items.length > 0
 
       if (self.listCookbookId !== cookbookId) {
-        self.recipes.clear()
+        self.recipeList = RecipeListModel.create({
+          items: [],
+          pageNumber: 1,
+          totalPages: 1,
+          totalCount: 0,
+        })
         self.listCookbookId = cookbookId
+        self.listSearch = search
+      } else if (isFirstPage) {
+        self.listSearch = search
       }
-      if (!hasStaleList) {
+
+      if (isFirstPage && !hasStaleList) {
         self.listFetchState = FetchState.loading
       }
 
       const response = yield api.getRecipes(cookbookId, search, pageNumber, pageSize)
       if (response.kind === "ok") {
-        if (self.listCookbookId === cookbookId) {
-          self.recipes.replace(response.recipes.items)
+        if (self.listCookbookId !== cookbookId) return true
+
+        const cappedTotalCount = Math.min(response.recipes.totalCount, RECIPE_LIST_MAX_COUNT)
+
+        if (isFirstPage) {
+          self.recipeList = RecipeListModel.create({
+            ...response.recipes,
+            totalCount: cappedTotalCount,
+            items: response.recipes.items.slice(0, RECIPE_LIST_MAX_COUNT),
+          })
           self.listFetchState = FetchState.ready
+        } else {
+          const existingIds = new Set(self.recipeList.items.map((recipe) => recipe.id))
+          for (const item of response.recipes.items) {
+            if (self.recipeList.items.length >= RECIPE_LIST_MAX_COUNT) break
+            if (existingIds.has(item.id)) continue
+            self.recipeList.items.push(RecipeBriefModel.create(item))
+          }
+          self.recipeList.setProp("pageNumber", response.recipes.pageNumber)
+          self.recipeList.setProp("totalPages", response.recipes.totalPages)
+          self.recipeList.setProp("totalCount", cappedTotalCount)
         }
         return true
       }
       console.error(`Error fetching recipes: ${JSON.stringify(response)}`)
-      if (self.listCookbookId === cookbookId) {
+      if (self.listCookbookId === cookbookId && isFirstPage) {
         self.listFetchState = FetchState.ready
       }
+      return false
+    }),
+    fetchMore: flow(function* (cookbookId: number) {
+      if (self.listCookbookId !== cookbookId) return false
+      if (self.listLoadMoreState === FetchState.loading) return false
+      if (self.recipeList.items.length >= RECIPE_LIST_MAX_COUNT) return false
+      if (self.recipeList.pageNumber >= self.recipeList.totalPages) return false
+
+      self.listLoadMoreState = FetchState.loading
+      const nextPage = self.recipeList.pageNumber + 1
+      const response = yield api.getRecipes(
+        cookbookId,
+        self.listSearch,
+        nextPage,
+        RECIPE_LIST_PAGE_SIZE,
+      )
+
+      if (response.kind === "ok" && self.listCookbookId === cookbookId) {
+        const cappedTotalCount = Math.min(response.recipes.totalCount, RECIPE_LIST_MAX_COUNT)
+        const existingIds = new Set(self.recipeList.items.map((recipe) => recipe.id))
+        for (const item of response.recipes.items) {
+          if (self.recipeList.items.length >= RECIPE_LIST_MAX_COUNT) break
+          if (existingIds.has(item.id)) continue
+          self.recipeList.items.push(RecipeBriefModel.create(item))
+        }
+        self.recipeList.setProp("pageNumber", response.recipes.pageNumber)
+        self.recipeList.setProp("totalPages", response.recipes.totalPages)
+        self.recipeList.setProp("totalCount", cappedTotalCount)
+        self.listLoadMoreState = FetchState.ready
+        return true
+      }
+
+      if (response.kind !== "ok") {
+        console.error(`Error fetching more recipes: ${JSON.stringify(response)}`)
+      }
+      self.listLoadMoreState = FetchState.ready
       return false
     }),
     update: flow(function* (updatedRecipe: RecipeSnapshotIn) {
@@ -216,7 +318,7 @@ export const RecipeStoreModel = types
       if (response.kind === "ok") {
         if (self.selected) self.selected.update(updatedRecipe)
         else console.error(`Error updating recipe: ${JSON.stringify(response)}`)
-        const brief = self.recipes.find((recipe) => recipe.id === updatedRecipe.id)
+        const brief = self.recipeList.items.find((recipe) => recipe.id === updatedRecipe.id)
         brief?.update(updatedRecipe.title)
 
         return true
@@ -232,7 +334,8 @@ export const RecipeStoreModel = types
         const cached = self.recipeCache.get(String(recipeId))
         if (cached) destroy(cached)
         self.recipeCache.delete(String(recipeId))
-        self.recipes.replace(self.recipes.filter((r) => r.id !== recipeId))
+        self.recipeList.items.replace(self.recipeList.items.filter((r) => r.id !== recipeId))
+        self.recipeList.setProp("totalCount", Math.max(0, self.recipeList.totalCount - 1))
         self.selected = null
         self.selectedFetchState = FetchState.ready
         // Keep selectedRecipeId so detail screen can show not-found (matches prior behavior).
@@ -247,7 +350,7 @@ export const RecipeStoreModel = types
       self.selectedRecipeId = null
     },
     getById(id: number) {
-      return self.recipes.find((recipe) => recipe.id === id)
+      return self.recipeList.items.find((recipe) => recipe.id === id)
     },
     setRecipeToAdd(recipeToAddSnapshot: RecipeToAddSnapshotIn) {
       const recipeToAddInstance = RecipeToAddModel.create(recipeToAddSnapshot)
@@ -358,14 +461,26 @@ export const RecipeStoreModel = types
     },
   }))
   .views((self) => ({
+    get recipes() {
+      return self.recipeList.items
+    },
+    get listHasNextPage() {
+      return (
+        self.recipeList.pageNumber < self.recipeList.totalPages &&
+        self.recipeList.items.length < RECIPE_LIST_MAX_COUNT
+      )
+    },
+    get isLoadingMoreRecipes() {
+      return self.listLoadMoreState === FetchState.loading
+    },
     getDraftForCookbook(cookbookId: number) {
       return self.drafts.find((d) => d.cookbookId === cookbookId)
     },
     hasListForCookbook(cookbookId: number) {
-      return self.listCookbookId === cookbookId && self.recipes.length > 0
+      return self.listCookbookId === cookbookId && self.recipeList.items.length > 0
     },
     isListPendingForCookbook(cookbookId: number) {
-      if (self.listCookbookId === cookbookId && self.recipes.length > 0) return false
+      if (self.listCookbookId === cookbookId && self.recipeList.items.length > 0) return false
       if (self.listCookbookId !== cookbookId) return true
       return self.listFetchState !== FetchState.ready
     },
@@ -373,7 +488,7 @@ export const RecipeStoreModel = types
       return (
         self.listCookbookId === cookbookId &&
         self.listFetchState === FetchState.ready &&
-        self.recipes.length === 0
+        self.recipeList.items.length === 0
       )
     },
     hasCachedRecipe(recipeId: number) {

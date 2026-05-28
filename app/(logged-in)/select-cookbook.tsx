@@ -151,12 +151,12 @@ export default observer(function SelectCookbookScreen() {
     const fetchData = async () => {
       setIsLoading(true)
       try {
-        await cookbookStore.fetch()
+        await cookbookStore.fetchAll()
       } catch (error) {
         console.error(error)
       }
 
-      if (cookbookStore.cookbooks.length === 1) {
+      if (cookbookStore.cookbookList.totalCount === 1) {
         const singleCookbook = cookbookStore.cookbooks[0]
         cookbookStore.setSelectedById(singleCookbook.id)
         setAutoSelecting(true)

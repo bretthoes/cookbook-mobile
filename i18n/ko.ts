@@ -537,7 +537,8 @@ const ko: Translations = {
     leaveCookbook: "___Leave Cookbook",
     notFound: "___Cookbook not found",
     noRecipesEmpty: "___No recipes have been added yet.",
-    recipeCount: "___{{count}} recipes.",
+    recipeCount: "___{{count}} recipes",
+    recipeCountLoaded: "___{{loaded}} of {{total}} recipes",
     leaveCannotRemoveFavoritesTitle: "___Cannot Leave Cookbook",
     leaveCannotRemoveFavorites:
       "___Please remove this cookbook from your favorites before leaving.",
