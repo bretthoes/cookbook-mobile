@@ -21,7 +21,7 @@ import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useLayoutEffect, useMemo, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
@@ -64,8 +64,9 @@ export default observer(function Cookbook() {
 
   const [refreshing, setRefreshing] = useState(false)
   const [popoverVisible, setPopoverVisible] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const cookbookId = Number(id)
+  const isListPending = recipeStore.isListPendingForCookbook(cookbookId)
   const [selectedTags, setSelectedTags] = useState<Set<TagKey>>(new Set())
   const [filterExpanded, setFilterExpanded] = useState(false)
   //const debouncedSearchQuery = useDebounce(searchQuery)
@@ -92,7 +93,8 @@ export default observer(function Cookbook() {
   }, [])
 
   const q = searchQuery.trim().toLowerCase()
-  let filteredItems = recipeStore.recipes.slice()
+  const listForThisCookbook = recipeStore.listCookbookId === cookbookId
+  let filteredItems = listForThisCookbook ? recipeStore.recipes.slice() : []
   if (q) {
     filteredItems = filteredItems.filter((r) => r.title.toLowerCase().includes(q))
   }
@@ -207,27 +209,21 @@ export default observer(function Cookbook() {
     setRefreshing(false)
   }
 
-  // initially, kick off a background refresh without the refreshing UI
-  useEffect(() => {
+  // Stale-while-revalidate: keep list when revisiting same cookbook; refresh in background.
+  useLayoutEffect(() => {
     let alive = true
+    setSelectedById(cookbookId)
     ;(async () => {
-      setIsLoading(true)
-
-      // clear old list so UI doesn't show previous cookbook
-      recipeStore.clear()
-
-      setSelectedById(Number(id))
       await Promise.all([
-        recipeStore.fetch(Number(id)),
-        membershipStore.singleByCookbookId(Number(id)),
+        recipeStore.fetch(cookbookId),
+        membershipStore.singleByCookbookId(cookbookId),
       ])
-
-      if (alive) setIsLoading(false)
+      if (!alive) return
     })()
     return () => {
       alive = false
     }
-  }, [id, recipeStore, membershipStore, setSelectedById])
+  }, [cookbookId, recipeStore, membershipStore, setSelectedById])
 
   // re-fetch recipes when the search query changes
   // useEffect(() => {
@@ -267,7 +263,7 @@ export default observer(function Cookbook() {
         <FlatList<RecipeBrief>
           data={filteredItems}
           ListEmptyComponent={
-            isLoading ? (
+            isListPending ? (
               <ActivityIndicator />
             ) : (
               <EmptyState

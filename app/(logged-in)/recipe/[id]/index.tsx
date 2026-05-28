@@ -19,7 +19,7 @@ import { useAppTheme } from "@/theme/context"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
   ActivityIndicator,
@@ -33,15 +33,16 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default observer(function Recipe() {
   const {
+    recipeStore,
     recipeStore: { selected, delete: deleteRecipe, single },
     membershipStore: { ownMembership },
   } = useStores()
   const { id } = useLocalSearchParams<{ id: string }>()
+  const recipeId = Number(id)
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
   const printRecipe = usePrintRecipe()
-  const [isLoading, setIsLoading] = useState(false)
   const [popoverVisible, setPopoverVisible] = useState(false)
   const isRecipeAuthor =
     ownMembership?.email?.toLowerCase() === selected?.authorEmail?.toLowerCase() &&
@@ -81,14 +82,9 @@ export default observer(function Recipe() {
     }
   }, [cookMode])
 
-  useEffect(() => {
-    setIsLoading(true)
-    const fetchData = async () => {
-      await single(Number(id))
-    }
-    fetchData()
-    setIsLoading(false)
-  }, [id, single])
+  useLayoutEffect(() => {
+    void single(recipeId)
+  }, [recipeId, single])
 
   const handlePressEdit = useCallback(() => {
     router.push(`../recipe/${selected?.id}/edit`)
@@ -150,19 +146,22 @@ export default observer(function Recipe() {
     [canEdit, handlePressEdit, handlePressDelete, printRecipe, selected],
   )
 
-  if (!selected && !isLoading)
+  if (recipeStore.isRecipeNotFound(recipeId)) {
     return (
       <>
         <Divider size={spacing.xxxl} />
         <ItemNotFound messageTx="itemNotFound:recipe" />
       </>
     )
+  }
+
+  if (recipeStore.isRecipePending(recipeId)) {
+    return <ActivityIndicator />
+  }
 
   const popoverAnchorTop = insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
 
-  return isLoading ? (
-    <ActivityIndicator />
-  ) : (
+  return (
     <>
       <Popover
         visible={popoverVisible}
