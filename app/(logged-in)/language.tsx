@@ -10,7 +10,8 @@ import { ViewStyle } from "react-native"
 import type { SupportedLanguageCode } from "@/i18n/language"
 
 export default function LanguageScreen() {
-  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>(getActiveLanguageCode())
+  const [currentLanguage, setCurrentLanguage] =
+    useState<SupportedLanguageCode>(getActiveLanguageCode())
 
   useHeader({
     leftIcon: "back",

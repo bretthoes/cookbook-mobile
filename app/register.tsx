@@ -10,11 +10,7 @@ import { StepIndicator } from "@/components/StepIndicator"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
-import {
-  getActiveLanguageCode,
-  setAppLanguage,
-  type SupportedLanguageCode,
-} from "@/i18n/language"
+import { getActiveLanguageCode, setAppLanguage, type SupportedLanguageCode } from "@/i18n/language"
 import { useStores } from "@/models/helpers/useStores"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
@@ -49,7 +45,8 @@ export default observer(function Register() {
   const [isCooldown, setIsCooldown] = useState(false)
   const [cooldownTime, setCooldownTime] = useState(0)
   const [verificationEmail, setVerificationEmail] = useState("")
-  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguageCode>(getActiveLanguageCode())
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<SupportedLanguageCode>(getActiveLanguageCode())
 
   const {
     authenticationStore: {
@@ -272,11 +269,7 @@ export default observer(function Register() {
       {currentStep === 1 && (
         <>
           <FormCard>
-            <Text
-              tx="registerScreen:languageStepDescription"
-              preset="formHelper"
-              style={$hint}
-            />
+            <Text tx="registerScreen:languageStepDescription" preset="formHelper" style={$hint} />
             <LanguagePicker selectedCode={selectedLanguage} onSelect={handleLanguageSelect} />
           </FormCard>
           <View style={$content}>

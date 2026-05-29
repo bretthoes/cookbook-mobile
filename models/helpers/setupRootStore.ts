@@ -34,8 +34,11 @@ const ROOT_STATE_STORAGE_KEY = "root-v1"
  */
 function snapshotForPersistence(snapshot: RootStoreSnapshot): RootStoreSnapshot {
   if (!snapshot.authenticationStore) return snapshot
-  const { authToken: _authToken, authResult: _authResult, ...authenticationStore } =
-    snapshot.authenticationStore
+  const {
+    authToken: _authToken,
+    authResult: _authResult,
+    ...authenticationStore
+  } = snapshot.authenticationStore
   return {
     ...snapshot,
     authenticationStore: {

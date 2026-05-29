@@ -14,7 +14,9 @@ export type SupportedLanguageCode = (typeof SUPPORTED_LANGUAGES)[number]["code"]
 
 const supportedCodes = SUPPORTED_LANGUAGES.map((l) => l.code)
 
-export function normalizeLanguageCode(tag: string | undefined | null): SupportedLanguageCode | null {
+export function normalizeLanguageCode(
+  tag: string | undefined | null,
+): SupportedLanguageCode | null {
   if (!tag) return null
   const primary = tag.split("-")[0]
   return supportedCodes.includes(primary as SupportedLanguageCode)

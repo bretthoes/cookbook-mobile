@@ -57,7 +57,8 @@ const en = {
   registerScreen: {
     title: "Register",
     languageStepTitle: "Choose your language",
-    languageStepDescription: "Pick the language you want to use in the app. You can change this later in Profile.",
+    languageStepDescription:
+      "Pick the language you want to use in the app. You can change this later in Profile.",
     emailStepTitle: "What's your email?",
     emailFieldLabel: "Let's start with your email.",
     emailPlaceholder: "you@example.com",
@@ -633,7 +634,7 @@ const en = {
     addAnotherSection: "Add another section",
     ingredientSectionsInfoTitle: "Ingredient sections",
     ingredientSectionsInfoMessage:
-      "Many recipes have separate parts—like a sauce and a main—each with its own ingredients. Sections group ingredient lines under an optional heading (for example, \"For the sauce\" or \"Patties\") so it is clear what goes together.\n\nUse one section for a simple recipe, or add another section when you want distinct ingredient groups.",
+      'Many recipes have separate parts—like a sauce and a main—each with its own ingredients. Sections group ingredient lines under an optional heading (for example, "For the sauce" or "Patties") so it is clear what goes together.\n\nUse one section for a simple recipe, or add another section when you want distinct ingredient groups.',
     ingredientSectionsInfoA11y: "What are ingredient sections?",
     addAnotherDirection: "Add another direction",
     zeroPlaceholder: "0",
@@ -732,11 +733,13 @@ const en = {
     purchaseError: "Purchase failed. Please try again.",
     restoreError: "Could not restore purchases. Please try again.",
     restoreSuccess: "Purchases restored successfully!",
-    terms: "By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
+    terms:
+      "By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
     loadingOfferings: "Loading plans...",
     noOfferings: "Plans unavailable. Please check back later.",
     noOfferingsNotConfigured: "Subscriptions are not configured in this build.",
-    noOfferingsInvalidApiKey: "Subscription setup is invalid. Check the RevenueCat API key for this build.",
+    noOfferingsInvalidApiKey:
+      "Subscription setup is invalid. Check the RevenueCat API key for this build.",
     noOfferingsNotLoggedIn: "Sign in to view subscription plans.",
     noOfferingsNoUserId:
       "We could not identify your account for subscriptions. Try signing out and back in.",
@@ -746,7 +749,8 @@ const en = {
   },
   recipeAddOptionsScreen_weeklyLimitReached: {
     upgradeTitle: "Weekly Limit Reached",
-    upgradeMessage: "You've used all {{limit}} free imports this week. Upgrade to Pro for unlimited imports.",
+    upgradeMessage:
+      "You've used all {{limit}} free imports this week. Upgrade to Pro for unlimited imports.",
     upgradeButton: "Upgrade to Pro",
     laterButton: "Not Now",
   },

@@ -162,7 +162,11 @@ export default observer(function AddInvitationLinkScreen() {
           </View>
 
           {copied && (
-            <Text tx="invitationAddLinkScreen:linkCopied" preset="formHelper" style={$themedHelper} />
+            <Text
+              tx="invitationAddLinkScreen:linkCopied"
+              preset="formHelper"
+              style={$themedHelper}
+            />
           )}
           {!!linkMsg && <Text text={linkMsg} preset="formHelper" style={$themedHelper} />}
         </UseCase>

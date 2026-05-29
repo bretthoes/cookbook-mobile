@@ -638,7 +638,7 @@ const fr: Translations = {
     addAnotherSection: "___Add another section",
     ingredientSectionsInfoTitle: "___Ingredient sections",
     ingredientSectionsInfoMessage:
-      "___Many recipes have separate parts—like a sauce and a main—each with its own ingredients. Sections group ingredient lines under an optional heading (for example, \"For the sauce\" or \"Patties\") so it is clear what goes together.\n\nUse one section for a simple recipe, or add another section when you want distinct ingredient groups.",
+      '___Many recipes have separate parts—like a sauce and a main—each with its own ingredients. Sections group ingredient lines under an optional heading (for example, "For the sauce" or "Patties") so it is clear what goes together.\n\nUse one section for a simple recipe, or add another section when you want distinct ingredient groups.',
     ingredientSectionsInfoA11y: "___What are ingredient sections?",
     addAnotherDirection: "___Add another direction",
     zeroPlaceholder: "___0",
@@ -736,7 +736,8 @@ const fr: Translations = {
     purchaseError: "___Purchase failed. Please try again.",
     restoreError: "___Could not restore purchases. Please try again.",
     restoreSuccess: "___Purchases restored successfully!",
-    terms: "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
+    terms:
+      "___By subscribing, you agree to our Terms of Service. Subscriptions auto-renew unless cancelled.",
     loadingOfferings: "___Loading plans...",
     noOfferings: "___Plans unavailable. Please check back later.",
     noOfferingsNotConfigured: "___Subscriptions are not configured in this build.",

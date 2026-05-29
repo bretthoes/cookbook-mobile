@@ -34,7 +34,11 @@ export const RecipeListItem = observer(function RecipeListItem({
       onPress={onPress}
       CenterComponent={
         <View style={themed($nameRow)}>
-          <Text {...mergedTextProps} text={text} style={[mergedTextProps.style, themed($nameText)]} />
+          <Text
+            {...mergedTextProps}
+            text={text}
+            style={[mergedTextProps.style, themed($nameText)]}
+          />
           {isOwner ? (
             <Icon
               icon="crown"

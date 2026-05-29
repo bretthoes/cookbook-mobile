@@ -42,10 +42,7 @@ export default observer(function Cookbook() {
   // initially, kick off a background refresh without the refreshing UI
   useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([
-        membershipStore.fetch(id),
-        membershipStore.singleByCookbookId(id),
-      ])
+      await Promise.all([membershipStore.fetch(id), membershipStore.singleByCookbookId(id)])
     }
     setIsLoading(true)
     fetchData()
@@ -55,10 +52,7 @@ export default observer(function Cookbook() {
   useEffect(() => {
     setIsLoading(true)
     const reload = async () => {
-      await Promise.all([
-        membershipStore.fetch(id),
-        membershipStore.singleByCookbookId(id),
-      ])
+      await Promise.all([membershipStore.fetch(id), membershipStore.singleByCookbookId(id)])
     }
     reload()
     setIsLoading(false)
@@ -67,7 +61,11 @@ export default observer(function Cookbook() {
   // simulate a longer refresh, if the refresh is too fast for UX
   async function manualRefresh() {
     setRefreshing(true)
-    await Promise.all([membershipStore.fetch(id), membershipStore.singleByCookbookId(id), delay(750)])
+    await Promise.all([
+      membershipStore.fetch(id),
+      membershipStore.singleByCookbookId(id),
+      delay(750),
+    ])
     setRefreshing(false)
   }
 
@@ -116,8 +114,7 @@ export default observer(function Cookbook() {
         refreshing={refreshing}
         renderItem={({ item, index }) => {
           const isCurrentUser =
-            !!currentUserEmail &&
-            item.email?.toLowerCase() === currentUserEmail.toLowerCase()
+            !!currentUserEmail && item.email?.toLowerCase() === currentUserEmail.toLowerCase()
           return (
             <View
               style={[

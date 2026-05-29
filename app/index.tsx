@@ -46,7 +46,8 @@ export default observer(function WelcomeScreen() {
   const $themedLanguageSection = useMemo(() => themed($languageSection), [themed])
 
   const [showLanguagePicker, setShowLanguagePicker] = useState(false)
-  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguageCode>(getActiveLanguageCode())
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<SupportedLanguageCode>(getActiveLanguageCode())
 
   useEffect(() => {
     getStoredLanguageCode().then((stored) => {

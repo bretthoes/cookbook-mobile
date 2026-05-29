@@ -63,14 +63,14 @@ Fix: <single concrete fix>
 
 ## Project constants
 
-| Item | Value |
-| ---- | ----- |
-| Bundle ID | `com.cookbookmobile` |
-| ASC App ID | `6771159239` |
-| TestFlight | https://appstoreconnect.apple.com/apps/6771159239/testflight/ios |
-| Build profile | `production` |
-| Submit profile | `production` |
-| Prod API | `config/config.prod.ts` → must not contain `CHANGEME` |
+| Item           | Value                                                            |
+| -------------- | ---------------------------------------------------------------- |
+| Bundle ID      | `com.cookbookmobile`                                             |
+| ASC App ID     | `6771159239`                                                     |
+| TestFlight     | https://appstoreconnect.apple.com/apps/6771159239/testflight/ios |
+| Build profile  | `production`                                                     |
+| Submit profile | `production`                                                     |
+| Prod API       | `config/config.prod.ts` → must not contain `CHANGEME`            |
 
 Submit is preconfigured: `ascAppId` in `eas.json`; ASC API key on EAS (`[Expo] EAS Submit`).
 
@@ -80,13 +80,13 @@ Submit is preconfigured: `ascAppId` in `eas.json`; ASC API key on EAS (`[Expo] E
 
 ## Troubleshooting (only if deploy fails)
 
-| Symptom | Fix |
-| ------- | --- |
+| Symptom                   | Fix                                                |
+| ------------------------- | -------------------------------------------------- |
 | `CHANGEME` in prod config | Set `API_URL` in `config/config.prod.ts`, redeploy |
-| Not logged in to EAS | User runs `eas login` locally, then redeploy |
-| Signing / credentials | `eas credentials` → iOS → production |
-| Submit agreement errors | App Store Connect → Agreements, Tax, and Banking |
-| Empty bundle ID in ASC | Register `com.cookbookmobile` in Apple Developer |
+| Not logged in to EAS      | User runs `eas login` locally, then redeploy       |
+| Signing / credentials     | `eas credentials` → iOS → production               |
+| Submit agreement errors   | App Store Connect → Agreements, Tax, and Banking   |
+| Empty bundle ID in ASC    | Register `com.cookbookmobile` in Apple Developer   |
 
 ## What this skill does not do
 

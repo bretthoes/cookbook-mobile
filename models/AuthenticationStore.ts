@@ -18,7 +18,10 @@ function syncRevenueCatAppUserId(store: SessionTokenStore & { authEmail: string 
   }
 }
 
-function* writeSessionTokens(store: SessionTokenStore & { authEmail: string }, authResult: AuthResultSnapshotIn) {
+function* writeSessionTokens(
+  store: SessionTokenStore & { authEmail: string },
+  authResult: AuthResultSnapshotIn,
+) {
   bumpAuthSession()
   setAccessToken(authResult.accessToken)
   store.setProp("authResult", AuthResultModel.create(authResult))

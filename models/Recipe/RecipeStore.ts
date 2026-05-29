@@ -225,8 +225,7 @@ export const RecipeStoreModel = types
       pageSize = RECIPE_LIST_PAGE_SIZE,
     ) {
       const isFirstPage = pageNumber === 1
-      const hasStaleList =
-        self.listCookbookId === cookbookId && self.recipeList.items.length > 0
+      const hasStaleList = self.listCookbookId === cookbookId && self.recipeList.items.length > 0
 
       if (self.listCookbookId !== cookbookId) {
         self.recipeList = RecipeListModel.create({

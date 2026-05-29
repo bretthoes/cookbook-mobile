@@ -93,7 +93,9 @@ export default observer(function PaywallScreen() {
     const plans: PlanOption[] = result.plans.map((plan) => ({
       id: plan.packageIdentifier,
       period: plan.period,
-      title: t(plan.period === "monthly" ? "paywallScreen:monthlyLabel" : "paywallScreen:annualLabel"),
+      title: t(
+        plan.period === "monthly" ? "paywallScreen:monthlyLabel" : "paywallScreen:annualLabel",
+      ),
       price: plan.priceString,
       savingsPercent:
         plan.period === "annual" && monthlyPlan
@@ -144,7 +146,14 @@ export default observer(function PaywallScreen() {
     } finally {
       setIsPurchasing(false)
     }
-  }, [selectedPlan, isPurchasing, resolveAppUserId, finishPaywall, t, authenticationStore.isAuthenticated])
+  }, [
+    selectedPlan,
+    isPurchasing,
+    resolveAppUserId,
+    finishPaywall,
+    t,
+    authenticationStore.isAuthenticated,
+  ])
 
   const handleRestore = useCallback(async () => {
     if (isRestoring) return
@@ -162,16 +171,21 @@ export default observer(function PaywallScreen() {
       const customerInfo = await Purchases.restorePurchases()
       const isNowPro = hasProEntitlement(customerInfo)
       subscriptionStore.setProp("isPro", isNowPro)
-      Alert.alert(
-        isNowPro ? t("paywallScreen:alreadyPro") : t("paywallScreen:restoreSuccess"),
-      )
+      Alert.alert(isNowPro ? t("paywallScreen:alreadyPro") : t("paywallScreen:restoreSuccess"))
       if (isNowPro) await finishPaywall()
     } catch {
       Alert.alert(t("paywallScreen:restoreError"))
     } finally {
       setIsRestoring(false)
     }
-  }, [isRestoring, resolveAppUserId, subscriptionStore, finishPaywall, t, authenticationStore.isAuthenticated])
+  }, [
+    isRestoring,
+    resolveAppUserId,
+    subscriptionStore,
+    finishPaywall,
+    t,
+    authenticationStore.isAuthenticated,
+  ])
 
   const $themedContainer = useMemo(() => themed($container), [themed])
   const $themedHeroSection = useMemo(() => themed($heroSection), [themed])
@@ -207,12 +221,12 @@ export default observer(function PaywallScreen() {
                 : offeringsError === "invalid_api_key"
                   ? "paywallScreen:noOfferingsInvalidApiKey"
                   : offeringsError === "not_logged_in"
-                  ? "paywallScreen:noOfferingsNotLoggedIn"
-                  : offeringsError === "no_user_id"
-                    ? "paywallScreen:noOfferingsNoUserId"
-                    : offeringsError === "no_offering" || offeringsError === "no_packages"
-                      ? "paywallScreen:noOfferingsDashboard"
-                      : "paywallScreen:noOfferings"
+                    ? "paywallScreen:noOfferingsNotLoggedIn"
+                    : offeringsError === "no_user_id"
+                      ? "paywallScreen:noOfferingsNoUserId"
+                      : offeringsError === "no_offering" || offeringsError === "no_packages"
+                        ? "paywallScreen:noOfferingsDashboard"
+                        : "paywallScreen:noOfferings"
             }
             style={themed($noOfferings)}
           />
@@ -266,9 +280,7 @@ function FeatureRow({ icon, txKey, accentColor }: FeatureRowProps) {
   const { themed } = useAppTheme()
   return (
     <View style={[themed($featureRow), !icon && themed($featureRowTextOnly)]}>
-      {icon && accentColor ? (
-        <Icon icon={icon as any} size={20} color={accentColor} />
-      ) : null}
+      {icon && accentColor ? <Icon icon={icon as any} size={20} color={accentColor} /> : null}
       <Text tx={txKey as any} style={themed($featureText)} />
     </View>
   )
@@ -305,7 +317,10 @@ function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
   )
 }
 
-function computeAnnualSavingsPercent(monthlyPrice: string, annualPrice: string): number | undefined {
+function computeAnnualSavingsPercent(
+  monthlyPrice: string,
+  annualPrice: string,
+): number | undefined {
   const monthly = parsePriceAmount(monthlyPrice)
   const annual = parsePriceAmount(annualPrice)
   if (monthly === null || annual === null) return undefined

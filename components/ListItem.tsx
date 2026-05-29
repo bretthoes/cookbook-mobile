@@ -158,7 +158,13 @@ export const ListItem = forwardRef<View, ListItemProps>(function ListItem(
         />
 
         {CenterComponent ?? (
-          <Text {...TextProps} tx={tx} text={text} txOptions={txOptions} style={themed($textStyles)}>
+          <Text
+            {...TextProps}
+            tx={tx}
+            text={text}
+            txOptions={txOptions}
+            style={themed($textStyles)}
+          >
             {children}
           </Text>
         )}

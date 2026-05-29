@@ -12,10 +12,7 @@ import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import {
-  isRevenueCatConfigured,
-  presentCustomerCenter,
-} from "@/services/subscription/revenueCat"
+import { isRevenueCatConfigured, presentCustomerCenter } from "@/services/subscription/revenueCat"
 import { openLinkInBrowser } from "@/utils/openLinkInBrowser"
 import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 import AsyncStorage from "@react-native-async-storage/async-storage"

@@ -131,11 +131,7 @@ export default observer(function AddCookbookScreen() {
           </View>
         )}
 
-        <Button
-          tx="cookbookAddScreen:addCoverPhoto"
-          onPress={pickImage}
-          disabled={isUploading}
-        />
+        <Button tx="cookbookAddScreen:addCoverPhoto" onPress={pickImage} disabled={isUploading} />
 
         {isUploading && <ActivityIndicator style={$uploadIndicator} />}
 
