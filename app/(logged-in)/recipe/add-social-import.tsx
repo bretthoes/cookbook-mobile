@@ -2,11 +2,10 @@ import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
-import { translate } from "@/i18n"
+import { translate, TxKeyPath } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
@@ -22,25 +21,23 @@ const isValidUrl = (input: string) => {
   return regex.test(input)
 }
 
-const PLATFORM_TITLES: Record<Platform, string> = {
+const PLATFORM_TITLES: Record<Platform, TxKeyPath> = {
   tiktok: "recipeAddSocialImportScreen:titleTiktok",
   instagram: "recipeAddSocialImportScreen:titleInstagram",
   pinterest: "recipeAddSocialImportScreen:titlePinterest",
 }
 
-const PLATFORM_SUBTITLES: Record<Platform, string> = {
+const PLATFORM_SUBTITLES: Record<Platform, TxKeyPath> = {
   tiktok: "recipeAddSocialImportScreen:subtitleTiktok",
   instagram: "recipeAddSocialImportScreen:subtitleInstagram",
   pinterest: "recipeAddSocialImportScreen:subtitlePinterest",
 }
 
-const PLATFORM_PLACEHOLDERS: Record<Platform, string> = {
+const PLATFORM_PLACEHOLDERS: Record<Platform, TxKeyPath> = {
   tiktok: "recipeAddSocialImportScreen:urlPlaceholderTiktok",
   instagram: "recipeAddSocialImportScreen:urlPlaceholderInstagram",
   pinterest: "recipeAddSocialImportScreen:urlPlaceholderPinterest",
 }
-
-const MINIMUM_LOADING_TIME_MS = 1500
 
 export default observer(function AddSocialImportScreen() {
   const { platform: rawPlatform } = useLocalSearchParams<{ platform: string }>()
@@ -48,7 +45,6 @@ export default observer(function AddSocialImportScreen() {
   const { t } = useTranslation()
 
   const { recipeStore } = useStores()
-  const { setRecipeToAdd } = recipeStore
   const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
@@ -81,33 +77,23 @@ export default observer(function AddSocialImportScreen() {
       if (error) return
 
       setIsLoading(true)
-      const startTime = Date.now()
-
-      const response = await api.extractRecipeFromSocialUrl(url)
-
-      const elapsed = Date.now() - startTime
-      if (elapsed < MINIMUM_LOADING_TIME_MS) {
-        await new Promise((resolve) => setTimeout(resolve, MINIMUM_LOADING_TIME_MS - elapsed))
-      }
-
+      const importResult = await recipeStore.importFromSocialUrl(url)
       setIsLoading(false)
 
-      if (response.kind === "ok") {
-        recipeStore.incrementImportCount()
-        setRecipeToAdd(response.recipe)
-        router.replace("../recipe/add")
-      } else if (response.kind === "rate-limited") {
+      if (importResult.ok) {
+        router.replace("/(logged-in)/recipe/add")
+      } else if (importResult.kind === "rate-limited") {
         setResult(t("recipeAddSocialImportScreen:rateLimited"))
       } else {
         setResult(t("recipeAddSocialImportScreen:extractFailed"))
       }
       setIsSubmitted(false)
     })
-  }, [url, getValidationError, recipeStore, setRecipeToAdd, run, t])
+  }, [url, getValidationError, recipeStore, run, t])
 
   useHeader(
     {
-      titleTx: PLATFORM_TITLES[platform] as never,
+      titleTx: PLATFORM_TITLES[platform],
       onLeftPress: () => router.back(),
       leftIcon: "back",
       onRightPress: isInFlight ? undefined : handleNext,
@@ -122,8 +108,8 @@ export default observer(function AddSocialImportScreen() {
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text tx={PLATFORM_SUBTITLES[platform] as never} style={{ paddingHorizontal: spacing.md }} />
-      <UseCase>
+      <Text tx={PLATFORM_SUBTITLES[platform]} style={{ paddingHorizontal: spacing.md }} />
+      <FormCard>
         <TextField
           value={url}
           onChangeText={(text) => {
@@ -135,12 +121,12 @@ export default observer(function AddSocialImportScreen() {
           autoCorrect={false}
           keyboardType="url"
           labelTx="recipeAddSocialImportScreen:urlLabel"
-          placeholderTx={PLATFORM_PLACEHOLDERS[platform] as never}
+          placeholderTx={PLATFORM_PLACEHOLDERS[platform]}
           helper={validationError}
           status={validationError ? "error" : undefined}
         />
         {result ? <Text text={result} preset="formHelper" /> : null}
-      </UseCase>
+      </FormCard>
     </Screen>
   )
 })

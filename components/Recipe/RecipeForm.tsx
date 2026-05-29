@@ -4,7 +4,8 @@ import { Divider } from "@/components/Divider"
 import { PressableIcon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { IngredientSectionEditor } from "@/components/Recipe/IngredientSectionEditor"
+import { SectionCard } from "@/components/SectionCard"
 import {
   getRecipeTagChipColor,
   RECIPE_TAG_CHIP_TEXT_COLOR,
@@ -16,7 +17,7 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
-import { MAX_INGREDIENT_SECTIONS, MAX_INGREDIENTS_TOTAL } from "@/utils/recipeIngredientSections"
+import { MAX_INGREDIENT_SECTIONS } from "@/utils/recipeIngredientSections"
 import { recipeSchema } from "@/validators/recipeSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import { Ionicons } from "@expo/vector-icons"
@@ -25,7 +26,6 @@ import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { useCallback, useState } from "react"
-import type { Control, FieldErrors } from "react-hook-form"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import {
   ActivityIndicator,
@@ -61,117 +61,6 @@ const parseNullableInteger = (value: string): number | null => {
 
   const parsed = Number.parseInt(trimmed, 10)
   return Number.isNaN(parsed) ? null : parsed
-}
-
-type IngredientSectionEditorProps = {
-  control: Control<RecipeFormInputs>
-  sectionIndex: number
-  errors: FieldErrors<RecipeFormInputs>
-  themedDirectionItemContainer: ViewStyle
-  themedDirectionIndex: TextStyle
-  themedTextFieldContainer: ViewStyle
-  themedButtonHeightOverride: ViewStyle
-  errorTextStyle: TextStyle
-  onRemoveSection: () => void
-  canRemoveSection: boolean
-  totalIngredientSlots: number
-}
-
-function IngredientSectionEditor(props: IngredientSectionEditorProps) {
-  const {
-    control,
-    sectionIndex,
-    errors,
-    themedDirectionItemContainer,
-    themedDirectionIndex,
-    themedTextFieldContainer,
-    themedButtonHeightOverride,
-    errorTextStyle,
-    onRemoveSection,
-    canRemoveSection,
-    totalIngredientSlots,
-  } = props
-
-  const {
-    fields: lineFields,
-    append: appendLine,
-    remove: removeLine,
-  } = useFieldArray({
-    control,
-    name: `ingredientSections.${sectionIndex}.ingredients`,
-  })
-
-  return (
-    <View style={{ marginBottom: spacing.md }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
-        <View style={{ flex: 1 }}>
-          <Controller
-            control={control}
-            name={`ingredientSections.${sectionIndex}.title`}
-            render={({ field }) => (
-              <TextField
-                value={field.value}
-                onChangeText={field.onChange}
-                placeholderTx="recipeFormScreen:ingredientSectionTitlePlaceholder"
-                labelTx="recipeFormScreen:ingredientSectionTitleLabel"
-                status="error"
-                helper={errors.ingredientSections?.[sectionIndex]?.title?.message ?? ""}
-                maxLength={255}
-              />
-            )}
-          />
-        </View>
-        {canRemoveSection && (
-          <View style={{ marginTop: spacing.lg }}>
-            <PressableIcon icon="x" onPress={onRemoveSection} />
-          </View>
-        )}
-      </View>
-      <Divider size={spacing.sm} />
-      {lineFields.map((item, index) => (
-        <View key={item.id || String(index)}>
-          {index > 0 && <Divider size={spacing.sm} />}
-          <View style={themedDirectionItemContainer}>
-            <Text text="-" style={themedDirectionIndex} />
-            <Controller
-              control={control}
-              name={`ingredientSections.${sectionIndex}.ingredients.${index}.name`}
-              render={({ field }) => (
-                <TextField
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  placeholderTx="recipeFormScreen:ingredientPlaceholder"
-                  containerStyle={themedTextFieldContainer}
-                  status="error"
-                  helper={
-                    errors.ingredientSections?.[sectionIndex]?.ingredients?.[index]?.name
-                      ?.message ?? ""
-                  }
-                  maxLength={255}
-                  RightAccessory={() => (
-                    <PressableIcon icon="x" onPress={() => removeLine(index)} />
-                  )}
-                />
-              )}
-            />
-          </View>
-          {errors.ingredientSections?.[sectionIndex]?.ingredients?.[index]?.name?.message && (
-            <Text
-              text={errors.ingredientSections[sectionIndex].ingredients![index]!.name!.message!}
-              style={[errorTextStyle, { marginLeft: spacing.xl }]}
-            />
-          )}
-        </View>
-      ))}
-      <Divider size={spacing.md} />
-      <Button
-        tx="recipeFormScreen:addAnotherIngredient"
-        onPress={() => appendLine({ name: "", optional: false })}
-        style={themedButtonHeightOverride}
-        disabled={totalIngredientSlots >= MAX_INGREDIENTS_TOTAL}
-      />
-    </View>
-  )
 }
 
 export interface RecipeFormInputs {
@@ -394,7 +283,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
 
   return (
     <View>
-      <UseCase
+      <SectionCard
         description={
           isEdit
             ? translate("recipeFormScreen:descriptionEdit")
@@ -721,7 +610,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
         </View>
 
         {isInFlight && <ActivityIndicator />}
-      </UseCase>
+      </SectionCard>
     </View>
   )
 })

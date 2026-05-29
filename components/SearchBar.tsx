@@ -1,6 +1,5 @@
 import { translate } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
-import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
 import * as React from "react"
@@ -21,24 +20,21 @@ export interface SearchBarProps {
  */
 export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
   const { value, onChangeText, placeholder, leftIcon, leftIconColor, onLeftIconPress } = props
-  const { themed } = useAppTheme()
-
-  const $themedRoot = React.useMemo(() => themed($root), [themed])
-  const $themedSearchBar = React.useMemo(() => themed($searchBar), [themed])
+  const { themed, theme } = useAppTheme()
 
   return (
-    <View style={$themedRoot}>
-      <Icon icon="search" size={20} color={colors.textDim} containerStyle={$leftIcon} />
+    <View style={themed($root)}>
+      <Icon icon="search" size={20} color={theme.colors.textDim} containerStyle={$leftIcon} />
       <TextInput
-        style={$themedSearchBar}
+        style={themed($searchBar)}
         placeholder={placeholder ?? translate("recipeListScreen:searchPlaceholder")}
         value={value}
         onChangeText={onChangeText}
-        placeholderTextColor={colors.border}
+        placeholderTextColor={theme.colors.border}
       />
       {leftIcon && (
         <TouchableOpacity onPress={onLeftIconPress} disabled={!onLeftIconPress}>
-          <Icon icon={leftIcon} size={20} color={leftIconColor ?? colors.textDim} />
+          <Icon icon={leftIcon} size={20} color={leftIconColor ?? theme.colors.textDim} />
         </TouchableOpacity>
       )}
     </View>

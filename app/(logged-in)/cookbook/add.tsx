@@ -4,12 +4,11 @@ import { Divider } from "@/components/Divider"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { CookbookToAddSnapshotIn } from "@/models/Cookbook"
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { cookbookSchema } from "@/validators/cookbookSchema"
@@ -28,7 +27,7 @@ interface CookbookFormInputs {
 
 export default observer(function AddCookbookScreen() {
   const {
-    cookbookStore: { create },
+    cookbookStore: { create, uploadCookbookCover },
   } = useStores()
   const { isInFlight, run } = useInFlightAction()
 
@@ -67,9 +66,9 @@ export default observer(function AddCookbookScreen() {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setImageLocal(result.assets[0]?.uri ?? null)
-        const uploadResponse = await api.uploadImage(result.assets)
-        if (uploadResponse.kind === "ok" && uploadResponse.keys.length > 0) {
-          setValue("image", uploadResponse.keys.at(-1) ?? "")
+        const uploadResponse = await uploadCookbookCover(result.assets)
+        if (uploadResponse.ok) {
+          setValue("image", uploadResponse.key)
         } else {
           setImageLocal(null)
           setValue("image", null)
@@ -124,7 +123,7 @@ export default observer(function AddCookbookScreen() {
   return (
     <Screen preset="scroll" contentContainerStyle={$root}>
       <Text tx="cookbookAddScreen:subtitle" />
-      <UseCase>
+      <FormCard>
         {imageLocal && (
           <View style={$imagePreviewContainer}>
             <AutoImage source={{ uri: imageLocal }} style={$imagePreview} />
@@ -154,7 +153,7 @@ export default observer(function AddCookbookScreen() {
             />
           )}
         />
-      </UseCase>
+      </FormCard>
     </Screen>
   )
 })

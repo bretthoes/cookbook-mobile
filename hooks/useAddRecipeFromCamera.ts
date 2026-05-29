@@ -1,5 +1,4 @@
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import { translate } from "@/i18n"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import * as ImagePicker from "expo-image-picker"
@@ -13,8 +12,19 @@ import { useCallback } from "react"
  */
 export function useAddRecipeFromCamera() {
   const { recipeStore } = useStores()
-  const { setRecipeToAdd, incrementImportCount } = recipeStore
   const { showActionSheetWithOptions } = useActionSheet()
+
+  const processPickedAsset = useCallback(
+    async (asset: ImagePicker.ImagePickerAsset) => {
+      const importResult = await recipeStore.importFromImage(asset)
+      if (importResult.ok) {
+        router.replace("/(logged-in)/recipe/add")
+      } else {
+        alert(translate("selectCookbookScreen:imageParsingFailed"))
+      }
+    },
+    [recipeStore],
+  )
 
   return useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -37,14 +47,7 @@ export function useAddRecipeFromCamera() {
           mediaTypes: ["images"],
         })
         if (!result.canceled && result.assets?.length) {
-          const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-          if (uploadResponse.kind === "ok") {
-            incrementImportCount()
-            setRecipeToAdd(uploadResponse.recipe)
-            router.replace("/(logged-in)/recipe/add")
-          } else {
-            alert(translate("selectCookbookScreen:imageParsingFailed"))
-          }
+          await processPickedAsset(result.assets[0])
         }
       } else if (buttonIndex === 1) {
         const result = await ImagePicker.launchImageLibraryAsync({
@@ -53,16 +56,9 @@ export function useAddRecipeFromCamera() {
           allowsEditing: true,
         })
         if (!result.canceled && result.assets?.length) {
-          const uploadResponse = await api.extractRecipeFromImage(result.assets[0])
-          if (uploadResponse.kind === "ok") {
-            incrementImportCount()
-            setRecipeToAdd(uploadResponse.recipe)
-            router.replace("/(logged-in)/recipe/add")
-          } else {
-            alert(translate("selectCookbookScreen:imageParsingFailed"))
-          }
+          await processPickedAsset(result.assets[0])
         }
       }
     })
-  }, [showActionSheetWithOptions, setRecipeToAdd, incrementImportCount])
+  }, [showActionSheetWithOptions, processPickedAsset])
 }

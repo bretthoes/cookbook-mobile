@@ -5,7 +5,7 @@ import { ListItem } from "@/components/ListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
-import { UseCase } from "@/components/UseCase"
+import { SectionCard } from "@/components/SectionCard"
 import Config from "@/config"
 import { isRTL, translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
@@ -103,7 +103,7 @@ export default observer(function ProfileScreen() {
         <Text preset="heading" tx="profileScreen:title" />
         {email && <Text preset="default" text={email} />}
       </View>
-      <UseCase tx="profileScreen:actions">
+      <SectionCard headingTx="profileScreen:actions">
         <Text tx="profileScreen:manageInfo" style={$description} />
         <ListItem
           tx="profileScreen:pendingInvites"
@@ -173,8 +173,8 @@ export default observer(function ProfileScreen() {
             onPress={handleSubscriptionPress}
           />
         )}
-      </UseCase>
-      <UseCase tx="profileScreen:preferences">
+      </SectionCard>
+      <SectionCard headingTx="profileScreen:preferences">
         <Text tx="profileScreen:customize" style={$description} />
         <ListItem
           tx="profileScreen:darkMode"
@@ -220,12 +220,12 @@ export default observer(function ProfileScreen() {
           rightIconColor={isDark ? colors.border : colors.text}
           bottomSeparator
         />
-      </UseCase>
+      </SectionCard>
       <View style={$buttonContainer}>
         <Button style={$button} tx="common:logOut" onPress={logout} />
       </View>
       {__DEV__ && (
-        <UseCase tx="demoDebugScreen:title">
+        <SectionCard headingTx="demoDebugScreen:title">
           <ListItem
             LeftComponent={
               <View>
@@ -275,7 +275,7 @@ export default observer(function ProfileScreen() {
               </View>
             }
           />
-        </UseCase>
+        </SectionCard>
       )}
     </Screen>
   )

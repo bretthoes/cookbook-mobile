@@ -7,7 +7,7 @@ import { observer } from "mobx-react-lite"
 import React from "react"
 import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
-import { UseCase } from "../UseCase"
+import { SectionCard } from "@/components/SectionCard"
 import {
   getRecipeTagChipColor,
   RECIPE_TAG_CHIP_TEXT_COLOR,
@@ -228,7 +228,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       )}
 
       {!!recipe.summary && (
-        <UseCase tx="recipeDetailsScreen:summary">
+        <SectionCard headingTx="recipeDetailsScreen:summary">
           <Text preset="default" text={displaySummary} />
           {shouldTruncate && (
             <Text
@@ -238,7 +238,7 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
               style={{ marginTop: spacing.sm, alignSelf: "flex-end" }}
             />
           )}
-        </UseCase>
+        </SectionCard>
       )}
     </View>
   )

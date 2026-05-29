@@ -3,7 +3,6 @@ import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
@@ -27,7 +26,6 @@ export default observer(function AddRecipeVoiceScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const { recipeStore } = useStores()
-  const { setRecipeToAdd } = recipeStore
 
   const [phase, setPhase] = useState<Phase>("idle")
   const [displayTranscript, setDisplayTranscript] = useState("")
@@ -93,11 +91,9 @@ export default observer(function AddRecipeVoiceScreen() {
     }
 
     updatePhase("processing")
-    const result = await api.extractRecipeFromVoice(text)
+    const result = await recipeStore.importFromVoice(text)
 
-    if (result.kind === "ok") {
-      recipeStore.incrementImportCount()
-      setRecipeToAdd(result.recipe)
+    if (result.ok) {
       router.replace("/(logged-in)/recipe/add")
     } else if (result.kind === "rate-limited") {
       setErrorMsg(t("recipeAddVoiceScreen:rateLimited"))
@@ -106,7 +102,7 @@ export default observer(function AddRecipeVoiceScreen() {
       setErrorMsg(t("recipeAddVoiceScreen:parseFailed"))
       updatePhase("idle")
     }
-  }, [t, recipeStore, updatePhase, setRecipeToAdd])
+  }, [t, recipeStore, updatePhase])
 
   useSpeechRecognitionEvent("result", (event) => {
     const segment = event.results[0]?.transcript ?? ""

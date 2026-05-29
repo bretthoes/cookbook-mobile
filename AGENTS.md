@@ -15,7 +15,16 @@ Expo (dev client) + React Native app using **expo-router** file-based routing. T
 ## Prerequisites
 
 - **Node.js** >= 20 (`package.json` `engines`).
-- **pnpm** — repo uses `packageManager: pnpm@9.x` and `pnpm-lock.yaml`; prefer pnpm over npm for installs.
+- **pnpm** — repo uses `packageManager: pnpm@11.x` and `pnpm-lock.yaml`; prefer pnpm over npm for installs.
+
+## CI
+
+GitHub Actions (`.github/workflows/ci.yml`) on push/PR to `master` and `dev`:
+
+- GitVersion (`.github/GitVersion.yml`, same branching rules as SharedCookbook)
+- `pnpm test` (Vitest, includes unit tests), `pnpm run lint`, `pnpm run check:i18n` (locale key parity)
+
+No EAS/release step in CI; store builds stay manual via EAS.
 
 ## RevenueCat (subscriptions)
 
@@ -64,10 +73,12 @@ This reads `../SharedCookbook/src/Web/wwwroot/api/specification.json` and writes
 
 After regeneration, update `services/api/wrappers/*.ts` and `services/api/index.ts` if new endpoints need app-facing methods.
 
-## Lint and format
+## Lint, test, and format
 
 ```bash
+pnpm test
 pnpm run lint
+pnpm run check:i18n
 pnpm run format:check
 ```
 

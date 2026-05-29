@@ -1,5 +1,5 @@
 import { ListItem } from "@/components/ListItem"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import {
   getActiveLanguageCode,
   SUPPORTED_LANGUAGES,
@@ -15,7 +15,7 @@ export function LanguagePicker({ selectedCode, onSelect }: LanguagePickerProps) 
   const active = selectedCode ?? getActiveLanguageCode()
 
   return (
-    <UseCase>
+    <FormCard>
       {SUPPORTED_LANGUAGES.map((language) => (
         <ListItem
           key={language.code}
@@ -26,6 +26,6 @@ export function LanguagePicker({ selectedCode, onSelect }: LanguagePickerProps) 
           rightIcon={active === language.code ? "check" : undefined}
         />
       ))}
-    </UseCase>
+    </FormCard>
   )
 }

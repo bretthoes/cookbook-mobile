@@ -2,7 +2,7 @@ import { Button } from "@/components/Button"
 import { PressableIcon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { UseCase } from "@/components/UseCase"
+import { SectionCard } from "@/components/SectionCard"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
@@ -117,7 +117,7 @@ export default observer(function AddInvitationLinkScreen() {
       />
 
       <View style={$themedSection}>
-        <UseCase>
+        <SectionCard>
           <View style={$themedLinkHeader}>
             <Text tx="invitationAddLinkScreen:inviteLinkLabel" preset="formLabel" />
             {!!inviteUrl && !isMinting && (
@@ -169,7 +169,7 @@ export default observer(function AddInvitationLinkScreen() {
             />
           )}
           {!!linkMsg && <Text text={linkMsg} preset="formHelper" style={$themedHelper} />}
-        </UseCase>
+        </SectionCard>
       </View>
     </Screen>
   )

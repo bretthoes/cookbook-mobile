@@ -205,7 +205,7 @@ export default observer(function AddRecipeScreen() {
         if (success) {
           submittedSuccessfullyRef.current = true
           deleteDraft(selectedCookbook.id)
-          router.replace(`../../cookbook/${selectedCookbook.id}`)
+          router.replace(`/(logged-in)/cookbook/${selectedCookbook.id}`)
         } else {
           // Save draft when create returns false (non-throwing failure)
           saveDraft(selectedCookbook.id, formData)

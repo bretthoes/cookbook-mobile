@@ -5,8 +5,9 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import type { TxKeyPath } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { router } from "expo-router"
 import * as SecureStore from "expo-secure-store"
@@ -126,7 +127,7 @@ export default observer(function Login(_props) {
         <Text tx="loginScreen:enterDetails" preset="subheading" style={$enterDetails} />
       </View>
 
-      <UseCase>
+      <FormCard>
         <TextField
           value={authEmail}
           onChangeText={setAuthEmail}
@@ -166,8 +167,8 @@ export default observer(function Login(_props) {
           RightAccessory={PasswordRightAccessory}
         />
 
-        <Text text={`${result}`} preset="formHelper" style={themed($result)} />
-      </UseCase>
+        {result ? <Text tx={result as TxKeyPath} preset="formHelper" style={themed($result)} /> : null}
+      </FormCard>
 
       <View style={$content}>
         <View style={$rememberMeRow}>

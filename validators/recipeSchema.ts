@@ -1,5 +1,6 @@
 import { RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { translate } from "@/i18n"
+import { MAX_INGREDIENT_SECTIONS } from "@/utils/recipeIngredientSections"
 import * as yup from "yup"
 
 export const recipeSchema = yup.object({
@@ -54,7 +55,7 @@ export const recipeSchema = yup.object({
         ),
       }),
     )
-    .max(6, () => translate("validation:maxIngredientSections"))
+    .max(MAX_INGREDIENT_SECTIONS, () => translate("validation:maxIngredientSections"))
     .test(
       "maxTotalIngredients",
       () => translate("validation:maxIngredients"),

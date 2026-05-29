@@ -80,7 +80,7 @@ export const RecipeModel = types
       const sDisplay = s > 0 ? s : ""
       return {
         textLabel: hDisplay + mDisplay + sDisplay,
-        accessibilityLabel: translate("demoPodcastListScreen:accessibility.durationLabel", {
+        accessibilityLabel: translate("cookbooksScreen:accessibility.durationLabel", {
           hours: h,
           minutes: m,
           seconds: s,

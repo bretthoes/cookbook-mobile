@@ -1,6 +1,6 @@
 import { Text } from "@/components/Text"
 import { useStores } from "@/models/helpers/useStores"
-import { colors } from "@/theme"
+import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import { observer } from "mobx-react-lite"
@@ -10,13 +10,11 @@ import { Badge } from "./Badge"
 
 export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
-  const { themeContext } = useAppTheme()
+  const { themed, theme } = useAppTheme()
   const { invitationStore } = useStores()
 
-  const isDark = themeContext === "dark"
-
   return (
-    <View style={[$tabBar, isDark && $tabBarDark]}>
+    <View style={themed($tabBar)}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
         const label =
@@ -29,11 +27,13 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
         if (["_sitemap", "+not-found"].includes(route.name)) return null
 
         const isFocused = state.index === index
+        const inactiveColor = theme.colors.textDim
+        const activeColor = theme.colors.tint
         const Icon = options.tabBarIcon ? (
           <View style={{ marginBottom: -6 }}>
             {options.tabBarIcon({
               focused: isFocused,
-              color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
+              color: isFocused ? activeColor : inactiveColor,
               size: 24,
             })}
           </View>
@@ -75,7 +75,7 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
               <Text
                 size="xs"
                 style={{
-                  color: isFocused ? colors.tint : isDark ? colors.border : colors.textDim,
+                  color: isFocused ? activeColor : inactiveColor,
                 }}
                 text={label.toString()}
               />
@@ -88,7 +88,7 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
   )
 })
 
-const $tabBar: ViewStyle = {
+const $tabBar: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   position: "absolute",
   bottom: 12,
@@ -99,19 +99,13 @@ const $tabBar: ViewStyle = {
   paddingVertical: 10,
   borderRadius: 25,
   borderCurve: "continuous",
-  shadowColor: colors.text,
+  shadowColor: theme.colors.text,
   shadowOffset: { width: 0, height: 10 },
-  shadowOpacity: 0.1,
+  shadowOpacity: theme.isDark ? 0.3 : 0.1,
   shadowRadius: 10,
   elevation: 10,
-  backgroundColor: colors.backgroundDim,
-}
-
-const $tabBarDark: ViewStyle = {
-  backgroundColor: colors.text,
-  shadowColor: colors.text,
-  shadowOpacity: 0.3,
-}
+  backgroundColor: theme.isDark ? theme.colors.text : theme.colors.backgroundDim,
+})
 
 const $tabBarItem: ViewStyle = {
   flex: 1,

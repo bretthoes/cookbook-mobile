@@ -12,6 +12,22 @@ const ko: Translations = {
     save: "___Save",
     goBack: "___Go Back",
     error: "___Error",
+    paginationLabel: "___Page {{currentPage}} of {{totalPages}} ({{totalCount}} items)",
+  },
+  errors: {
+    timeout: "___The request timed out. Please try again.",
+    cannotConnect: "___Cannot connect. Please try again later.",
+    server: "___Something went wrong on our end. Please try again later.",
+    unauthorized: "___You are not authorized to perform this action.",
+    notAllowed: "___Your account is not allowed to perform this action.",
+    forbidden: "___You do not have permission to do that.",
+    notFound: "___That item could not be found.",
+    conflict: "___That action conflicted with existing data.",
+    rateLimited: "___Too many requests. Please wait and try again.",
+    rejected: "___The request was rejected. Please check your input.",
+    badData: "___We received unexpected data. Please try again.",
+    unknown: "___Something went wrong. Please try again.",
+    invalidEmail: "잘못된 이메일 주소 입니다.",
   },
   itemNotFound: {
     message: "___Item not found",
@@ -84,6 +100,10 @@ const ko: Translations = {
       needsDigit: "___must contain at least one digit",
       needsSpecialChar: "___must contain at least one special character",
     },
+    errors: {
+      emailTaken: "___This email is already taken.",
+      generic: "___Something went wrong, please try again later.",
+    },
   },
   registerOptionsScreen: {
     title: "___Create account",
@@ -110,9 +130,6 @@ const ko: Translations = {
       content: "데이터가 없습니다. 버튼을 눌러서 리프레쉬 하시거나 앱을 리로드하세요.",
       button: "다시 시도해봅시다",
     },
-  },
-  errors: {
-    invalidEmail: "잘못된 이메일 주소 입니다.",
   },
   validation: {
     titleRequired: "___Title is required",
@@ -162,8 +179,20 @@ const ko: Translations = {
     rememberMe: "___Remember me",
     hint: "힌트: 가장 좋아하는 암호와 아무런 아무 이메일 주소나 사용할 수 있어요 :)",
     register: "계정이 없나요? 등록기",
+    errors: {
+      invalidCredentials: "___Email or password is incorrect.",
+      cannotConnect: "___Cannot connect. Please try again later.",
+      confirmationResent: "___A confirmation email has been resent.",
+      confirmationResendFailed: "___An error occurred sending email. Please try again.",
+      updateFailed: "___An error occurred. Please try again.",
+      updateSuccess: "___Successfully updated.",
+      googleFailed: "___Sign in with Google failed. Please try again.",
+      appleFailed: "___Sign in with Apple failed. Please try again.",
+      facebookFailed: "___Sign in with Facebook failed. Please try again.",
+      passwordResetSuccess: "___Password reset successfully.",
+    },
   },
-  demoNavigator: {
+  tabNavigator: {
     componentsTab: "컴포넌트",
     debugTab: "디버그",
     createTab: "창조하다",
@@ -328,7 +357,7 @@ const ko: Translations = {
     windowsReactotronHint:
       "작동하지 않는다면 Reactotron 데스크톱 앱이 실행 중인지 확인하고 앱을 다시 로드하세요.",
   },
-  demoPodcastListScreen: {
+  cookbooksScreen: {
     title: "책장",
     onlyFavorites: "즐겨찾기만 보기",
     favoriteButton: "즐겨찾기",
@@ -553,6 +582,21 @@ const ko: Translations = {
       "___Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
     leaveButton: "___Leave",
     leaveError: "___Failed to leave cookbook. Please try again.",
+    tags: {
+      isVegetarian: "___Vegetarian",
+      isVegan: "___Vegan",
+      isGlutenFree: "___Gluten Free",
+      isDairyFree: "___Dairy Free",
+      isHealthy: "___Healthy",
+      isCheap: "___Cheap",
+      isLowFodmap: "___Low FODMAP",
+      isHighProtein: "___High Protein",
+      isBreakfast: "___Breakfast",
+      isLunch: "___Lunch",
+      isDinner: "___Dinner",
+      isDessert: "___Dessert",
+      isSnack: "___Snack",
+    },
   },
   cookbookAddScreen: {
     title: "___Add new cookbook",

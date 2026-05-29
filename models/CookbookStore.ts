@@ -1,9 +1,10 @@
 import { destroy, flow, Instance, SnapshotOut, types } from "mobx-state-tree"
+import * as ImagePicker from "expo-image-picker"
 import { api } from "../services/api"
 import { Cookbook, CookbookModel, CookbookSnapshotIn, CookbookToAddSnapshotIn } from "./Cookbook"
 import { CookbookListModel } from "./generics/PaginatedListTypes"
 import { withSetPropAction } from "./helpers/withSetPropAction"
-import { FetchState } from "./Recipe/RecipeStore"
+import { FetchState } from "./shared/fetchState"
 
 export const COOKBOOK_LIST_PAGE_SIZE = 25
 
@@ -230,6 +231,13 @@ export const CookbookStoreModel = types
     remove() {
       destroy(self.selected)
     },
+    uploadCookbookCover: flow(function* (assets: ImagePicker.ImagePickerAsset[]) {
+      const response = yield api.uploadImage(assets)
+      if (response.kind === "ok" && response.keys.length > 0) {
+        return { ok: true as const, key: response.keys.at(-1) ?? "" }
+      }
+      return { ok: false as const }
+    }),
     setSelectedById(id: number) {
       const cookbook = this.getById(id)
       if (cookbook) self.selected = cookbook

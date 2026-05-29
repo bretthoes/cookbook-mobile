@@ -4,11 +4,11 @@ import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL, translate } from "@/i18n"
 import { Invitation } from "@/models/Invitation"
 import { useStores } from "@/models/helpers/useStores"
-import { colors, spacing } from "@/theme"
-import { delay } from "@/utils/delay"
+import { spacing } from "@/theme"
 import { observer } from "mobx-react-lite"
 import React, { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
 import {
@@ -44,8 +44,11 @@ const ICON_SIZE = 14
 export default observer(function Invitations() {
   const { invitationStore } = useStores()
 
-  const [refreshing, setRefreshing] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+
+  const { refreshing, onRefresh } = useManualRefresh(
+    useCallback(() => invitationStore.fetch(), [invitationStore]),
+  )
 
   useHeader({
     leftIcon: "back",
@@ -62,19 +65,6 @@ export default observer(function Invitations() {
     })()
   }, [invitationStore])
 
-  useEffect(() => {
-    ;(async function reload() {
-      await invitationStore.fetch()
-    })()
-  }, [invitationStore])
-
-  // simulate a longer refresh, if the refresh is too fast for UX
-  async function manualRefresh() {
-    setRefreshing(true)
-    await Promise.all([invitationStore.fetch(), delay(750)])
-    setRefreshing(false)
-  }
-
   return (
     <Screen preset="fixed" style={$root}>
       <FlatList<Invitation>
@@ -89,7 +79,7 @@ export default observer(function Invitations() {
         keyExtractor={(item) => item.id.toString()}
         extraData={invitationStore.invitations.items.length}
         refreshing={refreshing}
-        onRefresh={manualRefresh}
+        onRefresh={onRefresh}
         ListEmptyComponent={
           isLoading ? (
             <ActivityIndicator />
@@ -99,7 +89,7 @@ export default observer(function Invitations() {
               style={$emptyState}
               headingTx={
                 invitationStore.invitations.items.length === 0
-                  ? "demoPodcastListScreen:noFavoritesEmptyState.heading"
+                  ? "cookbooksScreen:cookbookListScreen.noFavoritesEmptyState.heading"
                   : undefined
               }
               contentTx={
@@ -108,7 +98,7 @@ export default observer(function Invitations() {
                   : undefined
               }
               button={invitationStore.invitations.items.length === 0 ? "" : undefined}
-              buttonOnPress={manualRefresh}
+              buttonOnPress={onRefresh}
               imageStyle={$emptyStateImage}
               ImageProps={{ resizeMode: "contain" }}
             />
@@ -185,7 +175,7 @@ const InvitationCard = observer(function InvitationCard({
       Platform.select<AccessibilityProps>({
         ios: {
           accessibilityLabel: invitation.cookbookTitle,
-          accessibilityHint: translate("demoPodcastListScreen:accessibility.cardHint", {
+          accessibilityHint: translate("cookbooksScreen:cookbookListScreen.accessibility.cardHint", {
             action: isFavorite ? "unfavorite" : "favorite",
           }),
         },
@@ -194,7 +184,7 @@ const InvitationCard = observer(function InvitationCard({
           accessibilityActions: [
             {
               name: "longpress",
-              label: translate("demoPodcastListScreen:accessibility.favoriteAction"),
+              label: translate("cookbooksScreen:cookbookListScreen.accessibility.favoriteAction"),
             },
           ],
           onAccessibilityAction: ({ nativeEvent }) => {

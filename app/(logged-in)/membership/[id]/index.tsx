@@ -64,7 +64,7 @@ export default observer(function MembershipScreen() {
         if (selectedIndex === undefined || selectedIndex === cancelButtonIndex) return
 
         if (selectedIndex === 0) {
-          router.push(`../membership/${id}/edit`)
+          router.push(`/(logged-in)/membership/${id}/edit`)
         } else if (selectedIndex === 1) {
           Alert.alert(
             translate("membershipScreen:deleteMemberTitle"),

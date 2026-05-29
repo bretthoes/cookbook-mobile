@@ -3,11 +3,10 @@ import { ItemNotFound } from "@/components/ItemNotFound"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import { colors, spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { cookbookSchema } from "@/validators/cookbookSchema"
@@ -81,9 +80,9 @@ export default observer(function EditCookbookScreen() {
         // Show local URI immediately for a snappy preview while the upload runs.
         setLocalImage(result.assets[0].uri)
 
-        const uploadResponse = await api.uploadImage(result.assets)
-        if (uploadResponse.kind === "ok" && uploadResponse.keys.length > 0) {
-          setValue("image", uploadResponse.keys[uploadResponse.keys.length - 1] ?? "")
+        const uploadResponse = await cookbookStore.uploadCookbookCover(result.assets)
+        if (uploadResponse.ok) {
+          setValue("image", uploadResponse.key)
         } else {
           alert(translate("cookbookEditScreen:imageUploadFailed"))
           setLocalImage(previousImage)
@@ -163,7 +162,7 @@ export default observer(function EditCookbookScreen() {
       safeAreaEdges={["bottom"]}
     >
       <Text tx="cookbookEditScreen:subtitle" />
-      <UseCase>
+      <FormCard>
         <Controller
           control={control}
           name="title"
@@ -204,7 +203,7 @@ export default observer(function EditCookbookScreen() {
             ]}
           />
         ) : null}
-      </UseCase>
+      </FormCard>
     </Screen>
   )
 })

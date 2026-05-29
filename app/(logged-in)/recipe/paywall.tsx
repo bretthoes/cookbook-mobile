@@ -1,53 +1,71 @@
 import { Button } from "@/components/Button"
 import { Icon } from "@/components/Icon"
+import { FeatureRow } from "@/components/subscription/FeatureRow"
+import { PlanCard } from "@/components/subscription/PlanCard"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { useStores } from "@/models/helpers/useStores"
-import {
-  ensureRevenueCatReady,
-  fetchPaywallPlans,
-  hasProEntitlement,
-  isUserCancelledPurchase,
-  type FetchPaywallPlansFailureReason,
-} from "@/services/subscription/revenueCat"
-import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
+import { usePaywall, type OfferingsLoadError } from "@/hooks/usePaywall"
 import type { ThemedStyle } from "@/theme"
+import { TxKeyPath } from "@/i18n"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { observer } from "mobx-react-lite"
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
 import {
   ActivityIndicator,
-  Alert,
+  Image,
   TouchableOpacity,
   View,
+  type ImageSourcePropType,
+  type ImageStyle,
   type TextStyle,
   type ViewStyle,
 } from "react-native"
 
-type PlanOption = {
-  id: string
-  period: "monthly" | "annual"
-  title: string
-  price: string
-  savingsPercent?: number
-}
+const pinterestLogo = require("@/assets/images/pinterest.png")
+const tiktokLogo = require("@/assets/images/tiktok.png")
+const instagramLogo = require("@/assets/images/instagram.png")
+const facebookLogo = require("@/assets/images/facebook.png")
 
-type OfferingsLoadError = FetchPaywallPlansFailureReason | "no_user_id"
+const SOCIAL_LOGOS: ImageSourcePropType[] = [
+  pinterestLogo,
+  tiktokLogo,
+  instagramLogo,
+  facebookLogo,
+]
+
+function offeringsErrorTxKey(error: OfferingsLoadError | null): TxKeyPath {
+  switch (error) {
+    case "not_configured":
+      return "paywallScreen:noOfferingsNotConfigured"
+    case "invalid_api_key":
+      return "paywallScreen:noOfferingsInvalidApiKey"
+    case "not_logged_in":
+      return "paywallScreen:noOfferingsNotLoggedIn"
+    case "no_user_id":
+      return "paywallScreen:noOfferingsNoUserId"
+    case "no_offering":
+    case "no_packages":
+      return "paywallScreen:noOfferingsDashboard"
+    default:
+      return "paywallScreen:noOfferings"
+  }
+}
 
 export default observer(function PaywallScreen() {
   const { themed, theme } = useAppTheme()
-  const { t } = useTranslation()
-  const { subscriptionStore, authenticationStore } = useStores()
-
-  const [offerings, setOfferings] = useState<PlanOption[]>([])
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
-  const [isLoadingOfferings, setIsLoadingOfferings] = useState(true)
-  const [isPurchasing, setIsPurchasing] = useState(false)
-  const [isRestoring, setIsRestoring] = useState(false)
-  const [offeringsError, setOfferingsError] = useState<OfferingsLoadError | null>(null)
+  const {
+    offerings,
+    selectedPlan,
+    setSelectedPlan,
+    isLoadingOfferings,
+    isPurchasing,
+    isRestoring,
+    offeringsError,
+    loadOfferings,
+    handleSubscribe,
+    handleRestore,
+  } = usePaywall()
 
   const accentColor = theme.colors.tint
 
@@ -57,147 +75,17 @@ export default observer(function PaywallScreen() {
     onLeftPress: () => router.back(),
   })
 
-  const resolveAppUserId = useCallback(async () => {
-    const id = await resolveRevenueCatAppUserId({
-      storedUserId: authenticationStore.userId,
-      authEmail: authenticationStore.authEmail,
-    })
-    if (id && authenticationStore.userId !== id) {
-      authenticationStore.setProp("userId", id)
-    }
-    return id
-  }, [authenticationStore])
-
-  const finishPaywall = useCallback(async () => {
-    const appUserId = await resolveAppUserId()
-    if (appUserId) await subscriptionStore.refresh(appUserId)
-    router.back()
-  }, [subscriptionStore, resolveAppUserId])
-
-  const loadOfferings = useCallback(async () => {
-    setIsLoadingOfferings(true)
-    setOfferingsError(null)
-
-    const appUserId = await resolveAppUserId()
-    const result = await fetchPaywallPlans(appUserId)
-
-    if (!result.ok) {
-      setOfferings([])
-      setOfferingsError(result.reason)
-      setIsLoadingOfferings(false)
-      return
-    }
-
-    const monthlyPlan = result.plans.find((p) => p.period === "monthly")
-
-    const plans: PlanOption[] = result.plans.map((plan) => ({
-      id: plan.packageIdentifier,
-      period: plan.period,
-      title: t(
-        plan.period === "monthly" ? "paywallScreen:monthlyLabel" : "paywallScreen:annualLabel",
-      ),
-      price: plan.priceString,
-      savingsPercent:
-        plan.period === "annual" && monthlyPlan
-          ? computeAnnualSavingsPercent(monthlyPlan.priceString, plan.priceString)
-          : undefined,
-    }))
-
-    setOfferings(plans)
-    const defaultPlan = plans.find((p) => p.period === "annual") ?? plans[0]
-    if (defaultPlan) setSelectedPlan(defaultPlan.id)
-    setIsLoadingOfferings(false)
-  }, [t, resolveAppUserId])
-
-  useEffect(() => {
-    loadOfferings()
-  }, [loadOfferings])
-
-  const handleSubscribe = useCallback(async () => {
-    if (!selectedPlan || isPurchasing) return
-
-    const appUserId = await resolveAppUserId()
-    if (!appUserId) {
-      setOfferingsError(authenticationStore.isAuthenticated ? "no_user_id" : "not_logged_in")
-      return
-    }
-
-    setIsPurchasing(true)
-    try {
-      await ensureRevenueCatReady(appUserId)
-      const Purchases = (await import("react-native-purchases")).default
-      const offeringsResult = await Purchases.getOfferings()
-      const pkg = offeringsResult.current?.availablePackages.find(
-        (p) => p.identifier === selectedPlan,
-      )
-      if (!pkg) {
-        Alert.alert(t("paywallScreen:purchaseError"))
-        return
-      }
-
-      const result = await Purchases.purchasePackage(pkg)
-      if (hasProEntitlement(result.customerInfo)) {
-        await finishPaywall()
-      }
-    } catch (e) {
-      if (!isUserCancelledPurchase(e)) {
-        Alert.alert(t("paywallScreen:purchaseError"))
-      }
-    } finally {
-      setIsPurchasing(false)
-    }
-  }, [
-    selectedPlan,
-    isPurchasing,
-    resolveAppUserId,
-    finishPaywall,
-    t,
-    authenticationStore.isAuthenticated,
-  ])
-
-  const handleRestore = useCallback(async () => {
-    if (isRestoring) return
-
-    const appUserId = await resolveAppUserId()
-    if (!appUserId) {
-      setOfferingsError(authenticationStore.isAuthenticated ? "no_user_id" : "not_logged_in")
-      return
-    }
-
-    setIsRestoring(true)
-    try {
-      await ensureRevenueCatReady(appUserId)
-      const Purchases = (await import("react-native-purchases")).default
-      const customerInfo = await Purchases.restorePurchases()
-      const isNowPro = hasProEntitlement(customerInfo)
-      subscriptionStore.setProp("isPro", isNowPro)
-      Alert.alert(isNowPro ? t("paywallScreen:alreadyPro") : t("paywallScreen:restoreSuccess"))
-      if (isNowPro) await finishPaywall()
-    } catch {
-      Alert.alert(t("paywallScreen:restoreError"))
-    } finally {
-      setIsRestoring(false)
-    }
-  }, [
-    isRestoring,
-    resolveAppUserId,
-    subscriptionStore,
-    finishPaywall,
-    t,
-    authenticationStore.isAuthenticated,
-  ])
-
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedHeroSection = useMemo(() => themed($heroSection), [themed])
-  const $themedPlansRow = useMemo(() => themed($plansRow), [themed])
-  const $themedFooter = useMemo(() => themed($footer), [themed])
-
   return (
-    <Screen preset="scroll" contentContainerStyle={$themedContainer}>
-      <View style={$themedHeroSection}>
+    <Screen preset="scroll" contentContainerStyle={themed($container)}>
+      <View style={themed($heroSection)}>
         <Icon icon="heart" size={52} color={accentColor} />
         <Text tx="paywallScreen:tagline" preset="heading" style={themed($heroTitle)} />
         <Text tx="paywallScreen:subtitle" style={themed($heroSubtitle)} />
+        <View style={themed($socialLogosRow)}>
+          {SOCIAL_LOGOS.map((logo, index) => (
+            <Image key={index} source={logo} style={themed($socialLogo)} resizeMode="contain" />
+          ))}
+        </View>
       </View>
 
       <View style={themed($featureList)}>
@@ -214,30 +102,11 @@ export default observer(function PaywallScreen() {
         <ActivityIndicator size="large" color={accentColor} style={themed($loader)} />
       ) : offerings.length === 0 ? (
         <View style={themed($emptyOfferingsBlock)}>
-          <Text
-            tx={
-              offeringsError === "not_configured"
-                ? "paywallScreen:noOfferingsNotConfigured"
-                : offeringsError === "invalid_api_key"
-                  ? "paywallScreen:noOfferingsInvalidApiKey"
-                  : offeringsError === "not_logged_in"
-                    ? "paywallScreen:noOfferingsNotLoggedIn"
-                    : offeringsError === "no_user_id"
-                      ? "paywallScreen:noOfferingsNoUserId"
-                      : offeringsError === "no_offering" || offeringsError === "no_packages"
-                        ? "paywallScreen:noOfferingsDashboard"
-                        : "paywallScreen:noOfferings"
-            }
-            style={themed($noOfferings)}
-          />
-          <Button
-            tx="paywallScreen:retryOfferings"
-            onPress={loadOfferings}
-            style={themed($retryButton)}
-          />
+          <Text tx={offeringsErrorTxKey(offeringsError)} style={themed($noOfferings)} />
+          <Button tx="paywallScreen:retryOfferings" onPress={loadOfferings} style={themed($retryButton)} />
         </View>
       ) : (
-        <View style={$themedPlansRow}>
+        <View style={themed($plansRow)}>
           {offerings.map((plan) => (
             <PlanCard
               key={plan.id}
@@ -257,7 +126,7 @@ export default observer(function PaywallScreen() {
         textStyle={themed($subscribeButtonText)}
       />
 
-      <View style={$themedFooter}>
+      <View style={themed($footer)}>
         <TouchableOpacity onPress={handleRestore} disabled={isRestoring}>
           <Text
             tx="paywallScreen:restoreButton"
@@ -269,73 +138,6 @@ export default observer(function PaywallScreen() {
     </Screen>
   )
 })
-
-interface FeatureRowProps {
-  icon?: string
-  txKey: string
-  accentColor?: string
-}
-
-function FeatureRow({ icon, txKey, accentColor }: FeatureRowProps) {
-  const { themed } = useAppTheme()
-  return (
-    <View style={[themed($featureRow), !icon && themed($featureRowTextOnly)]}>
-      {icon && accentColor ? <Icon icon={icon as any} size={20} color={accentColor} /> : null}
-      <Text tx={txKey as any} style={themed($featureText)} />
-    </View>
-  )
-}
-
-interface PlanCardProps {
-  plan: PlanOption
-  isSelected: boolean
-  onSelect: () => void
-}
-
-function PlanCard({ plan, isSelected, onSelect }: PlanCardProps) {
-  const { themed } = useAppTheme()
-  const { t } = useTranslation()
-
-  const cardStyle = useMemo(
-    () => [themed($planCard), isSelected && themed($planCardSelected)],
-    [themed, isSelected],
-  )
-
-  return (
-    <TouchableOpacity style={cardStyle} onPress={onSelect} activeOpacity={0.8}>
-      {plan.savingsPercent !== undefined && (
-        <View style={themed($savingsBadge)}>
-          <Text
-            text={t("paywallScreen:annualSavings", { percent: plan.savingsPercent })}
-            style={themed($savingsBadgeText)}
-          />
-        </View>
-      )}
-      <Text text={plan.title} preset="subheading" style={themed($planTitle)} />
-      <Text text={plan.price} style={themed($planPrice)} />
-    </TouchableOpacity>
-  )
-}
-
-function computeAnnualSavingsPercent(
-  monthlyPrice: string,
-  annualPrice: string,
-): number | undefined {
-  const monthly = parsePriceAmount(monthlyPrice)
-  const annual = parsePriceAmount(annualPrice)
-  if (monthly === null || annual === null) return undefined
-  const monthlyAnnualized = monthly * 12
-  if (monthlyAnnualized <= 0) return undefined
-  return Math.round((1 - annual / monthlyAnnualized) * 100)
-}
-
-function parsePriceAmount(priceString: string): number | null {
-  const normalized = priceString.replace(/[^\d.,]/g, "").replace(",", ".")
-  const value = Number.parseFloat(normalized)
-  return Number.isFinite(value) ? value : null
-}
-
-// #region Styles
 
 const $container: ThemedStyle<ViewStyle> = (theme) => ({
   paddingHorizontal: theme.spacing.lg,
@@ -361,72 +163,27 @@ const $heroSubtitle: ThemedStyle<TextStyle> = (theme) => ({
   fontSize: 15,
 })
 
+const $socialLogosRow: ThemedStyle<ViewStyle> = (theme) => ({
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: theme.spacing.md,
+  marginTop: theme.spacing.xs,
+})
+
+const $socialLogo: ThemedStyle<ImageStyle> = () => ({
+  width: 24,
+  height: 24,
+})
+
 const $featureList: ThemedStyle<ViewStyle> = (theme) => ({
   gap: theme.spacing.sm,
   paddingVertical: theme.spacing.sm,
 })
 
-const $featureRow: ThemedStyle<ViewStyle> = (theme) => ({
-  flexDirection: "row",
-  alignItems: "center",
-  gap: theme.spacing.sm,
-})
-
-/** Aligns text-only rows with the copy beside icons in other feature rows. */
-const $featureRowTextOnly: ThemedStyle<ViewStyle> = (theme) => ({
-  paddingLeft: 20 + theme.spacing.sm,
-})
-
-const $featureText: ThemedStyle<TextStyle> = (theme) => ({
-  flex: 1,
-  fontSize: 15,
-  color: theme.colors.text,
-})
-
 const $plansRow: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   gap: theme.spacing.sm,
-})
-
-const $planCard: ThemedStyle<ViewStyle> = (theme) => ({
-  flex: 1,
-  backgroundColor: theme.colors.backgroundDim,
-  borderRadius: theme.spacing.md,
-  padding: theme.spacing.md,
-  alignItems: "center",
-  borderWidth: 1.5,
-  borderColor: theme.colors.separator,
-  gap: theme.spacing.xs,
-})
-
-const $planCardSelected: ThemedStyle<ViewStyle> = (theme) => ({
-  borderColor: theme.colors.tint,
-  backgroundColor: theme.colors.palette.primary100,
-})
-
-const $planTitle: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.text,
-  textAlign: "center",
-})
-
-const $planPrice: ThemedStyle<TextStyle> = (theme) => ({
-  fontSize: 16,
-  fontWeight: "700",
-  color: theme.colors.text,
-  textAlign: "center",
-})
-
-const $savingsBadge: ThemedStyle<ViewStyle> = (theme) => ({
-  backgroundColor: theme.colors.tint,
-  borderRadius: 8,
-  paddingHorizontal: theme.spacing.xs,
-  paddingVertical: 2,
-})
-
-const $savingsBadgeText: ThemedStyle<TextStyle> = (theme) => ({
-  fontSize: 11,
-  fontWeight: "700",
-  color: theme.colors.palette.neutral100,
 })
 
 const $subscribeButton: ThemedStyle<ViewStyle> = (theme) => ({
@@ -484,5 +241,3 @@ const $termsText: ThemedStyle<TextStyle> = (theme) => ({
   textAlign: "center",
   lineHeight: 16,
 })
-
-// #endregion

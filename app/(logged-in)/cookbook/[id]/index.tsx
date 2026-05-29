@@ -10,13 +10,13 @@ import {
 import { Screen } from "@/components/Screen"
 import { SearchBar } from "@/components/SearchBar"
 import { Text } from "@/components/Text"
-import { isRTL } from "@/i18n"
+import { useManualRefresh } from "@/hooks/useManualRefresh"
+import { TxKeyPath, isRTL } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { RecipeBrief } from "@/models/Recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { delay } from "@/utils/delay"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
 import { observer } from "mobx-react-lite"
@@ -32,23 +32,27 @@ import {
   ViewStyle,
 } from "react-native"
 
-type TagKey = keyof typeof TAG_DEFINITIONS
+const RECIPE_TAG_KEYS = [
+  "isVegetarian",
+  "isVegan",
+  "isGlutenFree",
+  "isDairyFree",
+  "isHealthy",
+  "isCheap",
+  "isLowFodmap",
+  "isHighProtein",
+  "isBreakfast",
+  "isLunch",
+  "isDinner",
+  "isDessert",
+  "isSnack",
+] as const
 
-const TAG_DEFINITIONS = {
-  isVegetarian: "Vegetarian",
-  isVegan: "Vegan",
-  isGlutenFree: "Gluten Free",
-  isDairyFree: "Dairy Free",
-  isHealthy: "Healthy",
-  isCheap: "Cheap",
-  isLowFodmap: "Low FODMAP",
-  isHighProtein: "High Protein",
-  isBreakfast: "Breakfast",
-  isLunch: "Lunch",
-  isDinner: "Dinner",
-  isDessert: "Dessert",
-  isSnack: "Snack",
-} as const
+type TagKey = (typeof RECIPE_TAG_KEYS)[number]
+
+function tagLabelTx(tag: TagKey): TxKeyPath {
+  return `cookbookDetailScreen:tags.${tag}` as TxKeyPath
+}
 
 export default observer(function Cookbook() {
   const {
@@ -62,11 +66,13 @@ export default observer(function Cookbook() {
 
   const isAuthor = membershipStore.ownMembership?.isOwner
 
-  const [refreshing, setRefreshing] = useState(false)
   const [popoverVisible, setPopoverVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const cookbookId = Number(id)
   const isListPending = recipeStore.isListPendingForCookbook(cookbookId)
+  const { refreshing, onRefresh } = useManualRefresh(
+    useCallback(() => recipeStore.fetch(cookbookId), [recipeStore, cookbookId]),
+  )
   const [selectedTags, setSelectedTags] = useState<Set<TagKey>>(new Set())
   const [filterExpanded, setFilterExpanded] = useState(false)
   //const debouncedSearchQuery = useDebounce(searchQuery)
@@ -180,13 +186,13 @@ export default observer(function Cookbook() {
         key: "addRecipe",
         tx: "cookbookDetailScreen:addRecipe" as const,
         leftIcon: "create" as const,
-        onPress: () => router.push(`../../recipe/add-options`),
+        onPress: () => router.push("/(logged-in)/recipe/add-options"),
       },
       {
         key: "viewMembers",
         tx: "cookbookDetailScreen:viewMembers" as const,
         leftIcon: "membership" as const,
-        onPress: () => router.push(`../../membership/list`),
+        onPress: () => router.push("/(logged-in)/membership/list"),
       },
       ...(isAuthor
         ? [
@@ -208,13 +214,6 @@ export default observer(function Cookbook() {
     ],
     [isAuthor, handlePressEdit, handlePressLeave],
   )
-
-  // simulate a longer refresh, if the refresh is too fast for UX
-  async function manualRefresh() {
-    setRefreshing(true)
-    await Promise.all([recipeStore.fetch(Number(id)), delay(750)])
-    setRefreshing(false)
-  }
 
   // Stale-while-revalidate: keep list when revisiting same cookbook; refresh in background.
   useLayoutEffect(() => {
@@ -254,7 +253,7 @@ export default observer(function Cookbook() {
   )
 
   const handlePressRecipe = (recipeId: number) => {
-    router.push(`../../recipe/${recipeId}`)
+    router.push(`/(logged-in)/recipe/${recipeId}`)
   }
 
   if (!selected) return <ItemNotFound messageTx="itemNotFound:cookbook" />
@@ -277,7 +276,7 @@ export default observer(function Cookbook() {
                 preset="generic"
                 contentTx="cookbookDetailScreen:noRecipesEmpty"
                 style={$themedEmptyState}
-                buttonOnPress={manualRefresh}
+                buttonOnPress={onRefresh}
                 imageStyle={$themedEmptyStateImage}
                 ImageProps={{ resizeMode: "contain" }}
               />
@@ -295,7 +294,7 @@ export default observer(function Cookbook() {
               />
               {filterExpanded && (
                 <View style={themed($tagChipContainer)}>
-                  {(Object.keys(TAG_DEFINITIONS) as TagKey[]).map((tag) => {
+                  {RECIPE_TAG_KEYS.map((tag) => {
                     const isSelected = selectedTags.has(tag)
                     const chipColor = isSelected ? getRecipeTagChipColor(tag) : undefined
                     return (
@@ -314,7 +313,7 @@ export default observer(function Cookbook() {
                         <Text
                           size="xs"
                           weight={isSelected ? "semiBold" : "normal"}
-                          text={TAG_DEFINITIONS[tag]}
+                          tx={tagLabelTx(tag)}
                           style={chipColor ? { color: RECIPE_TAG_CHIP_TEXT_COLOR } : undefined}
                         />
                       </TouchableOpacity>
@@ -325,7 +324,7 @@ export default observer(function Cookbook() {
               <Divider size={spacing.sm} />
             </View>
           }
-          onRefresh={manualRefresh}
+          onRefresh={onRefresh}
           refreshing={refreshing}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.4}

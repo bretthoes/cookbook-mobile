@@ -1,4 +1,6 @@
 import Config from "@/config"
+import { isValidRevenueCatApiKey } from "@/services/subscription/revenueCatApiKey"
+import { extractPlansFromOffering } from "@/services/subscription/revenueCatPlans"
 
 import type { CustomerInfo, PurchasesError } from "react-native-purchases"
 
@@ -10,9 +12,11 @@ export function setRevenueCatCustomerInfoHandler(
   onCustomerInfoUpdate = handler
 }
 
-/** RevenueCat entitlement identifier (dashboard slug). */
-
-export const PRO_ENTITLEMENT_ID = "pro"
+export {
+  hasProEntitlement,
+  isUserCancelledPurchase,
+  PRO_ENTITLEMENT_ID,
+} from "@/services/subscription/entitlements"
 
 let sdkConfigured = false
 
@@ -20,14 +24,8 @@ let activeUserId: string | null = null
 
 let removeCustomerInfoListener: (() => void) | null = null
 
-export function hasProEntitlement(customerInfo: CustomerInfo): boolean {
-  return customerInfo.entitlements.active[PRO_ENTITLEMENT_ID] !== undefined
-}
-
 export function isRevenueCatConfigured(): boolean {
-  const key = Config.REVENUECAT_API_KEY
-
-  return Boolean(key) && /^(?:test_|appl_|goog_)/.test(key)
+  return isValidRevenueCatApiKey(Config.REVENUECAT_API_KEY)
 }
 
 function isInvalidRevenueCatApiKeyError(error: unknown): boolean {
@@ -106,12 +104,6 @@ export async function logOutRevenueCat(): Promise<void> {
   }
 }
 
-export function isUserCancelledPurchase(error: unknown): boolean {
-  const purchasesError = error as PurchasesError
-
-  return purchasesError?.userCancelled === true
-}
-
 export type PaywallPlan = {
   packageIdentifier: string
 
@@ -152,7 +144,11 @@ export async function fetchPaywallPlans(
       return { ok: false, reason: "no_offering" }
     }
 
-    const plans = extractPlansFromOffering(current)
+    const plans = extractPlansFromOffering(current).map((plan) => ({
+      packageIdentifier: plan.packageIdentifier,
+      period: plan.period,
+      priceString: plan.priceString,
+    }))
 
     if (plans.length === 0) {
       return { ok: false, reason: "no_packages" }
@@ -166,56 +162,6 @@ export async function fetchPaywallPlans(
 
     return { ok: false, reason: "error" }
   }
-}
-
-function extractPlansFromOffering(
-  offering: import("react-native-purchases").PurchasesOffering,
-): PaywallPlan[] {
-  const plans: PaywallPlan[] = []
-
-  const seen = new Set<string>()
-
-  const add = (
-    pkg: import("react-native-purchases").PurchasesPackage,
-    period: PaywallPlan["period"],
-  ) => {
-    if (seen.has(pkg.identifier)) return
-
-    seen.add(pkg.identifier)
-
-    plans.push({
-      packageIdentifier: pkg.identifier,
-
-      period,
-
-      priceString: pkg.product.priceString,
-    })
-  }
-
-  if (offering.monthly) add(offering.monthly, "monthly")
-
-  if (offering.annual) add(offering.annual, "annual")
-
-  if (plans.length > 0) return plans
-
-  for (const pkg of offering.availablePackages) {
-    const productId = pkg.product.identifier.toLowerCase()
-
-    const packageType = String(pkg.packageType).toUpperCase()
-
-    if (packageType === "MONTHLY" || productId === "monthly" || productId.includes("month")) {
-      add(pkg, "monthly")
-    } else if (
-      packageType === "ANNUAL" ||
-      productId === "yearly" ||
-      productId === "annual" ||
-      productId.includes("year")
-    ) {
-      add(pkg, "annual")
-    }
-  }
-
-  return plans
 }
 
 export async function presentCustomerCenter(appUserID: string): Promise<void> {

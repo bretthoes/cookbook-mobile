@@ -104,7 +104,7 @@ export default observer(function EditRecipe() {
     try {
       const success = await update(updatedRecipe)
       if (success) {
-        router.replace(`../../cookbook/${cookbook?.id}`)
+        router.replace(`/(logged-in)/cookbook/${cookbook?.id}`)
       } else {
         alert(translate("recipeEditScreen:updateFailed"))
       }

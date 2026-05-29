@@ -1,7 +1,7 @@
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
 import { spacing } from "@/theme"
@@ -100,7 +100,7 @@ export default observer(function SetDisplayName() {
         tx="setDisplayNameScreen:descriptionProfile"
         style={{ paddingBottom: spacing.md, paddingHorizontal: spacing.md }}
       />
-      <UseCase>
+      <FormCard>
         <TextField
           value={localDisplayName}
           onChangeText={setLocalDisplayName}
@@ -113,7 +113,7 @@ export default observer(function SetDisplayName() {
           placeholder=""
         />
         <Text text={`${result}`} preset="formHelper" />
-      </UseCase>
+      </FormCard>
     </Screen>
   )
 })

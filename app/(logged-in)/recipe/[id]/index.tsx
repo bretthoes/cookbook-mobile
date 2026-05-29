@@ -87,7 +87,7 @@ export default observer(function Recipe() {
   }, [recipeId, single])
 
   const handlePressEdit = useCallback(() => {
-    router.push(`../recipe/${selected?.id}/edit`)
+    router.push(`/(logged-in)/recipe/${selected?.id}/edit`)
   }, [selected?.id])
 
   const handlePressDelete = useCallback(async () => {

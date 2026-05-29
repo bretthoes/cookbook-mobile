@@ -44,28 +44,28 @@ export const CookbookModel = types
       return {
         textLabel:
           cookbook.membersCount == 1
-            ? translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.membersLabel", {
+            ? translate("cookbooksScreen:cookbookListScreen.cookbookCard.membersLabel", {
                 count: cookbook.membersCount,
               })
             : translate(
-                "demoPodcastListScreen:cookbookListScreen.cookbookCard.membersLabel_plural",
+                "cookbooksScreen:cookbookListScreen.cookbookCard.membersLabel_plural",
                 { count: cookbook.membersCount },
               ),
-        accessibilityLabel: translate("demoPodcastListScreen:accessibility.durationLabel", {}),
+        accessibilityLabel: translate("cookbooksScreen:accessibility.durationLabel", {}),
       }
     },
     get recipes() {
       return {
         textLabel:
           cookbook.recipeCount == 1
-            ? translate("demoPodcastListScreen:cookbookListScreen.cookbookCard.recipesLabel", {
+            ? translate("cookbooksScreen:cookbookListScreen.cookbookCard.recipesLabel", {
                 count: cookbook.recipeCount,
               })
             : translate(
-                "demoPodcastListScreen:cookbookListScreen.cookbookCard.recipesLabel_plural",
+                "cookbooksScreen:cookbookListScreen.cookbookCard.recipesLabel_plural",
                 { count: cookbook.recipeCount },
               ),
-        accessibilityLabel: translate("demoPodcastListScreen:accessibility.durationLabel", {}),
+        accessibilityLabel: translate("cookbooksScreen:accessibility.durationLabel", {}),
       }
     },
   }))

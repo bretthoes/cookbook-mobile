@@ -38,8 +38,8 @@ export default observer(function Layout() {
         options={{
           href: "./cookbooks",
           headerShown: false,
-          tabBarAccessibilityLabel: translate("demoNavigator:cookbookListTab"),
-          tabBarLabel: translate("demoNavigator:cookbookListTab"),
+          tabBarAccessibilityLabel: translate("tabNavigator:cookbookListTab"),
+          tabBarLabel: translate("tabNavigator:cookbookListTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="cookbooks" size={30} color={focused ? colors.tint : undefined} />
           ),
@@ -50,7 +50,7 @@ export default observer(function Layout() {
         options={{
           href: "./create",
           headerShown: false,
-          tabBarLabel: translate("demoNavigator:createTab"),
+          tabBarLabel: translate("tabNavigator:createTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="create" size={30} color={focused ? colors.tint : undefined} />
           ),
@@ -61,7 +61,7 @@ export default observer(function Layout() {
         options={{
           href: "./(logged-in)/(tabs)/profile",
           headerShown: false,
-          tabBarLabel: translate("demoNavigator:profileTab"),
+          tabBarLabel: translate("tabNavigator:profileTab"),
           tabBarIcon: ({ focused }) => (
             <Icon icon="user" size={28} color={focused ? colors.tint : undefined} />
           ),

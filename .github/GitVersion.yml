@@ -1,0 +1,18 @@
+mode: ContinuousDelivery
+label: null
+
+branches:
+  main:
+    regex: ^(master|main)$
+    increment: Patch
+    label: null
+
+  develop:
+    regex: ^dev(elop(ment)?)?$
+    label: beta
+    increment: Minor
+
+  feature:
+    regex: ^features?[\/-](?<BranchName>.+)
+    label: alpha
+    increment: Patch

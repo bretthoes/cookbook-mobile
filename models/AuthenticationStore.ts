@@ -86,7 +86,7 @@ export const AuthenticationStoreModel = types
       const response = yield api.updateUser(displayName)
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
-        store.setProp("result", "An error occurred. Please try again.")
+        store.setProp("result", "loginScreen:errors.updateFailed")
         return false
       }
       store.setProp("displayName", displayName)
@@ -123,28 +123,28 @@ export const AuthenticationStoreModel = types
               const updateResponse = yield api.updateUser(store.displayName)
               if (updateResponse.kind !== "ok") {
                 console.error(`Error updating user: ${JSON.stringify(updateResponse)}`)
-                store.setProp("result", "An error occurred. Please Try again.")
+                store.setProp("result", "loginScreen:errors.updateFailed")
               } else {
-                store.setProp("result", "Successfully updated.")
+                store.setProp("result", "loginScreen:errors.updateSuccess")
               }
             }
           }
           return true
         case "unauthorized":
-          if (!silent) store.setProp("result", "Email or password is incorrect.")
+          if (!silent) store.setProp("result", "loginScreen:errors.invalidCredentials")
           return false
         case "notallowed":
           if (isFirstLogin) return false
           const resendResponse = yield api.resendConfirmationEmail(store.authEmail)
           if (resendResponse.kind === "ok") {
-            store.setProp("result", "A confirmation email has been resent.")
+            store.setProp("result", "loginScreen:errors.confirmationResent")
           } else {
-            store.setProp("result", "An error occurred sending email. Please try again.")
+            store.setProp("result", "loginScreen:errors.confirmationResendFailed")
             console.error(`error in resendConfirmationEmail: ${JSON.stringify(resendResponse)}`)
           }
           return false
         default:
-          if (!silent) store.setProp("result", "Cannot connect. Please try again later.")
+          if (!silent) store.setProp("result", "loginScreen:errors.cannotConnect")
           console.error(`Error logging in: ${JSON.stringify(response)}`)
           return false
       }
@@ -158,10 +158,10 @@ export const AuthenticationStoreModel = types
           yield SecureStore.setItemAsync("password", password)
           return true
         case "rejected":
-          store.setProp("result", "This email is already taken.")
+          store.setProp("result", "registerScreen:errors.emailTaken")
           return false
         default:
-          store.setProp("result", "Something went wrong, please try again later.")
+          store.setProp("result", "registerScreen:errors.generic")
           console.error(`Error registering: ${JSON.stringify(response)}`)
           return false
       }
@@ -169,9 +169,9 @@ export const AuthenticationStoreModel = types
     resendConfirmationEmail: flow(function* () {
       const response = yield api.resendConfirmationEmail(store.authEmail)
       if (response.kind === "ok") {
-        store.setProp("result", "A confirmation email has been resent.")
+        store.setProp("result", "loginScreen:errors.confirmationResent")
       } else {
-        store.setProp("result", "An error occurred sending email. Please try again.")
+        store.setProp("result", "loginScreen:errors.confirmationResendFailed")
         console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
       }
     }),
@@ -187,7 +187,7 @@ export const AuthenticationStoreModel = types
       store.setProp("result", "")
       const response = yield api.loginWithGoogle(idToken)
       if (response.kind !== "ok") {
-        store.setProp("result", "Sign in with Google failed. Please try again.")
+        store.setProp("result", "loginScreen:errors.googleFailed")
         console.error(`Error logging in with Google: ${JSON.stringify(response)}`)
         return false
       }
@@ -198,7 +198,7 @@ export const AuthenticationStoreModel = types
       store.setProp("result", "")
       const response = yield api.loginWithApple(identityToken)
       if (response.kind !== "ok") {
-        store.setProp("result", "Sign in with Apple failed. Please try again.")
+        store.setProp("result", "loginScreen:errors.appleFailed")
         console.error(`Error logging in with Apple: ${JSON.stringify(response)}`)
         return false
       }
@@ -209,7 +209,7 @@ export const AuthenticationStoreModel = types
       store.setProp("result", "")
       const response = yield api.loginWithFacebook(accessToken)
       if (response.kind !== "ok") {
-        store.setProp("result", "Sign in with Facebook failed. Please try again.")
+        store.setProp("result", "loginScreen:errors.facebookFailed")
         console.error(`Error logging in with Facebook: ${JSON.stringify(response)}`)
         return false
       }
@@ -219,9 +219,9 @@ export const AuthenticationStoreModel = types
     resetPassword: flow(function* (resetCode: string, password: string) {
       const response = yield api.resetPassword(store.authEmail, resetCode, password)
       if (response.kind === "ok") {
-        store.setProp("result", "Password reset successfully.")
+        store.setProp("result", "loginScreen:errors.passwordResetSuccess")
       } else {
-        store.setProp("result", "An error occurred. Please Try again.")
+        store.setProp("result", "loginScreen:errors.updateFailed")
         console.error(`Error registering: ${JSON.stringify(response)}`)
       }
     }),
@@ -229,9 +229,9 @@ export const AuthenticationStoreModel = types
       const response = yield api.updateUser(store.displayName)
       if (response.kind !== "ok") {
         console.error(`Error updating user: ${JSON.stringify(response)}`)
-        store.setProp("result", "An error occurred. Please Try again.")
+        store.setProp("result", "loginScreen:errors.updateFailed")
       } else {
-        store.setProp("result", "Successfully updated.")
+        store.setProp("result", "loginScreen:errors.updateSuccess")
       }
     }),
   }))

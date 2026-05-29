@@ -7,76 +7,33 @@ import { RecipeToAddModel, RecipeToAddSnapshotIn } from "./RecipeToAdd"
 import { withSetPropAction } from "../helpers/withSetPropAction"
 import { RecipeListModel } from "../generics/PaginatedListTypes"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
+import {
+  ensureMinimumElapsed,
+  RECIPE_IMPORT_MIN_LOADING_MS,
+  RECIPE_SOCIAL_IMPORT_MIN_LOADING_MS,
+} from "@/utils/minimumLoadingDelay"
+import type { GeneralApiProblem } from "@/services/api/apiProblem"
+import * as ImagePicker from "expo-image-picker"
+import { FetchState } from "../shared/fetchState"
+import {
+  getCurrentWeekKey,
+  hasDraftContent,
+  type DraftFormData,
+} from "./recipeDraftHelpers"
+
+export { getCurrentWeekKey, hasDraftContent, type DraftFormData } from "./recipeDraftHelpers"
 
 export const WEEKLY_IMPORT_LIMIT = 5
 export const RECIPE_LIST_PAGE_SIZE = 50
 export const RECIPE_LIST_MAX_COUNT = 999
 
-/**
- * Returns an ISO date string for the Monday of the current week (e.g. "2026-03-23").
- * Used as a stable weekly key for resetting the import count.
- */
-export function getCurrentWeekKey(): string {
-  const now = new Date()
-  const day = now.getDay() // 0 = Sunday
-  const diff = now.getDate() - day + (day === 0 ? -6 : 1)
-  const monday = new Date(now)
-  monday.setDate(diff)
-  return monday.toISOString().split("T")[0]
-}
-
-/** Minimal form shape accepted by saveDraft — mirrors RecipeFormInputs from RecipeForm */
-export interface DraftFormData {
-  title: string
-  summary?: string | null
-  preparationTimeInMinutes?: number | null
-  cookingTimeInMinutes?: number | null
-  bakingTimeInMinutes?: number | null
-  servings?: number | null
-  ingredientSections: {
-    id?: number
-    title: string
-    ingredients: { name: string; optional: boolean | null }[]
-  }[]
-  directions: { text: string; image: string | null }[]
-  images: string[]
-  isVegetarian?: boolean | null
-  isVegan?: boolean | null
-  isGlutenFree?: boolean | null
-  isDairyFree?: boolean | null
-  isCheap?: boolean | null
-  isHealthy?: boolean | null
-  isLowFodmap?: boolean | null
-  isHighProtein?: boolean | null
-  isBreakfast?: boolean | null
-  isLunch?: boolean | null
-  isDinner?: boolean | null
-  isDessert?: boolean | null
-  isSnack?: boolean | null
-}
-
 function makeDraftId(): string {
   return Date.now().toString(36) + Math.random().toString(36).slice(2)
 }
 
-/** True when the form has enough content to represent an abandoned in-progress recipe. */
-export function hasDraftContent(formData: DraftFormData): boolean {
-  if (formData.title?.trim()) return true
-  if (formData.summary?.trim()) return true
-  if (formData.images.some((img) => img?.trim())) return true
-  if (formData.directions.some((d) => d.text?.trim() || d.image)) return true
-  return formData.ingredientSections.some((section) =>
-    section.ingredients.some((ingredient) => ingredient.name?.trim()),
-  )
-}
+export type RecipeImportFailureKind = GeneralApiProblem["kind"]
 
-export const FetchState = {
-  idle: "idle",
-  loading: "loading",
-  ready: "ready",
-} as const
-
-export type FetchState = (typeof FetchState)[keyof typeof FetchState]
+export { FetchState } from "../shared/fetchState"
 
 export const RecipeStoreModel = types
   .model("RecipeStore")
@@ -316,7 +273,6 @@ export const RecipeStoreModel = types
       const response = yield api.updateRecipe(updatedRecipe)
       if (response.kind === "ok") {
         if (self.selected) self.selected.update(updatedRecipe)
-        else console.error(`Error updating recipe: ${JSON.stringify(response)}`)
         const brief = self.recipeList.items.find((recipe) => recipe.id === updatedRecipe.id)
         brief?.update(updatedRecipe.title)
 
@@ -377,6 +333,46 @@ export const RecipeStoreModel = types
       }
       self.weeklyImportCount += 1
     },
+    importFromUrl: flow(function* (url: string) {
+      const startTime = Date.now()
+      const response = yield api.extractRecipeFromUrl(url)
+      yield ensureMinimumElapsed(startTime, RECIPE_IMPORT_MIN_LOADING_MS)
+      if (response.kind === "ok") {
+        self.incrementImportCount()
+        self.setRecipeToAdd(response.recipe)
+        return { ok: true as const }
+      }
+      return { ok: false as const, kind: response.kind as RecipeImportFailureKind }
+    }),
+    importFromSocialUrl: flow(function* (url: string) {
+      const startTime = Date.now()
+      const response = yield api.extractRecipeFromSocialUrl(url)
+      yield ensureMinimumElapsed(startTime, RECIPE_SOCIAL_IMPORT_MIN_LOADING_MS)
+      if (response.kind === "ok") {
+        self.incrementImportCount()
+        self.setRecipeToAdd(response.recipe)
+        return { ok: true as const }
+      }
+      return { ok: false as const, kind: response.kind as RecipeImportFailureKind }
+    }),
+    importFromVoice: flow(function* (transcript: string) {
+      const response = yield api.extractRecipeFromVoice(transcript)
+      if (response.kind === "ok") {
+        self.incrementImportCount()
+        self.setRecipeToAdd(response.recipe)
+        return { ok: true as const }
+      }
+      return { ok: false as const, kind: response.kind as RecipeImportFailureKind }
+    }),
+    importFromImage: flow(function* (image: ImagePicker.ImagePickerAsset) {
+      const response = yield api.extractRecipeFromImage(image)
+      if (response.kind === "ok") {
+        self.incrementImportCount()
+        self.setRecipeToAdd(response.recipe)
+        return { ok: true as const }
+      }
+      return { ok: false as const, kind: response.kind as RecipeImportFailureKind }
+    }),
     saveDraft(cookbookId: number, formData: DraftFormData) {
       if (!hasDraftContent(formData)) {
         const emptyIdx = self.drafts.findIndex((d) => d.cookbookId === cookbookId)

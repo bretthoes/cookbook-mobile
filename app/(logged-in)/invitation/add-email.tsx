@@ -2,7 +2,7 @@ import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
@@ -73,7 +73,7 @@ export default observer(function AddInvitationEmailScreen() {
       />
 
       <View style={$themedSection}>
-        <UseCase>
+        <FormCard>
           <TextField
             value={inviteEmail}
             onChangeText={(text) => {
@@ -96,7 +96,7 @@ export default observer(function AddInvitationEmailScreen() {
             style={$themedButton}
           />
           {!!emailMsg && <Text text={emailMsg} preset="formHelper" style={$themedHelper} />}
-        </UseCase>
+        </FormCard>
       </View>
     </Screen>
   )

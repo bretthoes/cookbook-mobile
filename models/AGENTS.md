@@ -13,7 +13,7 @@ App state uses **MobX-State-Tree (MST)** with **mobx-react-lite** `observer()` o
 | `recipeStore`         | `Recipe/RecipeStore.ts`  | Recipes, drafts, imports, weekly limits              |
 | `membershipStore`     | `MembershipStore.ts`     | Cookbook members                                     |
 | `invitationStore`     | `InvitationStore.ts`     | Pending invitations                                  |
-| `episodeStore`        | `EpisodeStore.ts`        | Legacy Ignite demo data (unused in production flows) |
+| `subscriptionStore`   | `SubscriptionStore.ts`   | RevenueCat pro entitlement state                     |
 
 Access stores in screens:
 

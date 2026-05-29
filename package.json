@@ -13,6 +13,9 @@
     "ios:reinstall": "expo run:ios --no-build-cache",
     "web": "expo start --web",
     "lint": "expo lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:i18n": "vitest run scripts/check-i18n-parity.test.ts",
     "generate:api": "openapi-typescript ../SharedCookbook/src/Web/wwwroot/api/specification.json -o services/api/generated/schema.d.ts && prettier --write services/api/generated/schema.d.ts",
     "deploy:ios:prod": "bash .cursor/skills/apple-upload/scripts/deploy.sh"
   },
@@ -88,7 +91,8 @@
     "eslint-config-expo": "^10.0.0",
     "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitest": "^4.1.7"
   },
   "private": true,
   "expo": {

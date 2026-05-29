@@ -2,11 +2,10 @@ import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { UseCase } from "@/components/UseCase"
+import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useStores } from "@/models/helpers/useStores"
-import { api } from "@/services/api"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
@@ -19,11 +18,8 @@ const isValidUrl = (input: string) => {
   return regex.test(input)
 }
 
-const MINIMUM_LOADING_TIME_MS = 1500
-
 export default observer(function RecipeUrlScreen() {
   const { recipeStore } = useStores()
-  const { setRecipeToAdd } = recipeStore
   const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
@@ -55,27 +51,17 @@ export default observer(function RecipeUrlScreen() {
       if (error) return
 
       setIsLoading(true)
-      const startTime = Date.now()
-
-      const uploadResponse = await api.extractRecipeFromUrl(url)
-
-      const elapsed = Date.now() - startTime
-      if (elapsed < MINIMUM_LOADING_TIME_MS) {
-        await new Promise((resolve) => setTimeout(resolve, MINIMUM_LOADING_TIME_MS - elapsed))
-      }
-
+      const importResult = await recipeStore.importFromUrl(url)
       setIsLoading(false)
 
-      if (uploadResponse.kind === "ok") {
-        recipeStore.incrementImportCount()
-        setRecipeToAdd(uploadResponse.recipe)
-        router.replace("../recipe/add")
+      if (importResult.ok) {
+        router.replace("/(logged-in)/recipe/add")
       } else {
         setResult(translate("recipeSelectUrlScreen:extractFailed"))
       }
       setIsSubmitted(false)
     })
-  }, [url, getValidationError, recipeStore, setRecipeToAdd, run])
+  }, [url, getValidationError, recipeStore, run])
 
   useHeader(
     {
@@ -95,7 +81,7 @@ export default observer(function RecipeUrlScreen() {
   return (
     <Screen style={$root} preset="scroll">
       <Text tx="recipeSelectUrlScreen:subtitle" style={{ paddingHorizontal: spacing.md }} />
-      <UseCase>
+      <FormCard>
         <TextField
           value={url}
           onChangeText={(text) => {
@@ -112,7 +98,7 @@ export default observer(function RecipeUrlScreen() {
           status={validationError ? "error" : undefined}
         />
         <Text text={`${result}`} preset="formHelper" />
-      </UseCase>
+      </FormCard>
     </Screen>
   )
 })

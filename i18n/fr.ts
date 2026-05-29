@@ -12,6 +12,22 @@ const fr: Translations = {
     save: "___Save",
     goBack: "___Go Back",
     error: "___Error",
+    paginationLabel: "___Page {{currentPage}} of {{totalPages}} ({{totalCount}} items)",
+  },
+  errors: {
+    timeout: "___The request timed out. Please try again.",
+    cannotConnect: "___Cannot connect. Please try again later.",
+    server: "___Something went wrong on our end. Please try again later.",
+    unauthorized: "___You are not authorized to perform this action.",
+    notAllowed: "___Your account is not allowed to perform this action.",
+    forbidden: "___You do not have permission to do that.",
+    notFound: "___That item could not be found.",
+    conflict: "___That action conflicted with existing data.",
+    rateLimited: "___Too many requests. Please wait and try again.",
+    rejected: "___The request was rejected. Please check your input.",
+    badData: "___We received unexpected data. Please try again.",
+    unknown: "___Something went wrong. Please try again.",
+    invalidEmail: "Adresse e-mail invalide.",
   },
   itemNotFound: {
     message: "___Item not found",
@@ -84,6 +100,10 @@ const fr: Translations = {
       needsDigit: "___must contain at least one digit",
       needsSpecialChar: "___must contain at least one special character",
     },
+    errors: {
+      emailTaken: "___This email is already taken.",
+      generic: "___Something went wrong, please try again later.",
+    },
   },
   registerOptionsScreen: {
     title: "___Create account",
@@ -111,10 +131,6 @@ const fr: Translations = {
         "Aucune donnée trouvée pour le moment. Essayez de cliquer sur le bouton pour rafraîchir ou recharger l'application.",
       button: "Essayons à nouveau",
     },
-  },
-
-  errors: {
-    invalidEmail: "Adresse e-mail invalide.",
   },
   validation: {
     titleRequired: "___Title is required",
@@ -164,6 +180,18 @@ const fr: Translations = {
     rememberMe: "___Remember me",
     hint: "Astuce : vous pouvez utiliser n'importe quelle adresse e-mail et votre mot de passe préféré :)",
     register: "---No account? Register",
+    errors: {
+      invalidCredentials: "___Email or password is incorrect.",
+      cannotConnect: "___Cannot connect. Please try again later.",
+      confirmationResent: "___A confirmation email has been resent.",
+      confirmationResendFailed: "___An error occurred sending email. Please try again.",
+      updateFailed: "___An error occurred. Please try again.",
+      updateSuccess: "___Successfully updated.",
+      googleFailed: "___Sign in with Google failed. Please try again.",
+      appleFailed: "___Sign in with Apple failed. Please try again.",
+      facebookFailed: "___Sign in with Facebook failed. Please try again.",
+      passwordResetSuccess: "___Password reset successfully.",
+    },
   },
   demoCommunityScreen: {
     title: "Connectez-vous avec la communauté",
@@ -223,7 +251,7 @@ const fr: Translations = {
     windowsReactotronHint:
       "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
   },
-  demoNavigator: {
+  tabNavigator: {
     componentsTab: "Composants",
     debugTab: "Débugage",
     createTab: "Créer",
@@ -331,7 +359,7 @@ const fr: Translations = {
     windowsReactotronHint:
       "Si cela ne fonctionne pas, assurez-vous que l'application de bureau Reactotron est en cours d'exécution, puis rechargez l'application.",
   },
-  demoPodcastListScreen: {
+  cookbooksScreen: {
     title: "Votre étagère",
     onlyFavorites: "Afficher uniquement les favoris",
     favoriteButton: "Favori",
@@ -558,6 +586,21 @@ const fr: Translations = {
       "___Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
     leaveButton: "___Leave",
     leaveError: "___Failed to leave cookbook. Please try again.",
+    tags: {
+      isVegetarian: "___Vegetarian",
+      isVegan: "___Vegan",
+      isGlutenFree: "___Gluten Free",
+      isDairyFree: "___Dairy Free",
+      isHealthy: "___Healthy",
+      isCheap: "___Cheap",
+      isLowFodmap: "___Low FODMAP",
+      isHighProtein: "___High Protein",
+      isBreakfast: "___Breakfast",
+      isLunch: "___Lunch",
+      isDinner: "___Dinner",
+      isDessert: "___Dessert",
+      isSnack: "___Snack",
+    },
   },
   cookbookAddScreen: {
     title: "___Add new cookbook",

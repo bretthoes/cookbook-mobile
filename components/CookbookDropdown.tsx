@@ -1,10 +1,9 @@
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
-import { UseCase } from "@/components/UseCase"
+import { SectionCard } from "@/components/SectionCard"
 import { translate } from "@/i18n"
 import { Cookbook } from "@/models/Cookbook"
 import type { ThemedStyle } from "@/theme"
-import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { observer } from "mobx-react-lite"
 import { useMemo, useState } from "react"
@@ -36,7 +35,7 @@ export interface CookbookDropdownProps {
 export const CookbookDropdown = observer(function CookbookDropdown(props: CookbookDropdownProps) {
   const { cookbooks, selectedCookbook, onSelect, error } = props
 
-  const { themed } = useAppTheme()
+  const { themed, theme } = useAppTheme()
   const [isDropdownVisible, setIsDropdownVisible] = useState(false)
 
   const $themedDropdownButton = useMemo(() => themed($dropdownButton(error)), [themed, error])
@@ -52,7 +51,7 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
   }
 
   return (
-    <UseCase description={translate("selectCookbookScreen:dropdownDescription")}>
+    <SectionCard description={translate("selectCookbookScreen:dropdownDescription")}>
       <TouchableOpacity
         style={$themedDropdownButton}
         onPress={() => setIsDropdownVisible(!isDropdownVisible)}
@@ -65,7 +64,7 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
           }
           style={$themedDropdownText}
         />
-        <Icon icon={isDropdownVisible ? "caretUp" : "caretDown"} size={20} color={colors.textDim} />
+        <Icon icon={isDropdownVisible ? "caretUp" : "caretDown"} size={20} color={theme.colors.textDim} />
       </TouchableOpacity>
 
       {error && <Text text={error} preset="formHelper" style={$themedErrorText} />}
@@ -80,13 +79,13 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
             >
               <Text text={item.title} style={$themedDropdownItemText} />
               {selectedCookbook?.id === item.id && (
-                <Icon icon="check" size={20} color={colors.tint} />
+                <Icon icon="check" size={20} color={theme.colors.tint} />
               )}
             </TouchableOpacity>
           ))}
         </ScrollView>
       )}
-    </UseCase>
+    </SectionCard>
   )
 })
 

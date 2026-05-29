@@ -10,6 +10,22 @@ const en = {
     save: "Save",
     goBack: "Go Back",
     error: "Error",
+    paginationLabel: "Page {{currentPage}} of {{totalPages}} ({{totalCount}} items)",
+  },
+  errors: {
+    timeout: "The request timed out. Please try again.",
+    cannotConnect: "Cannot connect. Please try again later.",
+    server: "Something went wrong on our end. Please try again later.",
+    unauthorized: "You are not authorized to perform this action.",
+    notAllowed: "Your account is not allowed to perform this action.",
+    forbidden: "You do not have permission to do that.",
+    notFound: "That item could not be found.",
+    conflict: "That action conflicted with existing data.",
+    rateLimited: "Too many requests. Please wait and try again.",
+    rejected: "The request was rejected. Please check your input.",
+    badData: "We received unexpected data. Please try again.",
+    unknown: "Something went wrong. Please try again.",
+    invalidEmail: "Invalid email address.",
   },
   itemNotFound: {
     message: "Item not found",
@@ -81,6 +97,10 @@ const en = {
       needsDigit: "must contain at least one digit",
       needsSpecialChar: "must contain at least one special character",
     },
+    errors: {
+      emailTaken: "This email is already taken.",
+      generic: "Something went wrong, please try again later.",
+    },
   },
   registerOptionsScreen: {
     title: "Create account",
@@ -107,9 +127,6 @@ const en = {
       content: "No data found yet. Try clicking the button to refresh or reload the app.",
       button: "Let's try this again",
     },
-  },
-  errors: {
-    invalidEmail: "Invalid email address.",
   },
   validation: {
     titleRequired: "Title is required",
@@ -159,8 +176,20 @@ const en = {
     rememberMe: "Remember me",
     hint: "Hint: you can use any email address and your favorite password :)",
     register: "No account? Register",
+    errors: {
+      invalidCredentials: "Email or password is incorrect.",
+      cannotConnect: "Cannot connect. Please try again later.",
+      confirmationResent: "A confirmation email has been resent.",
+      confirmationResendFailed: "An error occurred sending email. Please try again.",
+      updateFailed: "An error occurred. Please try again.",
+      updateSuccess: "Successfully updated.",
+      googleFailed: "Sign in with Google failed. Please try again.",
+      appleFailed: "Sign in with Apple failed. Please try again.",
+      facebookFailed: "Sign in with Facebook failed. Please try again.",
+      passwordResetSuccess: "Password reset successfully.",
+    },
   },
-  demoNavigator: {
+  tabNavigator: {
     componentsTab: "Components",
     debugTab: "Debug",
     createTab: "Create",
@@ -325,7 +354,7 @@ const en = {
     windowsReactotronHint:
       "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
   },
-  demoPodcastListScreen: {
+  cookbooksScreen: {
     title: "Your shelf",
     onlyFavorites: "Only Show Favorites",
     favoriteButton: "Favorite",
@@ -554,6 +583,21 @@ const en = {
       "Are you sure you want to leave this cookbook? You will have to be invited back to join again.",
     leaveButton: "Leave",
     leaveError: "Failed to leave cookbook. Please try again.",
+    tags: {
+      isVegetarian: "Vegetarian",
+      isVegan: "Vegan",
+      isGlutenFree: "Gluten Free",
+      isDairyFree: "Dairy Free",
+      isHealthy: "Healthy",
+      isCheap: "Cheap",
+      isLowFodmap: "Low FODMAP",
+      isHighProtein: "High Protein",
+      isBreakfast: "Breakfast",
+      isLunch: "Lunch",
+      isDinner: "Dinner",
+      isDessert: "Dessert",
+      isSnack: "Snack",
+    },
   },
   cookbookAddScreen: {
     title: "Add new cookbook",

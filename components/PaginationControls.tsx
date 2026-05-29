@@ -1,5 +1,6 @@
 import { Text } from "@/components/Text"
-import { colors, spacing } from "@/theme"
+import type { ThemedStyle } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 import * as React from "react"
 import { StyleProp, TextStyle, View, ViewStyle } from "react-native"
 import { Button } from "./Button"
@@ -28,39 +29,46 @@ export function PaginationControls(props: PaginationControlsProps) {
     hasPreviousPage,
     onNextPage,
     onPreviousPage,
+    style,
   } = props
+  const { themed, theme } = useAppTheme()
 
   return (
-    <View style={$root}>
+    <View style={[themed($root), style]}>
       <Button
         onPress={onPreviousPage}
         disabled={!hasPreviousPage}
         RightAccessory={() => (
-          <Icon icon="caretLeft" color={hasPreviousPage ? colors.text : colors.separator} />
+          <Icon
+            icon="caretLeft"
+            color={hasPreviousPage ? theme.colors.text : theme.colors.separator}
+          />
         )}
       ></Button>
-      <Text style={$text}>
-        Page {currentPage} of {totalPages} ({totalCount} items)
-      </Text>
+      <Text
+        tx="common:paginationLabel"
+        txOptions={{ currentPage, totalPages, totalCount }}
+        style={themed($text)}
+      />
       <Button
         onPress={onNextPage}
         disabled={!hasNextPage}
         RightAccessory={() => (
-          <Icon icon="caretRight" color={hasNextPage ? colors.text : colors.separator} />
+          <Icon icon="caretRight" color={hasNextPage ? theme.colors.text : theme.colors.separator} />
         )}
       />
     </View>
   )
 }
 
-const $root: ViewStyle = {
+const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   justifyContent: "space-between",
-  padding: spacing.md,
+  padding: theme.spacing.md,
   alignItems: "center",
-}
+})
 
-const $text: TextStyle = {
+const $text: ThemedStyle<TextStyle> = (theme) => ({
   textAlign: "center",
-  color: colors.icon,
-}
+  color: theme.colors.icon,
+})
