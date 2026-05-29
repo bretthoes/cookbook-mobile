@@ -24,6 +24,7 @@ const fr: Translations = {
     readyForLaunch: "Votre application, presque prête pour le lancement !",
     exciting: "(ohh, c'est excitant !)",
     letsGo: "Allons-y !",
+    chooseLanguage: "___Choose your language",
     registerButton: "___Register",
     loginButton: "___Login",
   },
@@ -58,6 +59,9 @@ const fr: Translations = {
   },
   registerScreen: {
     title: "___Register",
+    languageStepTitle: "___Choose your language",
+    languageStepDescription:
+      "___Pick the language you want to use in the app. You can change this later in Profile.",
     emailStepTitle: "___What's your email?",
     emailFieldLabel: "___Let's start with your email.",
     emailPlaceholder: "___you@example.com",
@@ -715,7 +719,6 @@ const fr: Translations = {
     title: "___Select Language",
     support:
       "___If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
-    note: "Remarque : Vous devrez peut-être vous déconnecter et vous reconnecter pour que les modifications prennent effet.",
   },
   paywallScreen: {
     title: "___Love To Cook Pro",

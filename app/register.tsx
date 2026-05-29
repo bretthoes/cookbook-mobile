@@ -3,12 +3,18 @@ import { LoadingScreen } from "@/components/LoadingScreen"
 import { Divider } from "@/components/Divider"
 import { FormCard } from "@/components/FormCard"
 import { PressableIcon } from "@/components/Icon"
+import { LanguagePicker } from "@/components/LanguagePicker"
 import { PasswordRequirements } from "@/components/PasswordRequirements"
 import { Screen } from "@/components/Screen"
 import { StepIndicator } from "@/components/StepIndicator"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
+import {
+  getActiveLanguageCode,
+  setAppLanguage,
+  type SupportedLanguageCode,
+} from "@/i18n/language"
 import { useStores } from "@/models/helpers/useStores"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
@@ -23,7 +29,7 @@ import { observer } from "mobx-react-lite"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { LayoutAnimation, TextInput, TextStyle, View, ViewStyle } from "react-native"
 
-const TOTAL_STEPS = 4
+const TOTAL_STEPS = 5
 const SUCCESS_DELAY_MS = 1000
 const isValidDisplayName = (input: string) => /^[\p{L}\p{M} \-']+$/u.test(input)
 
@@ -43,6 +49,7 @@ export default observer(function Register() {
   const [isCooldown, setIsCooldown] = useState(false)
   const [cooldownTime, setCooldownTime] = useState(0)
   const [verificationEmail, setVerificationEmail] = useState("")
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguageCode>(getActiveLanguageCode())
 
   const {
     authenticationStore: {
@@ -60,13 +67,13 @@ export default observer(function Register() {
 
   const advanceStep = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-    setCurrentStep((s) => Math.min(s + 1, 5))
+    setCurrentStep((s) => Math.min(s + 1, 6))
   }, [])
 
-  useEmailVerificationPolling(currentStep === 3, advanceStep)
+  useEmailVerificationPolling(currentStep === 4, advanceStep)
 
   useEffect(() => {
-    if (currentStep === 3 && !verificationEmail) {
+    if (currentStep === 4 && !verificationEmail) {
       if (authEmail) {
         setVerificationEmail(authEmail)
       } else {
@@ -105,6 +112,15 @@ export default observer(function Register() {
   const emailError = isSubmitted ? validationError : ""
   const passwordError = isSubmitted ? passwordValidationError : ""
   const displayNameValidationError = isSubmitted ? displayNameError : ""
+
+  const handleLanguageSelect = useCallback(async (code: SupportedLanguageCode) => {
+    await setAppLanguage(code)
+    setSelectedLanguage(code)
+  }, [])
+
+  const handleLanguageStepSubmit = () => {
+    advanceStep()
+  }
 
   const handleEmailStepSubmit = () => {
     setIsSubmitted(true)
@@ -187,7 +203,7 @@ export default observer(function Register() {
   }
 
   useEffect(() => {
-    if (currentStep === 5) {
+    if (currentStep === 6) {
       const t = setTimeout(() => {
         storage.set("onboarding.skipDisplayName", true)
         router.replace({ pathname: "/(logged-in)/onboarding", params: {} })
@@ -200,15 +216,17 @@ export default observer(function Register() {
 
   const headerTitle =
     currentStep === 1
-      ? "registerScreen:emailStepTitle"
+      ? "registerScreen:languageStepTitle"
       : currentStep === 2
-        ? "registerScreen:passwordStepTitle"
-        : currentStep === 4
-          ? "registerScreen:displayNameStepTitle"
-          : "registerScreen:title"
+        ? "registerScreen:emailStepTitle"
+        : currentStep === 3
+          ? "registerScreen:passwordStepTitle"
+          : currentStep === 5
+            ? "registerScreen:displayNameStepTitle"
+            : "registerScreen:title"
 
   useEffect(() => {
-    if (currentStep === 5) {
+    if (currentStep === 6) {
       navigation.setOptions({ headerShown: false })
     } else {
       navigation.setOptions({ headerShown: true })
@@ -240,7 +258,7 @@ export default observer(function Register() {
     [isPasswordHidden, colors.text],
   )
 
-  if (currentStep === 5) {
+  if (currentStep === 6) {
     return <LoadingScreen text={translate("registerScreen:gettingReady")} />
   }
 
@@ -252,6 +270,33 @@ export default observer(function Register() {
       </View>
 
       {currentStep === 1 && (
+        <>
+          <FormCard>
+            <Text
+              tx="registerScreen:languageStepDescription"
+              preset="formHelper"
+              style={$hint}
+            />
+            <LanguagePicker selectedCode={selectedLanguage} onSelect={handleLanguageSelect} />
+          </FormCard>
+          <View style={$content}>
+            <Button
+              testID="register-language-button"
+              tx="common:next"
+              style={$tapButton}
+              preset="reversed"
+              onPress={handleLanguageStepSubmit}
+            />
+            <Text
+              tx="registerScreen:alreadyHaveAccount"
+              style={$register}
+              onPress={() => router.push("/login-options")}
+            />
+          </View>
+        </>
+      )}
+
+      {currentStep === 2 && (
         <>
           <FormCard>
             <TextField
@@ -285,7 +330,7 @@ export default observer(function Register() {
         </>
       )}
 
-      {currentStep === 2 && (
+      {currentStep === 3 && (
         <>
           <FormCard>
             <TextField
@@ -324,7 +369,7 @@ export default observer(function Register() {
         </>
       )}
 
-      {currentStep === 3 && (
+      {currentStep === 4 && (
         <>
           <FormCard>
             <Text tx="emailVerificationScreen:sentToPrefix" preset="formHelper" />
@@ -369,7 +414,7 @@ export default observer(function Register() {
         </>
       )}
 
-      {currentStep === 4 && (
+      {currentStep === 5 && (
         <>
           <FormCard>
             <Text tx="setDisplayNameScreen:description" preset="formHelper" style={$hint} />

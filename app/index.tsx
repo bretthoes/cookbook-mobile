@@ -1,14 +1,23 @@
 // @mst replace-next-line
 import { Button } from "@/components/Button"
+import { LanguagePicker } from "@/components/LanguagePicker"
+import { Text } from "@/components/Text"
 import { useStores } from "@/models/helpers/useStores"
 import { type ThemedStyle } from "@/theme"
+import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import {
+  getActiveLanguageCode,
+  getStoredLanguageCode,
+  setAppLanguage,
+  type SupportedLanguageCode,
+} from "@/i18n/language"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 import { Redirect, useRouter } from "expo-router"
 import { observer } from "mobx-react-lite"
 import { DrawRevealImage } from "@/components/DrawRevealImage"
-import { useEffect, useMemo } from "react"
-import { useWindowDimensions, View, ViewStyle } from "react-native"
+import { useCallback, useEffect, useMemo, useState } from "react"
+import { useWindowDimensions, View, ViewStyle, type TextStyle } from "react-native"
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -34,6 +43,23 @@ export default observer(function WelcomeScreen() {
   const $themedBottom = useMemo(() => themed($bottomArea), [themed])
   const $themedLoginButton = useMemo(() => themed($loginButton), [themed])
   const $themedLoginButtonPressed = useMemo(() => themed($loginButtonPressed), [themed])
+  const $themedLanguageSection = useMemo(() => themed($languageSection), [themed])
+
+  const [showLanguagePicker, setShowLanguagePicker] = useState(false)
+  const [selectedLanguage, setSelectedLanguage] = useState<SupportedLanguageCode>(getActiveLanguageCode())
+
+  useEffect(() => {
+    getStoredLanguageCode().then((stored) => {
+      setShowLanguagePicker(stored === null)
+      if (stored) setSelectedLanguage(stored)
+    })
+  }, [])
+
+  const handleLanguageSelect = useCallback(async (code: SupportedLanguageCode) => {
+    await setAppLanguage(code)
+    setSelectedLanguage(code)
+    setShowLanguagePicker(false)
+  }, [])
 
   const logoSize = useMemo(() => {
     const w = Math.min(winWidth * 0.9, 420)
@@ -80,6 +106,12 @@ export default observer(function WelcomeScreen() {
       </View>
 
       <Animated.View style={[$themedBottom, $bottomContainerInsets, $buttonsAnimated]}>
+        {showLanguagePicker ? (
+          <View style={$themedLanguageSection}>
+            <Text tx="welcomeScreen:chooseLanguage" preset="subheading" style={$languageHeading} />
+            <LanguagePicker selectedCode={selectedLanguage} onSelect={handleLanguageSelect} />
+          </View>
+        ) : null}
         <View style={$buttonGroup}>
           <Button
             tx="welcomeScreen:registerButton"
@@ -116,6 +148,15 @@ const $bottomArea: ThemedStyle<ViewStyle> = (theme) => ({
   paddingHorizontal: theme.spacing.lg,
   paddingTop: theme.spacing.sm,
 })
+
+const $languageSection: ThemedStyle<ViewStyle> = (theme) => ({
+  marginBottom: theme.spacing.md,
+})
+
+const $languageHeading: TextStyle = {
+  marginBottom: spacing.sm,
+  textAlign: "center",
+}
 
 const $buttonGroup: ViewStyle = {
   justifyContent: "flex-end",

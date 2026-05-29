@@ -24,6 +24,7 @@ const ko: Translations = {
     readyForLaunch: "출시 준비가 거의 끝난 나만의 앱!",
     exciting: "(오, 이거 신나는데요!)",
     letsGo: "가보자구요!",
+    chooseLanguage: "___Choose your language",
     registerButton: "___Register",
     loginButton: "___Login",
   },
@@ -58,6 +59,9 @@ const ko: Translations = {
   },
   registerScreen: {
     title: "___Register",
+    languageStepTitle: "___Choose your language",
+    languageStepDescription:
+      "___Pick the language you want to use in the app. You can change this later in Profile.",
     emailStepTitle: "___What's your email?",
     emailFieldLabel: "___Let's start with your email.",
     emailPlaceholder: "___you@example.com",
@@ -711,7 +715,6 @@ const ko: Translations = {
     title: "___Select Language",
     support:
       "___If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
-    note: "참고: 변경 사항을 적용하려면 로그아웃 후 다시 로그인해야 할 수 있습니다.",
   },
   paywallScreen: {
     title: "___Love To Cook Pro",

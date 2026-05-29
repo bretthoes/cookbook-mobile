@@ -22,6 +22,7 @@ const en = {
     readyForLaunch: "Your app, almost ready for launch!",
     exciting: "(ohh, this is exciting!)",
     letsGo: "Let's go!",
+    chooseLanguage: "Choose your language",
     registerButton: "Register",
     loginButton: "Login",
   },
@@ -55,6 +56,8 @@ const en = {
   },
   registerScreen: {
     title: "Register",
+    languageStepTitle: "Choose your language",
+    languageStepDescription: "Pick the language you want to use in the app. You can change this later in Profile.",
     emailStepTitle: "What's your email?",
     emailFieldLabel: "Let's start with your email.",
     emailPlaceholder: "you@example.com",
@@ -712,7 +715,6 @@ const en = {
     title: "Select Language",
     support:
       "If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
-    note: "Note: You may need to log out and back in for the changes to take effect.",
   },
   paywallScreen: {
     title: "Love To Cook Pro",

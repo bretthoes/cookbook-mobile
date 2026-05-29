@@ -1,24 +1,16 @@
-import { ListItem } from "@/components/ListItem"
+import { LanguagePicker } from "@/components/LanguagePicker"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { UseCase } from "@/components/UseCase"
-import { loadDateFnsLocale } from "@/utils/formatDate"
+import { getActiveLanguageCode, getStoredLanguageCode, setAppLanguage } from "@/i18n/language"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
-import AsyncStorage from "@react-native-async-storage/async-storage"
 import { router } from "expo-router"
-import i18n, { changeLanguage } from "i18next"
-import React, { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { ViewStyle } from "react-native"
-
-const languages = [
-  { code: "en", name: "English" },
-  { code: "fr", name: "Français" },
-  { code: "ko", name: "한국어" },
-]
+import type { SupportedLanguageCode } from "@/i18n/language"
 
 export default function LanguageScreen() {
-  const [currentLanguage, setCurrentLanguage] = useState(i18n.language)
+  const [currentLanguage, setCurrentLanguage] = useState<SupportedLanguageCode>(getActiveLanguageCode())
 
   useHeader({
     leftIcon: "back",
@@ -27,21 +19,15 @@ export default function LanguageScreen() {
   })
 
   useEffect(() => {
-    const fetchLanguage = async () => {
-      const value = await AsyncStorage.getItem("language")
-      if (value !== null) {
-        setCurrentLanguage(value)
-      }
-    }
-    fetchLanguage()
+    getStoredLanguageCode().then((stored) => {
+      if (stored) setCurrentLanguage(stored)
+    })
   }, [])
 
-  const handleLanguageSelect = async (languageCode: string) => {
-    await changeLanguage(languageCode)
-    await AsyncStorage.setItem("language", languageCode)
-    loadDateFnsLocale()
+  const handleLanguageSelect = useCallback(async (languageCode: SupportedLanguageCode) => {
+    await setAppLanguage(languageCode)
     setCurrentLanguage(languageCode)
-  }
+  }, [])
 
   return (
     <Screen preset="scroll" style={$root}>
@@ -49,23 +35,7 @@ export default function LanguageScreen() {
         tx="languageScreen:support"
         style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
       />
-      <Text
-        tx="languageScreen:note"
-        preset="formLabel"
-        style={{ paddingHorizontal: spacing.lg, paddingBottom: spacing.lg }}
-      />
-      <UseCase>
-        {languages.map((language) => (
-          <ListItem
-            key={language.code}
-            text={language.name}
-            bottomSeparator
-            topSeparator
-            onPress={() => handleLanguageSelect(language.code)}
-            rightIcon={currentLanguage === language.code ? "check" : undefined}
-          />
-        ))}
-      </UseCase>
+      <LanguagePicker selectedCode={currentLanguage} onSelect={handleLanguageSelect} />
     </Screen>
   )
 }

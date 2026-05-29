@@ -8,6 +8,7 @@ import { I18nManager } from "react-native"
 import en, { Translations } from "./en"
 import fr from "./fr"
 import ko from "./ko"
+import { getStoredLanguageCode, normalizeLanguageCode } from "./language"
 
 const fallbackLocale = "en-US"
 
@@ -42,9 +43,13 @@ if (locale?.languageTag && locale?.textDirection === "rtl") {
 export const initI18n = async () => {
   i18n.use(initReactI18next)
 
+  const stored = await getStoredLanguageCode()
+  const deviceCode = normalizeLanguageCode(locale?.languageTag)
+  const initialLng = stored ?? deviceCode ?? fallbackLocale
+
   await i18n.init({
     resources,
-    lng: locale?.languageTag ?? fallbackLocale,
+    lng: initialLng,
     fallbackLng: fallbackLocale,
     interpolation: {
       escapeValue: false,
