@@ -10,6 +10,7 @@ import { useUiStore } from "@/stores/uiStore"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import type { CookbookItem } from "@/types/cookbook"
+import { getCookbooksForList } from "@/utils/cookbookList"
 import { useCallback, useMemo } from "react"
 import { ActivityIndicator, FlatList, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { useTranslation } from "react-i18next"
@@ -28,11 +29,10 @@ export default function CookbooksScreen(_props: void) {
   const { cookbooks, isListPending, listHasNextPage, isLoadingMore, refetch, fetchNextPage } =
     useCookbooksList()
 
-  const cookbooksForList = useMemo(() => {
-    if (!favoritesOnly) return cookbooks
-    const favoriteSet = new Set(favoriteCookbookIds)
-    return cookbooks.filter((c) => favoriteSet.has(c.id))
-  }, [cookbooks, favoritesOnly, favoriteCookbookIds])
+  const cookbooksForList = useMemo(
+    () => getCookbooksForList(cookbooks, favoritesOnly, favoriteCookbookIds),
+    [cookbooks, favoritesOnly, favoriteCookbookIds],
+  )
 
   const { refreshing, onRefresh } = useManualRefresh(useCallback(() => refetch(), [refetch]))
 
@@ -60,7 +60,7 @@ export default function CookbooksScreen(_props: void) {
         contentContainerStyle={$listContentContainer}
         data={cookbooksForList}
         keyExtractor={(item) => String(item.id)}
-        extraData={favoriteCookbookIds.length + cookbooks.length}
+        extraData={`${favoritesOnly}:${favoriteCookbookIds.join(",")}`}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={handleLoadMore}
