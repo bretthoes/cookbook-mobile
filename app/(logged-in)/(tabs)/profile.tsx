@@ -294,7 +294,7 @@ const $button: ViewStyle = {
 }
 
 const $buttonContainer: ViewStyle = {
-  marginBottom: spacing.xxxl,
+  marginBottom: spacing.xxxl + spacing.xxl,
   paddingHorizontal: spacing.xl,
 }
 

@@ -759,8 +759,7 @@ const ko: Translations = {
   // Settings related translations
   languageScreen: {
     title: "___Select Language",
-    support:
-      "___If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
+    support: "___Don't see your language? You can request support for a new language.",
   },
   paywallScreen: {
     title: "___Love To Cook Pro",

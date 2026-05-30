@@ -760,8 +760,7 @@ const en = {
   // Settings related translations
   languageScreen: {
     title: "Select Language",
-    support:
-      "If you would like to request support for a language that is not listed, please use the 'Send feedback' link in the profile tab.",
+    support: "Don't see your language? You can request support for a new language.",
   },
   paywallScreen: {
     title: "Love To Cook Pro",
