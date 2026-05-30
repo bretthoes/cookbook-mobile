@@ -5,17 +5,19 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
+import {
+  useCreateCookbookMutation,
+  useUploadCookbookCoverMutation,
+} from "@/hooks/queries/useCookbooksQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
-import { CookbookToAddSnapshotIn } from "@/models/Cookbook"
-import { useStores } from "@/models/helpers/useStores"
+import type { CookbookToAddSnapshotIn } from "@/types/cookbook"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
@@ -25,10 +27,9 @@ interface CookbookFormInputs {
   image: string | null
 }
 
-export default observer(function AddCookbookScreen() {
-  const {
-    cookbookStore: { create, uploadCookbookCover },
-  } = useStores()
+export default function AddCookbookScreen() {
+  const createCookbook = useCreateCookbookMutation()
+  const uploadCover = useUploadCookbookCoverMutation()
   const { isInFlight, run } = useInFlightAction()
 
   const {
@@ -66,7 +67,7 @@ export default observer(function AddCookbookScreen() {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         setImageLocal(result.assets[0]?.uri ?? null)
-        const uploadResponse = await uploadCookbookCover(result.assets)
+        const uploadResponse = await uploadCover.mutateAsync(result.assets)
         if (uploadResponse.ok) {
           setValue("image", uploadResponse.key)
         } else {
@@ -88,17 +89,13 @@ export default observer(function AddCookbookScreen() {
         image: formData.image,
       }
       try {
-        const success = await create(newCookbook)
-        if (success) {
-          router.replace("../../(tabs)/cookbooks")
-        } else {
-          setCreateError(translate("cookbookAddScreen:createFailed"))
-        }
+        await createCookbook.mutateAsync(newCookbook)
+        router.replace("../../(tabs)/cookbooks")
       } catch {
         setCreateError(translate("cookbookAddScreen:createFailed"))
       }
     },
-    [create],
+    [createCookbook],
   )
 
   const onError = useCallback((errors: unknown) => {
@@ -156,7 +153,7 @@ export default observer(function AddCookbookScreen() {
       </FormCard>
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

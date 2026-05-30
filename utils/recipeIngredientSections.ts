@@ -1,4 +1,4 @@
-import type { IngredientSectionSnapshotIn } from "@/models/Recipe/IngredientSection"
+import type { IngredientSectionSnapshotIn } from "@/types/recipe"
 
 /** Matches SharedCookbook.Domain.Entities.Recipe.Constraints */
 export const MAX_INGREDIENT_SECTIONS = 20
@@ -11,7 +11,7 @@ export type IngredientSectionFormRow = {
 }
 
 /**
- * Converts nested ingredient form rows into API/MST-ready sections.
+ * Converts nested ingredient form rows into API-ready sections.
  * Omits completely empty sections (no title and no non-blank ingredient lines).
  */
 export function formDataToIngredientSectionsSnapshot(

@@ -5,13 +5,14 @@ import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
 import { translate } from "@/i18n"
 import type { TxKeyPath } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useAuthStore } from "@/stores/authStore"
+import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
 import { Alert, FlatList, TextStyle, View, ViewStyle } from "react-native"
 
@@ -32,9 +33,11 @@ type DataItem = {
   canToggle?: boolean
 }
 
-export default observer(function MembershipEditScreen() {
+export default function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const { authenticationStore, membershipStore, cookbookStore } = useStores()
+  const currentUserEmail = useAuthStore((s) => s.authEmail)
+  const membershipStore = useMembershipStore()
+  const { selected: selectedCookbook } = useSelectedCookbook()
   const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
   const ownMembership = membershipStore.ownMembership
   const [resultMessage, setResultMessage] = useState<string | null>(null)
@@ -42,7 +45,7 @@ export default observer(function MembershipEditScreen() {
   const { themed } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
 
-  const cookbookId = cookbookStore.selected?.id ?? 0
+  const cookbookId = selectedCookbook?.id ?? 0
   const isOwner = ownMembership?.isOwner ?? false
   const canManageMembers = ownMembership?.canRemoveMember ?? false
 
@@ -89,8 +92,7 @@ export default observer(function MembershipEditScreen() {
   if (!membership) return <ItemNotFound message={translate("membershipScreen:notFound")} />
 
   const isCurrentUserMembership =
-    !!authenticationStore.authEmail &&
-    membership.email?.toLowerCase() === authenticationStore.authEmail.toLowerCase()
+    !!currentUserEmail && membership.email?.toLowerCase() === currentUserEmail.toLowerCase()
   const canEditMembership = canManageMembers && !isCurrentUserMembership
 
   if (!canEditMembership) {
@@ -121,7 +123,7 @@ export default observer(function MembershipEditScreen() {
     const currentValue = membership.isOwner
     if (newValue === currentValue) return // No change
 
-    const cookbookId = cookbookStore.selected?.id
+    const cookbookId = selectedCookbook?.id
     if (!cookbookId) {
       Alert.alert(
         translate("membershipScreen:errorTitle"),
@@ -182,8 +184,8 @@ export default observer(function MembershipEditScreen() {
   }
 
   const data: DataItem[] = [
-    { labelTx: "membershipScreen:labels.email", value: membership.email, type: "text" },
-    { labelTx: "membershipScreen:labels.name", value: membership.name, type: "text" },
+    { labelTx: "membershipScreen:labels.email", value: membership.email ?? "", type: "text" },
+    { labelTx: "membershipScreen:labels.name", value: membership.name ?? "", type: "text" },
     {
       labelTx: "membershipScreen:labels.isOwner",
       value: membership.isOwner,
@@ -270,7 +272,7 @@ export default observer(function MembershipEditScreen() {
       )}
     </Screen>
   )
-})
+}
 
 const $screenContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,

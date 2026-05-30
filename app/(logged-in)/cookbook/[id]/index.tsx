@@ -10,16 +10,20 @@ import {
 import { Screen } from "@/components/Screen"
 import { SearchBar } from "@/components/SearchBar"
 import { Text } from "@/components/Text"
+import { useRecipesList } from "@/hooks/queries/useRecipesQuery"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { TxKeyPath, isRTL } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
-import { RecipeBrief } from "@/models/Recipe"
+import { invalidateCookbookLists } from "@/services/query/invalidateQueries"
+import { useMembershipStore } from "@/stores/membershipStore"
+import { useUiStore } from "@/stores/uiStore"
+import type { RecipeBriefItem } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
+import { useQueryClient } from "@tanstack/react-query"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { useCallback, useLayoutEffect, useMemo, useState } from "react"
 import {
@@ -54,25 +58,34 @@ function tagLabelTx(tag: TagKey): TxKeyPath {
   return `cookbookDetailScreen:tags.${tag}` as TxKeyPath
 }
 
-export default observer(function Cookbook() {
-  const {
-    cookbookStore: { selected, setSelectedById, remove, hasFavorite },
-    recipeStore,
-    membershipStore,
-  } = useStores()
+export default function CookbookScreen() {
+  const queryClient = useQueryClient()
+  const ownMembership = useMembershipStore((s) => s.ownMembership)
+  const singleByCookbookId = useMembershipStore((s) => s.singleByCookbookId)
+  const deleteMembership = useMembershipStore((s) => s.delete)
+  const hasFavoriteCookbook = useUiStore((s) => s.hasFavoriteCookbook)
+  const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
+  const { selected, setSelectedById } = useSelectedCookbook()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { themed, theme } = useAppTheme()
   const { t } = useTranslation()
 
-  const isAuthor = membershipStore.ownMembership?.isOwner
+  const isAuthor = ownMembership?.isOwner
 
   const [popoverVisible, setPopoverVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const cookbookId = Number(id)
-  const isListPending = recipeStore.isListPendingForCookbook(cookbookId)
-  const { refreshing, onRefresh } = useManualRefresh(
-    useCallback(() => recipeStore.fetch(cookbookId), [recipeStore, cookbookId]),
-  )
+  const {
+    recipes,
+    isListPending,
+    listHasNextPage,
+    isLoadingMore,
+    refetch,
+    fetchNextPage,
+    data: recipesQueryData,
+  } = useRecipesList(cookbookId)
+  const recipeListTotalCount = recipesQueryData?.pages[0]?.totalCount ?? recipes.length
+  const { refreshing, onRefresh } = useManualRefresh(useCallback(() => refetch(), [refetch]))
   const [selectedTags, setSelectedTags] = useState<Set<TagKey>>(new Set())
   const [filterExpanded, setFilterExpanded] = useState(false)
   //const debouncedSearchQuery = useDebounce(searchQuery)
@@ -99,9 +112,8 @@ export default observer(function Cookbook() {
   }, [])
 
   const q = searchQuery.trim().toLowerCase()
-  const listForThisCookbook = recipeStore.listCookbookId === cookbookId
   const hasActiveFilters = q.length > 0 || selectedTags.size > 0
-  let filteredItems = listForThisCookbook ? recipeStore.recipes.slice() : []
+  let filteredItems = recipes.slice()
   if (q) {
     filteredItems = filteredItems.filter((r) => r.title.toLowerCase().includes(q))
   }
@@ -112,10 +124,9 @@ export default observer(function Cookbook() {
   }
 
   const handleLoadMore = useCallback(() => {
-    if (!listForThisCookbook) return
-    if (!recipeStore.listHasNextPage || recipeStore.isLoadingMoreRecipes) return
-    recipeStore.fetchMore(cookbookId)
-  }, [cookbookId, listForThisCookbook, recipeStore])
+    if (!listHasNextPage || isLoadingMore) return
+    void fetchNextPage()
+  }, [listHasNextPage, isLoadingMore, fetchNextPage])
 
   const handlePressEdit = useCallback(() => {
     if (!isAuthor) return
@@ -124,7 +135,7 @@ export default observer(function Cookbook() {
 
   const handlePressLeave = useCallback(async () => {
     // Check if cookbook is in favorites
-    if (selected && hasFavorite(selected)) {
+    if (selected && hasFavoriteCookbook(selected.id)) {
       Alert.alert(
         t("cookbookDetailScreen:leaveCannotRemoveFavoritesTitle"),
         t("cookbookDetailScreen:leaveCannotRemoveFavorites"),
@@ -165,10 +176,12 @@ export default observer(function Cookbook() {
           text: t("cookbookDetailScreen:leaveButton"),
           style: "destructive",
           onPress: async () => {
-            if (!membershipStore.ownMembership?.id) return
-            const result = await membershipStore.delete(membershipStore.ownMembership?.id)
+            if (!ownMembership?.id) return
+            const result = await deleteMembership(ownMembership.id)
             if (result) {
-              remove()
+              setSelectedCookbookId(null)
+              void invalidateCookbookLists(queryClient)
+              router.replace("/(logged-in)/(tabs)/cookbooks")
             } else {
               Alert.alert(t("common:error"), t("cookbookDetailScreen:leaveError"))
             }
@@ -176,7 +189,16 @@ export default observer(function Cookbook() {
         },
       ],
     )
-  }, [isAuthor, selected, hasFavorite, membershipStore, remove, t])
+  }, [
+    isAuthor,
+    selected,
+    hasFavoriteCookbook,
+    ownMembership,
+    deleteMembership,
+    setSelectedCookbookId,
+    queryClient,
+    t,
+  ])
 
   const handlePressMore = () => setPopoverVisible(true)
 
@@ -217,19 +239,9 @@ export default observer(function Cookbook() {
 
   // Stale-while-revalidate: keep list when revisiting same cookbook; refresh in background.
   useLayoutEffect(() => {
-    let alive = true
     setSelectedById(cookbookId)
-    ;(async () => {
-      await Promise.all([
-        recipeStore.fetch(cookbookId),
-        membershipStore.singleByCookbookId(cookbookId),
-      ])
-      if (!alive) return
-    })()
-    return () => {
-      alive = false
-    }
-  }, [cookbookId, recipeStore, membershipStore, setSelectedById])
+    void singleByCookbookId(cookbookId)
+  }, [cookbookId, singleByCookbookId, setSelectedById])
 
   // re-fetch recipes when the search query changes
   // useEffect(() => {
@@ -266,8 +278,9 @@ export default observer(function Cookbook() {
         options={popoverOptions}
       />
       <Screen preset="fixed" style={$themedRoot}>
-        <FlatList<RecipeBrief>
+        <FlatList<RecipeBriefItem>
           data={filteredItems}
+          keyExtractor={(item) => String(item.id)}
           ListEmptyComponent={
             isListPending ? (
               <ActivityIndicator />
@@ -330,25 +343,25 @@ export default observer(function Cookbook() {
           onEndReachedThreshold={0.4}
           ListFooterComponent={
             <View style={$themedListFooter}>
-              {recipeStore.isLoadingMoreRecipes && <ActivityIndicator />}
+              {isLoadingMore && <ActivityIndicator />}
               <Text
                 weight="light"
                 tx={
                   hasActiveFilters
                     ? "cookbookDetailScreen:recipeCount"
-                    : recipeStore.recipeList.totalCount > recipeStore.recipes.length
+                    : recipeListTotalCount > recipes.length
                       ? "cookbookDetailScreen:recipeCountLoaded"
                       : "cookbookDetailScreen:recipeCount"
                 }
                 txOptions={
                   hasActiveFilters
                     ? { count: filteredItems.length }
-                    : recipeStore.recipeList.totalCount > recipeStore.recipes.length
+                    : recipeListTotalCount > recipes.length
                       ? {
-                          loaded: recipeStore.recipes.length,
-                          total: recipeStore.recipeList.totalCount,
+                          loaded: recipes.length,
+                          total: recipeListTotalCount,
                         }
-                      : { count: recipeStore.recipeList.totalCount }
+                      : { count: recipeListTotalCount }
                 }
               />
             </View>
@@ -373,7 +386,7 @@ export default observer(function Cookbook() {
       </Screen>
     </>
   )
-})
+}
 
 const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
   marginTop: theme.spacing.xxl,

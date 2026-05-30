@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest"
-import {
-  computeAnnualSavingsPercent,
-  parsePriceAmount,
-} from "@/utils/subscription/pricing"
+import { computeAnnualSavingsPercent, parsePriceAmount } from "@/utils/subscription/pricing"
 
 describe("parsePriceAmount", () => {
   it("parses USD-style prices", () => {

@@ -4,22 +4,20 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { SectionCard } from "@/components/SectionCard"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { toInviteUrl } from "@/utils/invitations"
 import { useHeader } from "@/utils/useHeader"
 import * as Clipboard from "expo-clipboard"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ActivityIndicator, Share, TextStyle, View, ViewStyle } from "react-native"
 
-export default observer(function AddInvitationLinkScreen() {
-  const {
-    cookbookStore: { selected },
-    invitationStore: { link },
-  } = useStores()
+export default function AddInvitationLinkScreen() {
+  const { selected } = useSelectedCookbook()
+  const link = useInvitationStore((s) => s.link)
   const { themed, theme } = useAppTheme()
 
   const [isMinting, setIsMinting] = useState(false)
@@ -48,7 +46,7 @@ export default observer(function AddInvitationLinkScreen() {
     link(cookbookId)
       .then((res) => {
         if (cancelled) return
-        if (res?.message) {
+        if ("message" in res) {
           setLinkMsg(res.message ?? translate("invitationAddLinkScreen:failedToCreateLink"))
         } else {
           setInviteUrl(toInviteUrl(res.token))
@@ -83,7 +81,7 @@ export default observer(function AddInvitationLinkScreen() {
     setLinkMsg("")
     try {
       const res = await link(cookbookId)
-      if (res?.message) {
+      if ("message" in res) {
         setLinkMsg(res.message)
         return
       }
@@ -173,7 +171,7 @@ export default observer(function AddInvitationLinkScreen() {
       </View>
     </Screen>
   )
-})
+}
 
 const $intro: ThemedStyle<TextStyle> = (theme) => ({
   paddingHorizontal: theme.spacing.md,

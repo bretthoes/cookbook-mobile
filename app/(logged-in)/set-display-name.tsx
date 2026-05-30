@@ -3,11 +3,10 @@ import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useAuthStore } from "@/stores/authStore"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { ViewStyle } from "react-native"
 
@@ -16,14 +15,15 @@ const isValidDisplayName = (input: string) => {
   return regex.test(input)
 }
 
-export default observer(function SetDisplayName() {
+export default function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [localDisplayName, setLocalDisplayName] = useState("")
   const [result, setResult] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const isSavingRef = useRef(false)
-  const { authenticationStore } = useStores()
-  const { updateDisplayName, fetchDisplayName } = authenticationStore
+  const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
+  const fetchDisplayName = useAuthStore((s) => s.fetchDisplayName)
+  const displayName = useAuthStore((s) => s.displayName)
 
   const getValidationError = useCallback((name: string) => {
     if (name.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
@@ -44,14 +44,14 @@ export default observer(function SetDisplayName() {
 
     const load = async () => {
       await fetchDisplayName()
-      setLocalDisplayName(authenticationStore.displayName)
+      setLocalDisplayName(displayName)
     }
     load()
 
     return () => {
       setResult("")
     }
-  }, [fetchDisplayName, authenticationStore])
+  }, [fetchDisplayName, displayName])
 
   const handleSave = useCallback(async () => {
     if (isSavingRef.current) return
@@ -61,7 +61,7 @@ export default observer(function SetDisplayName() {
     const error = getValidationError(localDisplayName)
     if (error) return
 
-    if (localDisplayName === authenticationStore.displayName) {
+    if (localDisplayName === displayName) {
       setResult(translate("setDisplayNameScreen:noChangesToSave"))
       setIsSubmitted(false)
       return
@@ -81,7 +81,7 @@ export default observer(function SetDisplayName() {
       setIsSaving(false)
       setIsSubmitted(false)
     }
-  }, [localDisplayName, authenticationStore, getValidationError, updateDisplayName])
+  }, [localDisplayName, displayName, getValidationError, updateDisplayName])
 
   useHeader(
     {
@@ -116,7 +116,7 @@ export default observer(function SetDisplayName() {
       </FormCard>
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

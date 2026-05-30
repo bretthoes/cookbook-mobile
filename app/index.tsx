@@ -2,7 +2,7 @@
 import { Button } from "@/components/Button"
 import { LanguagePicker } from "@/components/LanguagePicker"
 import { Text } from "@/components/Text"
-import { useStores } from "@/models/helpers/useStores"
+import { useIsAuthenticated } from "@/stores/authStore"
 import { type ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -14,7 +14,6 @@ import {
 } from "@/i18n/language"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 import { Redirect, useRouter } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { DrawRevealImage } from "@/components/DrawRevealImage"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useWindowDimensions, View, ViewStyle, type TextStyle } from "react-native"
@@ -29,10 +28,8 @@ import Animated, {
 const welcomeLogo = require("../assets/images/logo.png")
 
 // @mst replace-next-line export default function WelcomeScreen() {
-export default observer(function WelcomeScreen() {
-  const {
-    authenticationStore: { isAuthenticated },
-  } = useStores()
+export default function WelcomeScreen() {
+  const isAuthenticated = useIsAuthenticated()
   const { themed } = useAppTheme()
   const { width: winWidth, height: winHeight } = useWindowDimensions()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
@@ -130,8 +127,7 @@ export default observer(function WelcomeScreen() {
       </Animated.View>
     </View>
   )
-  // @mst replace-next-line }
-})
+}
 
 const $container: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,

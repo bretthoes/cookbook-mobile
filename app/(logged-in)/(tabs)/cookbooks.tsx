@@ -3,44 +3,64 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { CookbookCard } from "@/components/cookbooks/CookbookCard"
 import { Switch } from "@/components/Toggle"
+import { useCookbooksList } from "@/hooks/queries/useCookbooksQuery"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useUiStore } from "@/stores/uiStore"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { observer } from "mobx-react-lite"
-import { useCallback, useEffect } from "react"
+import type { CookbookItem } from "@/types/cookbook"
+import { useCallback, useMemo } from "react"
 import { ActivityIndicator, FlatList, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import { useTranslation } from "react-i18next"
 
-export default observer(function CookbooksScreen(_props) {
-  const { cookbookStore } = useStores()
+export default function CookbooksScreen(_props: void) {
   const { themeContext } = useAppTheme()
   const { t } = useTranslation()
   const isDark = themeContext === "dark"
 
-  const isListPending = cookbookStore.isListPending
+  const favoritesOnly = useUiStore((s) => s.favoritesOnly)
+  const setFavoritesOnly = useUiStore((s) => s.setFavoritesOnly)
+  const favoriteCookbookIds = useUiStore((s) => s.favoriteCookbookIds)
+  const toggleFavoriteCookbook = useUiStore((s) => s.toggleFavoriteCookbook)
+  const hasFavoriteCookbook = useUiStore((s) => s.hasFavoriteCookbook)
 
-  const { refreshing, onRefresh } = useManualRefresh(
-    useCallback(() => cookbookStore.fetch(), [cookbookStore]),
-  )
+  const { cookbooks, isListPending, listHasNextPage, isLoadingMore, refetch, fetchNextPage } =
+    useCookbooksList()
 
-  useEffect(() => {
-    cookbookStore.fetch()
-  }, [cookbookStore])
+  const cookbooksForList = useMemo(() => {
+    if (!favoritesOnly) return cookbooks
+    const favoriteSet = new Set(favoriteCookbookIds)
+    return cookbooks.filter((c) => favoriteSet.has(c.id))
+  }, [cookbooks, favoritesOnly, favoriteCookbookIds])
+
+  const { refreshing, onRefresh } = useManualRefresh(useCallback(() => refetch(), [refetch]))
 
   const handleLoadMore = useCallback(() => {
-    if (cookbookStore.favoritesOnly) return
-    if (!cookbookStore.listHasNextPage || cookbookStore.isLoadingMoreCookbooks) return
-    cookbookStore.fetchMore()
-  }, [cookbookStore])
+    if (favoritesOnly) return
+    if (!listHasNextPage || isLoadingMore) return
+    void fetchNextPage()
+  }, [favoritesOnly, listHasNextPage, isLoadingMore, fetchNextPage])
+
+  const renderItem = useCallback(
+    ({ item }: { item: CookbookItem }) => (
+      <CookbookCard
+        cookbook={item}
+        isFavorite={hasFavoriteCookbook(item.id)}
+        onPressFavorite={() => toggleFavoriteCookbook(item.id)}
+        isDark={isDark}
+      />
+    ),
+    [hasFavoriteCookbook, toggleFavoriteCookbook, isDark],
+  )
 
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
       <FlatList
         contentContainerStyle={$listContentContainer}
-        data={cookbookStore.cookbooksForList.slice()}
-        extraData={cookbookStore.favorites.length + cookbookStore.cookbooks.length}
+        data={cookbooksForList}
+        keyExtractor={(item) => String(item.id)}
+        extraData={favoriteCookbookIds.length + cookbooks.length}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={handleLoadMore}
@@ -53,19 +73,19 @@ export default observer(function CookbooksScreen(_props) {
               preset="generic"
               style={$emptyState}
               headingTx={
-                cookbookStore.favoritesOnly
+                favoritesOnly
                   ? "cookbooksScreen:cookbookListScreen.noFavoritesEmptyState.heading"
                   : undefined
               }
               contentTx={
-                cookbookStore.favoritesOnly
+                favoritesOnly
                   ? "cookbooksScreen:cookbookListScreen.noFavoritesEmptyState.content"
                   : "cookbooksScreen:cookbookListScreen.noCookbooksEmptyState"
               }
               contentTxOptions={
-                cookbookStore.favoritesOnly ? undefined : { tabName: t("tabNavigator:createTab") }
+                favoritesOnly ? undefined : { tabName: t("tabNavigator:createTab") }
               }
-              button={cookbookStore.favoritesOnly ? "" : undefined}
+              button={favoritesOnly ? "" : undefined}
               buttonOnPress={onRefresh}
               imageStyle={$emptyStateImage}
               ImageProps={{ resizeMode: "contain" }}
@@ -75,13 +95,11 @@ export default observer(function CookbooksScreen(_props) {
         ListHeaderComponent={
           <View style={$heading}>
             <Text preset="heading" tx="cookbooksScreen:title" />
-            {(cookbookStore.favoritesOnly || cookbookStore.cookbooksForList.length > 0) && (
+            {(favoritesOnly || cookbooksForList.length > 0) && (
               <View style={$toggle}>
                 <Switch
-                  value={cookbookStore.favoritesOnly}
-                  onValueChange={() =>
-                    cookbookStore.setProp("favoritesOnly", !cookbookStore.favoritesOnly)
-                  }
+                  value={favoritesOnly}
+                  onValueChange={() => setFavoritesOnly(!favoritesOnly)}
                   labelTx="cookbooksScreen:onlyFavorites"
                   labelPosition="left"
                   labelStyle={$labelStyle}
@@ -91,18 +109,11 @@ export default observer(function CookbooksScreen(_props) {
             )}
           </View>
         }
-        renderItem={({ item }) => (
-          <CookbookCard
-            cookbook={item}
-            isFavorite={cookbookStore.hasFavorite(item)}
-            onPressFavorite={() => cookbookStore.toggleFavorite(item)}
-            isDark={isDark}
-          />
-        )}
+        renderItem={renderItem}
       />
     </Screen>
   )
-})
+}
 
 const $screenContentContainer: ViewStyle = {
   flex: 1,

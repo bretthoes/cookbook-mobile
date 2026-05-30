@@ -1,7 +1,7 @@
 import { useAppleSignIn } from "@/hooks/useAppleSignIn"
 import { useFacebookSignIn } from "@/hooks/useFacebookSignIn"
 import { useGoogleSignIn } from "@/hooks/useGoogleSignIn"
-import { useStores } from "@/models/helpers/useStores"
+import { useAuthStore } from "@/stores/authStore"
 import { useCallback, useState } from "react"
 
 /**
@@ -12,7 +12,6 @@ export function useSsoAuth(onSuccess: () => void) {
   const { signIn: googleSignIn } = useGoogleSignIn()
   const { signIn: appleSignIn } = useAppleSignIn()
   const { signIn: facebookSignIn } = useFacebookSignIn()
-  const { authenticationStore } = useStores()
   const [isSsoLoading, setIsSsoLoading] = useState(false)
 
   const run = useCallback(
@@ -31,25 +30,25 @@ export function useSsoAuth(onSuccess: () => void) {
     return run(async () => {
       const credential = await appleSignIn()
       if (!credential) return false
-      return authenticationStore.loginWithApple(credential.identityToken)
+      return useAuthStore.getState().loginWithApple(credential.identityToken)
     })
-  }, [run, appleSignIn, authenticationStore])
+  }, [run, appleSignIn])
 
   const signInWithGoogle = useCallback(() => {
     return run(async () => {
       const credential = await googleSignIn()
       if (!credential) return false
-      return authenticationStore.loginWithGoogle(credential.idToken)
+      return useAuthStore.getState().loginWithGoogle(credential.idToken)
     })
-  }, [run, googleSignIn, authenticationStore])
+  }, [run, googleSignIn])
 
   const signInWithFacebook = useCallback(() => {
     return run(async () => {
       const credential = await facebookSignIn()
       if (!credential) return false
-      return authenticationStore.loginWithFacebook(credential.accessToken)
+      return useAuthStore.getState().loginWithFacebook(credential.accessToken)
     })
-  }, [run, facebookSignIn, authenticationStore])
+  }, [run, facebookSignIn])
 
   return { isSsoLoading, signInWithApple, signInWithGoogle, signInWithFacebook }
 }

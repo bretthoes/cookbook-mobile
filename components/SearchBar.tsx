@@ -1,7 +1,6 @@
 import { translate } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import { Icon, IconTypes } from "./Icon"
@@ -18,7 +17,7 @@ export interface SearchBarProps {
 /**
  * A search bar.
  */
-export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
+export function SearchBar(props: SearchBarProps) {
   const { value, onChangeText, placeholder, leftIcon, leftIconColor, onLeftIconPress } = props
   const { themed, theme } = useAppTheme()
 
@@ -39,7 +38,7 @@ export const SearchBar = observer(function SearchBar(props: SearchBarProps) {
       )}
     </View>
   )
-})
+}
 
 const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",

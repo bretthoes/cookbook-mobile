@@ -1,8 +1,6 @@
-import {
-  computeAnnualSavingsPercent,
-  type PlanOption,
-} from "@/components/subscription/PlanCard"
-import { useStores } from "@/models/helpers/useStores"
+import { computeAnnualSavingsPercent, type PlanOption } from "@/components/subscription/PlanCard"
+import { useAuthStore } from "@/stores/authStore"
+import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import {
   ensureRevenueCatReady,
   fetchPaywallPlans,
@@ -20,7 +18,11 @@ export type OfferingsLoadError = FetchPaywallPlansFailureReason | "no_user_id"
 
 export function usePaywall() {
   const { t } = useTranslation()
-  const { subscriptionStore, authenticationStore } = useStores()
+  const authEmail = useAuthStore((s) => s.authEmail)
+  const userId = useAuthStore((s) => s.userId)
+  const authToken = useAuthStore((s) => s.authToken)
+  const isPro = useSubscriptionStore((s) => s.isPro)
+  const refresh = useSubscriptionStore((s) => s.refresh)
 
   const [offerings, setOfferings] = useState<PlanOption[]>([])
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
@@ -31,20 +33,20 @@ export function usePaywall() {
 
   const resolveAppUserId = useCallback(async () => {
     const id = await resolveRevenueCatAppUserId({
-      storedUserId: authenticationStore.userId,
-      authEmail: authenticationStore.authEmail,
+      storedUserId: userId,
+      authEmail,
     })
-    if (id && authenticationStore.userId !== id) {
-      authenticationStore.setProp("userId", id)
+    if (id && userId !== id) {
+      useAuthStore.setState({ userId: id })
     }
     return id
-  }, [authenticationStore])
+  }, [userId, authEmail])
 
   const finishPaywall = useCallback(async () => {
     const appUserId = await resolveAppUserId()
-    if (appUserId) await subscriptionStore.refresh(appUserId)
+    if (appUserId) await refresh(appUserId)
     router.back()
-  }, [subscriptionStore, resolveAppUserId])
+  }, [refresh, resolveAppUserId])
 
   const loadOfferings = useCallback(async () => {
     setIsLoadingOfferings(true)
@@ -90,7 +92,7 @@ export function usePaywall() {
 
     const appUserId = await resolveAppUserId()
     if (!appUserId) {
-      setOfferingsError(authenticationStore.isAuthenticated ? "no_user_id" : "not_logged_in")
+      setOfferingsError(!!authToken ? "no_user_id" : "not_logged_in")
       return
     }
 
@@ -118,29 +120,22 @@ export function usePaywall() {
     } finally {
       setIsPurchasing(false)
     }
-  }, [
-    selectedPlan,
-    isPurchasing,
-    resolveAppUserId,
-    finishPaywall,
-    t,
-    authenticationStore.isAuthenticated,
-  ])
+  }, [selectedPlan, isPurchasing, resolveAppUserId, finishPaywall, t, authToken])
 
   const handleRestore = useCallback(async () => {
     if (isRestoring) return
 
     const appUserId = await resolveAppUserId()
     if (!appUserId) {
-      setOfferingsError(authenticationStore.isAuthenticated ? "no_user_id" : "not_logged_in")
+      setOfferingsError(!!authToken ? "no_user_id" : "not_logged_in")
       return
     }
 
     setIsRestoring(true)
     try {
       await ensureRevenueCatReady(appUserId)
-      await subscriptionStore.refresh(appUserId)
-      const isNowPro = subscriptionStore.isPro
+      await refresh(appUserId)
+      const isNowPro = useSubscriptionStore.getState().isPro
       Alert.alert(isNowPro ? t("paywallScreen:alreadyPro") : t("paywallScreen:restoreSuccess"))
       if (isNowPro) await finishPaywall()
     } catch {
@@ -148,14 +143,7 @@ export function usePaywall() {
     } finally {
       setIsRestoring(false)
     }
-  }, [
-    isRestoring,
-    resolveAppUserId,
-    subscriptionStore,
-    finishPaywall,
-    t,
-    authenticationStore.isAuthenticated,
-  ])
+  }, [isRestoring, resolveAppUserId, refresh, finishPaywall, t, authToken])
 
   return {
     offerings,
@@ -168,5 +156,6 @@ export function usePaywall() {
     loadOfferings,
     handleSubscribe,
     handleRestore,
+    isPro,
   }
 }

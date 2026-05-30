@@ -6,10 +6,14 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL, translate } from "@/i18n"
-import { Invitation } from "@/models/Invitation"
-import { useStores } from "@/models/helpers/useStores"
-import { spacing } from "@/theme"
-import { observer } from "mobx-react-lite"
+import { useInvitationStore } from "@/stores/invitationStore"
+import type { Invitation } from "@/types/invitation"
+import {
+  getInvitationSenderInfo,
+  getInvitationTimeAgo,
+  getParsedInvitationMessage,
+} from "@/utils/invitationFormat"
+import { colors, spacing } from "@/theme"
 import React, { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
 import {
   AccessibilityProps,
@@ -41,13 +45,14 @@ import { router } from "expo-router"
 
 const ICON_SIZE = 14
 
-export default observer(function Invitations() {
-  const { invitationStore } = useStores()
+export default function Invitations() {
+  const invitationItems = useInvitationStore((s) => s.invitations.items)
+  const fetchInvitations = useInvitationStore((s) => s.fetch)
 
   const [isLoading, setIsLoading] = useState(false)
 
   const { refreshing, onRefresh } = useManualRefresh(
-    useCallback(() => invitationStore.fetch(), [invitationStore]),
+    useCallback(() => fetchInvitations(), [fetchInvitations]),
   )
 
   useHeader({
@@ -60,10 +65,10 @@ export default observer(function Invitations() {
   useEffect(() => {
     ;(async function load() {
       setIsLoading(true)
-      await invitationStore.fetch()
+      await fetchInvitations()
       setIsLoading(false)
     })()
-  }, [invitationStore])
+  }, [fetchInvitations])
 
   return (
     <Screen preset="fixed" style={$root}>
@@ -75,9 +80,9 @@ export default observer(function Invitations() {
           />
         }
         contentContainerStyle={$listContentContainer}
-        data={invitationStore.invitations.items.slice()}
+        data={invitationItems.slice()}
         keyExtractor={(item) => item.id.toString()}
-        extraData={invitationStore.invitations.items.length}
+        extraData={invitationItems.length}
         refreshing={refreshing}
         onRefresh={onRefresh}
         ListEmptyComponent={
@@ -88,16 +93,14 @@ export default observer(function Invitations() {
               preset="generic"
               style={$emptyState}
               headingTx={
-                invitationStore.invitations.items.length === 0
+                invitationItems.length === 0
                   ? "cookbooksScreen:cookbookListScreen.noFavoritesEmptyState.heading"
                   : undefined
               }
               contentTx={
-                invitationStore.invitations.items.length === 0
-                  ? "pendingInvitationScreen:emptyState"
-                  : undefined
+                invitationItems.length === 0 ? "pendingInvitationScreen:emptyState" : undefined
               }
-              button={invitationStore.invitations.items.length === 0 ? "" : undefined}
+              button={invitationItems.length === 0 ? "" : undefined}
               buttonOnPress={onRefresh}
               imageStyle={$emptyStateImage}
               ImageProps={{ resizeMode: "contain" }}
@@ -115,9 +118,9 @@ export default observer(function Invitations() {
       />
     </Screen>
   )
-})
+}
 
-const InvitationCard = observer(function InvitationCard({
+function InvitationCard({
   invitation,
   isFavorite,
   onPressFavorite,
@@ -128,7 +131,7 @@ const InvitationCard = observer(function InvitationCard({
   isFavorite: boolean
   isDark: boolean
 }) {
-  const { invitationStore } = useStores()
+  const respond = useInvitationStore((s) => s.respond)
   const { themed } = useAppTheme()
   const acceptPressed = useSharedValue(0)
   const rejectPressed = useSharedValue(0)
@@ -145,7 +148,7 @@ const InvitationCard = observer(function InvitationCard({
 
     setTimeout(() => {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-      invitationStore.respond(invitation.id, accepted)
+      respond(invitation.id, accepted)
     }, 500)
   }
 
@@ -175,9 +178,12 @@ const InvitationCard = observer(function InvitationCard({
       Platform.select<AccessibilityProps>({
         ios: {
           accessibilityLabel: invitation.cookbookTitle,
-          accessibilityHint: translate("cookbooksScreen:cookbookListScreen.accessibility.cardHint", {
-            action: isFavorite ? "unfavorite" : "favorite",
-          }),
+          accessibilityHint: translate(
+            "cookbooksScreen:cookbookListScreen.accessibility.cardHint",
+            {
+              action: isFavorite ? "unfavorite" : "favorite",
+            },
+          ),
         },
         android: {
           accessibilityLabel: invitation.cookbookTitle,
@@ -307,16 +313,20 @@ const InvitationCard = observer(function InvitationCard({
             <Text
               style={$themedMetadataText}
               size="xxs"
-              accessibilityLabel={invitation.getSenderInfo}
+              accessibilityLabel={getInvitationSenderInfo(invitation)}
             >
-              {invitation.getSenderInfo}
+              {getInvitationSenderInfo(invitation)}
             </Text>
-            <Text style={$themedMetadataText} size="xxs" accessibilityLabel={invitation.getTimeAgo}>
-              {invitation.getTimeAgo}
+            <Text
+              style={$themedMetadataText}
+              size="xxs"
+              accessibilityLabel={getInvitationTimeAgo(invitation)}
+            >
+              {getInvitationTimeAgo(invitation)}
             </Text>
           </View>
         }
-        content={invitation.getParsedInvitationMessage}
+        content={getParsedInvitationMessage(invitation)}
         {...accessibilityHintProps}
         RightComponent={<Image source={imageUri} style={$themedItemThumbnail} />}
         FooterComponent={
@@ -342,7 +352,7 @@ const InvitationCard = observer(function InvitationCard({
       />
     </Animated.View>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

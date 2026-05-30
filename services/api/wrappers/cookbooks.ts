@@ -1,5 +1,8 @@
-import { CookbookListSnapshotIn } from "@/models/generics"
-import { CookbookSnapshotIn, CookbookToAddSnapshotIn } from "@/models/Cookbook"
+import type {
+  CookbookListSnapshotIn,
+  CookbookSnapshotIn,
+  CookbookToAddSnapshotIn,
+} from "@/types/cookbook"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {

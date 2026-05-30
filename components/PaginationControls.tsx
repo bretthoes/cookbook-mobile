@@ -54,7 +54,10 @@ export function PaginationControls(props: PaginationControlsProps) {
         onPress={onNextPage}
         disabled={!hasNextPage}
         RightAccessory={() => (
-          <Icon icon="caretRight" color={hasNextPage ? theme.colors.text : theme.colors.separator} />
+          <Icon
+            icon="caretRight"
+            color={hasNextPage ? theme.colors.text : theme.colors.separator}
+          />
         )}
       />
     </View>

@@ -3,13 +3,12 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
+import { useImportRecipeFromUrlMutation } from "@/hooks/queries/useRecipesQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { ViewStyle } from "react-native"
 
@@ -18,8 +17,8 @@ const isValidUrl = (input: string) => {
   return regex.test(input)
 }
 
-export default observer(function RecipeUrlScreen() {
-  const { recipeStore } = useStores()
+export default function RecipeUrlScreen() {
+  const importFromUrl = useImportRecipeFromUrlMutation()
   const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
@@ -51,7 +50,7 @@ export default observer(function RecipeUrlScreen() {
       if (error) return
 
       setIsLoading(true)
-      const importResult = await recipeStore.importFromUrl(url)
+      const importResult = await importFromUrl.mutateAsync(url)
       setIsLoading(false)
 
       if (importResult.ok) {
@@ -61,7 +60,7 @@ export default observer(function RecipeUrlScreen() {
       }
       setIsSubmitted(false)
     })
-  }, [url, getValidationError, recipeStore, run])
+  }, [url, getValidationError, importFromUrl, run])
 
   useHeader(
     {
@@ -101,7 +100,7 @@ export default observer(function RecipeUrlScreen() {
       </FormCard>
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

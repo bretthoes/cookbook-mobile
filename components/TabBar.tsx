@@ -1,17 +1,16 @@
 import { Text } from "@/components/Text"
-import { useStores } from "@/models/helpers/useStores"
+import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
-import { observer } from "mobx-react-lite"
 import React from "react"
 import { TouchableOpacity, View, ViewStyle } from "react-native"
 import { Badge } from "./Badge"
 
-export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
+export function TabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
   const { themed, theme } = useAppTheme()
-  const { invitationStore } = useStores()
+  const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
 
   return (
     <View style={themed($tabBar)}>
@@ -58,7 +57,7 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
           })
         }
 
-        const showBadge = route.name === "profile" && invitationStore.invitations.totalCount > 0
+        const showBadge = route.name === "profile" && invitationTotalCount > 0
 
         return (
           <TouchableOpacity
@@ -79,14 +78,14 @@ export const TabBar = observer(function TabBar(props: BottomTabBarProps) {
                 }}
                 text={label.toString()}
               />
-              {showBadge && <Badge count={invitationStore.invitations.totalCount} style={$badge} />}
+              {showBadge && <Badge count={invitationTotalCount} style={$badge} />}
             </View>
           </TouchableOpacity>
         )
       })}
     </View>
   )
-})
+}
 
 const $tabBar: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",

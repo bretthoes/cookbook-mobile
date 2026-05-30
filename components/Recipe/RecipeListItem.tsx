@@ -3,11 +3,10 @@ import { ListItem } from "@/components/ListItem"
 import { Text, TextProps } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { observer } from "mobx-react-lite"
 import React from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 
-export const RecipeListItem = observer(function RecipeListItem({
+export function RecipeListItem({
   text,
   index,
   lastIndex,
@@ -54,7 +53,7 @@ export const RecipeListItem = observer(function RecipeListItem({
       bottomSeparator={index === lastIndex}
     />
   )
-})
+}
 
 const $nameRow: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   flexDirection: "row",

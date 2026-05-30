@@ -4,13 +4,14 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
 import type { TxKeyPath } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useAuthStore } from "@/stores/authStore"
+import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect } from "react"
 import { Alert, FlatList, View, ViewStyle } from "react-native"
 
@@ -19,19 +20,20 @@ type DataItem = {
   value: string | boolean | null
 }
 
-export default observer(function MembershipScreen() {
-  const { authenticationStore, cookbookStore, membershipStore } = useStores()
+export default function MembershipScreen() {
+  const currentUserEmail = useAuthStore((s) => s.authEmail)
+  const membershipStore = useMembershipStore()
+  const { selected: selectedCookbook } = useSelectedCookbook()
   const { id } = useLocalSearchParams<{ id: string }>()
   const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
   const ownMembership = membershipStore.ownMembership
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  const cookbookId = cookbookStore.selected?.id ?? 0
+  const cookbookId = selectedCookbook?.id ?? 0
   const canManageMembers = ownMembership?.canRemoveMember ?? false
   const isViewingOwnMembership =
-    !!authenticationStore.authEmail &&
-    membership?.email?.toLowerCase() === authenticationStore.authEmail.toLowerCase()
+    !!currentUserEmail && membership?.email?.toLowerCase() === currentUserEmail.toLowerCase()
   const canShowActions = canManageMembers && !isViewingOwnMembership
 
   const $themedScreenContentContainer = React.useMemo(
@@ -77,14 +79,16 @@ export default observer(function MembershipScreen() {
               {
                 text: translate("membershipScreen:deleteButton"),
                 style: "destructive",
-                onPress: async () => {
-                  const result = await membershipStore.delete(parseInt(id))
-                  if (!result) {
-                    Alert.alert(
-                      translate("membershipScreen:errorTitle"),
-                      translate("membershipScreen:deleteFailed"),
-                    )
-                  }
+                onPress: () => {
+                  router.back()
+                  void membershipStore.delete(parseInt(id)).then((result) => {
+                    if (!result) {
+                      Alert.alert(
+                        translate("membershipScreen:errorTitle"),
+                        translate("membershipScreen:deleteFailed"),
+                      )
+                    }
+                  })
                 },
               },
             ],
@@ -110,8 +114,8 @@ export default observer(function MembershipScreen() {
   }
 
   const data: DataItem[] = [
-    { labelTx: "membershipScreen:labels.email", value: membership.email },
-    { labelTx: "membershipScreen:labels.name", value: membership.name },
+    { labelTx: "membershipScreen:labels.email", value: membership.email ?? "" },
+    { labelTx: "membershipScreen:labels.name", value: membership.name ?? "" },
     { labelTx: "membershipScreen:labels.isOwner", value: membership.isOwner },
     { labelTx: "membershipScreen:labels.canAddRecipe", value: membership.canAddRecipe },
     { labelTx: "membershipScreen:labels.canUpdateRecipe", value: membership.canUpdateRecipe },
@@ -144,7 +148,7 @@ export default observer(function MembershipScreen() {
       />
     </Screen>
   )
-})
+}
 
 const $screenContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,

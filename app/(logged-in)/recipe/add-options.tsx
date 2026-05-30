@@ -2,14 +2,19 @@ import { Icon, type IconTypes } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
-import { useStores } from "@/models/helpers/useStores"
-import { getCurrentWeekKey, WEEKLY_IMPORT_LIMIT } from "@/models/Recipe/RecipeStore"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useSubscriptionStore } from "@/stores/subscriptionStore"
+import {
+  draftHasContent,
+  getCurrentWeekKey,
+  useUiStore,
+  WEEKLY_IMPORT_LIMIT,
+} from "@/stores/uiStore"
 import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import {
@@ -36,10 +41,15 @@ type RecipeAddOption = {
   action: () => void
 }
 
-export default observer(function AddRecipeOptionsScreen() {
+export default function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const { cookbookStore, recipeStore, subscriptionStore } = useStores()
+  const { selected } = useSelectedCookbook()
+  const setSelectedById = useUiStore((s) => s.setSelectedCookbookId)
+  const drafts = useUiStore((s) => s.drafts)
+  const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
+  const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
+  const isPro = useSubscriptionStore((s) => s.isPro)
   const addRecipeFromCamera = useAddRecipeFromCamera()
 
   useHeader({
@@ -48,10 +58,8 @@ export default observer(function AddRecipeOptionsScreen() {
     onLeftPress: () => router.back(),
   })
 
-  const isPro = subscriptionStore.isPro
   const currentWeek = getCurrentWeekKey()
-  const effectiveImportCount =
-    recipeStore.weeklyImportWeekStart === currentWeek ? recipeStore.weeklyImportCount : 0
+  const effectiveImportCount = weeklyImportWeekStart === currentWeek ? weeklyImportCount : 0
   const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
   const progressRatio = Math.min(effectiveImportCount / WEEKLY_IMPORT_LIMIT, 1)
 
@@ -65,10 +73,14 @@ export default observer(function AddRecipeOptionsScreen() {
 
   // Most recently saved draft with real in-progress content — surfaces "Continue Draft"
   const latestDraft = useMemo(() => {
-    const pendingDrafts = recipeStore.drafts.filter((draft) => draft.hasContent)
+    const pendingDrafts = drafts.filter((draft) => draftHasContent(draft))
     if (pendingDrafts.length === 0) return null
-    return pendingDrafts.reduce((latest, d) => (d.savedAt > latest.savedAt ? d : latest))
-  }, [recipeStore.drafts])
+    return pendingDrafts.reduce((latest, d) => {
+      const latestTime = new Date(latest.savedAt as string | Date).getTime()
+      const dTime = new Date(d.savedAt as string | Date).getTime()
+      return dTime > latestTime ? d : latest
+    })
+  }, [drafts])
 
   const options = useMemo(() => {
     const baseOptions: RecipeAddOption[] = [
@@ -118,7 +130,7 @@ export default observer(function AddRecipeOptionsScreen() {
         icon: "camera" as IconTypes,
         isPremium: true,
         action: () => {
-          if (cookbookStore.selected) {
+          if (selected) {
             addRecipeFromCamera()
           } else {
             router.replace({
@@ -157,13 +169,13 @@ export default observer(function AddRecipeOptionsScreen() {
       isPremium: false,
       showDraftBadge: true,
       action: () => {
-        cookbookStore.setSelectedById(latestDraft.cookbookId)
+        setSelectedById(latestDraft.cookbookId)
         router.replace({ pathname: "../recipe/add", params: { continueDraft: "1" } })
       },
     }
 
     return [...baseOptions, draftOption]
-  }, [t, cookbookStore, addRecipeFromCamera, latestDraft])
+  }, [t, selected, setSelectedById, addRecipeFromCamera, latestDraft])
 
   const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
   const $themedGrid = useMemo(() => themed($grid), [themed])
@@ -202,7 +214,7 @@ export default observer(function AddRecipeOptionsScreen() {
       )}
     </Screen>
   )
-})
+}
 
 // #region ProBanner
 

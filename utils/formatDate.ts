@@ -10,32 +10,20 @@ import i18n from "i18next"
 type Options = Parameters<typeof format>[2]
 
 let dateFnsLocale: Locale
-export const loadDateFnsLocale = () => {
+
+/** Loads the date-fns locale matching the active i18n language (en, fr, ko). */
+export async function loadDateFnsLocale(): Promise<void> {
   const primaryTag = i18n.language.split("-")[0]
   switch (primaryTag) {
-    case "en":
-      dateFnsLocale = require("date-fns/locale/en-US").default
-      break
-    case "ar":
-      dateFnsLocale = require("date-fns/locale/ar").default
+    case "fr":
+      dateFnsLocale = (await import("date-fns/locale/fr")).fr
       break
     case "ko":
-      dateFnsLocale = require("date-fns/locale/ko").default
+      dateFnsLocale = (await import("date-fns/locale/ko")).ko
       break
-    case "es":
-      dateFnsLocale = require("date-fns/locale/es").default
-      break
-    case "fr":
-      dateFnsLocale = require("date-fns/locale/fr").default
-      break
-    case "hi":
-      dateFnsLocale = require("date-fns/locale/hi").default
-      break
-    case "ja":
-      dateFnsLocale = require("date-fns/locale/ja").default
-      break
+    case "en":
     default:
-      dateFnsLocale = require("date-fns/locale/en-US").default
+      dateFnsLocale = (await import("date-fns/locale/en-US")).enUS
       break
   }
 }

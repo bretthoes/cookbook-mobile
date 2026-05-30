@@ -1,0 +1,1 @@
+export const COOKBOOK_LIST_PAGE_SIZE = 25

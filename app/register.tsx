@@ -11,7 +11,7 @@ import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
 import { getActiveLanguageCode, setAppLanguage, type SupportedLanguageCode } from "@/i18n/language"
-import { useStores } from "@/models/helpers/useStores"
+import { getAuthEmailValidationError, useAuthStore } from "@/stores/authStore"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import type { ThemedStyle } from "@/theme"
@@ -21,7 +21,6 @@ import * as SecureStore from "expo-secure-store"
 import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router, useNavigation } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { LayoutAnimation, TextInput, TextStyle, View, ViewStyle } from "react-native"
 
@@ -29,7 +28,7 @@ const TOTAL_STEPS = 5
 const SUCCESS_DELAY_MS = 1000
 const isValidDisplayName = (input: string) => /^[\p{L}\p{M} \-']+$/u.test(input)
 
-export default observer(function Register() {
+export default function Register() {
   const {
     theme: { colors },
     themed,
@@ -48,19 +47,15 @@ export default observer(function Register() {
   const [selectedLanguage, setSelectedLanguage] =
     useState<SupportedLanguageCode>(getActiveLanguageCode())
 
-  const {
-    authenticationStore: {
-      register,
-      login,
-      resendConfirmationEmail,
-      authEmail,
-      setAuthEmail,
-      updateDisplayName,
-      validationError,
-      result,
-      setResult,
-    },
-  } = useStores()
+  const register = useAuthStore((s) => s.register)
+  const login = useAuthStore((s) => s.login)
+  const resendConfirmationEmail = useAuthStore((s) => s.resendConfirmationEmail)
+  const authEmail = useAuthStore((s) => s.authEmail)
+  const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
+  const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
+  const result = useAuthStore((s) => s.result)
+  const setResult = useAuthStore((s) => s.setResult)
+  const validationError = getAuthEmailValidationError(authEmail)
 
   const advanceStep = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
@@ -437,7 +432,7 @@ export default observer(function Register() {
       )}
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

@@ -8,7 +8,10 @@ import { Switch } from "@/components/Toggle"
 import { SectionCard } from "@/components/SectionCard"
 import Config from "@/config"
 import { isRTL, translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useAuthStore } from "@/stores/authStore"
+import { useInvitationStore } from "@/stores/invitationStore"
+import { useMembershipStore } from "@/stores/membershipStore"
+import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -18,17 +21,18 @@ import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Application from "expo-application"
 import { useRouter } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect } from "react"
 import { Alert, LayoutAnimation, TextStyle, View, ViewStyle } from "react-native"
 
-export default observer(function ProfileScreen() {
-  const {
-    authenticationStore,
-    membershipStore: { email },
-    invitationStore,
-    subscriptionStore,
-  } = useStores()
+export default function ProfileScreen() {
+  const logout = useAuthStore((s) => s.logout)
+  const authEmail = useAuthStore((s) => s.authEmail)
+  const userId = useAuthStore((s) => s.userId)
+  const email = useMembershipStore((s) => s.email)
+  const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
+  const fetchInvitations = useInvitationStore((s) => s.fetch)
+  const isPro = useSubscriptionStore((s) => s.isPro)
+  const refreshSubscription = useSubscriptionStore((s) => s.refresh)
 
   const router = useRouter()
 
@@ -38,11 +42,8 @@ export default observer(function ProfileScreen() {
 
   // Fetch invitations when the profile tab is focused
   useEffect(() => {
-    const fetchInvitations = async () => {
-      await invitationStore.fetch()
-    }
-    fetchInvitations()
-  }, [invitationStore])
+    void fetchInvitations()
+  }, [fetchInvitations])
 
   useEffect(() => {
     AsyncStorage.getItem("themeContext").then((value) => {
@@ -59,15 +60,13 @@ export default observer(function ProfileScreen() {
     await AsyncStorage.setItem("themeContext", newTheme)
   }
 
-  const { logout, authEmail, userId } = authenticationStore
-
   const handleSubscriptionPress = useCallback(async () => {
     if (!isRevenueCatConfigured()) {
       router.push("/(logged-in)/recipe/paywall")
       return
     }
 
-    if (subscriptionStore.isPro) {
+    if (isPro) {
       const appUserId = await resolveRevenueCatAppUserId({
         storedUserId: userId,
         authEmail,
@@ -78,7 +77,7 @@ export default observer(function ProfileScreen() {
       }
       try {
         await presentCustomerCenter(appUserId)
-        await subscriptionStore.refresh(appUserId)
+        await refreshSubscription(appUserId)
       } catch {
         Alert.alert(translate("profileScreen:customerCenterError"))
       }
@@ -86,7 +85,7 @@ export default observer(function ProfileScreen() {
     }
 
     router.push("/(logged-in)/recipe/paywall")
-  }, [router, subscriptionStore, authEmail, userId])
+  }, [router, isPro, refreshSubscription, authEmail, userId])
 
   const $themedRoot = React.useMemo(() => themed($root), [themed])
 
@@ -118,7 +117,7 @@ export default observer(function ProfileScreen() {
           }
           RightComponent={
             <View style={$badgeContainer}>
-              <Badge count={invitationStore.invitations.totalCount} />
+              <Badge count={invitationTotalCount} />
             </View>
           }
           onPress={() => router.push("../invitation")}
@@ -157,11 +156,7 @@ export default observer(function ProfileScreen() {
         />
         {isRevenueCatConfigured() && (
           <ListItem
-            tx={
-              subscriptionStore.isPro
-                ? "profileScreen:manageSubscription"
-                : "profileScreen:upgradeToPro"
-            }
+            tx={isPro ? "profileScreen:manageSubscription" : "profileScreen:upgradeToPro"}
             bottomSeparator
             rightIcon={isRTL ? "caretLeft" : "caretRight"}
             rightIconColor={isDark ? colors.border : colors.text}
@@ -279,7 +274,7 @@ export default observer(function ProfileScreen() {
       )}
     </Screen>
   )
-})
+}
 
 const $titleContainer: ViewStyle = {
   paddingHorizontal: spacing.md,

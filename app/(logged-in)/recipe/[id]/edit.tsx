@@ -2,43 +2,44 @@ import { ItemNotFound } from "@/components/ItemNotFound"
 import { RecipeForm, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
-import { RecipeSnapshotIn } from "@/models/Recipe"
+import { useRecipeQuery, useUpdateRecipeMutation } from "@/hooks/queries/useRecipesQuery"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import type { RecipeSnapshotIn } from "@/types/recipe"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
-import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
+import { router, useLocalSearchParams } from "expo-router"
 import React from "react"
 
-export default observer(function EditRecipe() {
-  const {
-    recipeStore: { selected, update },
-    cookbookStore: { selected: cookbook },
-  } = useStores()
+export default function EditRecipe() {
+  const { id } = useLocalSearchParams<{ id: string }>()
+  const recipeId = Number(id)
+  const { data: selected } = useRecipeQuery(recipeId)
+  const updateRecipe = useUpdateRecipeMutation()
+  const { selected: cookbook } = useSelectedCookbook()
 
   const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
     if (!selected) return null
     return {
       title: selected.title,
-      summary: selected.summary,
-      preparationTimeInMinutes: selected.preparationTimeInMinutes,
-      cookingTimeInMinutes: selected.cookingTimeInMinutes,
-      bakingTimeInMinutes: selected.bakingTimeInMinutes,
-      servings: selected.servings,
+      summary: selected.summary ?? null,
+      preparationTimeInMinutes: selected.preparationTimeInMinutes ?? null,
+      cookingTimeInMinutes: selected.cookingTimeInMinutes ?? null,
+      bakingTimeInMinutes: selected.bakingTimeInMinutes ?? null,
+      servings: selected.servings ?? null,
       ingredientSections:
         selected.ingredientSections?.map((section) => ({
           id: section.id,
-          title: section.title,
-          ingredients: section.ingredients.map((ingredient) => ({
-            name: ingredient.name,
-            optional: ingredient.optional,
+          title: section.title ?? "",
+          ingredients: (section.ingredients ?? []).map((ingredient) => ({
+            name: ingredient.name ?? "",
+            optional: ingredient.optional ?? null,
           })),
         })) ?? [],
       directions:
         selected.directions?.map((direction) => ({
-          text: direction.text,
-          image: direction.image,
+          text: direction.text ?? "",
+          image: direction.image ?? null,
         })) ?? [],
-      images: selected.images?.map((image) => image.name) ?? [],
+      images: selected.images?.map((image) => image.name ?? "") ?? [],
       isVegetarian: selected.isVegetarian ?? null,
       isVegan: selected.isVegan ?? null,
       isGlutenFree: selected.isGlutenFree ?? null,
@@ -60,8 +61,8 @@ export default observer(function EditRecipe() {
       id: selected?.id ?? 0,
       title: formData.title?.trim() ?? "",
       summary: formData.summary?.trim() ?? "",
-      thumbnail: null, // TODO handle thumbnail logic
-      videoPath: null, // TODO handle videoPath logic
+      thumbnail: null,
+      videoPath: null,
       preparationTimeInMinutes: formData.preparationTimeInMinutes,
       cookingTimeInMinutes: formData.cookingTimeInMinutes,
       bakingTimeInMinutes: formData.bakingTimeInMinutes,
@@ -102,19 +103,15 @@ export default observer(function EditRecipe() {
     }
 
     try {
-      const success = await update(updatedRecipe)
-      if (success) {
-        router.replace(`/(logged-in)/cookbook/${cookbook?.id}`)
-      } else {
-        alert(translate("recipeEditScreen:updateFailed"))
-      }
+      await updateRecipe.mutateAsync(updatedRecipe)
+      router.replace(`/(logged-in)/cookbook/${cookbook?.id ?? ""}`)
     } catch (error) {
       console.error("Update recipe failed:", error)
       alert(translate("recipeEditScreen:updateFailed"))
     }
   }
 
-  const onError = (errors: any) => {
+  const onError = (errors: unknown) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
   }
 
@@ -130,4 +127,4 @@ export default observer(function EditRecipe() {
       />
     </Screen>
   )
-})
+}

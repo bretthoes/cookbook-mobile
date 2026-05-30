@@ -4,21 +4,22 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useAuthStore } from "@/stores/authStore"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { ComponentType, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, View, ViewStyle } from "react-native"
 
-export default observer(function ResetPassword() {
+export default function ResetPassword() {
   const {
     theme: { colors },
   } = useAppTheme()
-  const {
-    authenticationStore: { authEmail, resetPassword, result, setResult, setAuthEmail },
-  } = useStores()
+  const authEmail = useAuthStore((s) => s.authEmail)
+  const resetPassword = useAuthStore((s) => s.resetPassword)
+  const result = useAuthStore((s) => s.result)
+  const setResult = useAuthStore((s) => s.setResult)
+  const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
 
   const [resetCode, setResetCode] = useState("")
   const authPasswordInput = useRef<TextInput>(null)
@@ -136,7 +137,7 @@ export default observer(function ResetPassword() {
       />
     </Screen>
   )
-})
+}
 
 const $tapButton: ViewStyle = {
   marginTop: spacing.xs,

@@ -2,17 +2,18 @@ import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { useStores } from "@/models/helpers/useStores"
+import { getAuthEmailValidationError, useAuthStore } from "@/stores/authStore"
 import { spacing } from "@/theme"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useState } from "react"
 import { ViewStyle } from "react-native"
 
-export default observer(function ForgotPassword() {
-  const {
-    authenticationStore: { authEmail, result, setAuthEmail, forgotPassword, validationError },
-  } = useStores()
+export default function ForgotPassword() {
+  const authEmail = useAuthStore((s) => s.authEmail)
+  const result = useAuthStore((s) => s.result)
+  const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
+  const forgotPassword = useAuthStore((s) => s.forgotPassword)
+  const validationError = getAuthEmailValidationError(authEmail)
 
   const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -54,7 +55,7 @@ export default observer(function ForgotPassword() {
       />
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

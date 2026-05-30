@@ -71,7 +71,11 @@ export function FavoriteAnimatedButton(props: FavoriteAnimatedButtonProps) {
             <Animated.View
               style={[themed($iconContainer), StyleSheet.absoluteFill, animatedLikeButtonStyles]}
             >
-              <Icon icon="heart" size={ICON_SIZE} color={isDark ? theme.colors.border : theme.colors.text} />
+              <Icon
+                icon="heart"
+                size={ICON_SIZE}
+                color={isDark ? theme.colors.border : theme.colors.text}
+              />
             </Animated.View>
             <Animated.View style={[themed($iconContainer), animatedUnlikeButtonStyles]}>
               <Icon icon="heart" size={ICON_SIZE} color={theme.colors.palette.primary400} />
@@ -90,9 +94,7 @@ export function FavoriteAnimatedButton(props: FavoriteAnimatedButtonProps) {
       onPress={handlePress}
       onLongPress={handlePress}
       style={[$themedFavoriteButton, isFavorite && $themedUnFavoriteButton]}
-      accessibilityLabel={
-        isFavorite ? t(unfavoriteAccessibilityTx) : t(favoriteAccessibilityTx)
-      }
+      accessibilityLabel={isFavorite ? t(unfavoriteAccessibilityTx) : t(favoriteAccessibilityTx)}
       LeftAccessory={ButtonLeftAccessory}
     >
       <Text size="xxs" weight="medium" text={isFavorite ? t(unfavoriteTx) : t(favoriteTx)} />

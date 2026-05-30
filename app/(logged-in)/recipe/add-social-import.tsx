@@ -3,13 +3,12 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
+import { useImportRecipeFromSocialUrlMutation } from "@/hooks/queries/useRecipesQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate, TxKeyPath } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ViewStyle } from "react-native"
@@ -39,12 +38,12 @@ const PLATFORM_PLACEHOLDERS: Record<Platform, TxKeyPath> = {
   pinterest: "recipeAddSocialImportScreen:urlPlaceholderPinterest",
 }
 
-export default observer(function AddSocialImportScreen() {
+export default function AddSocialImportScreen() {
   const { platform: rawPlatform } = useLocalSearchParams<{ platform: string }>()
   const platform = (rawPlatform ?? "tiktok") as Platform
   const { t } = useTranslation()
 
-  const { recipeStore } = useStores()
+  const importFromSocial = useImportRecipeFromSocialUrlMutation()
   const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
@@ -77,7 +76,7 @@ export default observer(function AddSocialImportScreen() {
       if (error) return
 
       setIsLoading(true)
-      const importResult = await recipeStore.importFromSocialUrl(url)
+      const importResult = await importFromSocial.mutateAsync(url)
       setIsLoading(false)
 
       if (importResult.ok) {
@@ -89,7 +88,7 @@ export default observer(function AddSocialImportScreen() {
       }
       setIsSubmitted(false)
     })
-  }, [url, getValidationError, recipeStore, run, t])
+  }, [url, getValidationError, importFromSocial, run, t])
 
   useHeader(
     {
@@ -129,7 +128,7 @@ export default observer(function AddSocialImportScreen() {
       </FormCard>
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

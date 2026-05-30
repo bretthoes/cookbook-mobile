@@ -614,6 +614,7 @@ const en = {
     subtitle: "Edit the details for your cookbook.",
     changeCoverPhoto: "Change Cover Photo",
     titleLabel: "Title",
+    titlePlaceholder: "Enter cookbook title",
     noChangesToSave: "No changes to save",
     updatedSuccessfully: "Cookbook updated successfully!",
     failedToUpdate: "Failed to update cookbook",
@@ -628,6 +629,7 @@ const en = {
     deleteTitle: "Delete Recipe",
     deleteMessage: "Are you sure you want to delete this recipe? This action cannot be undone.",
     deleteButton: "Delete",
+    deleteFailed: "Failed to delete recipe",
   },
   recipeEditScreen: {
     notFound: "Recipe not found",

@@ -23,7 +23,6 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { Ionicons } from "@expo/vector-icons"
 import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import * as React from "react"
 import { useCallback, useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
@@ -129,7 +128,7 @@ export interface RecipeFormProps {
   formRef?: React.RefObject<RecipeFormHandle | null>
 }
 
-export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
+export function RecipeForm(props: RecipeFormProps) {
   const { onSubmit, onError, formValues = defaultForm, isEdit = false, formRef } = props
   const { themed, theme } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
@@ -613,7 +612,7 @@ export const RecipeForm = observer(function RecipeForm(props: RecipeFormProps) {
       </SectionCard>
     </View>
   )
-})
+}
 
 const $buttonHeightOverride: ThemedStyle<ViewStyle> = (theme) => ({
   minHeight: theme.spacing.md,

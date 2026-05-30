@@ -1,10 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
+import { recipeSchema } from "@/validators/recipeSchema"
 
 vi.mock("@/i18n", () => ({
   translate: (key: string) => key,
 }))
-
-import { recipeSchema } from "@/validators/recipeSchema"
 
 function minimalRecipe(overrides: Record<string, unknown> = {}) {
   return {
@@ -46,9 +45,7 @@ describe("recipeSchema", () => {
 
   it("requires a non-empty title up to 255 characters", async () => {
     await expect(recipeSchema.validate(minimalRecipe({ title: "" }))).rejects.toThrow()
-    await expect(
-      recipeSchema.validate(minimalRecipe({ title: "x".repeat(256) })),
-    ).rejects.toThrow()
+    await expect(recipeSchema.validate(minimalRecipe({ title: "x".repeat(256) }))).rejects.toThrow()
   })
 
   it("accepts null time fields and positive integers", async () => {

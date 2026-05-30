@@ -5,7 +5,6 @@ import { translate } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useMemo } from "react"
 import { TextStyle, View } from "react-native"
 
@@ -13,7 +12,7 @@ const cookbook = require("../../../assets/images/cookbook.png")
 const addRecipe = require("../../../assets/images/addRecipe.png")
 const invite = require("../../../assets/images/invite.png")
 
-export default observer(function CreateScreen() {
+export default function CreateScreen() {
   const { themed } = useAppTheme()
 
   const $themedTitle = useMemo(() => themed($title), [themed])
@@ -61,7 +60,7 @@ export default observer(function CreateScreen() {
       </View>
     </Screen>
   )
-})
+}
 
 const $title: ThemedStyle<TextStyle> = (theme) => ({
   marginBottom: theme.spacing.lg,

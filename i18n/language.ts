@@ -36,5 +36,5 @@ export async function getStoredLanguageCode(): Promise<SupportedLanguageCode | n
 export async function setAppLanguage(code: SupportedLanguageCode): Promise<void> {
   await changeLanguage(code)
   await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, code)
-  loadDateFnsLocale()
+  await loadDateFnsLocale()
 }

@@ -1,4 +1,3 @@
-import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {
   ApiResult,

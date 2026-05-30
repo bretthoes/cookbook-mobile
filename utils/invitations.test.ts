@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
+import { toInviteUrl, validateInviteEmail } from "@/utils/invitations"
 
 vi.mock("@/config", () => ({
   default: {
@@ -6,13 +7,9 @@ vi.mock("@/config", () => ({
   },
 }))
 
-import { toInviteUrl, validateInviteEmail } from "@/utils/invitations"
-
 describe("toInviteUrl", () => {
   it("builds an encoded invite URL", () => {
-    expect(toInviteUrl("abc+token")).toBe(
-      "https://cookbook.example/invite/?t=abc%2Btoken",
-    )
+    expect(toInviteUrl("abc+token")).toBe("https://cookbook.example/invite/?t=abc%2Btoken")
   })
 })
 

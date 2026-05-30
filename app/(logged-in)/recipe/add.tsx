@@ -2,21 +2,26 @@ import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Rec
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
-import { RecipeToAddSnapshotIn } from "@/models/Recipe"
+import { useCreateRecipeMutation } from "@/hooks/queries/useRecipesQuery"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useUiStore } from "@/stores/uiStore"
+import type { RecipeToAddSnapshotIn } from "@/types/recipe"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
-import { useStores } from "@/models/helpers/useStores"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useMemo, useRef } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
-export default observer(function AddRecipeScreen() {
-  const { recipeStore, cookbookStore } = useStores()
-  const { recipeToAdd, clearRecipeToAdd, create, saveDraft, deleteDraft, getDraftForCookbook } =
-    recipeStore
+export default function AddRecipeScreen() {
+  const recipeToAdd = useUiStore((s) => s.recipeToAdd)
+  const clearRecipeToAdd = useUiStore((s) => s.clearRecipeToAdd)
+  const saveDraft = useUiStore((s) => s.saveDraft)
+  const deleteDraft = useUiStore((s) => s.deleteDraft)
+  const getDraftForCookbook = useUiStore((s) => s.getDraftForCookbook)
+  const createRecipeMutation = useCreateRecipeMutation()
+  const { selected: selectedCookbook } = useSelectedCookbook()
   const { themed } = useAppTheme()
 
   // Only restore a draft when the user explicitly tapped "Continue Draft"
@@ -27,9 +32,6 @@ export default observer(function AddRecipeScreen() {
   const formRef = useRef<RecipeFormHandle | null>(null)
   // Prevents unmount cleanup from re-saving a draft after successful submit
   const submittedSuccessfullyRef = useRef(false)
-
-  // The selected cookbook comes from cookbookStore (set by select-cookbook screen)
-  const selectedCookbook = cookbookStore.selected
 
   const $themedCookbookLabel = useMemo(() => themed($cookbookLabel), [themed])
   const $themedCookbookHeader = useMemo(() => themed($cookbookHeader), [themed])
@@ -63,11 +65,11 @@ export default observer(function AddRecipeScreen() {
     if (!recipeToAdd) return null
     return {
       title: recipeToAdd.title,
-      summary: recipeToAdd.summary,
-      preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes,
-      cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes,
-      bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes,
-      servings: recipeToAdd.servings,
+      summary: recipeToAdd.summary ?? null,
+      preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes ?? null,
+      cookingTimeInMinutes: recipeToAdd.cookingTimeInMinutes ?? null,
+      bakingTimeInMinutes: recipeToAdd.bakingTimeInMinutes ?? null,
+      servings: recipeToAdd.servings ?? null,
       ingredientSections:
         recipeToAdd.ingredientSections?.map((section) => ({
           id: section.id,
@@ -80,7 +82,7 @@ export default observer(function AddRecipeScreen() {
       directions:
         recipeToAdd.directions?.map((direction) => ({
           text: direction.text,
-          image: direction.image,
+          image: direction.image ?? null,
         })) ?? [],
       images: recipeToAdd.images?.map((image) => image.name) ?? [],
       isVegetarian: recipeToAdd.isVegetarian ?? null,
@@ -105,17 +107,17 @@ export default observer(function AddRecipeScreen() {
     if (!draft) return null
     return {
       title: draft.title,
-      summary: draft.summary,
-      preparationTimeInMinutes: draft.preparationTimeInMinutes,
-      cookingTimeInMinutes: draft.cookingTimeInMinutes,
-      bakingTimeInMinutes: draft.bakingTimeInMinutes,
-      servings: draft.servings,
+      summary: draft.summary ?? null,
+      preparationTimeInMinutes: draft.preparationTimeInMinutes ?? null,
+      cookingTimeInMinutes: draft.cookingTimeInMinutes ?? null,
+      bakingTimeInMinutes: draft.bakingTimeInMinutes ?? null,
+      servings: draft.servings ?? null,
       ingredientSections: draft.ingredientSections.map((section) => ({
         id: section.id,
         title: section.title,
         ingredients: section.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
       })),
-      directions: draft.directions.map((d) => ({ text: d.text, image: d.image })),
+      directions: draft.directions.map((d) => ({ text: d.text, image: d.image ?? null })),
       images: draft.images.map((img) => img.name),
       isVegetarian: draft.isVegetarian ?? null,
       isVegan: draft.isVegan ?? null,
@@ -201,16 +203,10 @@ export default observer(function AddRecipeScreen() {
       }
 
       try {
-        const success = await create(newRecipe)
-        if (success) {
-          submittedSuccessfullyRef.current = true
-          deleteDraft(selectedCookbook.id)
-          router.replace(`/(logged-in)/cookbook/${selectedCookbook.id}`)
-        } else {
-          // Save draft when create returns false (non-throwing failure)
-          saveDraft(selectedCookbook.id, formData)
-          alert(translate("recipeAddScreen:createFailed"))
-        }
+        await createRecipeMutation.mutateAsync(newRecipe)
+        submittedSuccessfullyRef.current = true
+        deleteDraft(selectedCookbook.id)
+        router.replace(`/(logged-in)/cookbook/${selectedCookbook.id}`)
       } catch (e) {
         console.error("Add recipe failed:", e)
 
@@ -224,7 +220,7 @@ export default observer(function AddRecipeScreen() {
         alert(translate("recipeAddScreen:createFailed"))
       }
     },
-    [create, deleteDraft, saveDraft, selectedCookbook],
+    [createRecipeMutation, deleteDraft, saveDraft, selectedCookbook],
   )
 
   const onError = (errors: any) => {
@@ -250,7 +246,7 @@ export default observer(function AddRecipeScreen() {
       />
     </Screen>
   )
-})
+}
 
 const $cookbookLabel: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,

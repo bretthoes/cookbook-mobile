@@ -1,6 +1,8 @@
-import { CookbookInvitationStatus, InvitationSnapshotOut } from "@/models/Invitation"
-import { InvitationListSnapshotIn } from "@/models/generics"
-import { GeneralApiProblem } from "@/services/api/apiProblem"
+import {
+  CookbookInvitationStatus,
+  type InvitationListSnapshotIn,
+  type InvitationSnapshotOut,
+} from "@/types/invitation"
 import { apiClientInstance } from "@/services/api/client"
 import {
   ApiResult,

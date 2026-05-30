@@ -1,5 +1,4 @@
-import { MembershipListSnapshotIn } from "@/models/generics"
-import { MembershipSnapshotOut } from "@/models/Membership"
+import type { MembershipListSnapshotIn, MembershipSnapshotOut } from "@/types/membership"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {

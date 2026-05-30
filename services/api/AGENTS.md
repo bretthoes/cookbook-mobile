@@ -28,10 +28,10 @@ Reads `../SharedCookbook/src/Web/wwwroot/api/specification.json`, writes `genera
 
 ## After contract changes
 
-Update MST models, forms, validators, and screens — see `.cursor/skills/sync-api-client/SKILL.md`.
+Update `types/`, query hooks, forms, validators, and screens — see `.cursor/skills/sync-api-client/SKILL.md`.
 
 ## Auth
 
 - Protected routes: auth header injected automatically.
 - 401: client refreshes via `POST /api/Users/refresh`, then retries.
-- Session expiry: `api.setSessionExpiredCallback` → `authenticationStore.logout()` (wired in `models/helpers/setupRootStore.ts`).
+- Session expiry: `api.setSessionExpiredCallback` → `useAuthStore.getState().logout()` (wired in `stores/setupApp.ts`).

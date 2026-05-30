@@ -42,9 +42,7 @@ describe("i18n locale parity", () => {
     it(`${locale} includes all top-level keys from en`, () => {
       const content = readLocale(locale)
       for (const key of enKeys) {
-        expect(content, `missing top-level key: ${key}`).toMatch(
-          new RegExp(`^  ${key}: \\{`, "m"),
-        )
+        expect(content, `missing top-level key: ${key}`).toMatch(new RegExp(`^  ${key}: \\{`, "m"))
       }
     })
 

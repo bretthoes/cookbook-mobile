@@ -1,4 +1,4 @@
-import type { Recipe } from "@/models/Recipe/Recipe"
+import type { RecipeDetail } from "@/types/recipe"
 import { translate } from "@/i18n"
 import * as Print from "expo-print"
 import { useCallback } from "react"
@@ -11,7 +11,7 @@ function escapeHtml(s: string): string {
     .replace(/"/g, "&quot;")
 }
 
-function buildRecipeHtml(recipe: Recipe): string {
+function buildRecipeHtml(recipe: RecipeDetail): string {
   const metaItems: string[] = []
   if (recipe.preparationTimeInMinutes) {
     metaItems.push(
@@ -30,7 +30,7 @@ function buildRecipeHtml(recipe: Recipe): string {
 
   const metaHtml = metaItems.map((item) => `<span class="meta">${item}</span>`).join("")
 
-  const ingredients = [...recipe.ingredientSections]
+  const ingredients = [...(recipe.ingredientSections ?? [])]
     .sort((a, b) => a.ordinal - b.ordinal)
     .map((section) => {
       const lines = [...section.ingredients]
@@ -42,7 +42,7 @@ function buildRecipeHtml(recipe: Recipe): string {
     })
     .join("")
 
-  const directions = recipe.directions
+  const directions = (recipe.directions ?? [])
     .slice()
     .sort((a, b) => a.ordinal - b.ordinal)
     .map((d) => `<li>${d.text}</li>`)
@@ -91,7 +91,7 @@ function buildRecipeHtml(recipe: Recipe): string {
 }
 
 export function usePrintRecipe() {
-  return useCallback(async (recipe: Recipe) => {
+  return useCallback(async (recipe: RecipeDetail) => {
     const html = buildRecipeHtml(recipe)
     await Print.printAsync({ html })
   }, [])

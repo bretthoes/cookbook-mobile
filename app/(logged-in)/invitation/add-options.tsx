@@ -4,12 +4,11 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useTranslation } from "react-i18next"
 import { useMemo } from "react"
 import { View, type ViewStyle } from "react-native"
 
-export default observer(function AddInvitationOptionsScreen() {
+export default function AddInvitationOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
 
@@ -40,7 +39,7 @@ export default observer(function AddInvitationOptionsScreen() {
       </View>
     </Screen>
   )
-})
+}
 
 const $screenContainer: ThemedStyle<ViewStyle> = (theme) => ({
   paddingTop: theme.spacing.sm,

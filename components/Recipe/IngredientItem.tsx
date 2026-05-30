@@ -1,6 +1,6 @@
 import { Text } from "@/components/Text"
 import { Checkbox } from "@/components/Toggle"
-import { RecipeIngredient } from "@/models/Recipe"
+import type { RecipeIngredient } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import React, { useMemo, useState } from "react"

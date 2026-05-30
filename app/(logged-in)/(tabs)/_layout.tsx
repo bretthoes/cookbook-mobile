@@ -3,12 +3,11 @@ import { TabBar } from "@/components/TabBar"
 import { translate } from "@/i18n"
 import { colors, spacing, typography } from "@/theme"
 import { Tabs } from "expo-router/tabs"
-import { observer } from "mobx-react-lite"
 import { useState } from "react"
 import { TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-export default observer(function Layout() {
+export default function Layout() {
   const { bottom } = useSafeAreaInsets()
   const [useFloatingTabBar, _] = useState(true)
 
@@ -69,7 +68,7 @@ export default observer(function Layout() {
       />
     </Tabs>
   )
-})
+}
 
 const $tabBar: ViewStyle = {
   backgroundColor: colors.background,

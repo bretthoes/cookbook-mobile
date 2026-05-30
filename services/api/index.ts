@@ -5,17 +5,20 @@
  * See the [Backend API Integration](https://docs.infinite.red/ignite-cli/boilerplate/app/services/#backend-api-integration)
  * documentation for more details.
  */
-import { AuthResultSnapshotIn } from "@/models/AuthResult"
-import { CookbookSnapshotIn, CookbookToAddSnapshotIn } from "@/models/Cookbook"
-import {
+import type { AuthResultSnapshotIn } from "@/types/auth"
+import type {
   CookbookListSnapshotIn,
-  InvitationListSnapshotIn,
-  MembershipListSnapshotIn,
+  CookbookSnapshotIn,
+  CookbookToAddSnapshotIn,
+} from "@/types/cookbook"
+import type { InvitationListSnapshotIn, InvitationSnapshotOut } from "@/types/invitation"
+import type { MembershipListSnapshotIn, MembershipSnapshotOut } from "@/types/membership"
+import type {
   RecipeListSnapshotIn,
-} from "@/models/generics"
-import { InvitationSnapshotOut } from "@/models/Invitation"
-import { MembershipSnapshotOut } from "@/models/Membership"
-import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "@/models/Recipe"
+  RecipeSnapshotIn,
+  RecipeSnapshotOut,
+  RecipeToAddSnapshotIn,
+} from "@/types/recipe"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import * as cookbookWrappers from "@/services/api/wrappers/cookbooks"

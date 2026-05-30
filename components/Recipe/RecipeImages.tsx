@@ -1,5 +1,5 @@
 import { AutoImage } from "@/components/AutoImage"
-import { RecipeImage } from "@/models/Recipe"
+import type { RecipeImage } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import React, { useState } from "react"

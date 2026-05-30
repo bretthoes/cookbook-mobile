@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
+import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 
 const mocks = vi.hoisted(() => ({
   getAccessToken: vi.fn(),
@@ -19,8 +20,6 @@ vi.mock("expo-secure-store", () => ({
   getItemAsync: mocks.getItemAsync,
   setItemAsync: mocks.setItemAsync,
 }))
-
-import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 
 describe("resolveRevenueCatAppUserId", () => {
   beforeEach(() => {

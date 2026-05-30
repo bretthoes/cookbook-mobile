@@ -7,7 +7,9 @@ Expo (dev client) + React Native app using **expo-router** file-based routing. T
 | Area                 | Path                   | Notes                                                                        |
 | -------------------- | ---------------------- | ---------------------------------------------------------------------------- |
 | Screens / routes     | `app/`                 | expo-router — see `app/AGENTS.md`                                            |
-| State (MST)          | `models/`              | MobX-State-Tree stores — see `models/AGENTS.md`                              |
+| Client state         | `stores/`              | Zustand — see `stores/AGENTS.md`                                             |
+| Server state         | `hooks/queries/`       | TanStack Query for cookbooks, recipes, etc.                                  |
+| Types                | `types/`               | Plain TypeScript types (API DTOs / form shapes)                              |
 | API layer            | `services/api/`        | OpenAPI client — see `services/api/AGENTS.md` and `services/api/README.md`   |
 | Environment config   | `config/`              | `config.dev.ts` / `config.prod.ts` merged in `config/index.ts` via `__DEV__` |
 | Native / Expo config | `app.json`, `eas.json` | EAS build profiles (`development`, `preview`, `production`)                  |

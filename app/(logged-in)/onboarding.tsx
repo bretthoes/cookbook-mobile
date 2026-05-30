@@ -8,14 +8,13 @@ import { TextField } from "@/components/TextField"
 import { Switch } from "@/components/Toggle"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { remove, storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router, useNavigation } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { LayoutAnimation, TextInput, TextStyle, View, ViewStyle } from "react-native"
 
@@ -25,7 +24,7 @@ const isValidDisplayName = (input: string) => /^[\p{L}\p{M} \-']+$/u.test(input)
 // Email users set onboarding.skipDisplayName=true in register.tsx before navigating here.
 const STEP_DISPLAY_NAME = 1
 
-export default observer(function OnboardingScreen() {
+export default function OnboardingScreen() {
   // Read and immediately consume the flag — runs once at mount, never stale.
   // skipDisplayName=true  → email user, skip step 1 → steps: darkMode=1, largeFont=2, done=3
   // skipDisplayName=false → SSO user,   show step 1 → steps: displayName=1, darkMode=2, largeFont=3, done=4
@@ -47,9 +46,7 @@ export default observer(function OnboardingScreen() {
   const { themed, themeContext, setThemeContextOverride, largeFontEnabled, setLargeFontEnabled } =
     useAppTheme()
 
-  const {
-    authenticationStore: { updateDisplayName },
-  } = useStores()
+  const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
   const { isInFlight, run } = useInFlightAction()
 
   const [localDisplayName, setLocalDisplayName] = useState("")
@@ -231,7 +228,7 @@ export default observer(function OnboardingScreen() {
       )}
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

@@ -4,16 +4,20 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
+import {
+  useCookbookById,
+  useUpdateCookbookMutation,
+  useUploadCookbookCoverMutation,
+} from "@/hooks/queries/useCookbooksQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import { useUiStore } from "@/stores/uiStore"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
 import { colors, spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
 import { useLocalSearchParams, useRouter } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { ActivityIndicator, Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
@@ -23,16 +27,23 @@ interface CookbookFormInputs {
   image: string | null
 }
 
-export default observer(function EditCookbookScreen() {
+export default function EditCookbookScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
-  const { cookbookStore } = useStores()
+  const cookbookId = Number(id)
+  const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
+  const { cookbook: selected } = useCookbookById(cookbookId)
+  const updateCookbook = useUpdateCookbookMutation()
+  const uploadCover = useUploadCookbookCoverMutation()
   const [localImage, setLocalImage] = useState<string | null>(null)
   const [result, setResult] = useState<string>("")
   const [resultIsSuccess, setResultIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const { isInFlight, run } = useInFlightAction()
-  cookbookStore.setSelectedById(Number(id))
+
+  useEffect(() => {
+    setSelectedCookbookId(cookbookId)
+  }, [cookbookId, setSelectedCookbookId])
 
   const {
     control,
@@ -42,18 +53,18 @@ export default observer(function EditCookbookScreen() {
   } = useForm<CookbookFormInputs>({
     resolver: yupResolver(cookbookSchema),
     defaultValues: {
-      title: cookbookStore.selected?.title || "",
-      image: cookbookStore.selected?.image || null,
+      title: selected?.title || "",
+      image: selected?.image || null,
     },
   })
 
   useEffect(() => {
-    if (cookbookStore.selected) {
-      setValue("title", cookbookStore.selected.title)
-      setValue("image", cookbookStore.selected.image)
-      setLocalImage(cookbookStore.selected.image)
+    if (selected) {
+      setValue("title", selected.title)
+      setValue("image", selected.image ?? null)
+      setLocalImage(selected.image ?? null)
     }
-  }, [cookbookStore.selected, setValue])
+  }, [selected, setValue])
 
   const onError = useCallback((errors: unknown) => {
     console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
@@ -76,11 +87,10 @@ export default observer(function EditCookbookScreen() {
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
-        const previousImage = cookbookStore.selected?.image ?? null
-        // Show local URI immediately for a snappy preview while the upload runs.
+        const previousImage = selected?.image ?? null
         setLocalImage(result.assets[0].uri)
 
-        const uploadResponse = await cookbookStore.uploadCookbookCover(result.assets)
+        const uploadResponse = await uploadCover.mutateAsync(result.assets)
         if (uploadResponse.ok) {
           setValue("image", uploadResponse.key)
         } else {
@@ -95,12 +105,9 @@ export default observer(function EditCookbookScreen() {
 
   const onPressSend = useCallback(
     async (data: CookbookFormInputs) => {
-      if (!cookbookStore.selected) return
+      if (!selected) return
 
-      if (
-        data.title === cookbookStore.selected.title &&
-        data.image === cookbookStore.selected.image
-      ) {
+      if (data.title === selected.title && data.image === selected.image) {
         setResult(translate("cookbookEditScreen:noChangesToSave"))
         setResultIsSuccess(false)
         return
@@ -108,23 +115,17 @@ export default observer(function EditCookbookScreen() {
 
       setIsLoading(true)
       try {
-        const success = await cookbookStore.update({
-          id: cookbookStore.selected.id,
+        await updateCookbook.mutateAsync({
+          id: selected.id,
           title: data.title,
           image: data.image,
-          author: cookbookStore.selected.author,
-          authorEmail: cookbookStore.selected.authorEmail,
-          membersCount: cookbookStore.selected.membersCount,
-          recipeCount: cookbookStore.selected.recipeCount,
+          author: selected.author ?? null,
+          authorEmail: selected.authorEmail ?? null,
+          membersCount: selected.membersCount ?? 0,
+          recipeCount: selected.recipeCount ?? 0,
         })
-
-        if (success) {
-          setResult(translate("cookbookEditScreen:updatedSuccessfully"))
-          setResultIsSuccess(true)
-        } else {
-          setResult(translate("cookbookEditScreen:failedToUpdate"))
-          setResultIsSuccess(false)
-        }
+        setResult(translate("cookbookEditScreen:updatedSuccessfully"))
+        setResultIsSuccess(true)
       } catch (error) {
         console.error("Error updating cookbook:", error)
         setResult(translate("cookbookEditScreen:errorUpdating"))
@@ -133,7 +134,7 @@ export default observer(function EditCookbookScreen() {
         setIsLoading(false)
       }
     },
-    [cookbookStore],
+    [selected, updateCookbook],
   )
 
   const handleSave = useCallback(() => {
@@ -151,101 +152,85 @@ export default observer(function EditCookbookScreen() {
     [handleSave, isInFlight, isLoading],
   )
 
-  if (!cookbookStore.selected) {
+  if (!selected) {
     return <ItemNotFound message={translate("cookbookEditScreen:notFound")} />
   }
 
   return (
     <Screen
       preset="scroll"
-      contentContainerStyle={$screenContentContainer}
+      contentContainerStyle={$root}
       safeAreaEdges={["bottom"]}
+      keyboardOffset={100}
     >
-      <Text tx="cookbookEditScreen:subtitle" />
       <FormCard>
+        {localImage && (
+          <View style={$imagePreviewContainer}>
+            <Image source={{ uri: localImage }} style={$imagePreview} />
+          </View>
+        )}
+
+        <Button tx="cookbookEditScreen:changeCoverPhoto" onPress={pickImage} disabled={isLoading} />
+
+        {isLoading && <ActivityIndicator style={$uploadIndicator} />}
+
         <Controller
-          control={control}
           name="title"
+          control={control}
           render={({ field: { onChange, value } }) => (
             <TextField
-              labelTx="cookbookEditScreen:titleLabel"
               value={value}
+              labelTx="cookbookEditScreen:titleLabel"
               onChangeText={onChange}
+              placeholderTx="cookbookEditScreen:titlePlaceholder"
+              status={errors.title ? "error" : undefined}
               helper={errors.title?.message}
-              autoCapitalize="none"
             />
           )}
         />
 
-        <View style={$imageContainer}>
-          {localImage ? (
-            <Image source={{ uri: localImage }} style={$image} />
-          ) : (
-            <View style={$imagePlaceholder} />
-          )}
-          <Button
-            tx="cookbookEditScreen:changeCoverPhoto"
-            onPress={pickImage}
-            style={$imageButton}
-            disabled={isLoading}
-          />
-        </View>
-
-        {isLoading && <ActivityIndicator />}
         {result ? (
           <Text
             text={result}
-            style={[
-              $result,
-              {
-                color: resultIsSuccess ? colors.palette.primary500 : colors.palette.angry500,
-              },
-            ]}
+            style={[$resultText, resultIsSuccess ? $resultSuccess : $resultError]}
           />
         ) : null}
       </FormCard>
     </Screen>
   )
-})
-
-const $screenContentContainer: ViewStyle = {
-  paddingVertical: spacing.lg,
-  paddingHorizontal: spacing.lg,
 }
 
-const $imageContainer: ViewStyle = {
-  marginTop: spacing.lg,
-  alignItems: "center",
+const $root: ViewStyle = {
+  flex: 1,
+  marginHorizontal: spacing.md,
 }
 
-const $image: ImageStyle = {
-  width: "100%",
+const $imagePreviewContainer: ViewStyle = {
+  flexDirection: "row",
+  flexWrap: "wrap",
+  justifyContent: "center",
+}
+
+const $imagePreview: ImageStyle = {
+  width: 200,
   height: 266,
+  margin: 5,
   borderRadius: 8,
-  marginBottom: spacing.sm,
-  shadowColor: colors.text,
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
 }
 
-const $imagePlaceholder: ViewStyle = {
-  width: "100%",
-  height: 266,
-  backgroundColor: colors.palette.neutral300,
-  borderRadius: 8,
-  marginBottom: spacing.sm,
-  shadowColor: colors.text,
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.1,
-  shadowRadius: 4,
-}
-
-const $imageButton: ViewStyle = {
+const $uploadIndicator: ViewStyle = {
   marginTop: spacing.sm,
 }
 
-const $result: TextStyle = {
-  marginTop: spacing.lg,
+const $resultText: TextStyle = {
+  marginTop: spacing.md,
   textAlign: "center",
+}
+
+const $resultSuccess: TextStyle = {
+  color: colors.palette.primary500,
+}
+
+const $resultError: TextStyle = {
+  color: colors.palette.angry500,
 }

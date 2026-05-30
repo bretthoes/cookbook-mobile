@@ -1,13 +1,17 @@
 import { Card } from "@/components/Card"
 import { FavoriteAnimatedButton } from "@/components/FavoriteAnimatedButton"
 import { Text } from "@/components/Text"
-import { Cookbook } from "@/models/Cookbook"
+import type { Cookbook } from "@/types/cookbook"
+import {
+  getCookbookMembersLabel,
+  getCookbookRecipesLabel,
+  parseCookbookTitle,
+} from "@/utils/cookbookLabels"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { Image, ImageSource } from "expo-image"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { AccessibilityProps, ImageStyle, Platform, TextStyle, View, ViewStyle } from "react-native"
@@ -19,12 +23,7 @@ export interface CookbookCardProps {
   isDark: boolean
 }
 
-export const CookbookCard = observer(function CookbookCard({
-  cookbook,
-  isFavorite,
-  onPressFavorite,
-  isDark,
-}: CookbookCardProps) {
+export function CookbookCard({ cookbook, isFavorite, onPressFavorite, isDark }: CookbookCardProps) {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
 
@@ -74,6 +73,9 @@ export const CookbookCard = observer(function CookbookCard({
   const $themedItemThumbnail = themed($itemThumbnail)
   const $themedMetadata = themed($metadata)
   const $themedMetadataText = themed($metadataText)
+  const membersLabel = getCookbookMembersLabel(cookbook)
+  const recipesLabel = getCookbookRecipesLabel(cookbook)
+  const parsedTitle = parseCookbookTitle(cookbook.title)
 
   return (
     <Card
@@ -84,23 +86,15 @@ export const CookbookCard = observer(function CookbookCard({
       preset={isDark ? "reversed" : "default"}
       HeadingComponent={
         <View style={$themedMetadata}>
-          <Text
-            style={$themedMetadataText}
-            size="xxs"
-            accessibilityLabel={cookbook.members.accessibilityLabel}
-          >
-            {cookbook.members.textLabel}
+          <Text style={$themedMetadataText} size="xxs" accessibilityLabel={membersLabel}>
+            {membersLabel}
           </Text>
-          <Text
-            style={$themedMetadataText}
-            size="xxs"
-            accessibilityLabel={cookbook.recipes.accessibilityLabel}
-          >
-            {cookbook.recipes.textLabel}
+          <Text style={$themedMetadataText} size="xxs" accessibilityLabel={recipesLabel}>
+            {recipesLabel}
           </Text>
         </View>
       }
-      content={cookbook.parsedTitleAndSubtitle.title}
+      content={parsedTitle.title}
       contentStyle={$themedMetadataText}
       {...accessibilityHintProps}
       RightComponent={
@@ -120,7 +114,7 @@ export const CookbookCard = observer(function CookbookCard({
       }
     />
   )
-})
+}
 
 const $item: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,

@@ -6,13 +6,14 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { isRTL, translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useIsAuthenticated } from "@/stores/authStore"
+import { useInvitationStore } from "@/stores/invitationStore"
+import type { Invitation } from "@/types/invitation"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import {
   ActivityIndicator,
@@ -24,18 +25,17 @@ import {
   ViewStyle,
 } from "react-native"
 
-export default observer(function InvitationTokenScreen() {
+export default function InvitationTokenScreen() {
   const { token } = useLocalSearchParams<{ token: string }>()
-  const {
-    invitationStore,
-    authenticationStore: { isAuthenticated },
-  } = useStores()
+  const isAuthenticated = useIsAuthenticated()
+  const loadInvitationByToken = useInvitationStore((s) => s.single)
+  const respondToInvitation = useInvitationStore((s) => s.respond)
   const { themed, theme } = useAppTheme()
 
   const [isLoading, setIsLoading] = useState(true)
   const { isInFlight, run } = useInFlightAction()
   const [error, setError] = useState<string | null>(null)
-  const [invitation, setInvitation] = useState<any>(null)
+  const [invitation, setInvitation] = useState<Invitation | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [acceptedSuccessfully, setAcceptedSuccessfully] = useState(false)
   const [declinedSuccessfully, setDeclinedSuccessfully] = useState(false)
@@ -72,9 +72,10 @@ export default observer(function InvitationTokenScreen() {
       }
 
       try {
-        await invitationStore.single(token)
-        if (invitationStore.invitation) {
-          setInvitation(invitationStore.invitation)
+        await loadInvitationByToken(token)
+        const loaded = useInvitationStore.getState().invitation
+        if (loaded) {
+          setInvitation(loaded)
         } else {
           setError(translate("invitationLinkScreen:vanished"))
         }
@@ -87,7 +88,7 @@ export default observer(function InvitationTokenScreen() {
     }
 
     loadInvitation()
-  }, [token, isAuthenticated, invitationStore])
+  }, [token, isAuthenticated, loadInvitationByToken])
 
   const handleAccept = useCallback(() => {
     run(async () => {
@@ -110,7 +111,7 @@ export default observer(function InvitationTokenScreen() {
 
       setActionError(null)
       const startTime = Date.now()
-      const success = await invitationStore.respond(token, true)
+      const success = await respondToInvitation(token, true)
       const elapsedTime = Date.now() - startTime
       const minDelay = 1000
       if (elapsedTime < minDelay) {
@@ -120,14 +121,15 @@ export default observer(function InvitationTokenScreen() {
       if (success === true) {
         setAcceptedSuccessfully(true)
       } else {
+        const conflict = typeof success === "object" && success.conflict
         setActionError(
-          success?.conflict
+          conflict
             ? translate("invitationLinkScreen:alreadyRedeemed")
             : translate("invitationLinkScreen:acceptFailed"),
         )
       }
     })
-  }, [isAuthenticated, token, invitationStore, run])
+  }, [isAuthenticated, token, respondToInvitation, run])
 
   const handleReject = useCallback(() => {
     run(async () => {
@@ -135,7 +137,7 @@ export default observer(function InvitationTokenScreen() {
 
       setActionError(null)
       const startTime = Date.now()
-      const success = await invitationStore.respond(token, false)
+      const success = await respondToInvitation(token, false)
       const elapsedTime = Date.now() - startTime
       const minDelay = 1000
       if (elapsedTime < minDelay) {
@@ -144,14 +146,15 @@ export default observer(function InvitationTokenScreen() {
       if (success === true) {
         setDeclinedSuccessfully(true)
       } else {
+        const conflict = typeof success === "object" && success.conflict
         setActionError(
-          success?.conflict
+          conflict
             ? translate("invitationLinkScreen:alreadyRedeemed")
             : translate("invitationLinkScreen:declineFailed"),
         )
       }
     })
-  }, [token, invitationStore, run])
+  }, [token, respondToInvitation, run])
 
   if (isInFlight) {
     return <LoadingScreen text={translate("invitationLinkScreen:loadingShort")} />
@@ -390,7 +393,7 @@ export default observer(function InvitationTokenScreen() {
       )}
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

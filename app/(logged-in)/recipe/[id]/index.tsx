@@ -11,15 +11,15 @@ import RecipeSummary from "@/components/Recipe/RecipeSummary"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
+import { useDeleteRecipeMutation, useRecipeQuery } from "@/hooks/queries/useRecipesQuery"
 import { usePrintRecipe } from "@/hooks/usePrintRecipe"
-import { useStores } from "@/models/helpers/useStores"
+import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
   ActivityIndicator,
@@ -31,14 +31,12 @@ import {
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
-export default observer(function Recipe() {
-  const {
-    recipeStore,
-    recipeStore: { selected, delete: deleteRecipe, single },
-    membershipStore: { ownMembership },
-  } = useStores()
+export default function RecipeScreen() {
+  const ownMembership = useMembershipStore((s) => s.ownMembership)
   const { id } = useLocalSearchParams<{ id: string }>()
   const recipeId = Number(id)
+  const { data: selected, isPending, isError } = useRecipeQuery(recipeId)
+  const deleteRecipeMutation = useDeleteRecipeMutation()
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
@@ -49,7 +47,7 @@ export default observer(function Recipe() {
     !!ownMembership?.email
   const canEdit = isRecipeAuthor || ownMembership?.isOwner || ownMembership?.canUpdateRecipe
   const canDelete = ownMembership?.canDeleteRecipe
-  const recipeHasImages = selected?.images[0]
+  const recipeHasImages = selected?.images?.[0]
 
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
   const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
@@ -82,10 +80,6 @@ export default observer(function Recipe() {
     }
   }, [cookMode])
 
-  useLayoutEffect(() => {
-    void single(recipeId)
-  }, [recipeId, single])
-
   const handlePressEdit = useCallback(() => {
     router.push(`/(logged-in)/recipe/${selected?.id}/edit`)
   }, [selected?.id])
@@ -99,13 +93,17 @@ export default observer(function Recipe() {
       {
         text: t("recipeDetailScreen:deleteButton"),
         style: "destructive",
-        onPress: async () => {
-          const deleted = await deleteRecipe()
-          if (deleted) router.back()
+        onPress: () => {
+          router.back()
+          deleteRecipeMutation.mutate(recipeId, {
+            onError: () => {
+              Alert.alert(t("common:error"), t("recipeDetailScreen:deleteFailed"))
+            },
+          })
         },
       },
     ])
-  }, [deleteRecipe, t])
+  }, [deleteRecipeMutation, recipeId, t])
 
   const handlePressMore = () => setPopoverVisible(true)
 
@@ -147,7 +145,7 @@ export default observer(function Recipe() {
     [canEdit, handlePressEdit, handlePressDelete, printRecipe, selected],
   )
 
-  if (recipeStore.isRecipeNotFound(recipeId)) {
+  if (isError) {
     return (
       <>
         <Divider size={spacing.xxxl} />
@@ -156,7 +154,7 @@ export default observer(function Recipe() {
     )
   }
 
-  if (recipeStore.isRecipePending(recipeId)) {
+  if (isPending && !selected) {
     return <ActivityIndicator />
   }
 
@@ -192,7 +190,7 @@ export default observer(function Recipe() {
               style={{ paddingBottom: spacing.md }}
             />
             {(() => {
-              const sections = [...selected.ingredientSections].sort(
+              const sections = [...(selected.ingredientSections ?? [])].sort(
                 (a, b) => a.ordinal - b.ordinal,
               )
               const totalLines = sections.reduce((n, s) => n + s.ingredients.length, 0)
@@ -232,48 +230,52 @@ export default observer(function Recipe() {
           </View>
         )}
 
-        {selected && (
-          <View style={$themedDirectionsContainer}>
-            <View style={$directionsHeaderRow}>
-              <Text preset="subheading" tx="recipeDetailsScreen:directions" />
-              <View style={$cookModeRow}>
-                <Text tx="recipeDetailScreen:keepScreenOn" />
-                <Switch value={cookMode} onValueChange={setCookMode} />
+        {selected &&
+          (() => {
+            const directions = selected.directions ?? []
+            return (
+              <View style={$themedDirectionsContainer}>
+                <View style={$directionsHeaderRow}>
+                  <Text preset="subheading" tx="recipeDetailsScreen:directions" />
+                  <View style={$cookModeRow}>
+                    <Text tx="recipeDetailScreen:keepScreenOn" />
+                    <Switch value={cookMode} onValueChange={setCookMode} />
+                  </View>
+                </View>
+                {directions.map((item, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      $themedListItemStyle,
+                      index === 0 && $themedBorderTop,
+                      index === directions.length - 1 && $themedBorderBottom,
+                    ]}
+                  >
+                    <TouchableOpacity
+                      onPress={() => toggleDirectionCompleted(index)}
+                      style={[$directionItem, index !== directions.length - 1 && $themedSeparator]}
+                    >
+                      <DirectionText
+                        ordinal={item?.ordinal}
+                        text={item?.text ?? ""}
+                        completed={completedDirections.has(index)}
+                      />
+                      {item?.image ? (
+                        <AutoImage
+                          source={{ uri: item.image }}
+                          style={$directionImage as ImageStyle}
+                        />
+                      ) : null}
+                    </TouchableOpacity>
+                  </View>
+                ))}
               </View>
-            </View>
-            {selected.directions.map((item, index) => (
-              <View
-                key={index}
-                style={[
-                  $themedListItemStyle,
-                  index === 0 && $themedBorderTop,
-                  index === selected.directions.length - 1 && $themedBorderBottom,
-                ]}
-              >
-                <TouchableOpacity
-                  onPress={() => toggleDirectionCompleted(index)}
-                  style={[
-                    $directionItem,
-                    index !== selected.directions.length - 1 && $themedSeparator,
-                  ]}
-                >
-                  <DirectionText
-                    ordinal={item?.ordinal}
-                    text={item?.text ?? ""}
-                    completed={completedDirections.has(index)}
-                  />
-                  {item?.image ? (
-                    <AutoImage source={{ uri: item.image }} style={$directionImage as ImageStyle} />
-                  ) : null}
-                </TouchableOpacity>
-              </View>
-            ))}
-          </View>
-        )}
+            )
+          })()}
       </Screen>
     </>
   )
-})
+}
 
 // #region Styles
 

@@ -4,8 +4,10 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
 import { isRTL } from "@/i18n"
-import { Cookbook } from "@/models/Cookbook"
-import { useStores } from "@/models/helpers/useStores"
+import { useCookbooksList } from "@/hooks/queries/useCookbooksQuery"
+import { useUiStore } from "@/stores/uiStore"
+import type { Cookbook } from "@/types/cookbook"
+import { getCookbookMembersLabel } from "@/utils/cookbookLabels"
 import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -13,7 +15,6 @@ import { getCookbookImage } from "@/utils/cookbookImages"
 import { useHeader } from "@/utils/useHeader"
 import { useFocusEffect } from "@react-navigation/native"
 import { router, useLocalSearchParams } from "expo-router"
-import { observer } from "mobx-react-lite"
 import React, { useCallback, useEffect, useState } from "react"
 import {
   ActivityIndicator,
@@ -108,7 +109,7 @@ function CookbookItem({
           <Text preset="subheading" text={cookbook.title} style={$themedItemTitle} />
           <Text
             preset="formHelper"
-            text={`${cookbook.members.textLabel}`}
+            text={getCookbookMembersLabel(cookbook)}
             style={$themedItemDescription}
           />
         </View>
@@ -119,8 +120,9 @@ function CookbookItem({
 }
 
 // TODO i18n
-export default observer(function SelectCookbookScreen() {
-  const { cookbookStore } = useStores()
+export default function SelectCookbookScreen() {
+  const { cookbooks, isListPending, refetch } = useCookbooksList()
+  const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
   const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
   const addRecipeFromCamera = useAddRecipeFromCamera()
   const { themed } = useAppTheme()
@@ -148,35 +150,38 @@ export default observer(function SelectCookbookScreen() {
   })
 
   useEffect(() => {
-    const fetchData = async () => {
+    void refetch()
+  }, [refetch])
+
+  useEffect(() => {
+    if (isListPending) {
       setIsLoading(true)
-      try {
-        await cookbookStore.fetchAll()
-      } catch (error) {
-        console.error(error)
-      }
-
-      if (cookbookStore.cookbookList.totalCount === 1) {
-        const singleCookbook = cookbookStore.cookbooks[0]
-        cookbookStore.setSelectedById(singleCookbook.id)
-        setAutoSelecting(true)
-        if (params.onSelect === "handleAddRecipeFromCamera") {
-          addRecipeFromCamera()
-        } else {
-          router.replace(params.nextRoute as any)
-        }
-        return
-      }
-
-      setIsLoading(false)
+      return
     }
-    fetchData()
-  }, [cookbookStore, params.onSelect, params.nextRoute, addRecipeFromCamera])
+    setIsLoading(false)
+    if (cookbooks.length === 1) {
+      const singleCookbook = cookbooks[0]
+      setSelectedCookbookId(singleCookbook.id)
+      setAutoSelecting(true)
+      if (params.onSelect === "handleAddRecipeFromCamera") {
+        addRecipeFromCamera()
+      } else {
+        router.replace(params.nextRoute as any)
+      }
+    }
+  }, [
+    cookbooks,
+    isListPending,
+    setSelectedCookbookId,
+    params.onSelect,
+    params.nextRoute,
+    addRecipeFromCamera,
+  ])
 
   const handleItemPress = useCallback(
     (cookbookId: number) => {
       setSelectedId(cookbookId)
-      cookbookStore.setSelectedById(cookbookId)
+      setSelectedCookbookId(cookbookId)
 
       // Navigate after the fade animation completes
       setTimeout(() => {
@@ -187,7 +192,7 @@ export default observer(function SelectCookbookScreen() {
         }
       }, 350)
     },
-    [cookbookStore, params.onSelect, params.nextRoute, addRecipeFromCamera],
+    [setSelectedCookbookId, params.onSelect, params.nextRoute, addRecipeFromCamera],
   )
 
   if (autoSelecting) {
@@ -205,7 +210,7 @@ export default observer(function SelectCookbookScreen() {
         <View style={{ marginTop: spacing.xxl, alignItems: "center" }}>
           <ActivityIndicator size="large" />
         </View>
-      ) : cookbookStore.cookbooks.length === 0 ? (
+      ) : cookbooks.length === 0 ? (
         <EmptyState
           preset="generic"
           style={$themedEmptyState}
@@ -215,12 +220,12 @@ export default observer(function SelectCookbookScreen() {
         />
       ) : (
         <View style={$themedListContainer}>
-          {cookbookStore.cookbooks.map((cookbook, index) => (
+          {cookbooks.map((cookbook, index) => (
             <CookbookItem
               key={cookbook.id}
               cookbook={cookbook}
               isFirst={index === 0}
-              isLast={index === cookbookStore.cookbooks.length - 1}
+              isLast={index === cookbooks.length - 1}
               onPress={handleItemPress}
               selectedId={selectedId}
               themed={themed}
@@ -230,7 +235,7 @@ export default observer(function SelectCookbookScreen() {
       )}
     </Screen>
   )
-})
+}
 
 const $root: ThemedStyle<ViewStyle> = () => ({
   flex: 1,

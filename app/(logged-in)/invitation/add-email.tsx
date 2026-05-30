@@ -5,21 +5,19 @@ import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { validateInviteEmail } from "@/utils/invitations"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useMemo, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 
-export default observer(function AddInvitationEmailScreen() {
-  const {
-    cookbookStore: { selected },
-    invitationStore: { invite },
-  } = useStores()
+export default function AddInvitationEmailScreen() {
+  const { selected } = useSelectedCookbook()
+  const invite = useInvitationStore((s) => s.invite)
   const { themed } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
 
@@ -100,7 +98,7 @@ export default observer(function AddInvitationEmailScreen() {
       </View>
     </Screen>
   )
-})
+}
 
 const $intro: ThemedStyle<TextStyle> = (theme) => ({
   paddingHorizontal: theme.spacing.md,

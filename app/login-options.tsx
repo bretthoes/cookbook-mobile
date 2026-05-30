@@ -3,14 +3,13 @@ import { $container, $listContainer, OptionListItem } from "@/components/OptionL
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useSsoAuth } from "@/hooks/useSsoAuth"
-import { useStores } from "@/models/helpers/useStores"
+import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
@@ -27,11 +26,10 @@ const appleLogo = require("@/assets/images/apple.png")
 const facebookLogo = require("@/assets/images/facebook.png")
 const googleLogo = require("@/assets/images/google.png")
 
-export default observer(function LoginOptionsScreen() {
+export default function LoginOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const { authenticationStore } = useStores()
-  const { result } = authenticationStore
+  const result = useAuthStore((s) => s.result)
   const onAuthSuccess = useCallback(() => navigateAfterAuth(), [])
   const { isSsoLoading, signInWithApple, signInWithGoogle, signInWithFacebook } =
     useSsoAuth(onAuthSuccess)
@@ -94,7 +92,7 @@ export default observer(function LoginOptionsScreen() {
       </View>
     </Screen>
   )
-})
+}
 
 const $heading: ViewStyle = {
   paddingHorizontal: spacing.lg,

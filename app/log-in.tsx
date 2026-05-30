@@ -8,10 +8,9 @@ import { Checkbox } from "@/components/Toggle"
 import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import type { TxKeyPath } from "@/i18n"
-import { useStores } from "@/models/helpers/useStores"
+import { getAuthEmailValidationError, useAuthStore, useIsAuthenticated } from "@/stores/authStore"
 import { router } from "expo-router"
 import * as SecureStore from "expo-secure-store"
-import { observer } from "mobx-react-lite"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { TextInput, TextStyle, View, ViewStyle } from "react-native"
 import type { ThemedStyle } from "@/theme"
@@ -21,7 +20,7 @@ import { useAppTheme } from "@/theme/context"
 const REMEMBER_ME_EMAIL_KEY = "login_remember_email"
 const REMEMBER_ME_PASSWORD_KEY = "login_remember_password"
 
-export default observer(function Login(_props) {
+export default function Login(_props: void) {
   const {
     theme: { colors },
     themed,
@@ -33,17 +32,13 @@ export default observer(function Login(_props) {
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [rememberMe, setRememberMe] = useState(true)
-  const {
-    authenticationStore: {
-      login,
-      authEmail,
-      setAuthEmail,
-      validationError,
-      result,
-      setResult,
-      isAuthenticated,
-    },
-  } = useStores()
+  const login = useAuthStore((s) => s.login)
+  const authEmail = useAuthStore((s) => s.authEmail)
+  const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
+  const result = useAuthStore((s) => s.result)
+  const setResult = useAuthStore((s) => s.setResult)
+  const isAuthenticated = useIsAuthenticated()
+  const validationError = getAuthEmailValidationError(authEmail)
   const { isInFlight, run } = useInFlightAction()
 
   useEffect(() => {
@@ -167,7 +162,9 @@ export default observer(function Login(_props) {
           RightAccessory={PasswordRightAccessory}
         />
 
-        {result ? <Text tx={result as TxKeyPath} preset="formHelper" style={themed($result)} /> : null}
+        {result ? (
+          <Text tx={result as TxKeyPath} preset="formHelper" style={themed($result)} />
+        ) : null}
       </FormCard>
 
       <View style={$content}>
@@ -195,7 +192,7 @@ export default observer(function Login(_props) {
       </View>
     </Screen>
   )
-})
+}
 
 const $root: ViewStyle = {
   flex: 1,

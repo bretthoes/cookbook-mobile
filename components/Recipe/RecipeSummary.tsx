@@ -1,9 +1,8 @@
 import { Text } from "@/components/Text"
-import { Recipe } from "@/models/Recipe"
+import type { RecipeDetail } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { observer } from "mobx-react-lite"
 import React from "react"
 import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
@@ -41,7 +40,7 @@ const $detailsContainer: ThemedStyle<ViewStyle> = (theme) => ({
 })
 
 export interface RecipeSummaryProps {
-  recipe: Recipe
+  recipe: RecipeDetail
 }
 
 const MAX_SUMMARY_LENGTH = 200
@@ -119,11 +118,11 @@ const RECIPE_TAGS: { key: RecipeTagKey; labelTx: Parameters<typeof Text>[0]["tx"
   { key: "isSnack", labelTx: "recipeTags:isSnack" },
 ]
 
-export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
+export default function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = React.useState(false)
-  const hasImages = !!recipe?.images[0]
+  const hasImages = !!recipe?.images?.[0]
   const hasTimeOrServings =
     !!recipe.servings ||
     !!recipe.preparationTimeInMinutes ||
@@ -242,4 +241,4 @@ export default observer(function RecipeSummary({ recipe }: RecipeSummaryProps) {
       )}
     </View>
   )
-})
+}

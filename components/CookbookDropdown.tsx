@@ -2,10 +2,9 @@ import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { SectionCard } from "@/components/SectionCard"
 import { translate } from "@/i18n"
-import { Cookbook } from "@/models/Cookbook"
+import type { Cookbook } from "@/types/cookbook"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { observer } from "mobx-react-lite"
 import { useMemo, useState } from "react"
 import { ScrollView, TextStyle, TouchableOpacity, ViewStyle } from "react-native"
 
@@ -32,7 +31,7 @@ export interface CookbookDropdownProps {
  * A reusable dropdown component for selecting a cookbook.
  * Displays a button that opens a modal with a list of cookbooks to choose from.
  */
-export const CookbookDropdown = observer(function CookbookDropdown(props: CookbookDropdownProps) {
+export function CookbookDropdown(props: CookbookDropdownProps) {
   const { cookbooks, selectedCookbook, onSelect, error } = props
 
   const { themed, theme } = useAppTheme()
@@ -64,7 +63,11 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
           }
           style={$themedDropdownText}
         />
-        <Icon icon={isDropdownVisible ? "caretUp" : "caretDown"} size={20} color={theme.colors.textDim} />
+        <Icon
+          icon={isDropdownVisible ? "caretUp" : "caretDown"}
+          size={20}
+          color={theme.colors.textDim}
+        />
       </TouchableOpacity>
 
       {error && <Text text={error} preset="formHelper" style={$themedErrorText} />}
@@ -87,7 +90,7 @@ export const CookbookDropdown = observer(function CookbookDropdown(props: Cookbo
       )}
     </SectionCard>
   )
-})
+}
 
 const $dropdownButton =
   (error?: string): ThemedStyle<ViewStyle> =>

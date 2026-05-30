@@ -28,13 +28,14 @@ This reads from `../SharedCookbook/src/Web/wwwroot/api/specification.json` and w
 2. Run `npm run generate:api`.
 3. Add a wrapper method in the appropriate `wrappers/*.ts` file.
 4. Expose the method on the `Api` class in `index.ts`.
+5. If the contract change affects app-facing shapes, update `types/`, query hooks, forms, and screens — see `.cursor/skills/sync-api-client/SKILL.md`.
 
 ## Auth and Session Expiry
 
 - **Protected endpoints**: Auth header is injected automatically via the client's auth middleware.
 - **Unprotected endpoints**: `/api/Users/login`, `/api/Users/register`, `/api/Users/resendConfirmationEmail`, `/api/Users/forgotPassword`, `/api/Users/resetPassword`, `/api/Users/confirmEmail`.
 - **401 handling**: Client attempts token refresh via `POST /api/Users/refresh`, then retries the original request.
-- **Session expiry**: Call `api.setSessionExpiredCallback(callback)` during app setup (e.g. in `setupRootStore`). The callback is invoked when refresh fails.
+- **Session expiry**: Call `api.setSessionExpiredCallback(callback)` during app setup (see `stores/setupApp.ts`). The callback is invoked when refresh fails.
 
 ## Multipart Endpoints
 

@@ -2,13 +2,12 @@ import { Button } from "@/components/Button"
 import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { useStores } from "@/models/helpers/useStores"
+import { useImportRecipeFromVoiceMutation } from "@/hooks/queries/useRecipesQuery"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from "expo-speech-recognition"
-import { observer } from "mobx-react-lite"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ScrollView, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
@@ -22,10 +21,10 @@ import Animated, {
 
 type Phase = "idle" | "recording" | "processing"
 
-export default observer(function AddRecipeVoiceScreen() {
+export default function AddRecipeVoiceScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const { recipeStore } = useStores()
+  const importFromVoice = useImportRecipeFromVoiceMutation()
 
   const [phase, setPhase] = useState<Phase>("idle")
   const [displayTranscript, setDisplayTranscript] = useState("")
@@ -91,7 +90,7 @@ export default observer(function AddRecipeVoiceScreen() {
     }
 
     updatePhase("processing")
-    const result = await recipeStore.importFromVoice(text)
+    const result = await importFromVoice.mutateAsync(text)
 
     if (result.ok) {
       router.replace("/(logged-in)/recipe/add")
@@ -102,7 +101,7 @@ export default observer(function AddRecipeVoiceScreen() {
       setErrorMsg(t("recipeAddVoiceScreen:parseFailed"))
       updatePhase("idle")
     }
-  }, [t, recipeStore, updatePhase])
+  }, [t, importFromVoice, updatePhase])
 
   useSpeechRecognitionEvent("result", (event) => {
     const segment = event.results[0]?.transcript ?? ""
@@ -248,7 +247,7 @@ export default observer(function AddRecipeVoiceScreen() {
       )}
     </Screen>
   )
-})
+}
 
 const $container: ThemedStyle<ViewStyle> = (theme) => ({
   flexGrow: 1,

@@ -617,6 +617,7 @@ const fr: Translations = {
     subtitle: "___Edit the details for your cookbook.",
     changeCoverPhoto: "___Change Cover Photo",
     titleLabel: "___Title",
+    titlePlaceholder: "___Enter cookbook title",
     noChangesToSave: "___No changes to save",
     updatedSuccessfully: "___Cookbook updated successfully!",
     failedToUpdate: "___Failed to update cookbook",
@@ -631,6 +632,7 @@ const fr: Translations = {
     deleteTitle: "___Delete Recipe",
     deleteMessage: "___Are you sure you want to delete this recipe? This action cannot be undone.",
     deleteButton: "___Delete",
+    deleteFailed: "___Failed to delete recipe",
   },
   recipeEditScreen: {
     notFound: "___Recipe not found",

@@ -10,7 +10,6 @@ import { TxKeyPath } from "@/i18n"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { observer } from "mobx-react-lite"
 import {
   ActivityIndicator,
   Image,
@@ -27,12 +26,7 @@ const tiktokLogo = require("@/assets/images/tiktok.png")
 const instagramLogo = require("@/assets/images/instagram.png")
 const facebookLogo = require("@/assets/images/facebook.png")
 
-const SOCIAL_LOGOS: ImageSourcePropType[] = [
-  pinterestLogo,
-  tiktokLogo,
-  instagramLogo,
-  facebookLogo,
-]
+const SOCIAL_LOGOS: ImageSourcePropType[] = [pinterestLogo, tiktokLogo, instagramLogo, facebookLogo]
 
 function offeringsErrorTxKey(error: OfferingsLoadError | null): TxKeyPath {
   switch (error) {
@@ -52,7 +46,7 @@ function offeringsErrorTxKey(error: OfferingsLoadError | null): TxKeyPath {
   }
 }
 
-export default observer(function PaywallScreen() {
+export default function PaywallScreen() {
   const { themed, theme } = useAppTheme()
   const {
     offerings,
@@ -103,7 +97,11 @@ export default observer(function PaywallScreen() {
       ) : offerings.length === 0 ? (
         <View style={themed($emptyOfferingsBlock)}>
           <Text tx={offeringsErrorTxKey(offeringsError)} style={themed($noOfferings)} />
-          <Button tx="paywallScreen:retryOfferings" onPress={loadOfferings} style={themed($retryButton)} />
+          <Button
+            tx="paywallScreen:retryOfferings"
+            onPress={loadOfferings}
+            style={themed($retryButton)}
+          />
         </View>
       ) : (
         <View style={themed($plansRow)}>
@@ -137,7 +135,7 @@ export default observer(function PaywallScreen() {
       </View>
     </Screen>
   )
-})
+}
 
 const $container: ThemedStyle<ViewStyle> = (theme) => ({
   paddingHorizontal: theme.spacing.lg,

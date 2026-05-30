@@ -1,6 +1,10 @@
 import Config from "@/config"
-import { RecipeSnapshotIn, RecipeSnapshotOut, RecipeToAddSnapshotIn } from "@/models/Recipe"
-import { RecipeListSnapshotIn } from "@/models/generics"
+import type {
+  RecipeListSnapshotIn,
+  RecipeSnapshotIn,
+  RecipeSnapshotOut,
+  RecipeToAddSnapshotIn,
+} from "@/types/recipe"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {
@@ -85,7 +89,9 @@ export async function updateRecipe(
   try {
     const { error, response } = await client.PUT("/api/Recipes/{id}", {
       params: { path: { id: recipe.id } },
-      body: { recipe: recipe as unknown as { id: number } & Record<string, unknown> },
+      body: {
+        recipe: recipe as unknown as { id: number; title: string } & Record<string, unknown>,
+      },
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)

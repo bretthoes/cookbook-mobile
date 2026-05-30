@@ -4,33 +4,31 @@ import { Slot, SplashScreen, useNavigationContainerRef } from "expo-router"
 import { useEffect, useState } from "react"
 import { ViewStyle } from "react-native"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
-// @mst replace-next-line
 import { ErrorBoundary } from "@/components/ErrorBoundary/ErrorBoundary"
 import Config from "@/config"
 import { initI18n } from "@/i18n"
-import { useInitialRootStore } from "@/models/helpers/useStores"
+import { useAppInit } from "@/hooks/useAppInit"
 import { customFontsToLoad } from "@/theme"
 import { ThemeProvider } from "@/theme/context"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 import { useFonts } from "expo-font"
 import { ActionSheetProvider } from "@expo/react-native-action-sheet"
+import { QueryProvider } from "@/services/query/QueryProvider"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 
 SplashScreen.preventAutoHideAsync()
 
 function Root() {
   const navigationContainerRef = useNavigationContainerRef()
-  // @mst remove-block-start
-  // Wait for stores to load and render our layout inside of it so we have access
-  // to auth info etc
-  const { rehydrated } = useInitialRootStore()
-  // @mst remove-block-end
+  const { ready: rehydrated } = useAppInit()
 
   const [fontsLoaded, fontError] = useFonts(customFontsToLoad)
   const [isI18nInitialized, setIsI18nInitialized] = useState(false)
 
   useEffect(() => {
-    registerNavigationContainer(navigationContainerRef)
+    registerNavigationContainer(
+      navigationContainerRef as Parameters<typeof registerNavigationContainer>[0],
+    )
   }, [navigationContainerRef])
 
   useEffect(() => {
@@ -39,7 +37,7 @@ function Root() {
       .then(() => loadDateFnsLocale())
   }, [])
 
-  const loaded = fontsLoaded && isI18nInitialized && rehydrated // @mst remove-current-line
+  const loaded = fontsLoaded && isI18nInitialized && rehydrated
 
   useEffect(() => {
     if (fontError) throw fontError
@@ -59,11 +57,13 @@ function Root() {
     <ErrorBoundary catchErrors={Config.catchErrors}>
       <GestureHandlerRootView style={$root}>
         <ThemeProvider>
-          <ActionSheetProvider>
-            <KeyboardProvider>
-              <Slot />
-            </KeyboardProvider>
-          </ActionSheetProvider>
+          <QueryProvider>
+            <ActionSheetProvider>
+              <KeyboardProvider>
+                <Slot />
+              </KeyboardProvider>
+            </ActionSheetProvider>
+          </QueryProvider>
         </ThemeProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>
