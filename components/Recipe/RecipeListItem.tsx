@@ -1,6 +1,7 @@
 import { Icon } from "@/components/Icon"
 import { ListItem } from "@/components/ListItem"
 import { Text, TextProps } from "@/components/Text"
+import type { TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import React from "react"
@@ -12,6 +13,7 @@ export function RecipeListItem({
   lastIndex,
   onPress,
   TextProps: textPropsOverride,
+  suffixTx,
   isOwner,
 }: {
   text: string
@@ -19,6 +21,7 @@ export function RecipeListItem({
   lastIndex: number
   onPress: () => void
   TextProps?: TextProps
+  suffixTx?: TxKeyPath
   isOwner?: boolean
 }) {
   const { themed, theme } = useAppTheme()
@@ -38,6 +41,9 @@ export function RecipeListItem({
             text={text}
             style={[mergedTextProps.style, themed($nameText)]}
           />
+          {suffixTx ? (
+            <Text tx={suffixTx} preset="formHelper" style={themed($nameSuffix)} />
+          ) : null}
           {isOwner ? (
             <Icon
               icon="crown"
@@ -65,6 +71,12 @@ const $nameRow: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $nameText: ThemedStyle<TextStyle> = () => ({
   flexShrink: 1,
+})
+
+const $nameSuffix: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  flexShrink: 0,
+  marginStart: theme.spacing.xxs,
 })
 
 const $crownIcon: ThemedStyle<ViewStyle> = ({ spacing }) => ({

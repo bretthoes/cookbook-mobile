@@ -769,6 +769,7 @@ const en = {
     editRoleHint: "Tap the role above or ⋯ to change it.",
     currentRole: "Current role: {{role}}",
     currentTierSuffix: "(Current)",
+    youSuffix: "(You)",
     unsavedChanges: "You have unsaved changes. Tap Save to apply.",
   },
   // Settings related translations

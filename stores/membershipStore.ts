@@ -1,6 +1,7 @@
 import { api } from "@/services/api"
 import type { Membership, MembershipTier } from "@/types/membership"
 import { emptyPaginatedList, type PaginatedList } from "@/types/pagination"
+import { isOwnerTier, MEMBERSHIP_TIER } from "@/utils/membershipTier"
 import { create } from "zustand"
 
 export interface MembershipState {
@@ -124,13 +125,28 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
   setEmail: (email) => set({ email }),
 
   setMembershipTier: (id, tier) => {
+    const transferringOwnership = tier === MEMBERSHIP_TIER.Owner
+
     set({
       memberships: {
         ...get().memberships,
-        items: get().memberships.items.map((m) => (m.id === id ? { ...m, tier } : m)),
+        items: get().memberships.items.map((m) => {
+          if (m.id === id) return { ...m, tier }
+          if (transferringOwnership && isOwnerTier(m.tier)) {
+            return { ...m, tier: MEMBERSHIP_TIER.Contributor }
+          }
+          return m
+        }),
       },
-      ownMembership:
-        get().ownMembership?.id === id ? { ...get().ownMembership, tier } : get().ownMembership,
+      ownMembership: (() => {
+        const own = get().ownMembership
+        if (!own) return null
+        if (own.id === id) return { ...own, tier }
+        if (transferringOwnership && isOwnerTier(own.tier)) {
+          return { ...own, tier: MEMBERSHIP_TIER.Contributor }
+        }
+        return own
+      })(),
     })
   },
 }))

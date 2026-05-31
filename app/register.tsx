@@ -9,7 +9,7 @@ import { Screen } from "@/components/Screen"
 import { StepIndicator } from "@/components/StepIndicator"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
-import { translate } from "@/i18n"
+import { translate, type TxKeyPath } from "@/i18n"
 import { getActiveLanguageCode, setAppLanguage, type SupportedLanguageCode } from "@/i18n/language"
 import { getAuthEmailValidationError, useAuthStore } from "@/stores/authStore"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
@@ -337,7 +337,7 @@ export default function Register() {
               onSubmitEditing={handlePasswordStepSubmit}
             />
             <PasswordRequirements password={password} />
-            <Text text={`${result}`} preset="formHelper" />
+            {result ? <Text tx={result as TxKeyPath} preset="formHelper" /> : null}
           </FormCard>
           <View style={$content}>
             <Button
@@ -366,7 +366,7 @@ export default function Register() {
             <Text tx="emailVerificationScreen:sentToSuffix" preset="formHelper" />
             <Text tx="emailVerificationScreen:returnHereHint" preset="formHelper" style={$hint} />
             {result && !errorMessage ? (
-              <Text text={result} preset="formHelper" style={themed($formHelper)} />
+              <Text tx={result as TxKeyPath} preset="formHelper" style={themed($formHelper)} />
             ) : null}
             {isInFlight && (
               <React.Fragment>

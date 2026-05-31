@@ -752,6 +752,7 @@ const fr: Translations = {
     editRoleHint: "___Tap the role above or ⋯ to change it.",
     currentRole: "___Current role: {{role}}",
     currentTierSuffix: "___(Current)",
+    youSuffix: "___(You)",
     unsavedChanges: "___You have unsaved changes. Tap Save to apply.",
   },
   setDisplayNameScreen: {

@@ -37,7 +37,6 @@ export default function MembershipEditScreen() {
   const loadedCookbookId = useMembershipStore((s) => s.loadedCookbookId)
   const loadForCookbook = useMembershipStore((s) => s.loadForCookbook)
   const updateTier = useMembershipStore((s) => s.updateTier)
-  const singleByCookbookId = useMembershipStore((s) => s.singleByCookbookId)
   const { selected: selectedCookbook } = useSelectedCookbook()
   const [selectedTier, setSelectedTier] = useState<MembershipTier | null>(null)
   const [resultMessage, setResultMessage] = useState<string | null>(null)
@@ -74,7 +73,9 @@ export default function MembershipEditScreen() {
       const result = await updateTier(membershipId, selectedTier)
       if (result) {
         if (selectedTier === MEMBERSHIP_TIER.Owner) {
-          await singleByCookbookId(cookbookId, true)
+          await loadForCookbook(cookbookId, 1, 10, true)
+          router.back()
+          return
         }
         setResultMessage(translate("membershipScreen:updateSuccess"))
         setResultIsSuccess(true)
@@ -83,7 +84,7 @@ export default function MembershipEditScreen() {
         setResultIsSuccess(false)
       }
     })
-  }, [cookbookId, isDirty, membershipId, run, selectedTier, singleByCookbookId, updateTier])
+  }, [cookbookId, isDirty, membershipId, run, selectedTier, loadForCookbook, updateTier])
 
   useHeader(
     {

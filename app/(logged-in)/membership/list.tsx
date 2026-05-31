@@ -115,7 +115,7 @@ export default function Cookbook() {
                 onPress={async () => {
                   router.push(`/(logged-in)/membership/${item.id}`)
                 }}
-                TextProps={isCurrentUser ? { weight: "bold" } : undefined}
+                suffixTx={isCurrentUser ? "membershipScreen:youSuffix" : undefined}
               />
             </View>
           )
