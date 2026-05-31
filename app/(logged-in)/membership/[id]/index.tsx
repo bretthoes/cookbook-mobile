@@ -1,52 +1,48 @@
-import { Icon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
+import { MemberSummary } from "@/components/Membership/MemberSummary"
+import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
-import type { TxKeyPath } from "@/i18n"
-import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import {
+  canManageMembers,
+  tierDescriptionTx,
+  tierIcon,
+  tierLabelTx,
+} from "@/utils/membershipTier"
 import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { router, useLocalSearchParams } from "expo-router"
-import React, { useCallback, useEffect } from "react"
-import { Alert, FlatList, View, ViewStyle } from "react-native"
-
-type DataItem = {
-  labelTx: TxKeyPath
-  value: string | boolean | null
-}
+import React, { useCallback, useMemo } from "react"
+import { Alert, TextStyle, View } from "react-native"
 
 export default function MembershipScreen() {
-  const currentUserEmail = useAuthStore((s) => s.authEmail)
-  const membershipStore = useMembershipStore()
-  const { selected: selectedCookbook } = useSelectedCookbook()
   const { id } = useLocalSearchParams<{ id: string }>()
-  const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
-  const ownMembership = membershipStore.ownMembership
+  const membershipId = parseInt(id)
+  const currentUserEmail = useAuthStore((s) => s.authEmail)
+  const membership = useMembershipStore((s) =>
+    s.memberships.items.find((m) => m.id === membershipId),
+  )
+  const ownMembership = useMembershipStore((s) => s.ownMembership)
+  const deleteMembership = useMembershipStore((s) => s.delete)
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  const cookbookId = selectedCookbook?.id ?? 0
-  const canManageMembers = ownMembership?.canRemoveMember ?? false
   const isViewingOwnMembership =
     !!currentUserEmail && membership?.email?.toLowerCase() === currentUserEmail.toLowerCase()
-  const canShowActions = canManageMembers && !isViewingOwnMembership
+  const canShowActions = canManageMembers(ownMembership?.tier) && !isViewingOwnMembership
 
-  const $themedScreenContentContainer = React.useMemo(
-    () => themed($screenContentContainer),
-    [themed],
-  )
-  const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
-  const $themedItem = React.useMemo(() => themed($item), [themed])
+  const $themedSectionLabel = useMemo(() => themed($sectionLabel), [themed])
+  const $themedListContainer = useMemo(() => themed($listContainer), [themed])
+  const $themedEditHint = useMemo(() => themed($editHint), [themed])
 
-  useEffect(() => {
-    if (!cookbookId) return
-    void membershipStore.singleByCookbookId(cookbookId)
-  }, [cookbookId, membershipStore])
+  const handlePressEdit = useCallback(() => {
+    router.push(`/(logged-in)/membership/${id}/edit`)
+  }, [id])
 
   const handlePressMore = useCallback(() => {
     const editLabel = translate("membershipScreen:actionEdit")
@@ -66,7 +62,7 @@ export default function MembershipScreen() {
         if (selectedIndex === undefined || selectedIndex === cancelButtonIndex) return
 
         if (selectedIndex === 0) {
-          router.push(`/(logged-in)/membership/${id}/edit`)
+          handlePressEdit()
         } else if (selectedIndex === 1) {
           Alert.alert(
             translate("membershipScreen:deleteMemberTitle"),
@@ -81,7 +77,7 @@ export default function MembershipScreen() {
                 style: "destructive",
                 onPress: () => {
                   router.back()
-                  void membershipStore.delete(parseInt(id)).then((result) => {
+                  void deleteMembership(membershipId).then((result) => {
                     if (!result) {
                       Alert.alert(
                         translate("membershipScreen:errorTitle"),
@@ -96,7 +92,7 @@ export default function MembershipScreen() {
         }
       },
     )
-  }, [id, membershipStore, showActionSheetWithOptions])
+  }, [deleteMembership, handlePressEdit, membershipId, showActionSheetWithOptions])
 
   useHeader(
     {
@@ -113,56 +109,45 @@ export default function MembershipScreen() {
     return <ItemNotFound message={translate("membershipScreen:notFound")} />
   }
 
-  const data: DataItem[] = [
-    { labelTx: "membershipScreen:labels.email", value: membership.email ?? "" },
-    { labelTx: "membershipScreen:labels.name", value: membership.name ?? "" },
-    { labelTx: "membershipScreen:labels.isOwner", value: membership.isOwner },
-    { labelTx: "membershipScreen:labels.canAddRecipe", value: membership.canAddRecipe },
-    { labelTx: "membershipScreen:labels.canUpdateRecipe", value: membership.canUpdateRecipe },
-    { labelTx: "membershipScreen:labels.canDeleteRecipe", value: membership.canDeleteRecipe },
-    { labelTx: "membershipScreen:labels.canInvite", value: membership.canSendInvite },
-    { labelTx: "membershipScreen:labels.canManageMembers", value: membership.canRemoveMember },
-    {
-      labelTx: "membershipScreen:labels.canEditCookbookDetails",
-      value: membership.canEditCookbookDetails,
-    },
-  ]
-
-  const renderItem = ({ item }: { item: DataItem }) => (
-    <View style={$themedItem}>
-      <Text tx={item.labelTx} size="sm" />
-      {typeof item.value === "boolean" ? (
-        <Icon icon={item.value ? "check" : "x"} size={20} />
-      ) : (
-        <Text text={item.value?.toString() || "-"} size="sm" />
-      )}
-    </View>
-  )
+  const memberName =
+    membership.name ?? membership.email ?? translate("membershipScreen:editMemberFallback")
+  const tierTitle = translate(tierLabelTx(membership.tier))
+  const tierDescription = translate(tierDescriptionTx(membership.tier))
 
   return (
-    <Screen preset="fixed" contentContainerStyle={$themedScreenContentContainer}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        contentContainerStyle={$themedListContentContainer}
-      />
+    <Screen preset="scroll">
+      <MemberSummary name={memberName} email={membership.email} />
+
+      <Text tx="membershipScreen:roleSectionTitle" style={$themedSectionLabel} />
+
+      <View style={$themedListContainer}>
+        <OptionListItem
+          title={tierTitle}
+          description={tierDescription}
+          leftIcon={tierIcon(membership.tier)}
+          selected
+          readOnly={!canShowActions}
+          onPress={canShowActions ? handlePressEdit : undefined}
+        />
+      </View>
+
+      {canShowActions && (
+        <Text tx="membershipScreen:editRoleHint" style={$themedEditHint} />
+      )}
     </Screen>
   )
 }
 
-const $screenContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  flex: 1,
+const $sectionLabel: ThemedStyle<TextStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  marginBottom: theme.spacing.sm,
+  color: theme.colors.textDim,
+  fontSize: 14,
 })
 
-const $listContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  padding: theme.spacing.md,
-})
-
-const $item: ThemedStyle<ViewStyle> = (theme) => ({
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  paddingVertical: theme.spacing.sm,
-  borderBottomWidth: 1,
-  borderBottomColor: theme.colors.separator,
+const $editHint: ThemedStyle<TextStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  marginTop: theme.spacing.sm,
+  color: theme.colors.textDim,
+  fontSize: 14,
 })

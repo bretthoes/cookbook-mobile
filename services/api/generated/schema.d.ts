@@ -622,14 +622,10 @@ export interface components {
       id?: number
       name?: string | null
       email?: string | null
-      isOwner: boolean
-      canAddRecipe: boolean
-      canUpdateRecipe: boolean
-      canDeleteRecipe: boolean
-      canSendInvite: boolean
-      canRemoveMember: boolean
-      canEditCookbookDetails: boolean
+      tier: components["schemas"]["MembershipTier"]
     }
+    /** @enum {integer} */
+    MembershipTier: 0 | 1 | 2 | 3
     PaginatedListOfMembershipDto: {
       items?: components["schemas"]["MembershipDto"][]
       /** Format: int32 */
@@ -643,14 +639,8 @@ export interface components {
     }
     UpdateMembershipCommand: {
       /** Format: int32 */
-      id: number
-      isOwner: boolean
-      canAddRecipe: boolean
-      canUpdateRecipe: boolean
-      canDeleteRecipe: boolean
-      canSendInvite: boolean
-      canRemoveMember: boolean
-      canEditCookbookDetails: boolean
+      id?: number
+      tier?: components["schemas"]["MembershipTier"]
     }
     RecipeDetailedDto: {
       /** Format: int32 */

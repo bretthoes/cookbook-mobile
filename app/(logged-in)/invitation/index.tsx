@@ -58,7 +58,7 @@ export default function Invitations() {
   useHeader({
     leftIcon: "back",
     titleTx: "invitationScreen:title",
-    onLeftPress: () => router.back(),
+    onLeftPress: () => router.replace("/(logged-in)/(tabs)/cookbooks"),
   })
 
   // initially, kick off a background refresh without the refreshing UI

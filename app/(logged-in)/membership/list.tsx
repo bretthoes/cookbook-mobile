@@ -9,6 +9,7 @@ import { isRTL } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { Membership } from "@/types/membership"
+import { isOwnerTier } from "@/utils/membershipTier"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -19,20 +20,18 @@ import { ActivityIndicator, FlatList, ImageStyle, View, ViewStyle } from "react-
 
 export default function Cookbook() {
   const currentUserEmail = useAuthStore((s) => s.authEmail)
-  const membershipStore = useMembershipStore()
+  const memberships = useMembershipStore((s) => s.memberships)
+  const loadForCookbook = useMembershipStore((s) => s.loadForCookbook)
+  const fetch = useMembershipStore((s) => s.fetch)
   const { selected } = useSelectedCookbook()
   const id = selected?.id ?? 0
   const { themed } = useAppTheme()
 
   const [isLoading, setIsLoading] = useState(false)
   const { refreshing, onRefresh } = useManualRefresh(
-    useCallback(
-      () => Promise.all([membershipStore.fetch(id), membershipStore.singleByCookbookId(id)]),
-      [membershipStore, id],
-    ),
+    useCallback(() => loadForCookbook(id, memberships.pageNumber, 10, true), [id, loadForCookbook, memberships.pageNumber]),
   )
 
-  // Memoize themed styles
   const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
   const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
   const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
@@ -47,26 +46,24 @@ export default function Cookbook() {
   })
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true)
-      await Promise.all([membershipStore.fetch(id), membershipStore.singleByCookbookId(id)])
-      setIsLoading(false)
-    }
-    fetchData()
-  }, [membershipStore, id])
+    if (!id) return
+
+    setIsLoading(true)
+    void loadForCookbook(id).finally(() => setIsLoading(false))
+  }, [id, loadForCookbook])
 
   const handleNextPage = async () => {
-    if (membershipStore.memberships?.hasNextPage) {
+    if (memberships?.hasNextPage) {
       setIsLoading(true)
-      await membershipStore.fetch(id, membershipStore.memberships.pageNumber + 1)
+      await fetch(id, memberships.pageNumber + 1)
       setIsLoading(false)
     }
   }
 
   const handlePreviousPage = async () => {
-    if (membershipStore.memberships?.hasPreviousPage) {
+    if (memberships?.hasPreviousPage) {
       setIsLoading(true)
-      await membershipStore.fetch(id, membershipStore.memberships.pageNumber - 1)
+      await fetch(id, memberships.pageNumber - 1)
       setIsLoading(false)
     }
   }
@@ -76,7 +73,7 @@ export default function Cookbook() {
   return (
     <Screen preset="fixed" style={$themedRoot}>
       <FlatList<Membership>
-        data={membershipStore.memberships?.items?.slice() ?? []}
+        data={memberships?.items?.slice() ?? []}
         keyExtractor={(item) => String(item.id)}
         ListEmptyComponent={
           isLoading ? (
@@ -107,14 +104,14 @@ export default function Cookbook() {
               style={[
                 $themedListItemStyle,
                 index === 0 && $themedBorderTop,
-                index === membershipStore.memberships?.items?.length - 1 && $themedBorderBottom,
+                index === memberships?.items?.length - 1 && $themedBorderBottom,
               ]}
             >
               <RecipeListItem
                 index={index}
-                lastIndex={membershipStore.memberships?.items?.length - 1}
+                lastIndex={memberships?.items?.length - 1}
                 text={`${item.name ?? item.email}`}
-                isOwner={item.isOwner}
+                isOwner={isOwnerTier(item.tier)}
                 onPress={async () => {
                   router.push(`/(logged-in)/membership/${item.id}`)
                 }}
@@ -125,13 +122,13 @@ export default function Cookbook() {
         }}
         ListFooterComponent={
           <>
-            {(membershipStore.memberships?.totalPages ?? 1) > 1 && (
+            {(memberships?.totalPages ?? 1) > 1 && (
               <PaginationControls
-                currentPage={membershipStore.memberships.pageNumber}
-                totalPages={membershipStore.memberships.totalPages}
-                totalCount={membershipStore.memberships.totalCount}
-                hasNextPage={membershipStore.memberships.hasNextPage ?? false}
-                hasPreviousPage={membershipStore.memberships.hasPreviousPage ?? false}
+                currentPage={memberships.pageNumber}
+                totalPages={memberships.totalPages}
+                totalCount={memberships.totalCount}
+                hasNextPage={memberships.hasNextPage ?? false}
+                hasPreviousPage={memberships.hasPreviousPage ?? false}
                 onNextPage={handleNextPage}
                 onPreviousPage={handlePreviousPage}
               />

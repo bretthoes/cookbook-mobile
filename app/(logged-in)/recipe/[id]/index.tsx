@@ -14,6 +14,7 @@ import { Switch } from "@/components/Toggle"
 import { useDeleteRecipeMutation, useRecipeQuery } from "@/hooks/queries/useRecipesQuery"
 import { usePrintRecipe } from "@/hooks/usePrintRecipe"
 import { useMembershipStore } from "@/stores/membershipStore"
+import { canDeleteAnyRecipe, canEditAnyRecipe } from "@/utils/membershipTier"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -45,8 +46,8 @@ export default function RecipeScreen() {
   const isRecipeAuthor =
     ownMembership?.email?.toLowerCase() === selected?.authorEmail?.toLowerCase() &&
     !!ownMembership?.email
-  const canEdit = isRecipeAuthor || ownMembership?.isOwner || ownMembership?.canUpdateRecipe
-  const canDelete = ownMembership?.canDeleteRecipe
+  const canEdit = isRecipeAuthor || canEditAnyRecipe(ownMembership?.tier)
+  const canDelete = isRecipeAuthor || canDeleteAnyRecipe(ownMembership?.tier)
   const recipeHasImages = selected?.images?.[0]
 
   const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])

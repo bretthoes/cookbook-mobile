@@ -1,4 +1,4 @@
-import type { MembershipListSnapshotIn, MembershipSnapshotOut } from "@/types/membership"
+import type { MembershipListSnapshotIn, MembershipTier } from "@/types/membership"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {
@@ -36,7 +36,7 @@ export async function GetMemberships(
 
 export async function getMembership(
   cookbookId: number,
-): Promise<ApiResult<{ membership: MembershipSnapshotOut }>> {
+): Promise<ApiResult<{ membership: import("@/types/membership").MembershipSnapshotOut }>> {
   try {
     const { data, error, response } = await client.GET(
       "/api/Memberships/by-cookbook/{cookbookId}",
@@ -47,7 +47,7 @@ export async function getMembership(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ membership: data as MembershipSnapshotOut })
+    return toOkResult({ membership: data as import("@/types/membership").MembershipSnapshotOut })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -55,20 +55,14 @@ export async function getMembership(
 
 export async function updateMembership(
   membershipId: number,
-  membership: MembershipSnapshotOut,
+  tier: MembershipTier,
 ): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.PUT("/api/Memberships/{id}", {
       params: { path: { id: membershipId } },
       body: {
         id: membershipId,
-        isOwner: membership.isOwner,
-        canAddRecipe: membership.canAddRecipe,
-        canUpdateRecipe: membership.canUpdateRecipe,
-        canDeleteRecipe: membership.canDeleteRecipe,
-        canSendInvite: membership.canSendInvite,
-        canRemoveMember: membership.canRemoveMember,
-        canEditCookbookDetails: membership.canEditCookbookDetails,
+        tier,
       },
     })
     if (!response.ok)

@@ -1,74 +1,81 @@
-import { Icon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
+import { MemberSummary } from "@/components/Membership/MemberSummary"
+import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { Switch } from "@/components/Toggle"
 import { translate } from "@/i18n"
-import type { TxKeyPath } from "@/i18n"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
+import type { MembershipTier } from "@/types/membership"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import {
+  ALL_MEMBERSHIP_TIERS,
+  assignableTiers,
+  canManageMembers,
+  isOwnerTier,
+  MEMBERSHIP_TIER,
+  tierDescriptionTx,
+  tierIcon,
+  tierLabelTx,
+} from "@/utils/membershipTier"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
-import React, { useCallback, useEffect, useState } from "react"
-import { Alert, FlatList, TextStyle, View, ViewStyle } from "react-native"
-
-type MembershipProperty =
-  | "isOwner"
-  | "canAddRecipe"
-  | "canUpdateRecipe"
-  | "canDeleteRecipe"
-  | "canSendInvite"
-  | "canRemoveMember"
-  | "canEditCookbookDetails"
-
-type DataItem = {
-  labelTx: TxKeyPath
-  value: string | boolean | null
-  type: "text" | "switch"
-  key?: MembershipProperty
-  canToggle?: boolean
-}
+import React, { useCallback, useEffect, useMemo, useState } from "react"
+import { Alert, TextStyle, View } from "react-native"
 
 export default function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
+  const membershipId = parseInt(id)
   const currentUserEmail = useAuthStore((s) => s.authEmail)
-  const membershipStore = useMembershipStore()
+  const membership = useMembershipStore((s) =>
+    s.memberships.items.find((m) => m.id === membershipId),
+  )
+  const ownMembership = useMembershipStore((s) => s.ownMembership)
+  const loadedCookbookId = useMembershipStore((s) => s.loadedCookbookId)
+  const loadForCookbook = useMembershipStore((s) => s.loadForCookbook)
+  const updateTier = useMembershipStore((s) => s.updateTier)
+  const singleByCookbookId = useMembershipStore((s) => s.singleByCookbookId)
   const { selected: selectedCookbook } = useSelectedCookbook()
-  const membership = membershipStore.memberships.items.find((m) => m.id === parseInt(id))
-  const ownMembership = membershipStore.ownMembership
+  const [selectedTier, setSelectedTier] = useState<MembershipTier | null>(null)
   const [resultMessage, setResultMessage] = useState<string | null>(null)
   const [resultIsSuccess, setResultIsSuccess] = useState(false)
   const { themed } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
 
   const cookbookId = selectedCookbook?.id ?? 0
-  const isOwner = ownMembership?.isOwner ?? false
-  const canManageMembers = ownMembership?.canRemoveMember ?? false
 
-  // Memoize themed styles
-  const $themedScreenContentContainer = React.useMemo(
-    () => themed($screenContentContainer),
-    [themed],
-  )
-  const $themedListContentContainer = React.useMemo(() => themed($listContentContainer), [themed])
-  const $themedItem = React.useMemo(() => themed($item), [themed])
-  const $themedResultMessage = React.useMemo(() => themed($resultMessage), [themed])
-  const $themedSuccessMessage = React.useMemo(() => themed($successMessage), [themed])
-  const $themedErrorMessage = React.useMemo(() => themed($errorMessage), [themed])
+  const $themedSectionLabel = useMemo(() => themed($sectionLabel), [themed])
+  const $themedCurrentRole = useMemo(() => themed($currentRole), [themed])
+  const $themedUnsavedChanges = useMemo(() => themed($unsavedChanges), [themed])
+  const $themedListContainer = useMemo(() => themed($listContainer), [themed])
+  const $themedResultMessage = useMemo(() => themed($resultMessage), [themed])
+  const $themedSuccessMessage = useMemo(() => themed($successMessage), [themed])
+  const $themedErrorMessage = useMemo(() => themed($errorMessage), [themed])
 
   useEffect(() => {
-    if (!cookbookId) return
-    void membershipStore.singleByCookbookId(cookbookId)
-  }, [cookbookId, membershipStore])
+    if (!cookbookId || loadedCookbookId === cookbookId) return
+    void loadForCookbook(cookbookId)
+  }, [cookbookId, loadForCookbook, loadedCookbookId])
+
+  useEffect(() => {
+    if (membership) setSelectedTier(membership.tier)
+  }, [membership])
+
+  const isDirty =
+    selectedTier !== null && membership !== undefined && selectedTier !== membership.tier
 
   const handleSave = useCallback(() => {
+    if (selectedTier === null || !isDirty) return
+
     run(async () => {
-      const result = await membershipStore.update(parseInt(id))
+      const result = await updateTier(membershipId, selectedTier)
       if (result) {
+        if (selectedTier === MEMBERSHIP_TIER.Owner) {
+          await singleByCookbookId(cookbookId, true)
+        }
         setResultMessage(translate("membershipScreen:updateSuccess"))
         setResultIsSuccess(true)
       } else {
@@ -76,191 +83,98 @@ export default function MembershipEditScreen() {
         setResultIsSuccess(false)
       }
     })
-  }, [id, membershipStore, run])
+  }, [cookbookId, isDirty, membershipId, run, selectedTier, singleByCookbookId, updateTier])
 
   useHeader(
     {
       titleTx: "membershipScreen:editTitle",
       leftIcon: "back",
-      rightTx: "common:save",
+      rightTx: isDirty ? "common:save" : undefined,
       onLeftPress: () => router.back(),
-      onRightPress: isInFlight ? undefined : handleSave,
+      onRightPress: isDirty && !isInFlight ? handleSave : undefined,
     },
-    [handleSave, isInFlight],
+    [handleSave, isDirty, isInFlight],
   )
 
   if (!membership) return <ItemNotFound message={translate("membershipScreen:notFound")} />
 
   const isCurrentUserMembership =
     !!currentUserEmail && membership.email?.toLowerCase() === currentUserEmail.toLowerCase()
-  const canEditMembership = canManageMembers && !isCurrentUserMembership
+  const canEditMembership = canManageMembers(ownMembership?.tier) && !isCurrentUserMembership
 
   if (!canEditMembership) {
     return <ItemNotFound message={translate("membershipScreen:notFound")} />
   }
 
-  const canToggleOwner = isOwner && !isCurrentUserMembership
+  const tierOptions = assignableTiers(ownMembership?.tier, membership.tier)
+  const memberName =
+    membership.name ?? membership.email ?? translate("membershipScreen:editMemberFallback")
+  const currentTierLabel = translate(tierLabelTx(membership.tier))
 
-  const handleToggleOwner = (newValue: boolean) => {
-    // Safety check: only current owner can toggle ownership
-    if (!isOwner) {
-      Alert.alert(
-        translate("membershipScreen:errorTitle"),
-        translate("membershipScreen:onlyOwnerCanChange"),
-      )
-      return
-    }
+  const handleSelectTier = (tier: MembershipTier) => {
+    if (!tierOptions.includes(tier)) return
 
-    // Safety check: cannot toggle own membership
-    if (isCurrentUserMembership) {
-      Alert.alert(
-        translate("membershipScreen:errorTitle"),
-        translate("membershipScreen:cannotChangeOwnOwnership"),
-      )
-      return
-    }
-
-    const currentValue = membership.isOwner
-    if (newValue === currentValue) return // No change
-
-    const cookbookId = selectedCookbook?.id
-    if (!cookbookId) {
-      Alert.alert(
-        translate("membershipScreen:errorTitle"),
-        translate("membershipScreen:cookbookNotFound"),
-      )
-      return
-    }
-
-    if (newValue) {
-      // Promoting to owner - show confirmation first
+    if (tier === MEMBERSHIP_TIER.Owner && !isOwnerTier(membership.tier)) {
       Alert.alert(
         translate("membershipScreen:promoteToOwnerTitle"),
         translate("membershipScreen:promoteToOwnerMessage"),
         [
-          {
-            text: translate("membershipScreen:actionCancel"),
-            style: "cancel",
-          },
+          { text: translate("membershipScreen:actionCancel"), style: "cancel" },
           {
             text: translate("membershipScreen:confirmButton"),
             style: "destructive",
-            onPress: async () => {
-              // Update optimistically
-              membershipStore.setMembershipProperty(parseInt(id), "isOwner", true)
-              const success = await membershipStore.toggleOwner(parseInt(id), true)
-              if (success) {
-                // Refresh ownMembership to reflect the ownership change
-                await membershipStore.singleByCookbookId(cookbookId)
-              } else {
-                // Revert on failure
-                membershipStore.setMembershipProperty(parseInt(id), "isOwner", false)
-                Alert.alert(
-                  translate("membershipScreen:errorTitle"),
-                  translate("membershipScreen:ownershipUpdateFailed"),
-                )
-              }
-            },
+            onPress: () => setSelectedTier(tier),
           },
         ],
       )
-    } else {
-      // Demoting from owner - update directly (no confirmation needed)
-      membershipStore.setMembershipProperty(parseInt(id), "isOwner", false)
-      membershipStore.toggleOwner(parseInt(id), false).then(async (success) => {
-        if (success) {
-          // Refresh ownMembership to reflect the ownership change
-          await membershipStore.singleByCookbookId(cookbookId)
-        } else {
-          // Revert on failure
-          membershipStore.setMembershipProperty(parseInt(id), "isOwner", true)
-          Alert.alert(
-            translate("membershipScreen:errorTitle"),
-            translate("membershipScreen:ownershipUpdateFailed"),
-          )
-        }
-      })
+      return
     }
+
+    setSelectedTier(tier)
+    setResultMessage(null)
   }
 
-  const data: DataItem[] = [
-    { labelTx: "membershipScreen:labels.email", value: membership.email ?? "", type: "text" },
-    { labelTx: "membershipScreen:labels.name", value: membership.name ?? "", type: "text" },
-    {
-      labelTx: "membershipScreen:labels.isOwner",
-      value: membership.isOwner,
-      type: "switch",
-      key: "isOwner",
-      canToggle: canToggleOwner,
-    },
-    {
-      labelTx: "membershipScreen:labels.canAddRecipe",
-      value: membership.canAddRecipe,
-      type: "switch",
-      key: "canAddRecipe",
-    },
-    {
-      labelTx: "membershipScreen:labels.canUpdateRecipe",
-      value: membership.canUpdateRecipe,
-      type: "switch",
-      key: "canUpdateRecipe",
-    },
-    {
-      labelTx: "membershipScreen:labels.canDeleteRecipe",
-      value: membership.canDeleteRecipe,
-      type: "switch",
-      key: "canDeleteRecipe",
-    },
-    {
-      labelTx: "membershipScreen:labels.canInvite",
-      value: membership.canSendInvite,
-      type: "switch",
-      key: "canSendInvite",
-    },
-    {
-      labelTx: "membershipScreen:labels.canManageMembers",
-      value: membership.canRemoveMember,
-      type: "switch",
-      key: "canRemoveMember",
-    },
-    {
-      labelTx: "membershipScreen:labels.canEditCookbookDetails",
-      value: membership.canEditCookbookDetails,
-      type: "switch",
-      key: "canEditCookbookDetails",
-    },
-  ]
-
-  const renderItem = ({ item }: { item: DataItem }) => (
-    <View style={$themedItem}>
-      <Text tx={item.labelTx} size="sm" />
-      {item.type === "switch" ? (
-        <Switch
-          value={item.value as boolean}
-          onValueChange={(value) => {
-            if (item.key === "isOwner") {
-              handleToggleOwner(value)
-            } else if (item.key) {
-              membershipStore.setMembershipProperty(parseInt(id), item.key, value)
-            }
-          }}
-          disabled={item.key === "isOwner" && !item.canToggle}
-        />
-      ) : typeof item.value === "boolean" ? (
-        <Icon icon={item.value ? "check" : "x"} size={20} />
-      ) : (
-        <Text text={item.value?.toString() || "-"} size="sm" />
-      )}
-    </View>
-  )
+  const activeTier = selectedTier ?? membership.tier
 
   return (
-    <Screen preset="fixed" contentContainerStyle={$themedScreenContentContainer}>
-      <FlatList
-        data={data}
-        renderItem={renderItem}
-        contentContainerStyle={$themedListContentContainer}
+    <Screen preset="scroll">
+      <MemberSummary
+        name={memberName}
+        email={membership.email}
+        captionTx="membershipScreen:editMemberSubtitle"
       />
+      <Text
+        tx="membershipScreen:currentRole"
+        txOptions={{ role: currentTierLabel }}
+        style={$themedCurrentRole}
+      />
+      {isDirty && <Text tx="membershipScreen:unsavedChanges" style={$themedUnsavedChanges} />}
+
+      <Text tx="membershipScreen:roleSectionTitle" style={$themedSectionLabel} />
+
+      <View style={$themedListContainer}>
+        {ALL_MEMBERSHIP_TIERS.map((tier) => {
+          const isAssignable = tierOptions.includes(tier)
+          const isCurrentSavedTier = tier === membership.tier
+          const description = translate(tierDescriptionTx(tier))
+          const currentSuffix = isCurrentSavedTier
+            ? ` ${translate("membershipScreen:currentTierSuffix")}`
+            : ""
+
+          return (
+            <OptionListItem
+              key={tier}
+              title={translate(tierLabelTx(tier))}
+              description={`${description}${currentSuffix}`}
+              leftIcon={tierIcon(tier)}
+              selected={activeTier === tier}
+              disabled={!isAssignable}
+              onPress={() => handleSelectTier(tier)}
+            />
+          )
+        })}
+      </View>
+
       {resultMessage && (
         <Text
           text={resultMessage}
@@ -274,27 +188,28 @@ export default function MembershipEditScreen() {
   )
 }
 
-const $screenContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  flex: 1,
+const $sectionLabel: ThemedStyle<TextStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  marginBottom: theme.spacing.sm,
+  color: theme.colors.textDim,
+  fontSize: 14,
 })
 
-const $listContentContainer: ThemedStyle<ViewStyle> = (theme) => ({
-  padding: theme.spacing.md,
+const $currentRole: ThemedStyle<TextStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  marginBottom: theme.spacing.xs,
 })
 
-const $item: ThemedStyle<ViewStyle> = (theme) => ({
-  flexDirection: "row",
-  justifyContent: "space-between",
-  alignItems: "center",
-  paddingVertical: theme.spacing.sm,
-  borderBottomWidth: 1,
-  borderBottomColor: theme.colors.separator,
+const $unsavedChanges: ThemedStyle<TextStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.lg,
+  marginBottom: theme.spacing.md,
+  color: theme.colors.tint,
 })
 
 const $resultMessage: ThemedStyle<TextStyle> = (theme) => ({
   textAlign: "center",
   padding: theme.spacing.md,
-  margin: theme.spacing.md,
+  margin: theme.spacing.lg,
   borderRadius: theme.spacing.xs,
 })
 

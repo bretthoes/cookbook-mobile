@@ -15,6 +15,7 @@ import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { TxKeyPath, isRTL } from "@/i18n"
 import { invalidateCookbookLists } from "@/services/query/invalidateQueries"
+import { isOwnerTier } from "@/utils/membershipTier"
 import { useMembershipStore } from "@/stores/membershipStore"
 import { useUiStore } from "@/stores/uiStore"
 import type { RecipeBriefItem } from "@/types/recipe"
@@ -70,7 +71,7 @@ export default function CookbookScreen() {
   const { themed, theme } = useAppTheme()
   const { t } = useTranslation()
 
-  const isAuthor = ownMembership?.isOwner
+  const isAuthor = isOwnerTier(ownMembership?.tier)
 
   const [popoverVisible, setPopoverVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")

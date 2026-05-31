@@ -299,9 +299,9 @@ export class Api {
    */
   async updateMembership(
     membershipId: number,
-    membership: MembershipSnapshotOut,
+    tier: import("@/types/membership").MembershipTier,
   ): Promise<{ kind: "ok" } | GeneralApiProblem> {
-    return membershipWrappers.updateMembership(membershipId, membership)
+    return membershipWrappers.updateMembership(membershipId, tier)
   }
 
   /**

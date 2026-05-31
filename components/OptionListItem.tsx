@@ -17,11 +17,15 @@ const CARET_SIZE = 26
 export interface OptionListItemProps {
   title: string
   description: string
-  onPress: () => void
+  onPress?: () => void
   /** Icon name when using Icon component for the left side */
   leftIcon?: IconTypes
   /** Image source when using Image for the left side (e.g. require("./link.png")) */
   leftImage?: ImageSourcePropType
+  selected?: boolean
+  disabled?: boolean
+  /** When true, renders as a static row (no press feedback). */
+  readOnly?: boolean
 }
 
 export function OptionListItem({
@@ -30,6 +34,9 @@ export function OptionListItem({
   onPress,
   leftIcon,
   leftImage,
+  selected = false,
+  disabled = false,
+  readOnly = false,
 }: OptionListItemProps) {
   const {
     theme: { colors },
@@ -47,8 +54,10 @@ export function OptionListItem({
     throw new Error("OptionListItem requires either leftIcon or leftImage")
   }
 
-  return (
-    <TouchableOpacity style={$themedItemContainer} onPress={onPress}>
+  const showRightIcon = readOnly ? selected : !disabled || selected
+
+  const content = (
+    <>
       <View style={$themedIconContainer}>
         {leftIcon ? (
           <Icon icon={leftIcon} size={32} color={colors.tint} />
@@ -60,7 +69,41 @@ export function OptionListItem({
         <Text preset="subheading" text={title} style={$themedItemTitle} />
         <Text preset="formHelper" text={description} style={$themedItemDescription} />
       </View>
-      <Icon icon="caretRight" size={CARET_SIZE} color={colors.textDim} />
+      {showRightIcon ? (
+        <Icon
+          icon={selected ? "check" : "caretRight"}
+          size={selected ? 22 : CARET_SIZE}
+          color={selected ? colors.tint : colors.textDim}
+        />
+      ) : null}
+    </>
+  )
+
+  if (readOnly) {
+    return (
+      <View
+        style={[
+          $themedItemContainer,
+          selected && themed($itemContainerSelected),
+          disabled && themed($itemContainerDisabled),
+        ]}
+      >
+        {content}
+      </View>
+    )
+  }
+
+  return (
+    <TouchableOpacity
+      style={[
+        $themedItemContainer,
+        selected && themed($itemContainerSelected),
+        disabled && themed($itemContainerDisabled),
+      ]}
+      onPress={onPress}
+      disabled={disabled}
+    >
+      {content}
     </TouchableOpacity>
   )
 }
@@ -84,6 +127,14 @@ const $itemContainer: ThemedStyle<ViewStyle> = (theme) => ({
   borderBottomWidth: 1,
   borderBottomColor: theme.colors.background,
   minHeight: 80,
+})
+
+const $itemContainerSelected: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.palette.neutral200,
+})
+
+const $itemContainerDisabled: ThemedStyle<ViewStyle> = () => ({
+  opacity: 0.45,
 })
 
 const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({

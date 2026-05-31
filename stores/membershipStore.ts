@@ -1,38 +1,61 @@
 import { api } from "@/services/api"
-import type { Membership, MembershipSnapshotIn } from "@/types/membership"
+import type { Membership, MembershipTier } from "@/types/membership"
 import { emptyPaginatedList, type PaginatedList } from "@/types/pagination"
 import { create } from "zustand"
-
-export type MembershipProperty = keyof Pick<
-  Membership,
-  | "isOwner"
-  | "canAddRecipe"
-  | "canUpdateRecipe"
-  | "canDeleteRecipe"
-  | "canSendInvite"
-  | "canRemoveMember"
-  | "canEditCookbookDetails"
->
 
 export interface MembershipState {
   memberships: PaginatedList<Membership>
   ownMembership: Membership | null
+  loadedCookbookId: number | null
   email: string | null
 
+  loadForCookbook: (cookbookId: number, pageNumber?: number, pageSize?: number, force?: boolean) => Promise<void>
   fetch: (cookbookId: number, pageNumber?: number, pageSize?: number) => Promise<void>
-  singleByCookbookId: (id: number) => Promise<boolean>
+  singleByCookbookId: (cookbookId: number, force?: boolean) => Promise<boolean>
   fetchEmail: () => Promise<boolean>
-  update: (id: number) => Promise<boolean>
+  updateTier: (id: number, tier: MembershipTier) => Promise<boolean>
   delete: (id: number) => Promise<boolean>
   setEmail: (email: string) => void
-  setMembershipProperty: (id: number, property: MembershipProperty, value: boolean) => void
-  toggleOwner: (id: number, makeOwner: boolean) => Promise<boolean>
+  setMembershipTier: (id: number, tier: MembershipTier) => void
+}
+
+const inFlightLoads = new Map<string, Promise<void>>()
+
+function loadKey(cookbookId: number, pageNumber: number, pageSize: number) {
+  return `${cookbookId}:${pageNumber}:${pageSize}`
 }
 
 export const useMembershipStore = create<MembershipState>((set, get) => ({
   memberships: emptyPaginatedList(),
   ownMembership: null,
+  loadedCookbookId: null,
   email: null,
+
+  loadForCookbook: async (cookbookId, pageNumber = 1, pageSize = 10, force = false) => {
+    if (!cookbookId) return
+
+    if (force) {
+      await Promise.all([
+        get().fetch(cookbookId, pageNumber, pageSize),
+        get().singleByCookbookId(cookbookId, true),
+      ])
+      return
+    }
+
+    const key = loadKey(cookbookId, pageNumber, pageSize)
+    const existing = inFlightLoads.get(key)
+    if (existing) return existing
+
+    const promise = Promise.all([
+      get().fetch(cookbookId, pageNumber, pageSize),
+      get().singleByCookbookId(cookbookId),
+    ]).then(() => undefined).finally(() => {
+      inFlightLoads.delete(key)
+    })
+
+    inFlightLoads.set(key, promise)
+    return promise
+  },
 
   fetch: async (cookbookId, pageNumber = 1, pageSize = 10) => {
     const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
@@ -43,10 +66,17 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
     }
   },
 
-  singleByCookbookId: async (id) => {
-    const response = await api.getMembership(id)
+  singleByCookbookId: async (cookbookId, force = false) => {
+    if (!force && get().loadedCookbookId === cookbookId && get().ownMembership) {
+      return true
+    }
+
+    const response = await api.getMembership(cookbookId)
     if (response.kind === "ok") {
-      set({ ownMembership: response.membership as Membership })
+      set({
+        ownMembership: response.membership as Membership,
+        loadedCookbookId: cookbookId,
+      })
       return true
     }
     console.error(`Error fetching membership: ${JSON.stringify(response)}`)
@@ -64,11 +94,12 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
     return false
   },
 
-  update: async (id) => {
-    const membership = get().memberships.items.find((m) => m.id === id)
-    if (!membership) return false
-    const response = await api.updateMembership(id, membership as MembershipSnapshotIn)
-    if (response.kind === "ok") return true
+  updateTier: async (id, tier) => {
+    const response = await api.updateMembership(id, tier)
+    if (response.kind === "ok") {
+      get().setMembershipTier(id, tier)
+      return true
+    }
     console.error(`Error updating membership: ${JSON.stringify(response)}`)
     return false
   },
@@ -92,26 +123,14 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
 
   setEmail: (email) => set({ email }),
 
-  setMembershipProperty: (id, property, value) => {
+  setMembershipTier: (id, tier) => {
     set({
       memberships: {
         ...get().memberships,
-        items: get().memberships.items.map((m) => (m.id === id ? { ...m, [property]: value } : m)),
+        items: get().memberships.items.map((m) => (m.id === id ? { ...m, tier } : m)),
       },
+      ownMembership:
+        get().ownMembership?.id === id ? { ...get().ownMembership, tier } : get().ownMembership,
     })
-  },
-
-  toggleOwner: async (id, makeOwner) => {
-    const membership = get().memberships.items.find((m) => m.id === id)
-    if (!membership) return false
-
-    get().setMembershipProperty(id, "isOwner", makeOwner)
-    const updated = get().memberships.items.find((m) => m.id === id)!
-    const response = await api.updateMembership(id, updated as MembershipSnapshotIn)
-    if (response.kind === "ok") return true
-
-    console.error(`Error updating membership ownership: ${JSON.stringify(response)}`)
-    get().setMembershipProperty(id, "isOwner", !makeOwner)
-    return false
   },
 }))
