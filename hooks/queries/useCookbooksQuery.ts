@@ -170,14 +170,12 @@ export function useUpdateCookbookMutation() {
 export function useUploadCookbookCoverMutation() {
   return useMutation({
     mutationFn: async (assets: Parameters<typeof api.uploadImage>[0]) => {
-      try {
-        const response = await api.uploadImage(assets)
-        const data = unwrapApiResult(response)
-        const key = data.keys.at(-1) ?? ""
-        return { ok: true as const, key }
-      } catch {
-        return { ok: false as const }
+      const response = await api.uploadImage(assets)
+      if (response.kind !== "ok") {
+        return { ok: false as const, problem: response }
       }
+      const key = response.keys.at(-1) ?? ""
+      return { ok: true as const, key }
     },
   })
 }

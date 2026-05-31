@@ -24,6 +24,7 @@ const fr: Translations = {
     notFound: "___That item could not be found.",
     conflict: "___That action conflicted with existing data.",
     rateLimited: "___Too many requests. Please wait and try again.",
+    imageTooLarge: "___This image is too large. Please choose a photo under {{maxSizeMb}} MB.",
     rejected: "___The request was rejected. Please check your input.",
     badData: "___We received unexpected data. Please try again.",
     unknown: "___Something went wrong. Please try again.",

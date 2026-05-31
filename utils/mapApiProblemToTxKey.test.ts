@@ -13,6 +13,7 @@ const cases: [GeneralApiProblem, string][] = [
   [{ kind: "not-found" }, "errors:notFound"],
   [{ kind: "conflict" }, "errors:conflict"],
   [{ kind: "rate-limited" }, "errors:rateLimited"],
+  [{ kind: "file-too-large" }, "errors:imageTooLarge"],
   [{ kind: "rejected" }, "errors:rejected"],
   [{ kind: "bad-data" }, "errors:badData"],
   [{ kind: "unknown", temporary: true }, "errors:unknown"],
@@ -35,6 +36,11 @@ describe("getGeneralApiProblemFromResponse", () => {
   it("maps 429 to rate-limited", () => {
     const response = new Response(null, { status: 429 })
     expect(getGeneralApiProblemFromResponse(response)).toEqual({ kind: "rate-limited" })
+  })
+
+  it("maps 413 to file-too-large", () => {
+    const response = new Response(null, { status: 413 })
+    expect(getGeneralApiProblemFromResponse(response)).toEqual({ kind: "file-too-large" })
   })
 })
 

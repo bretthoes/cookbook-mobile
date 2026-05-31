@@ -17,6 +17,7 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
+import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
 import { MAX_INGREDIENT_SECTIONS } from "@/utils/recipeIngredientSections"
 import { recipeSchema } from "@/validators/recipeSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -184,7 +185,9 @@ export function RecipeForm(props: RecipeFormProps) {
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
         const uploadResponse = await api.uploadImage(result.assets)
-        if (uploadResponse.kind === "ok" && uploadResponse.keys.length > 0) {
+        if (uploadResponse.kind !== "ok") {
+          alert(getImageUploadErrorMessage(uploadResponse, "recipeFormScreen:imageUploadFailed"))
+        } else if (uploadResponse.keys.length > 0) {
           const key = uploadResponse.keys[0]
           setValue(`directions.${directionIndex}.image`, key)
           if (result.assets[0]?.uri) {
@@ -272,7 +275,7 @@ export function RecipeForm(props: RecipeFormProps) {
           })
           setNewImageKeysToLocalUri((prev) => ({ ...prev, ...keyToUri }))
         } else {
-          alert(translate("recipeFormScreen:imageUploadFailed"))
+          alert(getImageUploadErrorMessage(uploadResponse, "recipeFormScreen:imageUploadFailed"))
         }
       }
     } finally {

@@ -1109,6 +1109,14 @@ export interface operations {
           "application/json": components["schemas"]["ProblemDetails"]
         }
       }
+      413: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
       429: {
         headers: {
           [name: string]: unknown

@@ -22,6 +22,7 @@ const en = {
     notFound: "That item could not be found.",
     conflict: "That action conflicted with existing data.",
     rateLimited: "Too many requests. Please wait and try again.",
+    imageTooLarge: "This image is too large. Please choose a photo under {{maxSizeMb}} MB.",
     rejected: "The request was rejected. Please check your input.",
     badData: "We received unexpected data. Please try again.",
     unknown: "Something went wrong. Please try again.",

@@ -36,7 +36,7 @@ describe("getGeneralApiProblemFromResponse", () => {
     })
   })
 
-  it("maps 403, 404, 409, 429", () => {
+  it("maps 403, 404, 409, 413, 429", () => {
     expect(getGeneralApiProblemFromResponse(new Response(null, { status: 403 }))).toEqual({
       kind: "forbidden",
     })
@@ -48,6 +48,9 @@ describe("getGeneralApiProblemFromResponse", () => {
         detail: "Already exists",
       }),
     ).toEqual({ kind: "conflict", detail: "Already exists" })
+    expect(getGeneralApiProblemFromResponse(new Response(null, { status: 413 }))).toEqual({
+      kind: "file-too-large",
+    })
     expect(getGeneralApiProblemFromResponse(new Response(null, { status: 429 }))).toEqual({
       kind: "rate-limited",
     })

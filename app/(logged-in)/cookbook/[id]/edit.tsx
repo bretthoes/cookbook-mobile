@@ -14,6 +14,7 @@ import { useUiStore } from "@/stores/uiStore"
 import { translate } from "@/i18n"
 import { colors, spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
+import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
@@ -94,7 +95,7 @@ export default function EditCookbookScreen() {
         if (uploadResponse.ok) {
           setValue("image", uploadResponse.key)
         } else {
-          alert(translate("cookbookEditScreen:imageUploadFailed"))
+          alert(getImageUploadErrorMessage(uploadResponse.problem, "cookbookEditScreen:imageUploadFailed"))
           setLocalImage(previousImage)
         }
       }

@@ -14,6 +14,7 @@ import { translate } from "@/i18n"
 import type { CookbookToAddSnapshotIn } from "@/types/cookbook"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
+import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
@@ -73,7 +74,7 @@ export default function AddCookbookScreen() {
         } else {
           setImageLocal(null)
           setValue("image", null)
-          alert(translate("cookbookAddScreen:imageUploadFailed"))
+          alert(getImageUploadErrorMessage(uploadResponse.problem, "cookbookAddScreen:imageUploadFailed"))
         }
       }
     } finally {

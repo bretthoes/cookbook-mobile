@@ -38,6 +38,10 @@ export type GeneralApiProblem =
    */
   | { kind: "rate-limited" }
   /**
+   * Uploaded file exceeds the server size limit. This is a 413.
+   */
+  | { kind: "file-too-large" }
+  /**
    * All other 4xx series errors.
    */
   | { kind: "rejected" }
@@ -76,6 +80,8 @@ export function getGeneralApiProblemFromResponse(
         return { kind: "not-found" }
       case 409:
         return { kind: "conflict", detail: data?.detail }
+      case 413:
+        return { kind: "file-too-large" }
       case 429:
         return { kind: "rate-limited" }
       default:

@@ -24,6 +24,8 @@ export function mapApiProblemToTxKey(problem: GeneralApiProblem): TxKeyPath {
       return "errors:conflict"
     case "rate-limited":
       return "errors:rateLimited"
+    case "file-too-large":
+      return "errors:imageTooLarge"
     case "rejected":
       return "errors:rejected"
     case "bad-data":
