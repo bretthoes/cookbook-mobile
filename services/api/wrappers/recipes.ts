@@ -101,6 +101,19 @@ export async function updateRecipe(
   }
 }
 
+export async function recordRecipeMade(recipeId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  try {
+    const { error, response } = await client.POST("/api/Recipes/{id}/made", {
+      params: { path: { id: recipeId } },
+    })
+    if (!response.ok)
+      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    return { kind: "ok" }
+  } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
 export async function deleteRecipe(recipeId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.DELETE("/api/Recipes/{id}", {

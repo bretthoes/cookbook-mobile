@@ -180,6 +180,38 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/Notifications/latest": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["NotificationsLatest"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/Notifications": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: operations["NotificationsList"]
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/Recipes/{id}": {
     parameters: {
       query?: never
@@ -206,6 +238,22 @@ export interface paths {
     get: operations["RecipesList"]
     put?: never
     post: operations["RecipesCreate"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  "/api/Recipes/{id}/made": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["RecipesRecordMade"]
     delete?: never
     options?: never
     head?: never
@@ -642,6 +690,35 @@ export interface components {
       id?: number
       tier?: components["schemas"]["MembershipTier"]
     }
+    NotificationDto: {
+      /** Format: int32 */
+      id: number
+      actionType: components["schemas"]["CookbookNotificationActionType"]
+      /** Format: date-time */
+      created: string
+      /** Format: int32 */
+      cookbookId: number
+      cookbookTitle: string
+      /** Format: int32 */
+      recipeId?: number | null
+      recipeTitle?: string | null
+      actorDisplayName?: string | null
+      subjectDisplayName?: string | null
+      isImportant?: boolean
+    }
+    /** @enum {integer} */
+    CookbookNotificationActionType: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+    PaginatedListOfNotificationDto: {
+      items?: components["schemas"]["NotificationDto"][]
+      /** Format: int32 */
+      pageNumber?: number
+      /** Format: int32 */
+      totalPages?: number
+      /** Format: int32 */
+      totalCount?: number
+      hasPreviousPage?: boolean
+      hasNextPage?: boolean
+    }
     RecipeDetailedDto: {
       /** Format: int32 */
       id: number
@@ -659,6 +736,8 @@ export interface components {
       bakingTimeInMinutes?: number | null
       /** Format: int32 */
       servings?: number | null
+      /** Format: int32 */
+      madeCount?: number
       isVegetarian?: boolean | null
       isVegan?: boolean | null
       isGlutenFree?: boolean | null
@@ -1720,6 +1799,77 @@ export interface operations {
       }
     }
   }
+  NotificationsLatest: {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["NotificationDto"]
+        }
+      }
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
+  }
+  NotificationsList: {
+    parameters: {
+      query?: {
+        PageNumber?: number
+        PageSize?: number
+      }
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["PaginatedListOfNotificationDto"]
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
+  }
   RecipesGetById: {
     parameters: {
       query?: never
@@ -1949,6 +2099,57 @@ export interface operations {
         }
       }
       403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
+  }
+  RecipesRecordMade: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: number
+      }
+      cookie?: never
+    }
+    requestBody?: never
+    responses: {
+      204: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
         headers: {
           [name: string]: unknown
         }

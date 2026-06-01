@@ -9,4 +9,9 @@ export const queryKeys = {
       [...queryKeys.recipes.all, "list", cookbookId, search] as const,
     detail: (recipeId: number) => [...queryKeys.recipes.all, "detail", recipeId] as const,
   },
+  notifications: {
+    all: ["notifications"] as const,
+    list: () => [...queryKeys.notifications.all, "list"] as const,
+    latest: () => [...queryKeys.notifications.all, "latest"] as const,
+  },
 } as const

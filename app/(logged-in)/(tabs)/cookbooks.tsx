@@ -1,57 +1,49 @@
+import { LatestActivitySection } from "@/components/activity/LatestActivitySection"
 import { EmptyState } from "@/components/EmptyState"
+import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { CookbookCard } from "@/components/cookbooks/CookbookCard"
-import { Switch } from "@/components/Toggle"
 import { useCookbooksList } from "@/hooks/queries/useCookbooksQuery"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL } from "@/i18n"
-import { useUiStore } from "@/stores/uiStore"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import type { CookbookItem } from "@/types/cookbook"
 import { getCookbooksForList } from "@/utils/cookbookList"
+import { useRouter } from "expo-router"
 import { useCallback, useMemo } from "react"
-import { ActivityIndicator, FlatList, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  FlatList,
+  ImageStyle,
+  Pressable,
+  View,
+  ViewStyle,
+} from "react-native"
 import { useTranslation } from "react-i18next"
 
 export default function CookbooksScreen(_props: void) {
+  const router = useRouter()
   const { themeContext } = useAppTheme()
   const { t } = useTranslation()
   const isDark = themeContext === "dark"
 
-  const favoritesOnly = useUiStore((s) => s.favoritesOnly)
-  const setFavoritesOnly = useUiStore((s) => s.setFavoritesOnly)
-  const favoriteCookbookIds = useUiStore((s) => s.favoriteCookbookIds)
-  const toggleFavoriteCookbook = useUiStore((s) => s.toggleFavoriteCookbook)
-  const hasFavoriteCookbook = useUiStore((s) => s.hasFavoriteCookbook)
-
   const { cookbooks, isListPending, listHasNextPage, isLoadingMore, refetch, fetchNextPage } =
     useCookbooksList()
 
-  const cookbooksForList = useMemo(
-    () => getCookbooksForList(cookbooks, favoritesOnly, favoriteCookbookIds),
-    [cookbooks, favoritesOnly, favoriteCookbookIds],
-  )
+  const cookbooksForList = useMemo(() => getCookbooksForList(cookbooks), [cookbooks])
 
   const { refreshing, onRefresh } = useManualRefresh(useCallback(() => refetch(), [refetch]))
 
   const handleLoadMore = useCallback(() => {
-    if (favoritesOnly) return
     if (!listHasNextPage || isLoadingMore) return
     void fetchNextPage()
-  }, [favoritesOnly, listHasNextPage, isLoadingMore, fetchNextPage])
+  }, [listHasNextPage, isLoadingMore, fetchNextPage])
 
   const renderItem = useCallback(
-    ({ item }: { item: CookbookItem }) => (
-      <CookbookCard
-        cookbook={item}
-        isFavorite={hasFavoriteCookbook(item.id)}
-        onPressFavorite={() => toggleFavoriteCookbook(item.id)}
-        isDark={isDark}
-      />
-    ),
-    [hasFavoriteCookbook, toggleFavoriteCookbook, isDark],
+    ({ item }: { item: CookbookItem }) => <CookbookCard cookbook={item} isDark={isDark} />,
+    [isDark],
   )
 
   return (
@@ -60,7 +52,6 @@ export default function CookbooksScreen(_props: void) {
         contentContainerStyle={$listContentContainer}
         data={cookbooksForList}
         keyExtractor={(item) => String(item.id)}
-        extraData={`${favoritesOnly}:${favoriteCookbookIds.join(",")}`}
         refreshing={refreshing}
         onRefresh={onRefresh}
         onEndReached={handleLoadMore}
@@ -72,20 +63,8 @@ export default function CookbooksScreen(_props: void) {
             <EmptyState
               preset="generic"
               style={$emptyState}
-              headingTx={
-                favoritesOnly
-                  ? "cookbooksScreen:cookbookListScreen.noFavoritesEmptyState.heading"
-                  : undefined
-              }
-              contentTx={
-                favoritesOnly
-                  ? "cookbooksScreen:cookbookListScreen.noFavoritesEmptyState.content"
-                  : "cookbooksScreen:cookbookListScreen.noCookbooksEmptyState"
-              }
-              contentTxOptions={
-                favoritesOnly ? undefined : { tabName: t("tabNavigator:createTab") }
-              }
-              button={favoritesOnly ? "" : undefined}
+              contentTx="cookbooksScreen:cookbookListScreen.noCookbooksEmptyState"
+              contentTxOptions={{ tabName: t("tabNavigator:createTab") }}
               buttonOnPress={onRefresh}
               imageStyle={$emptyStateImage}
               ImageProps={{ resizeMode: "contain" }}
@@ -94,20 +73,27 @@ export default function CookbooksScreen(_props: void) {
         }
         ListHeaderComponent={
           <View style={$heading}>
-            <Text preset="heading" tx="cookbooksScreen:title" />
-            {(favoritesOnly || cookbooksForList.length > 0) && (
-              <View style={$toggle}>
-                <Switch
-                  value={favoritesOnly}
-                  onValueChange={() => setFavoritesOnly(!favoritesOnly)}
-                  labelTx="cookbooksScreen:onlyFavorites"
-                  labelPosition="left"
-                  labelStyle={$labelStyle}
-                  accessibilityLabel={t("cookbooksScreen:accessibility.switch")}
-                />
-              </View>
-            )}
+            <View style={$headingRow}>
+              <Text preset="heading" tx="cookbooksScreen:title" />
+              <Pressable
+                onPress={() => router.push("/(logged-in)/activity")}
+                accessibilityLabel={t("cookbooksScreen:activityFeedAccessibility")}
+                style={$feedButton}
+              >
+                <Icon icon="community" size={28} />
+              </Pressable>
+            </View>
           </View>
+        }
+        ListFooterComponent={
+          <>
+            {isLoadingMore ? (
+              <View style={$footerLoader}>
+                <ActivityIndicator />
+              </View>
+            ) : null}
+            <LatestActivitySection />
+          </>
         }
         renderItem={renderItem}
       />
@@ -129,12 +115,14 @@ const $heading: ViewStyle = {
   paddingTop: spacing.lg + spacing.xl,
 }
 
-const $toggle: ViewStyle = {
-  marginTop: spacing.md,
+const $headingRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
 }
 
-const $labelStyle: TextStyle = {
-  textAlign: "left",
+const $feedButton: ViewStyle = {
+  padding: spacing.xs,
 }
 
 const $emptyState: ViewStyle = {
@@ -143,4 +131,8 @@ const $emptyState: ViewStyle = {
 
 const $emptyStateImage: ImageStyle = {
   transform: [{ scaleX: isRTL ? -1 : 1 }],
+}
+
+const $footerLoader: ViewStyle = {
+  paddingVertical: spacing.md,
 }

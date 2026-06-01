@@ -1,4 +1,5 @@
 import { AutoImage } from "@/components/AutoImage"
+import { Button } from "@/components/Button"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
 import { ItemNotFound } from "@/components/ItemNotFound"
@@ -11,7 +12,12 @@ import RecipeSummary from "@/components/Recipe/RecipeSummary"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
-import { useDeleteRecipeMutation, useRecipeQuery } from "@/hooks/queries/useRecipesQuery"
+import {
+  useDeleteRecipeMutation,
+  useRecordRecipeMadeMutation,
+  useRecipeQuery,
+} from "@/hooks/queries/useRecipesQuery"
+import { useRecipeMadeCooldown } from "@/hooks/useRecipeMadeCooldown"
 import { usePrintRecipe } from "@/hooks/usePrintRecipe"
 import { useMembershipStore } from "@/stores/membershipStore"
 import { canDeleteAnyRecipe, canEditAnyRecipe } from "@/utils/membershipTier"
@@ -38,6 +44,8 @@ export default function RecipeScreen() {
   const recipeId = Number(id)
   const { data: selected, isPending, isError } = useRecipeQuery(recipeId)
   const deleteRecipeMutation = useDeleteRecipeMutation()
+  const recordRecipeMadeMutation = useRecordRecipeMadeMutation()
+  const { canRecordMade, recordCooldown } = useRecipeMadeCooldown(recipeId)
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
@@ -61,6 +69,7 @@ export default function RecipeScreen() {
     [themed],
   )
   const $themedSeparatorBelowImages = React.useMemo(() => themed($separatorBelowImages), [themed])
+  const $themedMadeSection = React.useMemo(() => themed($madeSection), [themed])
   const [cookMode, setCookMode] = useState(false)
   const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
 
@@ -107,6 +116,17 @@ export default function RecipeScreen() {
   }, [deleteRecipeMutation, recipeId, t])
 
   const handlePressMore = () => setPopoverVisible(true)
+
+  const handlePressMadeThis = useCallback(() => {
+    recordRecipeMadeMutation.mutate(recipeId, {
+      onSuccess: () => {
+        void recordCooldown()
+      },
+      onError: () => {
+        Alert.alert(t("common:error"), t("recipeDetailsScreen:madeThisFailed"))
+      },
+    })
+  }, [recordRecipeMadeMutation, recordCooldown, recipeId, t])
 
   const popoverOptions = useMemo(
     () => [
@@ -273,6 +293,20 @@ export default function RecipeScreen() {
               </View>
             )
           })()}
+
+        {selected ? (
+          <View style={$themedMadeSection}>
+            <Text
+              tx="recipeDetailsScreen:madeCount"
+              txOptions={{ count: selected.madeCount ?? 0 }}
+            />
+            <Button
+              tx="recipeDetailsScreen:madeThis"
+              onPress={handlePressMadeThis}
+              disabled={!canRecordMade || recordRecipeMadeMutation.isPending}
+            />
+          </View>
+        ) : null}
       </Screen>
     </>
   )
@@ -350,5 +384,11 @@ const $directionImage: ImageStyle = {
   borderRadius: 8,
   marginTop: spacing.sm,
 }
+
+const $madeSection: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.md,
+  paddingBottom: theme.spacing.xxl,
+  gap: theme.spacing.md,
+})
 
 // #endregion

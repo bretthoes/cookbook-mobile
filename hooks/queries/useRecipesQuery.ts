@@ -7,7 +7,7 @@ import type {
 } from "@/types/recipe"
 import type { GeneralApiProblem } from "@/services/api/apiProblem"
 import { api } from "@/services/api"
-import { getRecipe, getRecipes } from "@/services/api/wrappers/recipes"
+import { getRecipe, getRecipes, recordRecipeMade } from "@/services/api/wrappers/recipes"
 import { invalidateRecipeLists } from "@/services/query/invalidateQueries"
 import { queryKeys } from "@/services/query/queryKeys"
 import { ApiQueryError, unwrapApiResult } from "@/services/query/unwrapApiResult"
@@ -93,6 +93,7 @@ export function useCreateRecipeMutation() {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.list(variables.cookbookId, ""),
       })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all })
     },
   })
 }
@@ -108,6 +109,21 @@ export function useUpdateRecipeMutation() {
     onSuccess: (recipe) => {
       queryClient.setQueryData(queryKeys.recipes.detail(recipe.id), recipe as RecipeDetail)
       void invalidateRecipeLists(queryClient)
+    },
+  })
+}
+
+export function useRecordRecipeMadeMutation() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (recipeId: number) => {
+      const result = await recordRecipeMade(recipeId)
+      unwrapApiResult(result)
+      return recipeId
+    },
+    onSuccess: (recipeId) => {
+      void queryClient.invalidateQueries({ queryKey: queryKeys.recipes.detail(recipeId) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all })
     },
   })
 }

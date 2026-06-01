@@ -64,7 +64,6 @@ export default function CookbookScreen() {
   const ownMembership = useMembershipStore((s) => s.ownMembership)
   const singleByCookbookId = useMembershipStore((s) => s.singleByCookbookId)
   const deleteMembership = useMembershipStore((s) => s.delete)
-  const hasFavoriteCookbook = useUiStore((s) => s.hasFavoriteCookbook)
   const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
   const { selected, setSelectedById } = useSelectedCookbook()
   const { id } = useLocalSearchParams<{ id: string }>()
@@ -135,21 +134,6 @@ export default function CookbookScreen() {
   }, [isAuthor, id])
 
   const handlePressLeave = useCallback(async () => {
-    // Check if cookbook is in favorites
-    if (selected && hasFavoriteCookbook(selected.id)) {
-      Alert.alert(
-        t("cookbookDetailScreen:leaveCannotRemoveFavoritesTitle"),
-        t("cookbookDetailScreen:leaveCannotRemoveFavorites"),
-        [
-          {
-            text: t("common:ok"),
-            style: "cancel",
-          },
-        ],
-      )
-      return
-    }
-
     // TODO should refresh currentCookbook here to ensure membersCount is up to date.
     if (isAuthor && selected?.membersCount !== 1) {
       Alert.alert(
@@ -193,7 +177,6 @@ export default function CookbookScreen() {
   }, [
     isAuthor,
     selected,
-    hasFavoriteCookbook,
     ownMembership,
     deleteMembership,
     setSelectedCookbookId,

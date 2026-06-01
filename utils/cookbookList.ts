@@ -6,12 +6,6 @@ export function compareCookbooksByTitle(a: CookbookItem, b: CookbookItem): numbe
   return a.id - b.id
 }
 
-export function getCookbooksForList(
-  cookbooks: CookbookItem[],
-  favoritesOnly: boolean,
-  favoriteCookbookIds: number[],
-): CookbookItem[] {
-  const favoriteSet = new Set(favoriteCookbookIds)
-  const visible = favoritesOnly ? cookbooks.filter((c) => favoriteSet.has(c.id)) : cookbooks
-  return [...visible].sort(compareCookbooksByTitle)
+export function getCookbooksForList(cookbooks: CookbookItem[]): CookbookItem[] {
+  return [...cookbooks].sort(compareCookbooksByTitle)
 }

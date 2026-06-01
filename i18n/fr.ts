@@ -272,6 +272,20 @@ const fr: Translations = {
     title: "___Invitations",
     subtitle: "___Manage your cookbook invitations.",
   },
+  activityFeedScreen: {
+    title: "___Activity",
+    subtitle: "___What's new in your cookbooks",
+    previewLabel: "___Latest",
+    emptyHeading: "___Nothing here yet",
+    emptyContent:
+      "___When someone adds a recipe, makes one, or joins a cookbook, it will show up here.",
+    newRecipe: "___{{actorDisplayName}} added {{recipeTitle}} to {{cookbookTitle}}.",
+    recipeMade: "___{{actorDisplayName}} made {{recipeTitle}} from {{cookbookTitle}}.",
+    memberJoined: "___{{subjectDisplayName}} joined {{cookbookTitle}}.",
+    memberLeft: "___{{subjectDisplayName}} left {{cookbookTitle}}.",
+    memberRemoved:
+      "___{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
+  },
   invitationAddOptionsScreen: {
     title: "___Invite Friends",
     inviteByEmail: "___Invite by Email",
@@ -362,6 +376,10 @@ const fr: Translations = {
   },
   cookbooksScreen: {
     title: "Votre étagère",
+    activityFeedAccessibility: "___Activity feed",
+    latestActivityHeading: "___Latest activity",
+    seeAllActivity: "___See all activity",
+    noActivityYet: "___Nothing recent yet. Tap to open your activity feed.",
     onlyFavorites: "Afficher uniquement les favoris",
     favoriteButton: "Favori",
     unfavoriteButton: "Retirer des favoris",
@@ -660,6 +678,9 @@ const fr: Translations = {
     deleteRecipe: "___Delete Recipe",
     exportRecipe: "___Export Recipe",
     printRecipe: "___Print Recipe",
+    madeThis: "___I made this!",
+    madeCount: "___Made {{count}} times",
+    madeThisFailed: "___Could not record that you made this recipe. Please try again.",
   },
   recipeFormScreen: {
     descriptionEdit: "___Swipe back to exit without saving.",

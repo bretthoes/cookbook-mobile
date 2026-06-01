@@ -241,6 +241,20 @@ const en = {
     title: "Invitations",
     subtitle: "Manage your cookbook invitations.",
   },
+  activityFeedScreen: {
+    title: "Activity",
+    subtitle: "What's new in your cookbooks",
+    previewLabel: "Latest",
+    emptyHeading: "Nothing here yet",
+    emptyContent:
+      "When someone adds a recipe, makes one, or joins a cookbook, it will show up here.",
+    newRecipe: "{{actorDisplayName}} added {{recipeTitle}} to {{cookbookTitle}}.",
+    recipeMade: "{{actorDisplayName}} made {{recipeTitle}} from {{cookbookTitle}}.",
+    memberJoined: "{{subjectDisplayName}} joined {{cookbookTitle}}.",
+    memberLeft: "{{subjectDisplayName}} left {{cookbookTitle}}.",
+    memberRemoved:
+      "{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
+  },
   invitationAddOptionsScreen: {
     title: "Invite Friends",
     inviteByEmail: "Invite by Email",
@@ -357,6 +371,10 @@ const en = {
   },
   cookbooksScreen: {
     title: "Your shelf",
+    activityFeedAccessibility: "Activity feed",
+    latestActivityHeading: "Latest activity",
+    seeAllActivity: "See all activity",
+    noActivityYet: "Nothing recent yet. Tap to open your activity feed.",
     onlyFavorites: "Only Show Favorites",
     favoriteButton: "Favorite",
     unfavoriteButton: "Unfavorite",
@@ -657,6 +675,9 @@ const en = {
     deleteRecipe: "Delete Recipe",
     exportRecipe: "Export Recipe",
     printRecipe: "Print Recipe",
+    madeThis: "I made this!",
+    madeCount: "Made {{count}} times",
+    madeThisFailed: "Could not record that you made this recipe. Please try again.",
   },
   recipeFormScreen: {
     descriptionEdit: "Swipe back to exit without saving.",

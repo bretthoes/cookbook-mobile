@@ -20,18 +20,13 @@ function makeDraftId(): string {
 }
 
 export interface UiState {
-  favoriteCookbookIds: number[]
   selectedCookbookId: number | null
-  favoritesOnly: boolean
   drafts: RecipeDraftItem[]
   recipeToAdd: RecipeToAddSnapshotIn | null
   weeklyImportCount: number
   weeklyImportWeekStart: string
 
   setSelectedCookbookId: (id: number | null) => void
-  setFavoritesOnly: (value: boolean) => void
-  toggleFavoriteCookbook: (id: number) => void
-  hasFavoriteCookbook: (id: number) => boolean
 
   setRecipeToAdd: (recipe: RecipeToAddSnapshotIn | null) => void
   clearRecipeToAdd: () => void
@@ -61,28 +56,13 @@ export type LegacyUiSnapshot = {
 export const useUiStore = create<UiState>()(
   persist(
     (set, get) => ({
-      favoriteCookbookIds: [],
       selectedCookbookId: null,
-      favoritesOnly: false,
       drafts: [],
       recipeToAdd: null,
       weeklyImportCount: 0,
       weeklyImportWeekStart: "",
 
       setSelectedCookbookId: (id) => set({ selectedCookbookId: id }),
-
-      setFavoritesOnly: (value) => set({ favoritesOnly: value }),
-
-      toggleFavoriteCookbook: (id) => {
-        const ids = get().favoriteCookbookIds
-        if (ids.includes(id)) {
-          set({ favoriteCookbookIds: ids.filter((x) => x !== id) })
-        } else {
-          set({ favoriteCookbookIds: [...ids, id] })
-        }
-      },
-
-      hasFavoriteCookbook: (id) => get().favoriteCookbookIds.includes(id),
 
       setRecipeToAdd: (recipe) => set({ recipeToAdd: recipe }),
       clearRecipeToAdd: () => set({ recipeToAdd: null }),
@@ -189,13 +169,6 @@ export const useUiStore = create<UiState>()(
         const patch: Partial<UiState> = {}
 
         if (cs) {
-          if (typeof cs.favoritesOnly === "boolean") patch.favoritesOnly = cs.favoritesOnly
-          const favIds = Array.isArray(cs.favorites)
-            ? cs.favorites.map((f: number | { id?: number }) =>
-                typeof f === "number" ? f : (f?.id ?? 0),
-              )
-            : []
-          if (favIds.length > 0) patch.favoriteCookbookIds = favIds.filter(Boolean)
           if (cs.selected != null) {
             const selId =
               typeof cs.selected === "number" ? cs.selected : (cs.selected as { id?: number })?.id
@@ -224,9 +197,7 @@ export const useUiStore = create<UiState>()(
       name: UI_STORE_KEY,
       storage: createJSONStorage(() => zustandPersistStorage),
       partialize: (state) => ({
-        favoriteCookbookIds: state.favoriteCookbookIds,
         selectedCookbookId: state.selectedCookbookId,
-        favoritesOnly: state.favoritesOnly,
         drafts: state.drafts,
         weeklyImportCount: state.weeklyImportCount,
         weeklyImportWeekStart: state.weeklyImportWeekStart,
