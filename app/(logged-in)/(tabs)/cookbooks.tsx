@@ -13,14 +13,7 @@ import type { CookbookItem } from "@/types/cookbook"
 import { getCookbooksForList } from "@/utils/cookbookList"
 import { useRouter } from "expo-router"
 import { useCallback, useMemo } from "react"
-import {
-  ActivityIndicator,
-  FlatList,
-  ImageStyle,
-  Pressable,
-  View,
-  ViewStyle,
-} from "react-native"
+import { ActivityIndicator, FlatList, ImageStyle, Pressable, View, ViewStyle } from "react-native"
 import { useTranslation } from "react-i18next"
 
 export default function CookbooksScreen(_props: void) {

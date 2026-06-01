@@ -95,7 +95,12 @@ export default function EditCookbookScreen() {
         if (uploadResponse.ok) {
           setValue("image", uploadResponse.key)
         } else {
-          alert(getImageUploadErrorMessage(uploadResponse.problem, "cookbookEditScreen:imageUploadFailed"))
+          alert(
+            getImageUploadErrorMessage(
+              uploadResponse.problem,
+              "cookbookEditScreen:imageUploadFailed",
+            ),
+          )
           setLocalImage(previousImage)
         }
       }

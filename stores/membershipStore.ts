@@ -10,7 +10,12 @@ export interface MembershipState {
   loadedCookbookId: number | null
   email: string | null
 
-  loadForCookbook: (cookbookId: number, pageNumber?: number, pageSize?: number, force?: boolean) => Promise<void>
+  loadForCookbook: (
+    cookbookId: number,
+    pageNumber?: number,
+    pageSize?: number,
+    force?: boolean,
+  ) => Promise<void>
   fetch: (cookbookId: number, pageNumber?: number, pageSize?: number) => Promise<void>
   singleByCookbookId: (cookbookId: number, force?: boolean) => Promise<boolean>
   fetchEmail: () => Promise<boolean>
@@ -50,9 +55,11 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
     const promise = Promise.all([
       get().fetch(cookbookId, pageNumber, pageSize),
       get().singleByCookbookId(cookbookId),
-    ]).then(() => undefined).finally(() => {
-      inFlightLoads.delete(key)
-    })
+    ])
+      .then(() => undefined)
+      .finally(() => {
+        inFlightLoads.delete(key)
+      })
 
     inFlightLoads.set(key, promise)
     return promise

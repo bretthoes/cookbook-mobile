@@ -8,12 +8,7 @@ import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import {
-  canManageMembers,
-  tierDescriptionTx,
-  tierIcon,
-  tierLabelTx,
-} from "@/utils/membershipTier"
+import { canManageMembers, tierDescriptionTx, tierIcon, tierLabelTx } from "@/utils/membershipTier"
 import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@expo/react-native-action-sheet"
 import { router, useLocalSearchParams } from "expo-router"
@@ -131,9 +126,7 @@ export default function MembershipScreen() {
         />
       </View>
 
-      {canShowActions && (
-        <Text tx="membershipScreen:editRoleHint" style={$themedEditHint} />
-      )}
+      {canShowActions && <Text tx="membershipScreen:editRoleHint" style={$themedEditHint} />}
     </Screen>
   )
 }

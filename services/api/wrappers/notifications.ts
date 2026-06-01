@@ -26,9 +26,7 @@ export async function getNotifications(
   }
 }
 
-export async function getLatestActivity(): Promise<
-  ApiResult<NotificationItem> | { kind: "ok" }
-> {
+export async function getLatestActivity(): Promise<ApiResult<NotificationItem> | { kind: "ok" }> {
   try {
     const { data, error, response } = await client.GET("/api/Notifications/latest")
     if (response.status === 204) return { kind: "ok" }

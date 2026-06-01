@@ -74,7 +74,12 @@ export default function AddCookbookScreen() {
         } else {
           setImageLocal(null)
           setValue("image", null)
-          alert(getImageUploadErrorMessage(uploadResponse.problem, "cookbookAddScreen:imageUploadFailed"))
+          alert(
+            getImageUploadErrorMessage(
+              uploadResponse.problem,
+              "cookbookAddScreen:imageUploadFailed",
+            ),
+          )
         }
       }
     } finally {

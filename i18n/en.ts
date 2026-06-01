@@ -252,8 +252,7 @@ const en = {
     recipeMade: "{{actorDisplayName}} made {{recipeTitle}} from {{cookbookTitle}}.",
     memberJoined: "{{subjectDisplayName}} joined {{cookbookTitle}}.",
     memberLeft: "{{subjectDisplayName}} left {{cookbookTitle}}.",
-    memberRemoved:
-      "{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
+    memberRemoved: "{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
   },
   invitationAddOptionsScreen: {
     title: "Invite Friends",
@@ -779,7 +778,8 @@ const en = {
       viewer: "Viewer",
     },
     tierDescription: {
-      owner: "Full control. Transfer ownership, manage all members, edit cookbook details, and all recipes.",
+      owner:
+        "Full control. Transfer ownership, manage all members, edit cookbook details, and all recipes.",
       admin: "Manage members below admin, edit cookbook details, and all recipes.",
       contributor: "Add recipes and send invites. Edit or delete only your own recipes.",
       viewer: "View recipes only. Cannot add, edit, invite, or manage members.",

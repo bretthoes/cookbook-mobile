@@ -283,8 +283,7 @@ const fr: Translations = {
     recipeMade: "___{{actorDisplayName}} made {{recipeTitle}} from {{cookbookTitle}}.",
     memberJoined: "___{{subjectDisplayName}} joined {{cookbookTitle}}.",
     memberLeft: "___{{subjectDisplayName}} left {{cookbookTitle}}.",
-    memberRemoved:
-      "___{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
+    memberRemoved: "___{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
   },
   invitationAddOptionsScreen: {
     title: "___Invite Friends",

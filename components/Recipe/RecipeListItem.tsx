@@ -41,9 +41,7 @@ export function RecipeListItem({
             text={text}
             style={[mergedTextProps.style, themed($nameText)]}
           />
-          {suffixTx ? (
-            <Text tx={suffixTx} preset="formHelper" style={themed($nameSuffix)} />
-          ) : null}
+          {suffixTx ? <Text tx={suffixTx} preset="formHelper" style={themed($nameSuffix)} /> : null}
           {isOwner ? (
             <Icon
               icon="crown"

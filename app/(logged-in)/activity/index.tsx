@@ -12,14 +12,8 @@ import { useCallback } from "react"
 import { ActivityIndicator, FlatList, TextStyle, View, ViewStyle } from "react-native"
 
 export default function ActivityFeedScreen() {
-  const {
-    notifications,
-    isListPending,
-    listHasNextPage,
-    isLoadingMore,
-    refetch,
-    fetchNextPage,
-  } = useNotificationsList()
+  const { notifications, isListPending, listHasNextPage, isLoadingMore, refetch, fetchNextPage } =
+    useNotificationsList()
 
   useHeader({
     leftIcon: "back",
@@ -50,12 +44,7 @@ export default function ActivityFeedScreen() {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.4}
         contentContainerStyle={$listContent}
-        ListHeaderComponent={
-          <Text
-            tx="activityFeedScreen:subtitle"
-            style={$subtitle}
-          />
-        }
+        ListHeaderComponent={<Text tx="activityFeedScreen:subtitle" style={$subtitle} />}
         ListEmptyComponent={
           isListPending ? (
             <ActivityIndicator style={$emptyLoader} />

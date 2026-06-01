@@ -29,7 +29,10 @@ export default function Cookbook() {
 
   const [isLoading, setIsLoading] = useState(false)
   const { refreshing, onRefresh } = useManualRefresh(
-    useCallback(() => loadForCookbook(id, memberships.pageNumber, 10, true), [id, loadForCookbook, memberships.pageNumber]),
+    useCallback(
+      () => loadForCookbook(id, memberships.pageNumber, 10, true),
+      [id, loadForCookbook, memberships.pageNumber],
+    ),
   )
 
   const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])

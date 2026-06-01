@@ -174,15 +174,7 @@ export default function CookbookScreen() {
         },
       ],
     )
-  }, [
-    isAuthor,
-    selected,
-    ownMembership,
-    deleteMembership,
-    setSelectedCookbookId,
-    queryClient,
-    t,
-  ])
+  }, [isAuthor, selected, ownMembership, deleteMembership, setSelectedCookbookId, queryClient, t])
 
   const handlePressMore = () => setPopoverVisible(true)
 

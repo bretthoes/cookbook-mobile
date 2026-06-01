@@ -26,7 +26,12 @@ export function MemberSummary({ name, email, captionTx, captionTxOptions }: Memb
       <Text preset="subheading" weight="semiBold" text={name} />
       {showEmail && <Text preset="formHelper" text={email} style={$themedEmail} />}
       {captionTx && (
-        <Text tx={captionTx} txOptions={captionTxOptions} preset="formHelper" style={$themedCaption} />
+        <Text
+          tx={captionTx}
+          txOptions={captionTxOptions}
+          preset="formHelper"
+          style={$themedCaption}
+        />
       )}
     </View>
   )

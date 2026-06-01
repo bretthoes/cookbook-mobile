@@ -101,7 +101,9 @@ export async function updateRecipe(
   }
 }
 
-export async function recordRecipeMade(recipeId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+export async function recordRecipeMade(
+  recipeId: number,
+): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.POST("/api/Recipes/{id}/made", {
       params: { path: { id: recipeId } },
