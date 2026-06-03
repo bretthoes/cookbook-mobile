@@ -22,7 +22,7 @@ async function writeCooldownMap(map: CooldownMap) {
 }
 
 /** Milliseconds since epoch when the cooldown ends, or null if not in cooldown. */
-export async function getRecipeMadeCooldownEndsAt(recipeId: number): Promise<number | null> {
+export async function getRecipeMadeCooldownEndsAt(recipeId: string): Promise<number | null> {
   const map = await readCooldownMap()
   const endsAt = map[String(recipeId)]
   if (endsAt == null) return null
@@ -34,7 +34,7 @@ export function isRecipeMadeCooldownActive(cooldownEndsAt: number | null): boole
   return cooldownEndsAt != null && Date.now() < cooldownEndsAt
 }
 
-export async function setRecipeMadeCooldown(recipeId: number): Promise<number> {
+export async function setRecipeMadeCooldown(recipeId: string): Promise<number> {
   const endsAt = Date.now() + RECIPE_MADE_COOLDOWN_MS
   const map = await readCooldownMap()
   map[String(recipeId)] = endsAt

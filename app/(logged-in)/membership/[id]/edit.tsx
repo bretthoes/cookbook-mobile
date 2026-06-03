@@ -5,7 +5,6 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
-import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { MembershipTier } from "@/types/membership"
 import type { ThemedStyle } from "@/theme"
@@ -28,8 +27,7 @@ import { Alert, TextStyle, View } from "react-native"
 
 export default function MembershipEditScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const membershipId = parseInt(id)
-  const currentUserEmail = useAuthStore((s) => s.authEmail)
+  const membershipId = id ?? ""
   const membership = useMembershipStore((s) =>
     s.memberships.items.find((m) => m.id === membershipId),
   )
@@ -44,7 +42,7 @@ export default function MembershipEditScreen() {
   const { themed } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
 
-  const cookbookId = selectedCookbook?.id ?? 0
+  const cookbookId = selectedCookbook?.id ?? ""
 
   const $themedSectionLabel = useMemo(() => themed($sectionLabel), [themed])
   const $themedCurrentRole = useMemo(() => themed($currentRole), [themed])
@@ -99,8 +97,7 @@ export default function MembershipEditScreen() {
 
   if (!membership) return <ItemNotFound message={translate("membershipScreen:notFound")} />
 
-  const isCurrentUserMembership =
-    !!currentUserEmail && membership.email?.toLowerCase() === currentUserEmail.toLowerCase()
+  const isCurrentUserMembership = ownMembership?.id === membershipId
   const canEditMembership = canManageMembers(ownMembership?.tier) && !isCurrentUserMembership
 
   if (!canEditMembership) {
@@ -108,8 +105,7 @@ export default function MembershipEditScreen() {
   }
 
   const tierOptions = assignableTiers(ownMembership?.tier, membership.tier)
-  const memberName =
-    membership.name ?? membership.email ?? translate("membershipScreen:editMemberFallback")
+  const memberName = membership.name ?? translate("membershipScreen:editMemberFallback")
   const currentTierLabel = translate(tierLabelTx(membership.tier))
 
   const handleSelectTier = (tier: MembershipTier) => {
@@ -141,7 +137,6 @@ export default function MembershipEditScreen() {
     <Screen preset="scroll">
       <MemberSummary
         name={memberName}
-        email={membership.email}
         captionTx="membershipScreen:editMemberSubtitle"
       />
       <Text

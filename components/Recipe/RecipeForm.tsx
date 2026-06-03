@@ -40,13 +40,11 @@ import {
 type IngredientLineForm = { name: string; optional: boolean | null }
 
 type IngredientSectionForm = {
-  id?: number
   title: string
   ingredients: IngredientLineForm[]
 }
 
 const defaultIngredientSection = (): IngredientSectionForm => ({
-  id: 0,
   title: "",
   ingredients: [
     { name: "", optional: null },

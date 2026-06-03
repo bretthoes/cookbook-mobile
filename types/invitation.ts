@@ -2,10 +2,9 @@ import type { components } from "@/services/api/generated/schema"
 import type { PaginatedList } from "@/types/pagination"
 
 export type Invitation = {
-  id: number
-  cookbookId?: number | null
+  id: string
+  cookbookId?: string | null
   senderName?: string | null
-  senderEmail?: string | null
   cookbookTitle: string
   cookbookImage?: string | null
   created: string

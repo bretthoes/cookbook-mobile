@@ -13,7 +13,7 @@ export function isRecipeListQuery(query: Query): boolean {
   return key[0] === queryKeys.recipes.all[0] && key[1] === "list"
 }
 
-export function isRecipeListQueryForCookbook(query: Query, cookbookId: number): boolean {
+export function isRecipeListQueryForCookbook(query: Query, cookbookId: string): boolean {
   return isRecipeListQuery(query) && query.queryKey[2] === cookbookId
 }
 
@@ -25,7 +25,7 @@ export function invalidateRecipeLists(queryClient: QueryClient) {
   return queryClient.invalidateQueries({ predicate: isRecipeListQuery })
 }
 
-export function invalidateRecipeListsForCookbook(queryClient: QueryClient, cookbookId: number) {
+export function invalidateRecipeListsForCookbook(queryClient: QueryClient, cookbookId: string) {
   return queryClient.invalidateQueries({
     predicate: (query) => isRecipeListQueryForCookbook(query, cookbookId),
   })

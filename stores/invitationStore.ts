@@ -11,11 +11,12 @@ export interface InvitationState {
   fetch: (pageNumber?: number, pageSize?: number) => Promise<void>
   count: () => Promise<number>
   respond: (
-    idOrToken: number | string,
+    idOrToken: string,
     accepted: boolean,
+    byToken?: boolean,
   ) => Promise<boolean | { success: false; conflict: boolean }>
-  invite: (cookbookId: number, email: string) => Promise<string>
-  link: (cookbookId: number) => Promise<{ token: string } | { message: string }>
+  invite: (cookbookId: string, email: string) => Promise<string>
+  link: (cookbookId: string) => Promise<{ token: string } | { message: string }>
 }
 
 export const useInvitationStore = create<InvitationState>((set, get) => ({
@@ -55,14 +56,13 @@ export const useInvitationStore = create<InvitationState>((set, get) => ({
     return 0
   },
 
-  respond: async (idOrToken, accepted) => {
-    const response =
-      typeof idOrToken === "string"
-        ? await api.UpdateInvitationToken(idOrToken, accepted)
-        : await api.updateInvite(idOrToken, accepted)
+  respond: async (idOrToken, accepted, byToken = false) => {
+    const response = byToken
+      ? await api.UpdateInvitationToken(idOrToken, accepted)
+      : await api.updateInvite(idOrToken, accepted)
 
     if (response.kind === "ok") {
-      if (typeof idOrToken === "number") {
+      if (!byToken) {
         const invitations = get().invitations
         set({
           invitations: {

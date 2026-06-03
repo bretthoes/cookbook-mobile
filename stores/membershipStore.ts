@@ -7,27 +7,27 @@ import { create } from "zustand"
 export interface MembershipState {
   memberships: PaginatedList<Membership>
   ownMembership: Membership | null
-  loadedCookbookId: number | null
+  loadedCookbookId: string | null
   email: string | null
 
   loadForCookbook: (
-    cookbookId: number,
+    cookbookId: string,
     pageNumber?: number,
     pageSize?: number,
     force?: boolean,
   ) => Promise<void>
-  fetch: (cookbookId: number, pageNumber?: number, pageSize?: number) => Promise<void>
-  singleByCookbookId: (cookbookId: number, force?: boolean) => Promise<boolean>
+  fetch: (cookbookId: string, pageNumber?: number, pageSize?: number) => Promise<void>
+  singleByCookbookId: (cookbookId: string, force?: boolean) => Promise<boolean>
   fetchEmail: () => Promise<boolean>
-  updateTier: (id: number, tier: MembershipTier) => Promise<boolean>
-  delete: (id: number) => Promise<boolean>
+  updateTier: (id: string, tier: MembershipTier) => Promise<boolean>
+  delete: (id: string) => Promise<boolean>
   setEmail: (email: string) => void
-  setMembershipTier: (id: number, tier: MembershipTier) => void
+  setMembershipTier: (id: string, tier: MembershipTier) => void
 }
 
 const inFlightLoads = new Map<string, Promise<void>>()
 
-function loadKey(cookbookId: number, pageNumber: number, pageSize: number) {
+function loadKey(cookbookId: string, pageNumber: number, pageSize: number) {
   return `${cookbookId}:${pageNumber}:${pageSize}`
 }
 

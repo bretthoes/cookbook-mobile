@@ -31,11 +31,11 @@ export default function AddInvitationLinkScreen() {
     onLeftPress: () => router.back(),
   })
 
-  const hasGeneratedForCookbook = useRef<number | null>(null)
+  const hasGeneratedForCookbook = useRef<string | null>(null)
   const copiedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    const cookbookId = selected?.id ?? 0
+    const cookbookId = selected?.id ?? ""
     if (!cookbookId || hasGeneratedForCookbook.current === cookbookId) return
     hasGeneratedForCookbook.current = cookbookId
 
@@ -75,7 +75,7 @@ export default function AddInvitationLinkScreen() {
   }, [inviteUrl, isMinting])
 
   const onShareLink = async () => {
-    const cookbookId = selected?.id ?? 0
+    const cookbookId = selected?.id ?? ""
     if (!cookbookId || isMinting) return
     setIsMinting(true)
     setLinkMsg("")

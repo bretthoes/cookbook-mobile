@@ -33,18 +33,18 @@ function normalizeRecipeList(page: RecipeListPage) {
   }
 }
 
-async function fetchRecipesPage(cookbookId: number, search: string, pageNumber: number) {
+async function fetchRecipesPage(cookbookId: string, search: string, pageNumber: number) {
   const result = await getRecipes(cookbookId, search, pageNumber, RECIPE_LIST_PAGE_SIZE)
   const data = unwrapApiResult(result)
   return normalizeRecipeList(data.recipes)
 }
 
-export function useRecipesInfiniteQuery(cookbookId: number, search = "") {
+export function useRecipesInfiniteQuery(cookbookId: string, search = "") {
   return useInfiniteQuery({
     queryKey: queryKeys.recipes.list(cookbookId, search),
     queryFn: ({ pageParam }) => fetchRecipesPage(cookbookId, search, pageParam),
     initialPageParam: 1,
-    enabled: cookbookId > 0,
+    enabled: !!cookbookId,
     getNextPageParam: (lastPage, _allPages, lastPageParam) => {
       if (lastPage.pageNumber >= lastPage.totalPages) return undefined
       return lastPageParam + 1
@@ -52,7 +52,7 @@ export function useRecipesInfiniteQuery(cookbookId: number, search = "") {
   })
 }
 
-export function useRecipesList(cookbookId: number, search = "") {
+export function useRecipesList(cookbookId: string, search = "") {
   const query = useRecipesInfiniteQuery(cookbookId, search)
   const recipes = query.data?.pages.flatMap((p) => p.items) ?? []
   const lastPage = query.data?.pages.at(-1)
@@ -66,7 +66,7 @@ export function useRecipesList(cookbookId: number, search = "") {
   }
 }
 
-export function useRecipeQuery(recipeId: number) {
+export function useRecipeQuery(recipeId: string) {
   return useQuery({
     queryKey: queryKeys.recipes.detail(recipeId),
     queryFn: async () => {
@@ -74,7 +74,7 @@ export function useRecipeQuery(recipeId: number) {
       const data = unwrapApiResult(result)
       return data.recipe as RecipeDetail
     },
-    enabled: recipeId > 0,
+    enabled: !!recipeId,
     retry: (failureCount, error) => {
       if (error instanceof ApiQueryError && error.problem.kind === "not-found") return false
       return failureCount < 1
@@ -116,7 +116,7 @@ export function useUpdateRecipeMutation() {
 export function useRecordRecipeMadeMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (recipeId: number) => {
+    mutationFn: async (recipeId: string) => {
       const result = await recordRecipeMade(recipeId)
       unwrapApiResult(result)
       return recipeId
@@ -131,7 +131,7 @@ export function useRecordRecipeMadeMutation() {
 export function useDeleteRecipeMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (recipeId: number) => {
+    mutationFn: async (recipeId: string) => {
       const result = await api.deleteRecipe(recipeId)
       if (result.kind !== "ok") throw new Error(result.kind)
       return recipeId

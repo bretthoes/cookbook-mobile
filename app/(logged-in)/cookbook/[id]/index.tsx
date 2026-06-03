@@ -74,7 +74,7 @@ export default function CookbookScreen() {
 
   const [popoverVisible, setPopoverVisible] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
-  const cookbookId = Number(id)
+  const cookbookId = id ?? ""
   const {
     recipes,
     isListPending,
@@ -240,7 +240,7 @@ export default function CookbookScreen() {
     [selected?.title, id],
   )
 
-  const handlePressRecipe = (recipeId: number) => {
+  const handlePressRecipe = (recipeId: string) => {
     router.push(`/(logged-in)/recipe/${recipeId}`)
   }
 

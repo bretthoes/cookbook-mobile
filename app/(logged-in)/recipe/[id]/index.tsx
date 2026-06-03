@@ -32,6 +32,7 @@ import {
   ActivityIndicator,
   Alert,
   ImageStyle,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
@@ -41,7 +42,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context"
 export default function RecipeScreen() {
   const ownMembership = useMembershipStore((s) => s.ownMembership)
   const { id } = useLocalSearchParams<{ id: string }>()
-  const recipeId = Number(id)
+  const recipeId = id ?? ""
   const { data: selected, isPending, isError } = useRecipeQuery(recipeId)
   const deleteRecipeMutation = useDeleteRecipeMutation()
   const recordRecipeMadeMutation = useRecordRecipeMadeMutation()
@@ -51,9 +52,7 @@ export default function RecipeScreen() {
   const insets = useSafeAreaInsets()
   const printRecipe = usePrintRecipe()
   const [popoverVisible, setPopoverVisible] = useState(false)
-  const isRecipeAuthor =
-    ownMembership?.email?.toLowerCase() === selected?.authorEmail?.toLowerCase() &&
-    !!ownMembership?.email
+  const isRecipeAuthor = selected?.isAuthor === true
   const canEdit = isRecipeAuthor || canEditAnyRecipe(ownMembership?.tier)
   const canDelete = isRecipeAuthor || canDeleteAnyRecipe(ownMembership?.tier)
   const recipeHasImages = selected?.images?.[0]
@@ -223,7 +222,7 @@ export default function RecipeScreen() {
                 if (section.title.trim()) {
                   nodes.push(
                     <Text
-                      key={`section-title-${sectionIndex}-${section.ordinal}-${section.id}`}
+                      key={`section-title-${sectionIndex}-${section.ordinal}`}
                       preset="formLabel"
                       style={{ paddingTop: spacing.sm, paddingBottom: spacing.xs }}
                       text={section.title}
@@ -236,7 +235,7 @@ export default function RecipeScreen() {
                   const isLast = lineIndex === totalLines - 1
                   nodes.push(
                     <IngredientItem
-                      key={`ingredient-${sectionIndex}-${ingredientIndex}-${lineIndex}-${item.id}-${item.ordinal}`}
+                      key={`ingredient-${sectionIndex}-${ingredientIndex}-${lineIndex}-${item.ordinal}`}
                       ingredient={item}
                       index={lineIndex}
                       isFirst={isFirst}
@@ -296,14 +295,15 @@ export default function RecipeScreen() {
 
         {selected ? (
           <View style={$themedMadeSection}>
-            <Text
-              tx="recipeDetailsScreen:madeCount"
-              txOptions={{ count: selected.madeCount ?? 0 }}
-            />
             <Button
               tx="recipeDetailsScreen:madeThis"
               onPress={handlePressMadeThis}
               disabled={!canRecordMade || recordRecipeMadeMutation.isPending}
+            />
+            <Text
+              tx="recipeDetailsScreen:madeCount"
+              txOptions={{ count: selected.madeCount ?? 0 }}
+              style={$madeCountText}
             />
           </View>
         ) : null}
@@ -389,6 +389,11 @@ const $madeSection: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
   paddingBottom: theme.spacing.xxl,
   gap: theme.spacing.md,
+  alignItems: "center",
 })
+
+const $madeCountText: TextStyle = {
+  textAlign: "center",
+}
 
 // #endregion

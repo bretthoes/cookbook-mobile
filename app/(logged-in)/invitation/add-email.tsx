@@ -46,7 +46,7 @@ export default function AddInvitationEmailScreen() {
         return
       }
 
-      const cookbookId = selected?.id ?? 0
+      const cookbookId = selected?.id ?? ""
       const res = await invite(cookbookId, inviteEmail.trim())
       setIsSubmitted(false)
 

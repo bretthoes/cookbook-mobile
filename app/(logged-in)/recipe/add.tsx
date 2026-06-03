@@ -72,7 +72,6 @@ export default function AddRecipeScreen() {
       servings: recipeToAdd.servings ?? null,
       ingredientSections:
         recipeToAdd.ingredientSections?.map((section) => ({
-          id: section.id,
           title: section.title,
           ingredients: section.ingredients.map((ingredient) => ({
             name: ingredient.name,
@@ -102,7 +101,7 @@ export default function AddRecipeScreen() {
   }
 
   /** Map a saved draft to form inputs */
-  const mapDraftToFormInputs = (cookbookId: number): RecipeFormInputs | null => {
+  const mapDraftToFormInputs = (cookbookId: string): RecipeFormInputs | null => {
     const draft = getDraftForCookbook(cookbookId)
     if (!draft) return null
     return {
@@ -113,7 +112,6 @@ export default function AddRecipeScreen() {
       bakingTimeInMinutes: draft.bakingTimeInMinutes ?? null,
       servings: draft.servings ?? null,
       ingredientSections: draft.ingredientSections.map((section) => ({
-        id: section.id,
         title: section.title,
         ingredients: section.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
       })),
@@ -156,20 +154,16 @@ export default function AddRecipeScreen() {
       const validDirections = formData.directions
         .filter((direction) => direction.text?.trim())
         .map((direction, index) => ({
-          id: 0,
           text: direction.text.trim(),
           ordinal: index + 1,
           image: direction.image || null,
         }))
 
-      const validIngredientSections = formDataToIngredientSectionsSnapshot(formData, {
-        sectionIds: "reset",
-      })
+      const validIngredientSections = formDataToIngredientSectionsSnapshot(formData)
 
       const validImages = formData.images
         .filter((image) => image?.trim())
         .map((image, index) => ({
-          id: 0,
           name: image.trim(),
           ordinal: index + 1,
         }))

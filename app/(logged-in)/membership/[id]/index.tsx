@@ -4,7 +4,6 @@ import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
-import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -17,8 +16,7 @@ import { Alert, TextStyle, View } from "react-native"
 
 export default function MembershipScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const membershipId = parseInt(id)
-  const currentUserEmail = useAuthStore((s) => s.authEmail)
+  const membershipId = id ?? ""
   const membership = useMembershipStore((s) =>
     s.memberships.items.find((m) => m.id === membershipId),
   )
@@ -27,8 +25,7 @@ export default function MembershipScreen() {
   const { showActionSheetWithOptions } = useActionSheet()
   const { themed } = useAppTheme()
 
-  const isViewingOwnMembership =
-    !!currentUserEmail && membership?.email?.toLowerCase() === currentUserEmail.toLowerCase()
+  const isViewingOwnMembership = ownMembership?.id === membershipId
   const canShowActions = canManageMembers(ownMembership?.tier) && !isViewingOwnMembership
 
   const $themedSectionLabel = useMemo(() => themed($sectionLabel), [themed])
@@ -104,14 +101,13 @@ export default function MembershipScreen() {
     return <ItemNotFound message={translate("membershipScreen:notFound")} />
   }
 
-  const memberName =
-    membership.name ?? membership.email ?? translate("membershipScreen:editMemberFallback")
+  const memberName = membership.name ?? translate("membershipScreen:editMemberFallback")
   const tierTitle = translate(tierLabelTx(membership.tier))
   const tierDescription = translate(tierDescriptionTx(membership.tier))
 
   return (
     <Screen preset="scroll">
-      <MemberSummary name={memberName} email={membership.email} />
+      <MemberSummary name={memberName} />
 
       <Text tx="membershipScreen:roleSectionTitle" style={$themedSectionLabel} />
 

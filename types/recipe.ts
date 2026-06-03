@@ -6,7 +6,7 @@ export type RecipeSnapshotIn = RecipeDetail
 export type RecipeSnapshotOut = RecipeDetail
 
 export type RecipeBriefItem = components["schemas"]["RecipeBriefDto"] & {
-  id: number
+  id: string
   title: string
 }
 
@@ -21,7 +21,7 @@ export type IngredientSectionSnapshotIn = IngredientSection
 
 export type RecipeToAddSnapshotIn = {
   title: string
-  cookbookId: number
+  cookbookId: string
   summary?: string | null
   thumbnail?: string | null
   videoPath?: string | null

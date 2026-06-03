@@ -38,8 +38,8 @@ function CookbookItem({
   cookbook: Cookbook
   isFirst: boolean
   isLast: boolean
-  onPress: (cookbookId: number) => void
-  selectedId: number | null
+  onPress: (cookbookId: string) => void
+  selectedId: string | null
   themed: ReturnType<typeof useAppTheme>["themed"]
 }) {
   const opacity = useSharedValue(1)
@@ -127,7 +127,7 @@ export default function SelectCookbookScreen() {
   const addRecipeFromCamera = useAddRecipeFromCamera()
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedId, setSelectedId] = useState<number | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [autoSelecting, setAutoSelecting] = useState(false)
 
   // Reset selection state when screen comes into focus
@@ -179,7 +179,7 @@ export default function SelectCookbookScreen() {
   ])
 
   const handleItemPress = useCallback(
-    (cookbookId: number) => {
+    (cookbookId: string) => {
       setSelectedId(cookbookId)
       setSelectedCookbookId(cookbookId)
 

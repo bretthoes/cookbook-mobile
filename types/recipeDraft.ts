@@ -3,7 +3,7 @@ import type { IngredientSection, RecipeDirection, RecipeImage } from "@/types/re
 
 export type RecipeDraftItem = {
   draftId: string
-  cookbookId: number
+  cookbookId: string
   savedAt: string | Date
   title: string
   summary?: string | null

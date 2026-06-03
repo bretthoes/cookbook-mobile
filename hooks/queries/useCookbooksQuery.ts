@@ -68,7 +68,7 @@ export function useCookbooksList() {
 
 export function findCookbookInCache(
   data: InfiniteData<{ items: CookbookItem[] }> | undefined,
-  id: number | null | undefined,
+  id: string | null | undefined,
 ): CookbookItem | undefined {
   if (id == null || !data) return undefined
   for (const page of data.pages) {
@@ -78,7 +78,7 @@ export function findCookbookInCache(
   return undefined
 }
 
-export function useCookbookById(cookbookId: number | null | undefined) {
+export function useCookbookById(cookbookId: string | null | undefined) {
   const query = useCookbooksInfiniteQuery()
   const cookbook = findCookbookInCache(query.data, cookbookId)
   return { cookbook, isLoading: query.isLoading && !cookbook, query }

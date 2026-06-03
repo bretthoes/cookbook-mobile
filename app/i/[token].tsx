@@ -111,7 +111,7 @@ export default function InvitationTokenScreen() {
 
       setActionError(null)
       const startTime = Date.now()
-      const success = await respondToInvitation(token, true)
+      const success = await respondToInvitation(token, true, true)
       const elapsedTime = Date.now() - startTime
       const minDelay = 1000
       if (elapsedTime < minDelay) {
@@ -137,7 +137,7 @@ export default function InvitationTokenScreen() {
 
       setActionError(null)
       const startTime = Date.now()
-      const success = await respondToInvitation(token, false)
+      const success = await respondToInvitation(token, false, true)
       const elapsedTime = Date.now() - startTime
       const minDelay = 1000
       if (elapsedTime < minDelay) {

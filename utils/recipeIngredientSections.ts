@@ -5,7 +5,6 @@ export const MAX_INGREDIENT_SECTIONS = 20
 export const MAX_INGREDIENTS_TOTAL = 40
 
 export type IngredientSectionFormRow = {
-  id?: number
   title: string
   ingredients: { name: string; optional: boolean | null }[]
 }
@@ -13,20 +12,20 @@ export type IngredientSectionFormRow = {
 /**
  * Converts nested ingredient form rows into API-ready sections.
  * Omits completely empty sections (no title and no non-blank ingredient lines).
+ * The second argument is accepted for backwards-compatibility but has no effect
+ * since embedded sections no longer carry their own IDs.
  */
 export function formDataToIngredientSectionsSnapshot(
   formData: { ingredientSections: IngredientSectionFormRow[] },
-  options: { sectionIds: "preserve" | "reset" },
+  _options?: { sectionIds?: "preserve" | "reset" },
 ): IngredientSectionSnapshotIn[] {
   return formData.ingredientSections
     .map((sec, sIdx) => ({
-      id: options.sectionIds === "preserve" ? (sec.id ?? 0) : 0,
       title: (sec.title ?? "").trim(),
       ordinal: sIdx,
       ingredients: sec.ingredients
         .filter((i) => i.name?.trim())
         .map((i, iIdx) => ({
-          id: 0,
           name: i.name.trim(),
           optional: i.optional ?? false,
           ordinal: iIdx + 1,

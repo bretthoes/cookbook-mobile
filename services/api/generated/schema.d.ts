@@ -580,12 +580,10 @@ export interface components {
       hasNextPage?: boolean
     }
     CookbookBriefDto: {
-      /** Format: int32 */
-      id: number
+      /** Format: uuid */
+      id: string
       title: string
       image?: string | null
-      author?: string | null
-      authorEmail?: string | null
       /** Format: int32 */
       membersCount?: number
       /** Format: int32 */
@@ -614,8 +612,8 @@ export interface components {
       image?: string | null
     }
     UpdateCookbookCommand: {
-      /** Format: int32 */
-      id?: number
+      /** Format: uuid */
+      id?: string
       title?: string | null
       image?: string | null
     }
@@ -631,12 +629,11 @@ export interface components {
       hasNextPage?: boolean
     }
     InvitationDto: {
-      /** Format: int32 */
-      id?: number
-      /** Format: int32 */
-      cookbookId?: number | null
+      /** Format: uuid */
+      id?: string
+      /** Format: uuid */
+      cookbookId?: string | null
       senderName?: string | null
-      senderEmail?: string | null
       cookbookTitle: string
       cookbookImage?: string | null
       /** Format: date-time */
@@ -645,31 +642,30 @@ export interface components {
     /** @enum {integer} */
     InvitationStatus: 0 | 1 | 2 | 3 | 4 | 5
     CreateInvitationCommand: {
-      /** Format: int32 */
-      cookbookId?: number
+      /** Format: uuid */
+      cookbookId?: string
       email?: string
     }
     UpdateInvitationCommand: {
-      /** Format: int32 */
-      id?: number
+      /** Format: uuid */
+      id?: string
       newStatus?: components["schemas"]["InvitationStatus"]
     }
     InvitationTokenDto: {
       token?: string
     }
     CreateInvitationTokenCommand: {
-      /** Format: int32 */
-      cookbookId?: number
+      /** Format: uuid */
+      cookbookId?: string
     }
     UpdateInvitationTokenCommand: {
       token?: string
       newStatus?: components["schemas"]["InvitationStatus"]
     }
     MembershipDto: {
-      /** Format: int32 */
-      id?: number
+      /** Format: uuid */
+      id?: string
       name?: string | null
-      email?: string | null
       tier: components["schemas"]["MembershipTier"]
     }
     /** @enum {integer} */
@@ -686,21 +682,21 @@ export interface components {
       hasNextPage?: boolean
     }
     UpdateMembershipCommand: {
-      /** Format: int32 */
-      id?: number
+      /** Format: uuid */
+      id?: string
       tier?: components["schemas"]["MembershipTier"]
     }
     NotificationDto: {
-      /** Format: int32 */
-      id: number
+      /** Format: uuid */
+      id: string
       actionType: components["schemas"]["CookbookNotificationActionType"]
       /** Format: date-time */
       created: string
-      /** Format: int32 */
-      cookbookId: number
+      /** Format: uuid */
+      cookbookId: string
       cookbookTitle: string
-      /** Format: int32 */
-      recipeId?: number | null
+      /** Format: uuid */
+      recipeId?: string | null
       recipeTitle?: string | null
       actorDisplayName?: string | null
       subjectDisplayName?: string | null
@@ -720,11 +716,11 @@ export interface components {
       hasNextPage?: boolean
     }
     RecipeDetailedDto: {
-      /** Format: int32 */
-      id: number
+      /** Format: uuid */
+      id: string
       title: string
       author?: string | null
-      authorEmail?: string | null
+      isAuthor?: boolean
       summary?: string | null
       thumbnail?: string | null
       videoPath?: string | null
@@ -756,31 +752,23 @@ export interface components {
       ingredientSections?: components["schemas"]["IngredientSectionDto"][]
     }
     RecipeDirectionDto: {
-      /** Format: int32 */
-      id?: number
       text: string
       /** Format: int32 */
       ordinal: number
       image?: string | null
     }
     RecipeImageDto: {
-      /** Format: int32 */
-      id?: number
       name: string
       /** Format: int32 */
       ordinal: number
     }
     IngredientSectionDto: {
-      /** Format: int32 */
-      id?: number
       title: string
       /** Format: int32 */
       ordinal: number
       ingredients: components["schemas"]["RecipeIngredientDto"][]
     }
     RecipeIngredientDto: {
-      /** Format: int32 */
-      id?: number
       name: string
       optional: boolean
       /** Format: int32 */
@@ -798,8 +786,8 @@ export interface components {
       hasNextPage?: boolean
     }
     RecipeBriefDto: {
-      /** Format: int32 */
-      id: number
+      /** Format: uuid */
+      id: string
       title: string
       isVegetarian?: boolean | null
       isVegan?: boolean | null
@@ -819,8 +807,8 @@ export interface components {
       recipe: components["schemas"]["CreateRecipeDto"]
     }
     CreateRecipeDto: components["schemas"]["RecipeDto"] & {
-      /** Format: int32 */
-      cookbookId: number
+      /** Format: uuid */
+      cookbookId: string
     }
     RecipeDto: {
       title: string
@@ -856,8 +844,8 @@ export interface components {
       recipe?: components["schemas"]["UpdateRecipeDto"]
     }
     UpdateRecipeDto: components["schemas"]["RecipeDto"] & {
-      /** Format: int32 */
-      id: number
+      /** Format: uuid */
+      id: string
     }
     ParseRecipeFromUrlCommand: {
       url?: string
@@ -1012,7 +1000,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          "application/json": number
+          "application/json": string
         }
       }
       400: {
@@ -1038,7 +1026,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1093,7 +1081,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1253,7 +1241,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          "application/json": number
+          "application/json": string
         }
       }
       400: {
@@ -1314,6 +1302,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
+          /** Format: int32 */
           "application/json": number
         }
       }
@@ -1332,7 +1321,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1387,7 +1376,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1569,7 +1558,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1614,7 +1603,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1669,7 +1658,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1720,7 +1709,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        cookbookId: number
+        cookbookId: string
       }
       cookie?: never
     }
@@ -1763,7 +1752,8 @@ export interface operations {
   MembershipsList: {
     parameters: {
       query: {
-        CookbookId: number
+        /** Format: uuid */
+        CookbookId: string
         PageNumber: number
         PageSize: number
       }
@@ -1875,7 +1865,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1920,7 +1910,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -1975,7 +1965,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -2024,7 +2014,8 @@ export interface operations {
   RecipesList: {
     parameters: {
       query: {
-        CookbookId: number
+        /** Format: uuid */
+        CookbookId: string
         Search?: string | null
         PageNumber?: number
         PageSize?: number
@@ -2079,7 +2070,7 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          "application/json": number
+          "application/json": string
         }
       }
       400: {
@@ -2113,7 +2104,7 @@ export interface operations {
       query?: never
       header?: never
       path: {
-        id: number
+        id: string
       }
       cookie?: never
     }
@@ -2812,3 +2803,4 @@ export interface operations {
     }
   }
 }
+

@@ -3,7 +3,7 @@ import { formatDistanceToNow } from "date-fns/formatDistanceToNow"
 import { parseISO } from "date-fns/parseISO"
 
 export function getInvitationSenderInfo(invitation: Invitation) {
-  return `From: ${invitation.senderEmail}`
+  return `From: ${invitation.senderName}`
 }
 
 export function getInvitationTimeAgo(invitation: Invitation) {

@@ -31,7 +31,7 @@ interface CookbookFormInputs {
 export default function EditCookbookScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
-  const cookbookId = Number(id)
+  const cookbookId = id ?? ""
   const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
   const { cookbook: selected } = useCookbookById(cookbookId)
   const updateCookbook = useUpdateCookbookMutation()
@@ -125,8 +125,6 @@ export default function EditCookbookScreen() {
           id: selected.id,
           title: data.title,
           image: data.image,
-          author: selected.author ?? null,
-          authorEmail: selected.authorEmail ?? null,
           membersCount: selected.membersCount ?? 0,
           recipeCount: selected.recipeCount ?? 0,
         })

@@ -20,30 +20,30 @@ function makeDraftId(): string {
 }
 
 export interface UiState {
-  selectedCookbookId: number | null
+  selectedCookbookId: string | null
   drafts: RecipeDraftItem[]
   recipeToAdd: RecipeToAddSnapshotIn | null
   weeklyImportCount: number
   weeklyImportWeekStart: string
 
-  setSelectedCookbookId: (id: number | null) => void
+  setSelectedCookbookId: (id: string | null) => void
 
   setRecipeToAdd: (recipe: RecipeToAddSnapshotIn | null) => void
   clearRecipeToAdd: () => void
   incrementImportCount: () => void
 
-  saveDraft: (cookbookId: number, formData: DraftFormData) => void
-  deleteDraft: (cookbookId: number) => void
-  getDraftForCookbook: (cookbookId: number) => RecipeDraftItem | undefined
+  saveDraft: (cookbookId: string, formData: DraftFormData) => void
+  deleteDraft: (cookbookId: string) => void
+  getDraftForCookbook: (cookbookId: string) => RecipeDraftItem | undefined
 
   migrateFromLegacySnapshot: (snapshot: LegacyUiSnapshot) => void
 }
 
 export type LegacyUiSnapshot = {
   cookbookStore?: {
-    favorites?: (number | { id?: number })[]
+    favorites?: (number | string | { id?: number | string })[]
     favoritesOnly?: boolean
-    selected?: number | { id?: number }
+    selected?: number | string | { id?: number | string }
   }
   recipeStore?: {
     drafts?: RecipeDraftItem[]
@@ -170,9 +170,11 @@ export const useUiStore = create<UiState>()(
 
         if (cs) {
           if (cs.selected != null) {
-            const selId =
-              typeof cs.selected === "number" ? cs.selected : (cs.selected as { id?: number })?.id
-            if (selId != null) patch.selectedCookbookId = selId
+            const rawId =
+              typeof cs.selected === "number" || typeof cs.selected === "string"
+                ? cs.selected
+                : (cs.selected as { id?: number | string })?.id
+            if (rawId != null) patch.selectedCookbookId = String(rawId)
           }
         }
 

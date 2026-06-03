@@ -61,14 +61,14 @@ export class Api {
    */
   async createCookbook(
     cookbook: CookbookToAddSnapshotIn,
-  ): Promise<{ kind: "ok"; cookbookId: number } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; cookbookId: string } | GeneralApiProblem> {
     return cookbookWrappers.createCookbook(cookbook)
   }
 
   /**
    * Deletes a single cookbook by its id.
    */
-  async deleteCookbook(cookbookId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async deleteCookbook(cookbookId: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return cookbookWrappers.deleteCookbook(cookbookId)
   }
 
@@ -76,7 +76,7 @@ export class Api {
    * Gets a list of memberships matching a cookbookId with pagination.
    */
   async GetMemberships(
-    cookbookId: number,
+    cookbookId: string,
     pageNumber: number,
     pageSize: number,
   ): Promise<{ kind: "ok"; memberships: MembershipListSnapshotIn } | GeneralApiProblem> {
@@ -87,7 +87,7 @@ export class Api {
    * Gets the membership by cookbookId.
    */
   async getMembership(
-    cookbookId: number,
+    cookbookId: string,
   ): Promise<{ kind: "ok"; membership: MembershipSnapshotOut } | GeneralApiProblem> {
     return membershipWrappers.getMembership(cookbookId)
   }
@@ -123,7 +123,7 @@ export class Api {
    * Gets a list of recipes matching a cookbookId with pagination.
    */
   async getRecipes(
-    cookbookId: number,
+    cookbookId: string,
     search: string,
     pageNumber: number,
     pageSize: number,
@@ -135,7 +135,7 @@ export class Api {
    * Gets a single recipe by its id.
    */
   async getRecipe(
-    recipeId: number,
+    recipeId: string,
   ): Promise<{ kind: "ok"; recipe: RecipeSnapshotOut } | GeneralApiProblem> {
     return recipeWrappers.getRecipe(recipeId)
   }
@@ -143,7 +143,7 @@ export class Api {
   /**
    * Deletes a single recipe by its id.
    */
-  async deleteRecipe(recipeId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async deleteRecipe(recipeId: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return recipeWrappers.deleteRecipe(recipeId)
   }
 
@@ -152,33 +152,33 @@ export class Api {
    */
   async createRecipe(
     recipe: RecipeToAddSnapshotIn,
-  ): Promise<{ kind: "ok"; recipeId: number } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipeId: string } | GeneralApiProblem> {
     return recipeWrappers.createRecipe(recipe)
   }
 
   async updateRecipe(
     recipe: RecipeSnapshotIn,
-  ): Promise<{ kind: "ok"; recipeId: number } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipeId: string } | GeneralApiProblem> {
     return recipeWrappers.updateRecipe(recipe)
   }
 
   async createInvite(
-    cookbookId: number,
+    cookbookId: string,
     email: string,
   ): Promise<{ kind: "ok"; token: string } | GeneralApiProblem> {
     return invitationWrappers.createInvite(cookbookId, email)
   }
 
   async createInviteToken(
-    cookbookId: number,
+    cookbookId: string,
   ): Promise<{ kind: "ok"; token: string } | GeneralApiProblem> {
     return invitationWrappers.createInviteToken(cookbookId)
   }
 
   async updateInvite(
-    id: number,
+    id: string,
     accepted: boolean,
-  ): Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; invitationId: string } | GeneralApiProblem> {
     return invitationWrappers.updateInvite(id, accepted)
   }
 
@@ -188,7 +188,7 @@ export class Api {
   async UpdateInvitationToken(
     token: string,
     accepted: boolean,
-  ): Promise<{ kind: "ok"; invitationId: number } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; invitationId: string } | GeneralApiProblem> {
     return invitationWrappers.UpdateInvitationToken(token, accepted)
   }
 
@@ -298,7 +298,7 @@ export class Api {
    * Updates a membership's permissions.
    */
   async updateMembership(
-    membershipId: number,
+    membershipId: string,
     tier: import("@/types/membership").MembershipTier,
   ): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return membershipWrappers.updateMembership(membershipId, tier)
@@ -307,7 +307,7 @@ export class Api {
   /**
    * Deletes a membership.
    */
-  async deleteMembership(membershipId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async deleteMembership(membershipId: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return membershipWrappers.deleteMembership(membershipId)
   }
 

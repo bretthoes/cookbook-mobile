@@ -1,7 +1,7 @@
 import type { components } from "@/services/api/generated/schema"
 
 export type CookbookItem = components["schemas"]["CookbookBriefDto"] & {
-  id: number
+  id: string
   title: string
 }
 

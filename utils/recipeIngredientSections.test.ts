@@ -32,19 +32,13 @@ describe("formDataToIngredientSectionsSnapshot", () => {
   }
 
   it("trims names and drops blank ingredient lines", () => {
-    const result = formDataToIngredientSectionsSnapshot(baseForm, { sectionIds: "preserve" })
+    const result = formDataToIngredientSectionsSnapshot(baseForm)
     expect(result).toHaveLength(1)
     expect(result[0]).toMatchObject({
-      id: 5,
       title: "Sauce",
       ordinal: 0,
       ingredients: [{ name: "flour", optional: false, ordinal: 1 }],
     })
-  })
-
-  it("resets section ids when requested", () => {
-    const result = formDataToIngredientSectionsSnapshot(baseForm, { sectionIds: "reset" })
-    expect(result[0]?.id).toBe(0)
   })
 
   it("omits sections with no title and no ingredients", () => {

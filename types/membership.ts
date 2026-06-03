@@ -3,7 +3,7 @@ import type { components } from "@/services/api/generated/schema"
 export type MembershipTier = components["schemas"]["MembershipTier"]
 
 export type Membership = components["schemas"]["MembershipDto"] & {
-  id: number
+  id: string
   tier: MembershipTier
 }
 

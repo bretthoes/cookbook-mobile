@@ -33,7 +33,7 @@ export async function getCookbooks(
 
 export async function createCookbook(
   cookbook: CookbookToAddSnapshotIn,
-): Promise<ApiResult<{ cookbookId: number }>> {
+): Promise<ApiResult<{ cookbookId: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/Cookbooks", {
       body: { title: cookbook.title, image: cookbook.image ?? undefined },
@@ -68,7 +68,7 @@ export async function updateCookbook(
 }
 
 export async function deleteCookbook(
-  cookbookId: number,
+  cookbookId: string,
 ): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.DELETE("/api/Cookbooks/{id}", {

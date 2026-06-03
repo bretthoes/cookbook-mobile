@@ -21,7 +21,7 @@ const SOCIAL_IMPORT_TIMEOUT_MS = 35_000
 const { client } = apiClientInstance
 
 export async function getRecipes(
-  cookbookId: number,
+  cookbookId: string,
   search: string,
   pageNumber: number,
   pageSize: number,
@@ -47,7 +47,7 @@ export async function getRecipes(
 }
 
 export async function getRecipe(
-  recipeId: number,
+  recipeId: string,
 ): Promise<ApiResult<{ recipe: RecipeSnapshotOut }>> {
   try {
     const { data, error, response } = await client.GET("/api/Recipes/{id}", {
@@ -64,11 +64,11 @@ export async function getRecipe(
 
 export async function createRecipe(
   recipe: RecipeToAddSnapshotIn,
-): Promise<ApiResult<{ recipeId: number }>> {
+): Promise<ApiResult<{ recipeId: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/Recipes", {
       body: {
-        recipe: recipe as unknown as { cookbookId: number; title: string } & Record<
+        recipe: recipe as unknown as { cookbookId: string; title: string } & Record<
           string,
           unknown
         >,
@@ -85,12 +85,12 @@ export async function createRecipe(
 
 export async function updateRecipe(
   recipe: RecipeSnapshotIn,
-): Promise<ApiResult<{ recipeId: number }>> {
+): Promise<ApiResult<{ recipeId: string }>> {
   try {
     const { error, response } = await client.PUT("/api/Recipes/{id}", {
       params: { path: { id: recipe.id } },
       body: {
-        recipe: recipe as unknown as { id: number; title: string } & Record<string, unknown>,
+        recipe: recipe as unknown as { id: string; title: string } & Record<string, unknown>,
       },
     })
     if (!response.ok)
@@ -102,7 +102,7 @@ export async function updateRecipe(
 }
 
 export async function recordRecipeMade(
-  recipeId: number,
+  recipeId: string,
 ): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.POST("/api/Recipes/{id}/made", {
@@ -116,7 +116,7 @@ export async function recordRecipeMade(
   }
 }
 
-export async function deleteRecipe(recipeId: number): Promise<{ kind: "ok" } | GeneralApiProblem> {
+export async function deleteRecipe(recipeId: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.DELETE("/api/Recipes/{id}", {
       params: { path: { id: recipeId } },

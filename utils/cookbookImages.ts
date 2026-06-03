@@ -10,35 +10,26 @@ const indigoCookbookImage = require("../assets/images/cookbooks/indigo.png")
 const pinkCookbookImage = require("../assets/images/cookbooks/pink.png")
 const tealCookbookImage = require("../assets/images/cookbooks/teal.png")
 
+const cookbookImagesByIndex = [
+  redCookbookImage,
+  orangeCookbookImage,
+  indigoCookbookImage,
+  yellowCookbookImage,
+  pinkCookbookImage,
+  tealCookbookImage,
+  blueCookbookImage,
+  purpleCookbookImage,
+  greenCookbookImage,
+  greyCookbookImage,
+]
+
 /**
  * Returns a consistent image for a cookbook based on its ID.
- * The image is determined by the last digit of the ID to ensure persistence.
+ * Uses the last hex character of the UUID to pick a colour slot.
  */
-export const getCookbookImage = (id: number): number => {
-  const lastDigit = id % 10
-
-  switch (lastDigit) {
-    case 0:
-      return redCookbookImage
-    case 1:
-      return orangeCookbookImage
-    case 2:
-      return indigoCookbookImage
-    case 3:
-      return yellowCookbookImage
-    case 4:
-      return pinkCookbookImage
-    case 5:
-      return tealCookbookImage
-    case 6:
-      return blueCookbookImage
-    case 7:
-      return purpleCookbookImage
-    case 8:
-      return greenCookbookImage
-    case 9:
-      return greyCookbookImage
-    default:
-      return missingCookbookImage
-  }
+export const getCookbookImage = (id: string): number => {
+  if (!id) return missingCookbookImage
+  const lastChar = id[id.length - 1]
+  const index = parseInt(lastChar, 16) % cookbookImagesByIndex.length
+  return cookbookImagesByIndex[index] ?? missingCookbookImage
 }

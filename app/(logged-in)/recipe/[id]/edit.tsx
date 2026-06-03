@@ -11,7 +11,7 @@ import React from "react"
 
 export default function EditRecipe() {
   const { id } = useLocalSearchParams<{ id: string }>()
-  const recipeId = Number(id)
+  const recipeId = id ?? ""
   const { data: selected } = useRecipeQuery(recipeId)
   const updateRecipe = useUpdateRecipeMutation()
   const { selected: cookbook } = useSelectedCookbook()
@@ -27,7 +27,6 @@ export default function EditRecipe() {
       servings: selected.servings ?? null,
       ingredientSections:
         selected.ingredientSections?.map((section) => ({
-          id: section.id,
           title: section.title ?? "",
           ingredients: (section.ingredients ?? []).map((ingredient) => ({
             name: ingredient.name ?? "",
@@ -58,7 +57,7 @@ export default function EditRecipe() {
 
   const onPressSend = async (formData: RecipeFormInputs) => {
     const updatedRecipe: RecipeSnapshotIn = {
-      id: selected?.id ?? 0,
+      id: selected?.id ?? "",
       title: formData.title?.trim() ?? "",
       summary: formData.summary?.trim() ?? "",
       thumbnail: null,
@@ -67,26 +66,17 @@ export default function EditRecipe() {
       cookingTimeInMinutes: formData.cookingTimeInMinutes,
       bakingTimeInMinutes: formData.bakingTimeInMinutes,
       servings: formData.servings,
-      authorEmail: selected?.authorEmail,
       author: selected?.author,
       directions: formData.directions.map((direction, index) => ({
-        id: 0,
         text: direction.text?.trim() ?? "",
         ordinal: index + 1,
         image: direction.image || null,
       })),
-      ingredientSections: formDataToIngredientSectionsSnapshot(formData, {
-        sectionIds: "preserve",
-      }),
-      images: formData.images.map((name, index) => {
-        const trimmed = name?.trim() ?? ""
-        const existing = selected?.images?.find((img) => img.name === trimmed)
-        return {
-          id: existing?.id ?? 0,
-          name: trimmed,
-          ordinal: index + 1,
-        }
-      }),
+      ingredientSections: formDataToIngredientSectionsSnapshot(formData),
+      images: formData.images.map((name, index) => ({
+        name: (name?.trim() ?? ""),
+        ordinal: index + 1,
+      })),
       isVegetarian: formData.isVegetarian ?? null,
       isVegan: formData.isVegan ?? null,
       isGlutenFree: formData.isGlutenFree ?? null,

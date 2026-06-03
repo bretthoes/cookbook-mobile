@@ -75,7 +75,7 @@ export async function GetInvitationCount(
 }
 
 export async function createInvite(
-  cookbookId: number,
+  cookbookId: string,
   email: string,
 ): Promise<ApiResult<{ token: string }>> {
   try {
@@ -90,7 +90,7 @@ export async function createInvite(
   }
 }
 
-export async function createInviteToken(cookbookId: number): Promise<ApiResult<{ token: string }>> {
+export async function createInviteToken(cookbookId: string): Promise<ApiResult<{ token: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/InvitationTokens", {
       body: { cookbookId },
@@ -105,9 +105,9 @@ export async function createInviteToken(cookbookId: number): Promise<ApiResult<{
 }
 
 export async function updateInvite(
-  id: number,
+  id: string,
   accepted: boolean,
-): Promise<ApiResult<{ invitationId: number }>> {
+): Promise<ApiResult<{ invitationId: string }>> {
   try {
     const newStatus = accepted
       ? CookbookInvitationStatus.Accepted
@@ -118,7 +118,7 @@ export async function updateInvite(
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
-    return toOkResult({ invitationId: data ?? id })
+    return toOkResult({ invitationId: data ?? id as string })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -127,7 +127,7 @@ export async function updateInvite(
 export async function UpdateInvitationToken(
   token: string,
   accepted: boolean,
-): Promise<ApiResult<{ invitationId: number }>> {
+): Promise<ApiResult<{ invitationId: string }>> {
   try {
     const newStatus = accepted
       ? CookbookInvitationStatus.Accepted
@@ -138,7 +138,7 @@ export async function UpdateInvitationToken(
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
-    return toOkResult({ invitationId: data ?? 0 })
+    return toOkResult({ invitationId: data ?? "" })
   } catch (e) {
     return toProblemFromError(e)
   }

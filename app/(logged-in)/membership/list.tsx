@@ -6,7 +6,6 @@ import { Text } from "@/components/Text"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL } from "@/i18n"
-import { useAuthStore } from "@/stores/authStore"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { Membership } from "@/types/membership"
 import { isOwnerTier } from "@/utils/membershipTier"
@@ -19,12 +18,12 @@ import React, { useCallback, useEffect, useState } from "react"
 import { ActivityIndicator, FlatList, ImageStyle, View, ViewStyle } from "react-native"
 
 export default function Cookbook() {
-  const currentUserEmail = useAuthStore((s) => s.authEmail)
   const memberships = useMembershipStore((s) => s.memberships)
+  const ownMembership = useMembershipStore((s) => s.ownMembership)
   const loadForCookbook = useMembershipStore((s) => s.loadForCookbook)
   const fetch = useMembershipStore((s) => s.fetch)
   const { selected } = useSelectedCookbook()
-  const id = selected?.id ?? 0
+  const id = selected?.id ?? ""
   const { themed } = useAppTheme()
 
   const [isLoading, setIsLoading] = useState(false)
@@ -100,8 +99,7 @@ export default function Cookbook() {
         onRefresh={onRefresh}
         refreshing={refreshing}
         renderItem={({ item, index }) => {
-          const isCurrentUser =
-            !!currentUserEmail && item.email?.toLowerCase() === currentUserEmail.toLowerCase()
+          const isCurrentUser = ownMembership?.id === item.id
           return (
             <View
               style={[
@@ -113,7 +111,7 @@ export default function Cookbook() {
               <RecipeListItem
                 index={index}
                 lastIndex={memberships?.items?.length - 1}
-                text={`${item.name ?? item.email}`}
+                text={`${item.name ?? ""}`}
                 isOwner={isOwnerTier(item.tier)}
                 onPress={async () => {
                   router.push(`/(logged-in)/membership/${item.id}`)

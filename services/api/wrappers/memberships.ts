@@ -11,7 +11,7 @@ import {
 const { client } = apiClientInstance
 
 export async function GetMemberships(
-  cookbookId: number,
+  cookbookId: string,
   pageNumber: number,
   pageSize: number,
 ): Promise<ApiResult<{ memberships: MembershipListSnapshotIn }>> {
@@ -35,7 +35,7 @@ export async function GetMemberships(
 }
 
 export async function getMembership(
-  cookbookId: number,
+  cookbookId: string,
 ): Promise<ApiResult<{ membership: import("@/types/membership").MembershipSnapshotOut }>> {
   try {
     const { data, error, response } = await client.GET(
@@ -54,7 +54,7 @@ export async function getMembership(
 }
 
 export async function updateMembership(
-  membershipId: number,
+  membershipId: string,
   tier: MembershipTier,
 ): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
@@ -74,7 +74,7 @@ export async function updateMembership(
 }
 
 export async function deleteMembership(
-  membershipId: number,
+  membershipId: string,
 ): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.DELETE("/api/Memberships/{id}", {

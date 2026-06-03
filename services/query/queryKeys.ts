@@ -5,9 +5,9 @@ export const queryKeys = {
   },
   recipes: {
     all: ["recipes"] as const,
-    list: (cookbookId: number, search: string) =>
+    list: (cookbookId: string, search: string) =>
       [...queryKeys.recipes.all, "list", cookbookId, search] as const,
-    detail: (recipeId: number) => [...queryKeys.recipes.all, "detail", recipeId] as const,
+    detail: (recipeId: string) => [...queryKeys.recipes.all, "detail", recipeId] as const,
   },
   notifications: {
     all: ["notifications"] as const,
