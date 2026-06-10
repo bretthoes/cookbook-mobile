@@ -79,14 +79,16 @@ export default function CookbooksScreen(_props: void) {
           </View>
         }
         ListFooterComponent={
-          <>
-            {isLoadingMore ? (
-              <View style={$footerLoader}>
-                <ActivityIndicator />
-              </View>
-            ) : null}
-            <LatestActivitySection />
-          </>
+          cookbooksForList.length > 0 ? (
+            <>
+              {isLoadingMore ? (
+                <View style={$footerLoader}>
+                  <ActivityIndicator />
+                </View>
+              ) : null}
+              <LatestActivitySection />
+            </>
+          ) : null
         }
         renderItem={renderItem}
       />
