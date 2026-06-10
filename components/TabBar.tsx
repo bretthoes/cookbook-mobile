@@ -103,7 +103,7 @@ const $tabBar: ThemedStyle<ViewStyle> = (theme) => ({
   shadowOpacity: theme.isDark ? 0.3 : 0.1,
   shadowRadius: 10,
   elevation: 10,
-  backgroundColor: theme.isDark ? theme.colors.text : theme.colors.backgroundDim,
+  backgroundColor: theme.colors.backgroundDim,
 })
 
 const $tabBarItem: ViewStyle = {
