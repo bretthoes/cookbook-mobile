@@ -15,6 +15,8 @@
       "bundleIdentifier": "com.cookbookmobile",
       "associatedDomains": ["applinks:sharedcookbook.com"],
       "infoPlist": {
+        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera to take photos.",
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos to select images.",
         "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to recognize your speech to add recipes by voice.",
         "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use your microphone to add recipes by voice.",
         "SKAdNetworkItems": [
@@ -86,6 +88,13 @@
         "expo-camera",
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to select images.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take photos."
         }
       ],
       "expo-localization",
