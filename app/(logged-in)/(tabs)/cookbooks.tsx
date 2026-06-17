@@ -69,11 +69,11 @@ export default function CookbooksScreen(_props: void) {
             <View style={$headingRow}>
               <Text preset="heading" tx="cookbooksScreen:title" />
               <Pressable
-                onPress={() => router.push("/(logged-in)/activity")}
-                accessibilityLabel={t("cookbooksScreen:activityFeedAccessibility")}
-                style={$feedButton}
+                onPress={() => router.push("/(logged-in)/cookbook/add")}
+                accessibilityLabel={t("cookbooksScreen:cookbookListScreen.add")}
+                style={$addButton}
               >
-                <Icon icon="community" size={28} />
+                <Icon icon="create" size={28} />
               </Pressable>
             </View>
           </View>
@@ -116,7 +116,7 @@ const $headingRow: ViewStyle = {
   justifyContent: "space-between",
 }
 
-const $feedButton: ViewStyle = {
+const $addButton: ViewStyle = {
   padding: spacing.xs,
 }
 
