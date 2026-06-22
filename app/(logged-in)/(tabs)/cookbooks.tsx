@@ -68,13 +68,15 @@ export default function CookbooksScreen(_props: void) {
           <View style={$heading}>
             <View style={$headingRow}>
               <Text preset="heading" tx="cookbooksScreen:title" />
+              {/* TODO: need new icon for this
               <Pressable
                 onPress={() => router.push("/(logged-in)/cookbook/add")}
-                accessibilityLabel={t("cookbooksScreen:cookbookListScreen.add")}
+                accessibilityLabel={t("cookbooksScreen:activityFeedAccessibility")}
                 style={$addButton}
               >
                 <Icon icon="create" size={28} />
               </Pressable>
+              */}
             </View>
           </View>
         }

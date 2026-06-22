@@ -2,6 +2,7 @@ import { Button } from "@/components/Button"
 import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { TextField } from "@/components/TextField"
 import { useImportRecipeFromVoiceMutation } from "@/hooks/queries/useRecipesQuery"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -10,7 +11,7 @@ import { router } from "expo-router"
 import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from "expo-speech-recognition"
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ScrollView, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
+import { TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -19,11 +20,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
-type Phase = "idle" | "recording" | "processing"
+type Phase = "idle" | "recording" | "review" | "processing"
 
 export default function AddRecipeVoiceScreen() {
   const { themed } = useAppTheme()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const importFromVoice = useImportRecipeFromVoiceMutation()
 
   const [phase, setPhase] = useState<Phase>("idle")
@@ -41,6 +42,11 @@ export default function AddRecipeVoiceScreen() {
   const updatePhase = useCallback((p: Phase) => {
     phaseRef.current = p
     setPhase(p)
+  }, [])
+
+  const updateTranscript = useCallback((text: string) => {
+    transcriptRef.current = text
+    setDisplayTranscript(text)
   }, [])
 
   // Pulsing animation while recording
@@ -70,7 +76,7 @@ export default function AddRecipeVoiceScreen() {
 
   useHeader({
     leftIcon: "back",
-    titleTx: "recipeAddVoiceScreen:title",
+    titleTx: phase === "review" ? "recipeAddVoiceScreen:reviewTitle" : "recipeAddVoiceScreen:title",
     onLeftPress: () => {
       if (maxDurationTimerRef.current) {
         clearTimeout(maxDurationTimerRef.current)
@@ -81,7 +87,7 @@ export default function AddRecipeVoiceScreen() {
     },
   })
 
-  const processTranscript = useCallback(async () => {
+  const enterReviewPhase = useCallback(() => {
     const text = transcriptRef.current.trim()
     if (!text) {
       setErrorMsg(t("recipeAddVoiceScreen:noTranscript"))
@@ -89,6 +95,19 @@ export default function AddRecipeVoiceScreen() {
       return
     }
 
+    setErrorMsg("")
+    updatePhase("review")
+  }, [t, updatePhase])
+
+  const processTranscript = useCallback(async () => {
+    const text = transcriptRef.current.trim()
+    if (!text) {
+      setErrorMsg(t("recipeAddVoiceScreen:noTranscript"))
+      updatePhase("review")
+      return
+    }
+
+    setErrorMsg("")
     updatePhase("processing")
     const result = await importFromVoice.mutateAsync(text)
 
@@ -96,10 +115,10 @@ export default function AddRecipeVoiceScreen() {
       router.replace("/(logged-in)/recipe/add")
     } else if (result.kind === "rate-limited") {
       setErrorMsg(t("recipeAddVoiceScreen:rateLimited"))
-      updatePhase("idle")
+      updatePhase("review")
     } else {
       setErrorMsg(t("recipeAddVoiceScreen:parseFailed"))
-      updatePhase("idle")
+      updatePhase("review")
     }
   }, [t, importFromVoice, updatePhase])
 
@@ -109,13 +128,12 @@ export default function AddRecipeVoiceScreen() {
     if (event.isFinal) {
       finalTranscriptRef.current = combined
     }
-    transcriptRef.current = combined
-    setDisplayTranscript(combined)
+    updateTranscript(combined)
   })
 
   useSpeechRecognitionEvent("end", () => {
     if (phaseRef.current === "recording") {
-      processTranscript()
+      enterReviewPhase()
     }
   })
 
@@ -126,8 +144,7 @@ export default function AddRecipeVoiceScreen() {
 
   const handleStart = async () => {
     setErrorMsg("")
-    setDisplayTranscript("")
-    transcriptRef.current = ""
+    updateTranscript("")
     finalTranscriptRef.current = ""
 
     const { granted } = await ExpoSpeechRecognitionModule.requestPermissionsAsync()
@@ -137,7 +154,11 @@ export default function AddRecipeVoiceScreen() {
     }
 
     updatePhase("recording")
-    ExpoSpeechRecognitionModule.start({ lang: "en-US", interimResults: true, continuous: true })
+    ExpoSpeechRecognitionModule.start({
+      lang: i18n.language,
+      interimResults: true,
+      continuous: true,
+    })
 
     maxDurationTimerRef.current = setTimeout(() => {
       if (phaseRef.current === "recording") {
@@ -152,7 +173,7 @@ export default function AddRecipeVoiceScreen() {
       maxDurationTimerRef.current = null
     }
     ExpoSpeechRecognitionModule.stop()
-    // "end" event fires and triggers processTranscript
+    // "end" event fires and triggers enterReviewPhase
   }
 
   const handleCancel = () => {
@@ -161,9 +182,15 @@ export default function AddRecipeVoiceScreen() {
       maxDurationTimerRef.current = null
     }
     ExpoSpeechRecognitionModule.abort()
-    transcriptRef.current = ""
     finalTranscriptRef.current = ""
-    setDisplayTranscript("")
+    updateTranscript("")
+    setErrorMsg("")
+    updatePhase("idle")
+  }
+
+  const handleReRecord = () => {
+    finalTranscriptRef.current = ""
+    updateTranscript("")
     setErrorMsg("")
     updatePhase("idle")
   }
@@ -175,46 +202,60 @@ export default function AddRecipeVoiceScreen() {
   }
 
   const isRecording = phase === "recording"
+  const isReview = phase === "review"
 
   return (
     <Screen preset="scroll" safeAreaEdges={["top"]} contentContainerStyle={themed($container)}>
-      <View style={themed($micSection)}>
-        <TouchableOpacity
-          onPress={isRecording ? handleStop : handleStart}
-          activeOpacity={0.8}
-          accessibilityRole="button"
-          accessibilityLabel={
-            isRecording
-              ? t("recipeAddVoiceScreen:stopButton")
-              : t("recipeAddVoiceScreen:startButton")
-          }
-        >
-          <Animated.View style={[$ring, themed($ringThemed), $animatedRing]}>
-            <View style={[themed($micCircle), isRecording && themed($micCircleActive)]}>
-              <Text text="🎙" style={$micEmoji} />
-            </View>
-          </Animated.View>
-        </TouchableOpacity>
+      {!isReview && (
+        <View style={themed($micSection)}>
+          <TouchableOpacity
+            onPress={isRecording ? handleStop : handleStart}
+            activeOpacity={0.8}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isRecording
+                ? t("recipeAddVoiceScreen:stopButton")
+                : t("recipeAddVoiceScreen:startButton")
+            }
+          >
+            <Animated.View style={[$ring, themed($ringThemed), $animatedRing]}>
+              <View style={[themed($micCircle), isRecording && themed($micCircleActive)]}>
+                <Text text="🎙" style={$micEmoji} />
+              </View>
+            </Animated.View>
+          </TouchableOpacity>
 
-        <Text
-          text={
-            isRecording ? t("recipeAddVoiceScreen:listening") : t("recipeAddVoiceScreen:tapToStart")
-          }
-          style={themed($statusText)}
-          preset={isRecording ? "bold" : "default"}
-        />
-      </View>
+          <Text
+            text={
+              isRecording
+                ? t("recipeAddVoiceScreen:listening")
+                : t("recipeAddVoiceScreen:tapToStart")
+            }
+            style={themed($statusText)}
+            preset={isRecording ? "bold" : "default"}
+          />
+        </View>
+      )}
 
-      {displayTranscript ? (
+      {isReview ? (
+        <View style={themed($reviewSection)}>
+          <Text tx="recipeAddVoiceScreen:editTranscript" style={themed($reviewHint)} />
+          <TextField
+            labelTx="recipeAddVoiceScreen:transcriptLabel"
+            value={displayTranscript}
+            onChangeText={updateTranscript}
+            multiline
+            style={themed($transcriptInput)}
+          />
+        </View>
+      ) : displayTranscript ? (
         <View style={themed($transcriptContainer)}>
           <Text
             tx="recipeAddVoiceScreen:transcriptLabel"
             preset="formLabel"
             style={themed($transcriptLabel)}
           />
-          <ScrollView style={$transcriptScroll} nestedScrollEnabled>
-            <Text text={displayTranscript} style={themed($transcriptText)} />
-          </ScrollView>
+          <Text text={displayTranscript} style={themed($transcriptText)} />
         </View>
       ) : null}
 
@@ -237,7 +278,24 @@ export default function AddRecipeVoiceScreen() {
         </>
       )}
 
-      {!isRecording && (
+      {isReview && (
+        <>
+          <Button
+            tx="recipeAddVoiceScreen:processButton"
+            preset="filled"
+            style={themed($actionButton)}
+            onPress={processTranscript}
+          />
+          <Button
+            tx="recipeAddVoiceScreen:reRecordButton"
+            preset="default"
+            style={themed($actionButton)}
+            onPress={handleReRecord}
+          />
+        </>
+      )}
+
+      {!isRecording && !isReview && (
         <Button
           tx="recipeAddVoiceScreen:startButton"
           preset="reversed"
@@ -260,6 +318,20 @@ const $micSection: ThemedStyle<ViewStyle> = (theme) => ({
   alignItems: "center",
   paddingTop: theme.spacing.xl,
   gap: theme.spacing.md,
+})
+
+const $reviewSection: ThemedStyle<ViewStyle> = (theme) => ({
+  gap: theme.spacing.md,
+  paddingTop: theme.spacing.md,
+})
+
+const $reviewHint: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+})
+
+const $transcriptInput: ThemedStyle<TextStyle> = () => ({
+  minHeight: 160,
+  textAlignVertical: "top",
 })
 
 const $ring: ViewStyle = {
@@ -310,10 +382,6 @@ const $transcriptLabel: ThemedStyle<TextStyle> = (theme) => ({
   marginBottom: theme.spacing.xs,
   color: theme.colors.textDim,
 })
-
-const $transcriptScroll: ViewStyle = {
-  flexGrow: 0,
-}
 
 const $transcriptText: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.text,
