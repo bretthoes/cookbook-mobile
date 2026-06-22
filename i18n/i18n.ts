@@ -54,7 +54,6 @@ export const initI18n = async () => {
     interpolation: {
       escapeValue: false,
     },
-    nsSeparator: false,
   })
 
   return i18n
