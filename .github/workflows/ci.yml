@@ -23,14 +23,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22.13.1
-          cache: pnpm
+          cache: npm
 
       - name: Install GitVersion
         uses: gittools/actions/gitversion/setup@v4.5.0
@@ -49,13 +46,13 @@ jobs:
           echo "semVer     = ${{ steps.gitversion.outputs.semVer }}"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: npm ci
 
       - name: Test
-        run: pnpm test
+        run: npm test
 
       - name: Lint
-        run: pnpm run lint
+        run: npm run lint
 
       - name: i18n parity
-        run: pnpm run check:i18n
+        run: npm run check:i18n

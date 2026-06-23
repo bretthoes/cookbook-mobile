@@ -36,7 +36,7 @@ fi
 
 # EAS CLI
 if ! command -v eas >/dev/null 2>&1; then
-  fail "eas CLI not found (install: pnpm add -g eas-cli)"
+  fail "eas CLI not found (install: npm install -g eas-cli)"
 else
   ok "eas CLI installed ($(eas --version 2>/dev/null | head -1))"
 fi

@@ -52,7 +52,7 @@ If the change is breaking, tell the user before proceeding:
 ### Step 1: Regenerate the Client
 
 ```powershell
-pnpm run generate:api
+npm run generate:api
 ```
 
 This reads `specification.json` and writes `services/api/generated/schema.d.ts`.

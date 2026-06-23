@@ -18,20 +18,20 @@ See **[AGENTS.md](./AGENTS.md)** for setup, backend URL, CI, and repo layout.
 1. Install dependencies
 
    ```bash
-   pnpm install
+   npm install
    ```
 
 2. Start the app
 
    ```bash
-   pnpm start
+   npm start
    ```
 
 Use the dev client / simulator options from the Expo CLI:
 
 ```bash
-pnpm run android
-pnpm run ios
+npm run android
+npm run ios
 ```
 
 ## Learn more

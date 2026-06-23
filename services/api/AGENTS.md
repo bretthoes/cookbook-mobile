@@ -15,7 +15,7 @@ OpenAPI-typed HTTP client for SharedCookbook. **Full reference: [`README.md`](./
 ## Regenerate types
 
 ```bash
-pnpm run generate:api
+npm run generate:api
 ```
 
 Reads `../SharedCookbook/src/Web/wwwroot/api/specification.json`, writes `generated/schema.d.ts`.

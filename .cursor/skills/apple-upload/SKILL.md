@@ -47,7 +47,7 @@ Build-only (no submit):
 bash .cursor/skills/apple-upload/scripts/deploy.sh --build-only
 ```
 
-**Terminal without agent:** `pnpm deploy:ios:prod` (same script; pass flags after `--`).
+**Terminal without agent:** `npm run deploy:ios:prod` (same script; pass flags after `--`).
 
 ### Reply template (success)
 
@@ -76,7 +76,7 @@ Submit is preconfigured: `ascAppId` in `eas.json`; ASC API key on EAS (`[Expo] E
 
 ## Auto-approval hook
 
-`.cursor/hooks.json` auto-allows the deploy script and related `eas` / `pnpm deploy:ios:prod` commands so the user is not prompted for each step. The agent still requests **`all`** sandbox permissions on the single Shell call.
+`.cursor/hooks.json` auto-allows the deploy script and related `eas` / `npm run deploy:ios:prod` commands so the user is not prompted for each step. The agent still requests **`all`** sandbox permissions on the single Shell call.
 
 ## Troubleshooting (only if deploy fails)
 

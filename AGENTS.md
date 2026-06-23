@@ -16,15 +16,15 @@ Expo (dev client) + React Native app using **expo-router** file-based routing. T
 
 ## Prerequisites
 
-- **Node.js** >= 20 (`package.json` `engines`).
-- **pnpm** — repo uses `packageManager: pnpm@11.x` and `pnpm-lock.yaml`; prefer pnpm over npm for installs.
+- **Node.js** >= 22.13 (`package.json` `engines`).
+- **npm** — repo uses `package-lock.json`; use `npm ci` in CI and `npm install` locally.
 
 ## CI
 
 GitHub Actions (`.github/workflows/ci.yml`) on push/PR to `master` and `dev`:
 
 - GitVersion (`.github/GitVersion.yml`, same branching rules as SharedCookbook)
-- `pnpm test` (Vitest, includes unit tests), `pnpm run lint`, `pnpm run check:i18n` (locale key parity)
+- `npm test` (Vitest, includes unit tests), `npm run lint`, `npm run check:i18n` (locale key parity)
 
 No EAS/release step in CI; store builds stay manual via EAS.
 
@@ -35,21 +35,21 @@ Optional keys via Expo env (local: `.env.local`, CI/TestFlight: [EAS env vars](h
 - `EXPO_PUBLIC_REVENUECAT_API_KEY` — Test Store `test_…` for local dev; or shared fallback
 - `EXPO_PUBLIC_REVENUECAT_API_KEY_IOS` / `_ANDROID` — `appl_…` / `goog_…` for store builds (never `test_…` on TestFlight)
 
-Dashboard: products `monthly` / `yearly`, entitlement `pro`. After upgrading `react-native-purchases`, rebuild the dev client (`pnpm run ios` / `android`).
+Dashboard: products `monthly` / `yearly`, entitlement `pro`. After upgrading `react-native-purchases`, rebuild the dev client (`npm run ios` / `android`).
 
 ## Install and dev server
 
 ```bash
-pnpm install
-pnpm start
+npm install
+npm start
 ```
 
 Use the dev client / simulator options from the Expo CLI. Platform shortcuts:
 
 ```bash
-pnpm run android
-pnpm run ios
-pnpm web
+npm run android
+npm run ios
+npm run web
 ```
 
 ## Backend URL (development)
@@ -68,7 +68,7 @@ For a physical device, you will need a reachable host/IP (not documented here by
 When the backend contract changes, regenerate types from the sibling checkout path:
 
 ```bash
-pnpm run generate:api
+npm run generate:api
 ```
 
 This reads `../SharedCookbook/src/Web/wwwroot/api/specification.json` and writes `services/api/generated/schema.d.ts`. Both repos should live as siblings (e.g. `git/SharedCookbook` and `git/cookbook-mobile`).
@@ -78,10 +78,10 @@ After regeneration, update `services/api/wrappers/*.ts` and `services/api/index.
 ## Lint, test, and format
 
 ```bash
-pnpm test
-pnpm run lint
-pnpm run check:i18n
-pnpm run format:check
+npm test
+npm run lint
+npm run check:i18n
+npm run format:check
 ```
 
 ## Crash reporting (Sentry)
