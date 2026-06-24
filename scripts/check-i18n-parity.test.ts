@@ -46,9 +46,9 @@ describe("i18n locale parity", () => {
       }
     })
 
-    it(`${locale} uses ___ placeholders for untranslated strings`, () => {
+    it(`${locale} has no untranslated ___ placeholders`, () => {
       const placeholders = countPlaceholders(readLocale(locale))
-      expect(placeholders).toBeGreaterThan(0)
+      expect(placeholders).toBe(0)
     })
   }
 })
