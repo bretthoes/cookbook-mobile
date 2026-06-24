@@ -1,8 +1,10 @@
 import { Button } from "@/components/Button"
+import { FormCard } from "@/components/FormCard"
 import { LoadingScreen } from "@/components/LoadingScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
+import { getSpeechRecognitionLocale } from "@/i18n/language"
 import { useImportRecipeFromVoiceMutation } from "@/hooks/queries/useRecipesQuery"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -24,7 +26,7 @@ type Phase = "idle" | "recording" | "review" | "processing"
 
 export default function AddRecipeVoiceScreen() {
   const { themed } = useAppTheme()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const importFromVoice = useImportRecipeFromVoiceMutation()
 
   const [phase, setPhase] = useState<Phase>("idle")
@@ -155,7 +157,7 @@ export default function AddRecipeVoiceScreen() {
 
     updatePhase("recording")
     ExpoSpeechRecognitionModule.start({
-      lang: i18n.language,
+      lang: getSpeechRecognitionLocale(),
       interimResults: true,
       continuous: true,
     })
@@ -240,13 +242,15 @@ export default function AddRecipeVoiceScreen() {
       {isReview ? (
         <View style={themed($reviewSection)}>
           <Text tx="recipeAddVoiceScreen:editTranscript" style={themed($reviewHint)} />
-          <TextField
-            labelTx="recipeAddVoiceScreen:transcriptLabel"
-            value={displayTranscript}
-            onChangeText={updateTranscript}
-            multiline
-            style={themed($transcriptInput)}
-          />
+          <FormCard>
+            <TextField
+              labelTx="recipeAddVoiceScreen:transcriptLabel"
+              value={displayTranscript}
+              onChangeText={updateTranscript}
+              multiline
+              inputWrapperStyle={themed($transcriptInputWrapper)}
+            />
+          </FormCard>
         </View>
       ) : displayTranscript ? (
         <View style={themed($transcriptContainer)}>
@@ -329,9 +333,8 @@ const $reviewHint: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
 })
 
-const $transcriptInput: ThemedStyle<TextStyle> = () => ({
+const $transcriptInputWrapper: ThemedStyle<ViewStyle> = () => ({
   minHeight: 160,
-  textAlignVertical: "top",
 })
 
 const $ring: ViewStyle = {

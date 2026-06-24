@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import * as Localization from "expo-localization"
 import i18n, { changeLanguage } from "i18next"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 
@@ -26,6 +27,24 @@ export function normalizeLanguageCode(
 
 export function getActiveLanguageCode(): SupportedLanguageCode {
   return normalizeLanguageCode(i18n.language) ?? "en"
+}
+
+const defaultSpeechLocales: Record<SupportedLanguageCode, string> = {
+  en: "en-US",
+  fr: "fr-FR",
+  ko: "ko-KR",
+}
+
+/** BCP 47 tag for expo-speech-recognition (requires region, e.g. en-US not en). */
+export function getSpeechRecognitionLocale(): string {
+  const appCode = getActiveLanguageCode()
+  const deviceTag = Localization.getLocales()[0]?.languageTag
+
+  if (deviceTag && normalizeLanguageCode(deviceTag) === appCode) {
+    return deviceTag
+  }
+
+  return defaultSpeechLocales[appCode]
 }
 
 export async function getStoredLanguageCode(): Promise<SupportedLanguageCode | null> {
