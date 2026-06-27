@@ -33,7 +33,7 @@ export function CookbookCard({ cookbook, isDark }: CookbookCardProps) {
     router.push(`/(logged-in)/cookbook/${cookbook.id}`)
   }
 
-  const $themedItem = themed($item)
+  const $themedItem = [themed($item), themed($outline)]
   const $themedItemThumbnail = themed($itemThumbnail)
   const $themedMetadata = themed($metadata)
   const $themedMetadataText = themed($metadataText)
@@ -97,4 +97,13 @@ const $metadataText: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
   marginEnd: theme.spacing.md,
   marginBottom: theme.spacing.xs,
+})
+
+const $outline: ThemedStyle<ViewStyle> = (theme) => ({
+  shadowOpacity: 0,
+  shadowRadius: 0,
+  shadowOffset: { width: 0, height: 0 },
+  elevation: 0,
+  borderWidth: 1,
+  borderColor: theme.colors.separator,
 })
