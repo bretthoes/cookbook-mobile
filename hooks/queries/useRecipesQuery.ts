@@ -213,3 +213,25 @@ export function useImportRecipeFromImageMutation() {
     },
   })
 }
+
+export function useApplyRecipeEditFromPromptMutation() {
+  const incrementImportCount = useUiStore((s) => s.incrementImportCount)
+  return useMutation({
+    mutationFn: async ({
+      recipeId,
+      prompt,
+      recipe,
+    }: {
+      recipeId: string
+      prompt: string
+      recipe: import("@/types/recipe").RecipeSnapshotIn
+    }) => {
+      const response = await api.applyRecipeEditFromPrompt(recipeId, prompt, recipe)
+      if (response.kind === "ok") {
+        incrementImportCount()
+        return { ok: true as const, recipe: response.recipe }
+      }
+      return { ok: false as const, kind: response.kind as RecipeImportFailureKind }
+    },
+  })
+}

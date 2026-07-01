@@ -225,6 +225,14 @@ export class Api {
     return recipeWrappers.extractRecipeFromImage(image)
   }
 
+  async applyRecipeEditFromPrompt(
+    recipeId: string,
+    prompt: string,
+    recipe: RecipeSnapshotIn,
+  ): Promise<{ kind: "ok"; recipe: RecipeSnapshotIn } | GeneralApiProblem> {
+    return recipeWrappers.applyRecipeEditFromPrompt(recipeId, prompt, recipe)
+  }
+
   /**
    * Gets the current user's email.
    */

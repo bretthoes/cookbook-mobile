@@ -162,6 +162,25 @@ export async function extractRecipeFromVoice(
   }
 }
 
+export async function applyRecipeEditFromPrompt(
+  recipeId: string,
+  prompt: string,
+  recipe: RecipeSnapshotIn,
+): Promise<ApiResult<{ recipe: RecipeSnapshotIn }>> {
+  try {
+    const { data, error, response } = await client.POST("/api/Recipes/{id}/apply-prompt", {
+      params: { path: { id: recipeId } },
+      body: { prompt, recipe },
+    })
+    if (!response.ok)
+      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    if (!data) return { kind: "not-found" }
+    return toOkResult({ recipe: data as RecipeSnapshotIn })
+  } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
 export async function extractRecipeFromSocialUrl(
   url: string,
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {

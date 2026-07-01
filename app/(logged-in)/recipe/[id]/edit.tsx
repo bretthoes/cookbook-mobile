@@ -1,82 +1,128 @@
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { RecipeForm, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
+import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/Recipe/RecipeAiEditDialog"
+import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { translate } from "@/i18n"
-import { useRecipeQuery, useUpdateRecipeMutation } from "@/hooks/queries/useRecipesQuery"
+import {
+  useApplyRecipeEditFromPromptMutation,
+  useRecipeQuery,
+  useUpdateRecipeMutation,
+} from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useSubscriptionStore } from "@/stores/subscriptionStore"
+import { getCurrentWeekKey, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
 import type { RecipeSnapshotIn } from "@/types/recipe"
+import {
+  formInputsToRecipeSnapshotIn,
+  recipeLikeToFormInputs,
+  updateDtoToFormInputs,
+} from "@/utils/recipeFormMappers"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 import { router, useLocalSearchParams } from "expo-router"
-import React from "react"
+import React, { useCallback, useMemo, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
+import { View, ViewStyle } from "react-native"
 
 export default function EditRecipe() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const recipeId = id ?? ""
+  const { t } = useTranslation()
   const { data: selected } = useRecipeQuery(recipeId)
   const updateRecipe = useUpdateRecipeMutation()
+  const applyAiEdit = useApplyRecipeEditFromPromptMutation()
   const { selected: cookbook } = useSelectedCookbook()
 
-  const mapRecipeToFormInputs = (): RecipeFormInputs | null => {
+  const isPro = useSubscriptionStore((s) => s.isPro)
+  const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
+  const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
+
+  const formRef = useRef<RecipeFormHandle | null>(null)
+  const [formKey, setFormKey] = useState(0)
+  const [appliedFormValues, setAppliedFormValues] = useState<RecipeFormInputs | null>(null)
+  const [dialogVisible, setDialogVisible] = useState(false)
+  const [aiErrorMsg, setAiErrorMsg] = useState("")
+
+  const currentWeek = getCurrentWeekKey()
+  const effectiveImportCount = weeklyImportWeekStart === currentWeek ? weeklyImportCount : 0
+  const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
+
+  const mapRecipeToFormInputs = useCallback((): RecipeFormInputs | null => {
     if (!selected) return null
-    return {
-      title: selected.title,
-      summary: selected.summary ?? null,
-      preparationTimeInMinutes: selected.preparationTimeInMinutes ?? null,
-      cookingTimeInMinutes: selected.cookingTimeInMinutes ?? null,
-      bakingTimeInMinutes: selected.bakingTimeInMinutes ?? null,
-      servings: selected.servings ?? null,
-      ingredientSections:
-        selected.ingredientSections?.map((section) => ({
-          title: section.title ?? "",
-          ingredients: (section.ingredients ?? []).map((ingredient) => ({
-            name: ingredient.name ?? "",
-            optional: ingredient.optional ?? null,
-          })),
-        })) ?? [],
-      directions:
-        selected.directions?.map((direction) => ({
-          text: direction.text ?? "",
-          image: direction.image ?? null,
-        })) ?? [],
-      images: selected.images?.map((image) => image.name ?? "") ?? [],
-      isVegetarian: selected.isVegetarian ?? null,
-      isVegan: selected.isVegan ?? null,
-      isGlutenFree: selected.isGlutenFree ?? null,
-      isDairyFree: selected.isDairyFree ?? null,
-      isCheap: selected.isCheap ?? null,
-      isHealthy: selected.isHealthy ?? null,
-      isLowFodmap: selected.isLowFodmap ?? null,
-      isHighProtein: selected.isHighProtein ?? null,
-      isBreakfast: selected.isBreakfast ?? null,
-      isLunch: selected.isLunch ?? null,
-      isDinner: selected.isDinner ?? null,
-      isDessert: selected.isDessert ?? null,
-      isSnack: selected.isSnack ?? null,
+    return recipeLikeToFormInputs(selected)
+  }, [selected])
+
+  const resolveFormValues = useMemo(
+    () => appliedFormValues ?? mapRecipeToFormInputs() ?? undefined,
+    [appliedFormValues, mapRecipeToFormInputs],
+  )
+
+  const handleFabPress = useCallback(() => {
+    if (isAtLimit) {
+      router.push("/(logged-in)/recipe/paywall")
+      return
     }
-  }
+    setAiErrorMsg("")
+    setDialogVisible(true)
+  }, [isAtLimit])
+
+  const handleApplyAiEdit = useCallback(
+    async (prompt: string) => {
+      if (!selected) return
+
+      setAiErrorMsg("")
+      const formValues = formRef.current?.getValues() ?? resolveFormValues
+      if (!formValues) return
+
+      const recipePayload = formInputsToRecipeSnapshotIn(formValues, selected)
+
+      const result = await applyAiEdit.mutateAsync({
+        recipeId: selected.id,
+        prompt,
+        recipe: recipePayload,
+      })
+
+      if (result.ok) {
+        setAppliedFormValues(updateDtoToFormInputs(result.recipe as RecipeSnapshotIn))
+        setFormKey((k) => k + 1)
+        setDialogVisible(false)
+        return
+      }
+
+      if (result.kind === "rate-limited") {
+        setAiErrorMsg(t("recipeAiEditDialog:rateLimited"))
+      } else {
+        setAiErrorMsg(t("recipeAiEditDialog:parseFailed"))
+      }
+    },
+    [applyAiEdit, resolveFormValues, selected, t],
+  )
 
   const onPressSend = async (formData: RecipeFormInputs) => {
     const updatedRecipe: RecipeSnapshotIn = {
       id: selected?.id ?? "",
       title: formData.title?.trim() ?? "",
       summary: formData.summary?.trim() ?? "",
-      thumbnail: null,
-      videoPath: null,
+      thumbnail: selected?.thumbnail ?? null,
+      videoPath: selected?.videoPath ?? null,
       preparationTimeInMinutes: formData.preparationTimeInMinutes,
       cookingTimeInMinutes: formData.cookingTimeInMinutes,
       bakingTimeInMinutes: formData.bakingTimeInMinutes,
       servings: formData.servings,
       author: selected?.author,
-      directions: formData.directions.map((direction, index) => ({
-        text: direction.text?.trim() ?? "",
-        ordinal: index + 1,
-        image: direction.image || null,
-      })),
+      directions: formData.directions
+        .filter((direction) => direction.text?.trim())
+        .map((direction, index) => ({
+          text: direction.text.trim(),
+          ordinal: index + 1,
+          image: direction.image || null,
+        })),
       ingredientSections: formDataToIngredientSectionsSnapshot(formData),
-      images: formData.images.map((name, index) => ({
-        name: (name?.trim() ?? ""),
-        ordinal: index + 1,
-      })),
+      images: formData.images
+        .filter((image) => image?.trim())
+        .map((image, index) => ({
+          name: image.trim(),
+          ordinal: index + 1,
+        })),
       isVegetarian: formData.isVegetarian ?? null,
       isVegan: formData.isVegan ?? null,
       isGlutenFree: formData.isGlutenFree ?? null,
@@ -108,13 +154,30 @@ export default function EditRecipe() {
   if (!selected) return <ItemNotFound message={translate("recipeEditScreen:notFound")} />
 
   return (
-    <Screen preset="scroll">
-      <RecipeForm
-        onSubmit={onPressSend}
-        onError={onError}
-        formValues={mapRecipeToFormInputs() ?? undefined}
-        isEdit={true}
+    <View style={$screenRoot}>
+      <Screen preset="scroll">
+        <RecipeForm
+          key={formKey}
+          onSubmit={onPressSend}
+          onError={onError}
+          formValues={resolveFormValues}
+          isEdit={true}
+          formRef={formRef}
+        />
+      </Screen>
+
+      <RecipeAiEditFab onPress={handleFabPress} showLock={isAtLimit} />
+      <RecipeAiEditDialog
+        visible={dialogVisible}
+        isLoading={applyAiEdit.isPending}
+        errorMsg={aiErrorMsg}
+        onDismiss={() => setDialogVisible(false)}
+        onApply={handleApplyAiEdit}
       />
-    </Screen>
+    </View>
   )
+}
+
+const $screenRoot: ViewStyle = {
+  flex: 1,
 }

@@ -308,6 +308,22 @@ export interface paths {
     patch?: never
     trace?: never
   }
+  "/api/Recipes/{id}/apply-prompt": {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: operations["RecipesApplyEditFromPrompt"]
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
   "/api/Subscriptions/status": {
     parameters: {
       query?: never
@@ -580,7 +596,7 @@ export interface components {
       hasNextPage?: boolean
     }
     CookbookBriefDto: {
-      /** Format: uuid */
+      /** Format: guid */
       id: string
       title: string
       image?: string | null
@@ -612,7 +628,7 @@ export interface components {
       image?: string | null
     }
     UpdateCookbookCommand: {
-      /** Format: uuid */
+      /** Format: guid */
       id?: string
       title?: string | null
       image?: string | null
@@ -629,9 +645,9 @@ export interface components {
       hasNextPage?: boolean
     }
     InvitationDto: {
-      /** Format: uuid */
+      /** Format: guid */
       id?: string
-      /** Format: uuid */
+      /** Format: guid */
       cookbookId?: string | null
       senderName?: string | null
       cookbookTitle: string
@@ -642,12 +658,12 @@ export interface components {
     /** @enum {integer} */
     InvitationStatus: 0 | 1 | 2 | 3 | 4 | 5
     CreateInvitationCommand: {
-      /** Format: uuid */
+      /** Format: guid */
       cookbookId?: string
       email?: string
     }
     UpdateInvitationCommand: {
-      /** Format: uuid */
+      /** Format: guid */
       id?: string
       newStatus?: components["schemas"]["InvitationStatus"]
     }
@@ -655,7 +671,7 @@ export interface components {
       token?: string
     }
     CreateInvitationTokenCommand: {
-      /** Format: uuid */
+      /** Format: guid */
       cookbookId?: string
     }
     UpdateInvitationTokenCommand: {
@@ -663,7 +679,7 @@ export interface components {
       newStatus?: components["schemas"]["InvitationStatus"]
     }
     MembershipDto: {
-      /** Format: uuid */
+      /** Format: guid */
       id?: string
       name?: string | null
       tier: components["schemas"]["MembershipTier"]
@@ -682,20 +698,20 @@ export interface components {
       hasNextPage?: boolean
     }
     UpdateMembershipCommand: {
-      /** Format: uuid */
+      /** Format: guid */
       id?: string
       tier?: components["schemas"]["MembershipTier"]
     }
     NotificationDto: {
-      /** Format: uuid */
+      /** Format: guid */
       id: string
       actionType: components["schemas"]["CookbookNotificationActionType"]
       /** Format: date-time */
       created: string
-      /** Format: uuid */
+      /** Format: guid */
       cookbookId: string
       cookbookTitle: string
-      /** Format: uuid */
+      /** Format: guid */
       recipeId?: string | null
       recipeTitle?: string | null
       actorDisplayName?: string | null
@@ -716,7 +732,7 @@ export interface components {
       hasNextPage?: boolean
     }
     RecipeDetailedDto: {
-      /** Format: uuid */
+      /** Format: guid */
       id: string
       title: string
       author?: string | null
@@ -786,7 +802,7 @@ export interface components {
       hasNextPage?: boolean
     }
     RecipeBriefDto: {
-      /** Format: uuid */
+      /** Format: guid */
       id: string
       title: string
       isVegetarian?: boolean | null
@@ -807,7 +823,7 @@ export interface components {
       recipe: components["schemas"]["CreateRecipeDto"]
     }
     CreateRecipeDto: components["schemas"]["RecipeDto"] & {
-      /** Format: uuid */
+      /** Format: guid */
       cookbookId: string
     }
     RecipeDto: {
@@ -844,7 +860,7 @@ export interface components {
       recipe?: components["schemas"]["UpdateRecipeDto"]
     }
     UpdateRecipeDto: components["schemas"]["RecipeDto"] & {
-      /** Format: uuid */
+      /** Format: guid */
       id: string
     }
     ParseRecipeFromUrlCommand: {
@@ -853,6 +869,10 @@ export interface components {
     }
     ParseRecipeFromVoiceCommand: {
       transcript?: string
+    }
+    ApplyRecipeEditFromPromptRequest: {
+      prompt?: string
+      recipe?: components["schemas"]["UpdateRecipeDto"]
     }
     SubscriptionStatusDto: {
       isPro?: boolean
@@ -1302,7 +1322,6 @@ export interface operations {
           [name: string]: unknown
         }
         content: {
-          /** Format: int32 */
           "application/json": number
         }
       }
@@ -1752,7 +1771,6 @@ export interface operations {
   MembershipsList: {
     parameters: {
       query: {
-        /** Format: uuid */
         CookbookId: string
         PageNumber: number
         PageSize: number
@@ -2014,7 +2032,6 @@ export interface operations {
   RecipesList: {
     parameters: {
       query: {
-        /** Format: uuid */
         CookbookId: string
         Search?: string | null
         PageNumber?: number
@@ -2277,6 +2294,79 @@ export interface operations {
         }
       }
       401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      429: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+    }
+  }
+  RecipesApplyEditFromPrompt: {
+    parameters: {
+      query?: never
+      header?: never
+      path: {
+        id: string
+      }
+      cookie?: never
+    }
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["ApplyRecipeEditFromPromptRequest"]
+      }
+    }
+    responses: {
+      200: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["UpdateRecipeDto"]
+        }
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
+      }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      403: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      404: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
+      422: {
         headers: {
           [name: string]: unknown
         }
@@ -2803,4 +2893,3 @@ export interface operations {
     }
   }
 }
-
