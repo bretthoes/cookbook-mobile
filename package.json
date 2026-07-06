@@ -17,7 +17,8 @@
     "test:watch": "vitest",
     "check:i18n": "vitest run scripts/check-i18n-parity.test.ts",
     "generate:api": "openapi-typescript ../SharedCookbook/src/Web/wwwroot/api/specification.json -o services/api/generated/schema.d.ts && prettier --write services/api/generated/schema.d.ts",
-    "deploy:ios:prod": "bash .cursor/skills/apple-upload/scripts/deploy.sh"
+    "deploy:ios:prod": "bash .cursor/skills/apple-upload/scripts/deploy.sh",
+    "deploy:android:prod": "bash .cursor/skills/android-upload/scripts/deploy.sh"
   },
   "dependencies": {
     "@expo-google-fonts/playpen-sans": "^0.4.1",

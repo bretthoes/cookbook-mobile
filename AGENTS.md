@@ -26,7 +26,7 @@ GitHub Actions (`.github/workflows/ci.yml`) on push/PR to `master` and `dev`:
 - GitVersion (`.github/GitVersion.yml`, same branching rules as SharedCookbook)
 - `npm test` (Vitest, includes unit tests), `npm run lint`, `npm run check:i18n` (locale key parity)
 
-No EAS/release step in CI; store builds stay manual via EAS.
+No EAS/release step in CI; store builds stay manual via EAS (`npm run deploy:ios:prod`, `npm run deploy:android:prod`).
 
 ## RevenueCat (subscriptions)
 
