@@ -4,16 +4,18 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import React from "react"
-import { TouchableOpacity, View, ViewStyle } from "react-native"
+import { Platform, TouchableOpacity, View, ViewStyle } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Badge } from "./Badge"
 
 export function TabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
   const { themed, theme } = useAppTheme()
+  const { bottom } = useSafeAreaInsets()
   const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
 
   return (
-    <View style={themed($tabBar)}>
+    <View style={[themed($tabBar), { bottom: 12 + (Platform.OS === "android" ? bottom : 0) }]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
         const label =
@@ -90,7 +92,6 @@ export function TabBar(props: BottomTabBarProps) {
 const $tabBar: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   position: "absolute",
-  bottom: 12,
   justifyContent: "space-between",
   alignItems: "center",
   paddingHorizontal: 20,
