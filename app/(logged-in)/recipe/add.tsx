@@ -6,6 +6,7 @@ import { useCreateRecipeMutation } from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useUiStore } from "@/stores/uiStore"
 import type { RecipeToAddSnapshotIn } from "@/types/recipe"
+import { draftItemHasContent } from "@/utils/recipeDraftHelpers"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -21,12 +22,16 @@ export default function AddRecipeScreen() {
   const deleteDraft = useUiStore((s) => s.deleteDraft)
   const getDraftForCookbook = useUiStore((s) => s.getDraftForCookbook)
   const createRecipeMutation = useCreateRecipeMutation()
-  const { selected: selectedCookbook } = useSelectedCookbook()
+  const { selected: selectedCookbook, selectedCookbookId } = useSelectedCookbook()
   const { themed } = useAppTheme()
 
   // Only restore a draft when the user explicitly tapped "Continue Draft"
-  const { continueDraft } = useLocalSearchParams<{ continueDraft?: string }>()
+  const { continueDraft, cookbookId: draftCookbookId } = useLocalSearchParams<{
+    continueDraft?: string
+    cookbookId?: string
+  }>()
   const shouldRestoreDraft = continueDraft === "1"
+  const restoreCookbookId = draftCookbookId ?? selectedCookbookId
 
   // Ref exposing the live form state to unmount cleanup without needing a re-render
   const formRef = useRef<RecipeFormHandle | null>(null)
@@ -50,15 +55,14 @@ export default function AddRecipeScreen() {
     return () => {
       clearRecipeToAdd()
       if (submittedSuccessfullyRef.current) return
-      if (selectedCookbook && formRef.current?.isDirty) {
+      const cookbookId = useUiStore.getState().selectedCookbookId
+      if (cookbookId && formRef.current?.isDirty) {
         // formRef is a plain value ref (not a JSX ref prop), so React never nulls it out.
         // Reading .current in the cleanup intentionally captures the latest form state at unmount.
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        saveDraft(selectedCookbook.id, formRef.current.getValues())
+        saveDraft(cookbookId, formRef.current.getValues())
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [clearRecipeToAdd, saveDraft])
 
   /** Map recipeToAdd (from social/URL/voice imports) to form inputs — takes priority over draft */
   const mapRecipeToAddToFormInputs = (): RecipeFormInputs | null => {
@@ -104,6 +108,10 @@ export default function AddRecipeScreen() {
   const mapDraftToFormInputs = (cookbookId: string): RecipeFormInputs | null => {
     const draft = getDraftForCookbook(cookbookId)
     if (!draft) return null
+    if (!draftItemHasContent(draft)) {
+      deleteDraft(cookbookId)
+      return null
+    }
     return {
       title: draft.title,
       summary: draft.summary ?? null,
@@ -134,15 +142,15 @@ export default function AddRecipeScreen() {
   }
 
   /** Resolve initial form values: recipeToAdd (import) > draft (only when explicitly continuing) > nothing */
-  const resolveFormValues = (): RecipeFormInputs | undefined => {
+  const resolvedFormValues = useMemo((): RecipeFormInputs | undefined => {
     const fromImport = mapRecipeToAddToFormInputs()
     if (fromImport) return fromImport
-    if (shouldRestoreDraft && selectedCookbook) {
-      const fromDraft = mapDraftToFormInputs(selectedCookbook.id)
-      if (fromDraft) return fromDraft
+    if (shouldRestoreDraft && restoreCookbookId) {
+      return mapDraftToFormInputs(restoreCookbookId) ?? undefined
     }
     return undefined
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getDraftForCookbook/deleteDraft are stable; draft reads use restoreCookbookId
+  }, [recipeToAdd, shouldRestoreDraft, restoreCookbookId])
 
   const onPressSend = useCallback(
     async (formData: RecipeFormInputs) => {
@@ -234,7 +242,7 @@ export default function AddRecipeScreen() {
       )}
       <RecipeForm
         onSubmit={onPressSend}
-        formValues={resolveFormValues()}
+        formValues={resolvedFormValues}
         onError={onError}
         formRef={formRef}
       />

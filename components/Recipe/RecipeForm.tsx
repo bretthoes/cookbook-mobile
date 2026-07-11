@@ -25,7 +25,7 @@ import { Ionicons } from "@expo/vector-icons"
 import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
 import * as React from "react"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import {
   ActivityIndicator,
@@ -148,11 +148,19 @@ export function RecipeForm(props: RecipeFormProps) {
     setValue,
     watch,
     getValues,
+    reset,
   } = useForm<RecipeFormInputs>({
     resolver: yupResolver(recipeSchema),
     mode: "onSubmit",
     defaultValues: formValues,
   })
+
+  const lastResetFormValuesRef = useRef(formValues)
+  useEffect(() => {
+    if (formValues === lastResetFormValuesRef.current) return
+    lastResetFormValuesRef.current = formValues
+    reset(formValues)
+  }, [formValues, reset])
 
   // Keep formRef in sync so the parent can read current values and dirty state
   // (including inside useEffect cleanup callbacks on unmount)

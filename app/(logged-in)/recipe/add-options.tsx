@@ -5,7 +5,7 @@ import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import {
-  draftHasContent,
+  draftItemHasContent,
   getCurrentWeekKey,
   useUiStore,
   WEEKLY_IMPORT_LIMIT,
@@ -15,7 +15,7 @@ import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import {
   Image,
@@ -47,6 +47,7 @@ export default function AddRecipeOptionsScreen() {
   const { selected } = useSelectedCookbook()
   const setSelectedById = useUiStore((s) => s.setSelectedCookbookId)
   const drafts = useUiStore((s) => s.drafts)
+  const pruneEmptyDrafts = useUiStore((s) => s.pruneEmptyDrafts)
   const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
   const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
   const isPro = useSubscriptionStore((s) => s.isPro)
@@ -63,6 +64,10 @@ export default function AddRecipeOptionsScreen() {
   const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
   const progressRatio = Math.min(effectiveImportCount / WEEKLY_IMPORT_LIMIT, 1)
 
+  useEffect(() => {
+    pruneEmptyDrafts()
+  }, [pruneEmptyDrafts])
+
   const handlePremiumPress = (action: () => void) => {
     if (isAtLimit) {
       router.push("../recipe/paywall")
@@ -73,7 +78,7 @@ export default function AddRecipeOptionsScreen() {
 
   // Most recently saved draft with real in-progress content — surfaces "Continue Draft"
   const latestDraft = useMemo(() => {
-    const pendingDrafts = drafts.filter((draft) => draftHasContent(draft))
+    const pendingDrafts = drafts.filter((draft) => draftItemHasContent(draft))
     if (pendingDrafts.length === 0) return null
     return pendingDrafts.reduce((latest, d) => {
       const latestTime = new Date(latest.savedAt as string | Date).getTime()
@@ -170,7 +175,10 @@ export default function AddRecipeOptionsScreen() {
       showDraftBadge: true,
       action: () => {
         setSelectedById(latestDraft.cookbookId)
-        router.replace({ pathname: "../recipe/add", params: { continueDraft: "1" } })
+        router.replace({
+          pathname: "../recipe/add",
+          params: { continueDraft: "1", cookbookId: latestDraft.cookbookId },
+        })
       },
     }
 
