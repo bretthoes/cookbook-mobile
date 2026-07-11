@@ -2,10 +2,12 @@
 # One-shot production Android build + Google Play submit for cookbook-mobile.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
-cd "$ROOT"
-
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=env.sh
+source "$SCRIPT_DIR/env.sh"
+
+ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
+cd "$ROOT"
 PULL=0
 BUILD_ONLY=0
 SUBMIT_BUILD_ID=""

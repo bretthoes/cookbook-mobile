@@ -2,7 +2,11 @@
 # Preflight checks before eas build --platform android --profile production
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# shellcheck source=env.sh
+source "$SCRIPT_DIR/env.sh"
+
+ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 cd "$ROOT"
 
 errors=0
