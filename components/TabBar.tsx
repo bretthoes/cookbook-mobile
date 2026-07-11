@@ -12,7 +12,7 @@ function getTabBarBottomOffset(bottom: number) {
   if (Platform.OS === "android") {
     // Gesture nav often reports 0 — keep the original 12px float.
     // 3-button nav reports ~48dp — sit above it without the huge gap.
-    return bottom > 0 ? Math.max(12, bottom - 16) : 12
+    return bottom > 0 ? Math.max(12, bottom - 12) : 12
   }
 
   return 12 + bottom
