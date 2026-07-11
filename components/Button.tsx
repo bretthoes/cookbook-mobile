@@ -1,12 +1,14 @@
-import type { ThemedStyle, ThemedStyleArray } from "@/theme"
+import type { ThemedStyle, ThemedStyleArray, Colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { ComponentType } from "react"
 import {
+  ActivityIndicator,
   Pressable,
   PressableProps,
   PressableStateCallbackType,
   StyleProp,
   TextStyle,
+  View,
   ViewStyle,
 } from "react-native"
 import { $styles } from "../theme"
@@ -81,6 +83,15 @@ export interface ButtonProps extends PressableProps {
    * An optional style override for the disabled state
    */
   disabledStyle?: StyleProp<ViewStyle>
+  /**
+   * Shows a spinner inset on the left without shifting the label.
+   * Implies `disabled`.
+   */
+  loading?: boolean
+  /**
+   * Spinner color when `loading` is true. Defaults to a preset-appropriate color.
+   */
+  loadingIndicatorColor?: string
 }
 
 /**
@@ -112,12 +123,17 @@ export function Button(props: ButtonProps) {
     LeftAccessory,
     disabled,
     disabledStyle: $disabledViewStyleOverride,
+    loading,
+    loadingIndicatorColor,
+    accessibilityState,
     ...rest
   } = props
 
-  const { themed } = useAppTheme()
+  const { themed, theme } = useAppTheme()
 
   const preset: Presets = props.preset ?? "default"
+  const isDisabled = !!disabled || !!loading
+  const spinnerColor = loadingIndicatorColor ?? getLoadingIndicatorColor(preset, theme.colors)
   /**
    * @param {PressableStateCallbackType} root0 - The root object containing the pressed state.
    * @param {boolean} root0.pressed - The pressed state.
@@ -128,7 +144,7 @@ export function Button(props: ButtonProps) {
       themed($viewPresets[preset]),
       $viewStyleOverride,
       !!pressed && themed([$pressedViewPresets[preset], $pressedViewStyleOverride]),
-      !!disabled && $disabledViewStyleOverride,
+      !!isDisabled && $disabledViewStyleOverride,
     ]
   }
   /**
@@ -141,7 +157,8 @@ export function Button(props: ButtonProps) {
       themed($textPresets[preset]),
       $textStyleOverride,
       !!pressed && themed([$pressedTextPresets[preset], $pressedTextStyleOverride]),
-      !!disabled && $disabledTextStyleOverride,
+      !!isDisabled && $disabledTextStyleOverride,
+      !!loading && themed($loadingTextStyle),
     ]
   }
 
@@ -149,14 +166,24 @@ export function Button(props: ButtonProps) {
     <Pressable
       style={$viewStyle}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
+      accessibilityState={{ ...accessibilityState, disabled: isDisabled, busy: !!loading }}
       {...rest}
-      disabled={disabled}
+      disabled={isDisabled}
     >
       {(state) => (
         <>
+          {loading ? (
+            <View style={themed($loadingIndicatorSlot)} pointerEvents="none">
+              <ActivityIndicator color={spinnerColor} size="small" />
+            </View>
+          ) : null}
+
           {!!LeftAccessory && (
-            <LeftAccessory style={$leftAccessoryStyle} pressableState={state} disabled={disabled} />
+            <LeftAccessory
+              style={$leftAccessoryStyle}
+              pressableState={state}
+              disabled={isDisabled}
+            />
           )}
 
           <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)}>
@@ -167,7 +194,7 @@ export function Button(props: ButtonProps) {
             <RightAccessory
               style={$rightAccessoryStyle}
               pressableState={state}
-              disabled={disabled}
+              disabled={isDisabled}
             />
           )}
         </>
@@ -176,7 +203,12 @@ export function Button(props: ButtonProps) {
   )
 }
 
+function getLoadingIndicatorColor(preset: Presets, colors: Colors): string {
+  return preset === "reversed" ? colors.backgroundDim : colors.tint
+}
+
 const $baseViewStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  position: "relative",
   minHeight: 56,
   borderRadius: 4,
   justifyContent: "center",
@@ -184,6 +216,20 @@ const $baseViewStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   paddingVertical: spacing.sm,
   paddingHorizontal: spacing.sm,
   overflow: "hidden",
+})
+
+const $loadingIndicatorSlot: ThemedStyle<ViewStyle> = ({ spacing }) => ({
+  position: "absolute",
+  left: spacing.md,
+  top: 0,
+  bottom: 0,
+  justifyContent: "center",
+  alignItems: "center",
+  width: spacing.lg,
+})
+
+const $loadingTextStyle: ThemedStyle<TextStyle> = () => ({
+  opacity: 0.85,
 })
 
 const $baseTextStyle: ThemedStyle<TextStyle> = ({ typography }) => ({

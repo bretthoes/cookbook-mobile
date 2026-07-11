@@ -181,7 +181,7 @@ export default function Login(_props: void) {
           style={$tapButton}
           preset="reversed"
           onPress={authenticate}
-          disabled={isInFlight}
+          loading={isInFlight}
         />
 
         <Text

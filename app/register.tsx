@@ -22,7 +22,14 @@ import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router, useNavigation } from "expo-router"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { LayoutAnimation, TextInput, TextStyle, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  LayoutAnimation,
+  TextInput,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native"
 
 const TOTAL_STEPS = 5
 const SUCCESS_DELAY_MS = 1000
@@ -346,7 +353,7 @@ export default function Register() {
               style={$tapButton}
               preset="reversed"
               onPress={handlePasswordStepSubmit}
-              disabled={isInFlight}
+              loading={isInFlight}
             />
             <Text
               tx="registerScreen:alreadyHaveAccount"
@@ -371,7 +378,10 @@ export default function Register() {
             {isInFlight && (
               <React.Fragment>
                 <Divider style={{ marginVertical: spacing.xs }} />
-                <Text tx="emailVerificationScreen:verifying" preset="formHelper" />
+                <View style={$verifyingRow}>
+                  <ActivityIndicator color={colors.tint} size="small" />
+                  <Text tx="emailVerificationScreen:verifying" preset="formHelper" />
+                </View>
               </React.Fragment>
             )}
             {errorMessage ? (
@@ -383,7 +393,7 @@ export default function Register() {
               tx="emailVerificationScreen:iveVerified"
               preset="reversed"
               onPress={handleVerify}
-              disabled={isInFlight}
+              loading={isInFlight}
               style={$tapButton}
             />
             <Button
@@ -424,7 +434,7 @@ export default function Register() {
               tx="common:next"
               preset="reversed"
               onPress={handleStep3Continue}
-              disabled={isInFlight}
+              loading={isInFlight}
               style={$tapButton}
             />
           </View>
@@ -461,6 +471,12 @@ const $register: TextStyle = {
 
 const $hint: TextStyle = {
   marginTop: spacing.sm,
+}
+
+const $verifyingRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  gap: spacing.xs,
 }
 
 const $formHelper: ThemedStyle<TextStyle> = (theme) => ({
