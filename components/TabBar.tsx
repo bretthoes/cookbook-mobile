@@ -8,6 +8,16 @@ import { Platform, TouchableOpacity, View, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Badge } from "./Badge"
 
+function getTabBarBottomOffset(bottom: number) {
+  if (Platform.OS === "android") {
+    // Gesture nav often reports 0 — keep the original 12px float.
+    // 3-button nav reports ~48dp — sit above it without the huge gap.
+    return bottom > 0 ? Math.max(12, bottom - 16) : 12
+  }
+
+  return 12 + bottom
+}
+
 export function TabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
   const { themed, theme } = useAppTheme()
@@ -15,7 +25,7 @@ export function TabBar(props: BottomTabBarProps) {
   const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
 
   return (
-    <View style={[themed($tabBar), { bottom: 12 + (Platform.OS === "android" ? bottom : 0) }]}>
+    <View style={[themed($tabBar), { bottom: getTabBarBottomOffset(bottom) }]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
         const label =
@@ -92,6 +102,8 @@ export function TabBar(props: BottomTabBarProps) {
 const $tabBar: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
   position: "absolute",
+  left: 0,
+  right: 0,
   justifyContent: "space-between",
   alignItems: "center",
   paddingHorizontal: 20,
