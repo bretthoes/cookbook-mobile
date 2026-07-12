@@ -1,7 +1,6 @@
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import {
@@ -51,7 +50,6 @@ export default function AddRecipeOptionsScreen() {
   const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
   const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
   const isPro = useSubscriptionStore((s) => s.isPro)
-  const addRecipeFromCamera = useAddRecipeFromCamera()
 
   useHeader({
     leftIcon: "back",
@@ -136,14 +134,13 @@ export default function AddRecipeOptionsScreen() {
         isPremium: true,
         action: () => {
           if (selected) {
-            addRecipeFromCamera()
+            router.replace("../recipe/add-photo")
           } else {
             router.replace({
               pathname: "../select-cookbook",
               params: {
-                nextRoute: "/(logged-in)/(tabs)/recipe/add",
+                nextRoute: "/(logged-in)/recipe/add-photo",
                 action: t("selectCookbookScreen:actionForAddFromCamera"),
-                onSelect: "handleAddRecipeFromCamera",
               },
             })
           }
@@ -183,7 +180,7 @@ export default function AddRecipeOptionsScreen() {
     }
 
     return [...baseOptions, draftOption]
-  }, [t, selected, setSelectedById, addRecipeFromCamera, latestDraft])
+  }, [t, selected, setSelectedById, latestDraft])
 
   const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
   const $themedGrid = useMemo(() => themed($grid), [themed])

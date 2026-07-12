@@ -2,7 +2,6 @@ import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { useAddRecipeFromCamera } from "@/hooks/useAddRecipeFromCamera"
 import { isRTL } from "@/i18n"
 import { useCookbooksList } from "@/hooks/queries/useCookbooksQuery"
 import { useUiStore } from "@/stores/uiStore"
@@ -123,8 +122,7 @@ function CookbookItem({
 export default function SelectCookbookScreen() {
   const { cookbooks, isListPending, refetch } = useCookbooksList()
   const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
-  const params = useLocalSearchParams<{ nextRoute: string; action: string; onSelect?: string }>()
-  const addRecipeFromCamera = useAddRecipeFromCamera()
+  const params = useLocalSearchParams<{ nextRoute: string; action: string }>()
   const { themed } = useAppTheme()
   const [isLoading, setIsLoading] = useState(false)
   const [selectedId, setSelectedId] = useState<string | null>(null)
@@ -163,19 +161,13 @@ export default function SelectCookbookScreen() {
       const singleCookbook = cookbooks[0]
       setSelectedCookbookId(singleCookbook.id)
       setAutoSelecting(true)
-      if (params.onSelect === "handleAddRecipeFromCamera") {
-        addRecipeFromCamera()
-      } else {
-        router.replace(params.nextRoute as any)
-      }
+      router.replace(params.nextRoute as any)
     }
   }, [
     cookbooks,
     isListPending,
     setSelectedCookbookId,
-    params.onSelect,
     params.nextRoute,
-    addRecipeFromCamera,
   ])
 
   const handleItemPress = useCallback(
@@ -185,14 +177,10 @@ export default function SelectCookbookScreen() {
 
       // Navigate after the fade animation completes
       setTimeout(() => {
-        if (params.onSelect === "handleAddRecipeFromCamera") {
-          addRecipeFromCamera()
-        } else {
-          router.push(params.nextRoute as any)
-        }
+        router.push(params.nextRoute as any)
       }, 350)
     },
-    [setSelectedCookbookId, params.onSelect, params.nextRoute, addRecipeFromCamera],
+    [setSelectedCookbookId, params.nextRoute],
   )
 
   if (autoSelecting) {

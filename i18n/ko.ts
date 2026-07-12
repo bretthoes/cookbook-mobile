@@ -540,6 +540,20 @@ const ko: Translations = {
     microphonePermissionDenied: "마이크 접근 권한이 필요합니다. 기기 설정에서 허용해 주세요.",
     unknownError: "문제가 발생했습니다. 다시 시도해 주세요.",
   },
+  recipeAddPhotoScreen: {
+    title: "사진에서 가져오기",
+    subtitle: "가져올 레시피 사진을 선택하세요.",
+    processing: "레시피를 읽는 중",
+    choosePhoto: "사진 선택",
+    errorTitle: "사진을 읽을 수 없습니다",
+    parseFailed:
+      "이 사진으로 레시피를 만들 수 없습니다. 레시피 텍스트가 더 선명한 이미지로 다시 시도해 주세요.",
+    rateLimited: "AI 서비스를 일시적으로 사용할 수 없습니다. 나중에 다시 시도해 주세요.",
+    takePhoto: "사진 촬영",
+    selectFromRoll: "앨범에서 선택",
+    cameraRollPermissionDenied: "사진 앨범 접근 권한이 필요합니다. 기기 설정에서 허용해 주세요.",
+    cameraPermissionDenied: "카메라 접근 권한이 필요합니다. 기기 설정에서 허용해 주세요.",
+  },
   recipeSelectUrlScreen: {
     title: "레시피 추가",
     next: "다음",

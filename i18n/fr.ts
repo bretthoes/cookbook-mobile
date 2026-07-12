@@ -553,6 +553,22 @@ const fr: Translations = {
       "L'accès au microphone est requis. Veuillez l'autoriser dans les paramètres de votre appareil.",
     unknownError: "Une erreur s'est produite. Veuillez réessayer.",
   },
+  recipeAddPhotoScreen: {
+    title: "Importer depuis une photo",
+    subtitle: "Choisissez une photo de recette à importer.",
+    processing: "Lecture de votre recette",
+    choosePhoto: "Choisir une photo",
+    errorTitle: "Impossible de lire cette photo",
+    parseFailed:
+      "Impossible de créer une recette à partir de cette photo. Essayez une image plus nette du texte de la recette.",
+    rateLimited: "Le service IA est temporairement indisponible. Veuillez réessayer plus tard.",
+    takePhoto: "Prendre une photo",
+    selectFromRoll: "Sélectionner depuis la pellicule",
+    cameraRollPermissionDenied:
+      "L'accès à la pellicule est requis. Veuillez l'autoriser dans les paramètres de votre appareil.",
+    cameraPermissionDenied:
+      "L'accès à l'appareil photo est requis. Veuillez l'autoriser dans les paramètres de votre appareil.",
+  },
   recipeSelectUrlScreen: {
     title: "Ajouter une recette",
     next: "Suivant",
