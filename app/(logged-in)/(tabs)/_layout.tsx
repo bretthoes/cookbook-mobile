@@ -1,31 +1,24 @@
+import { AndroidTabBar } from "@/components/AndroidTabBar"
 import { Icon } from "@/components/Icon"
 import { TabBar } from "@/components/TabBar"
 import { translate } from "@/i18n"
 import { colors, spacing, typography } from "@/theme"
 import { Tabs } from "expo-router/tabs"
-import { useState } from "react"
-import { TextStyle, ViewStyle } from "react-native"
+import { Platform, TextStyle, ViewStyle } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+const isIos = Platform.OS === "ios"
 
 export default function Layout() {
   const { bottom } = useSafeAreaInsets()
-  const [useFloatingTabBar, _] = useState(true)
-
-  //useEffect(() => {
-  //  AsyncStorage.getItem("useFloatingTabBar").then((value) => {
-  //    if (value !== null) {
-  //      setUseFloatingTabBar(value === "true")
-  //    }
-  //  })
-  //}, [])
 
   return (
     <Tabs
-      tabBar={useFloatingTabBar ? (props) => <TabBar {...props} /> : undefined}
+      tabBar={(props) => (isIos ? <TabBar {...props} /> : <AndroidTabBar {...props} />)}
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
-        tabBarStyle: useFloatingTabBar ? [$tabBar, { height: bottom + 70 }] : undefined,
+        tabBarStyle: isIos ? [$iosTabBar, { height: bottom + 70 }] : $androidTabBar,
         tabBarActiveTintColor: colors.text,
         tabBarInactiveTintColor: colors.text,
         tabBarLabelStyle: $tabBarLabel,
@@ -70,9 +63,15 @@ export default function Layout() {
   )
 }
 
-const $tabBar: ViewStyle = {
+const $iosTabBar: ViewStyle = {
   backgroundColor: colors.background,
   borderTopColor: colors.transparent,
+}
+
+const $androidTabBar: ViewStyle = {
+  backgroundColor: colors.background,
+  borderTopWidth: 0,
+  elevation: 0,
 }
 
 const $tabBarItem: ViewStyle = {

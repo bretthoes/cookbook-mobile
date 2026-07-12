@@ -5,17 +5,19 @@ import { useAppTheme } from "@/theme/context"
 import { BottomTabBarProps } from "@react-navigation/bottom-tabs"
 import React from "react"
 import { TouchableOpacity, View, ViewStyle } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Badge } from "./Badge"
 
-const FLOATING_TAB_BAR_BOTTOM_OFFSET = 12
+const TAB_BAR_HEIGHT = 56
 
-export function TabBar(props: BottomTabBarProps) {
+export function AndroidTabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
   const { themed, theme } = useAppTheme()
+  const { bottom } = useSafeAreaInsets()
   const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
 
   return (
-    <View style={[themed($tabBar), { bottom: FLOATING_TAB_BAR_BOTTOM_OFFSET }]}>
+    <View style={[themed($tabBar), { paddingBottom: bottom, minHeight: TAB_BAR_HEIGHT + bottom }]}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
         const label =
@@ -31,13 +33,11 @@ export function TabBar(props: BottomTabBarProps) {
         const inactiveColor = theme.colors.textDim
         const activeColor = theme.colors.tint
         const Icon = options.tabBarIcon ? (
-          <View style={{ marginBottom: -6 }}>
-            {options.tabBarIcon({
-              focused: isFocused,
-              color: isFocused ? activeColor : inactiveColor,
-              size: 24,
-            })}
-          </View>
+          options.tabBarIcon({
+            focused: isFocused,
+            color: isFocused ? activeColor : inactiveColor,
+            size: 24,
+          })
         ) : null
 
         const onPress = () => {
@@ -77,6 +77,7 @@ export function TabBar(props: BottomTabBarProps) {
                 size="xs"
                 style={{
                   color: isFocused ? activeColor : inactiveColor,
+                  marginTop: theme.spacing.xxs,
                 }}
                 text={label.toString()}
               />
@@ -91,22 +92,12 @@ export function TabBar(props: BottomTabBarProps) {
 
 const $tabBar: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
-  position: "absolute",
-  left: 0,
-  right: 0,
-  justifyContent: "space-between",
   alignItems: "center",
-  paddingHorizontal: 20,
-  marginHorizontal: 20,
-  paddingVertical: 10,
-  borderRadius: 25,
-  borderCurve: "continuous",
-  shadowColor: theme.colors.text,
-  shadowOffset: { width: 0, height: 10 },
-  shadowOpacity: theme.isDark ? 0.3 : 0.1,
-  shadowRadius: 10,
-  elevation: 10,
-  backgroundColor: theme.colors.backgroundDim,
+  backgroundColor: theme.colors.background,
+  borderTopWidth: 1,
+  borderTopColor: theme.colors.separator,
+  elevation: 8,
+  paddingTop: theme.spacing.xs,
 })
 
 const $tabBarItem: ViewStyle = {

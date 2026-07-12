@@ -13,7 +13,15 @@ import type { CookbookItem } from "@/types/cookbook"
 import { getCookbooksForList } from "@/utils/cookbookList"
 import { useRouter } from "expo-router"
 import { useCallback, useMemo } from "react"
-import { ActivityIndicator, FlatList, ImageStyle, Pressable, View, ViewStyle } from "react-native"
+import {
+  ActivityIndicator,
+  FlatList,
+  ImageStyle,
+  Platform,
+  Pressable,
+  View,
+  ViewStyle,
+} from "react-native"
 import { useTranslation } from "react-i18next"
 
 export default function CookbooksScreen(_props: void) {
@@ -104,7 +112,8 @@ const $screenContentContainer: ViewStyle = {
 
 const $listContentContainer: ViewStyle = {
   paddingHorizontal: spacing.lg,
-  paddingBottom: spacing.xxxl + spacing.xxl,
+  // iOS floating tab bar overlays scroll content; Android bar reserves layout space.
+  paddingBottom: Platform.OS === "ios" ? spacing.xxxl + spacing.xxl : spacing.lg,
 }
 
 const $heading: ViewStyle = {
