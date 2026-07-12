@@ -15,7 +15,8 @@ function getTabBarBottomOffset(bottom: number) {
     return bottom > 0 ? Math.max(12, bottom - 12) : 12
   }
 
-  return 12 + bottom
+  // iOS safe area is already accounted for by tabBarStyle height in _layout.tsx.
+  return 12
 }
 
 export function TabBar(props: BottomTabBarProps) {
