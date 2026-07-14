@@ -36,9 +36,13 @@ export function useSsoAuth(onSuccess: () => void) {
 
   const signInWithGoogle = useCallback(() => {
     return run(async () => {
-      const credential = await googleSignIn()
-      if (!credential) return false
-      return useAuthStore.getState().loginWithGoogle(credential.idToken)
+      const result = await googleSignIn()
+      if (result.status === "cancelled") return false
+      if (result.status === "failed") {
+        useAuthStore.getState().setResult("loginScreen:errors.googleFailed")
+        return false
+      }
+      return useAuthStore.getState().loginWithGoogle(result.idToken)
     })
   }, [run, googleSignIn])
 
