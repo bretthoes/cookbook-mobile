@@ -1,4 +1,5 @@
 import type { RecipeDraftItem } from "@/types/recipeDraft"
+import { hasMeaningfulText } from "@/utils/hasMeaningfulText"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 
 export const WEEKLY_IMPORT_LIMIT = 5
@@ -53,13 +54,15 @@ export function getCurrentWeekKey(): string {
 }
 
 export function draftItemHasContent(draft: DraftContentFields): boolean {
-  if (draft.title?.trim()) return true
-  if (draft.summary?.trim()) return true
-  if (draft.images?.some((img) => img.name?.trim())) return true
-  if (draft.directions?.some((d) => d.text?.trim() || d.image)) return true
+  if (hasMeaningfulText(draft.title)) return true
+  if (hasMeaningfulText(draft.summary)) return true
+  if (draft.images?.some((img) => hasMeaningfulText(img.name))) return true
+  if (draft.directions?.some((d) => hasMeaningfulText(d.text) || !!d.image)) return true
   return (
-    draft.ingredientSections?.some((section) =>
-      section.ingredients?.some((ingredient) => ingredient.name?.trim()),
+    draft.ingredientSections?.some(
+      (section) =>
+        hasMeaningfulText(section.title) ||
+        section.ingredients?.some((ingredient) => hasMeaningfulText(ingredient.name)),
     ) ?? false
   )
 }
@@ -81,20 +84,24 @@ export function buildDraftFieldsFromFormData(formData: DraftFormData): DraftFiel
     { sectionIds: "reset" },
   )
   const validDirections = formData.directions
-    .filter((d) => d.text?.trim() || d.image)
+    .filter((d) => hasMeaningfulText(d.text) || d.image)
     .map((d, idx) => ({
       id: 0,
-      text: d.text?.trim() ?? "",
+      text: hasMeaningfulText(d.text) ? d.text.replace(/\u00A0/g, " ").trim() : "",
       ordinal: idx + 1,
       image: d.image ?? null,
     }))
   const validImages = formData.images
-    .filter((img) => img?.trim())
-    .map((img, idx) => ({ id: 0, name: img.trim(), ordinal: idx + 1 }))
+    .filter((img) => hasMeaningfulText(img))
+    .map((img, idx) => ({ id: 0, name: img.replace(/\u00A0/g, " ").trim(), ordinal: idx + 1 }))
 
   return {
-    title: formData.title,
-    summary: formData.summary ?? null,
+    title: hasMeaningfulText(formData.title)
+      ? formData.title.replace(/\u00A0/g, " ").trim()
+      : "",
+    summary: hasMeaningfulText(formData.summary)
+      ? formData.summary!.replace(/\u00A0/g, " ").trim()
+      : null,
     preparationTimeInMinutes: formData.preparationTimeInMinutes ?? null,
     cookingTimeInMinutes: formData.cookingTimeInMinutes ?? null,
     bakingTimeInMinutes: formData.bakingTimeInMinutes ?? null,

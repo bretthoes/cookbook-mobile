@@ -93,6 +93,17 @@ describe("hasDraftContent", () => {
         ...base,
         ingredientSections: [{ title: "For the sauce", ingredients: [{ name: "", optional: false }] }],
       }),
+    ).toBe(true)
+  })
+
+  it("ignores non-breaking space and other invisible-only text", () => {
+    const base = emptyDraft()
+    expect(hasDraftContent({ ...base, title: "\u00A0" })).toBe(false)
+    expect(
+      hasDraftContent({
+        ...base,
+        ingredientSections: [{ title: "", ingredients: [{ name: "\u00A0", optional: false }] }],
+      }),
     ).toBe(false)
   })
 })
@@ -148,6 +159,6 @@ describe("buildDraftFieldsFromFormData", () => {
 
     const contentFields = buildDraftFieldsFromFormData({ ...emptyDraft(), title: "  Soup  " })
     expect(draftItemHasContent(contentFields)).toBe(true)
-    expect(contentFields.title).toBe("  Soup  ")
+    expect(contentFields.title).toBe("Soup")
   })
 })

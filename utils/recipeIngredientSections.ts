@@ -1,4 +1,5 @@
 import type { IngredientSectionSnapshotIn } from "@/types/recipe"
+import { hasMeaningfulText } from "@/utils/hasMeaningfulText"
 
 /** Matches SharedCookbook.Domain.Entities.Recipe.Constraints */
 export const MAX_INGREDIENT_SECTIONS = 20
@@ -21,24 +22,24 @@ export function formDataToIngredientSectionsSnapshot(
 ): IngredientSectionSnapshotIn[] {
   return formData.ingredientSections
     .map((sec, sIdx) => ({
-      title: (sec.title ?? "").trim(),
+      title: hasMeaningfulText(sec.title) ? sec.title.replace(/\u00A0/g, " ").trim() : "",
       ordinal: sIdx,
       ingredients: sec.ingredients
-        .filter((i) => i.name?.trim())
+        .filter((i) => hasMeaningfulText(i.name))
         .map((i, iIdx) => ({
-          name: i.name.trim(),
+          name: i.name.replace(/\u00A0/g, " ").trim(),
           optional: i.optional ?? false,
           ordinal: iIdx + 1,
         })),
     }))
-    .filter((s) => s.ingredients.length > 0 || s.title.length > 0)
+    .filter((s) => s.ingredients.length > 0 || hasMeaningfulText(s.title))
 }
 
 export function countIngredientsInForm(formData: {
   ingredientSections: IngredientSectionFormRow[]
 }): number {
   return formData.ingredientSections.reduce(
-    (n, sec) => n + sec.ingredients.filter((i) => i.name?.trim()).length,
+    (n, sec) => n + sec.ingredients.filter((i) => hasMeaningfulText(i.name)).length,
     0,
   )
 }

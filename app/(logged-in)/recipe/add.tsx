@@ -6,8 +6,9 @@ import { useCreateRecipeMutation } from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useUiStore } from "@/stores/uiStore"
 import type { RecipeToAddSnapshotIn } from "@/types/recipe"
-import { draftItemHasContent } from "@/utils/recipeDraftHelpers"
+import { draftItemHasContent, hasDraftContent } from "@/utils/recipeDraftHelpers"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
+import { normalizeRouteParam } from "@/utils/routeParams"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
@@ -21,16 +22,18 @@ export default function AddRecipeScreen() {
   const saveDraft = useUiStore((s) => s.saveDraft)
   const deleteDraft = useUiStore((s) => s.deleteDraft)
   const getDraftForCookbook = useUiStore((s) => s.getDraftForCookbook)
+  const drafts = useUiStore((s) => s.drafts)
   const createRecipeMutation = useCreateRecipeMutation()
   const { selected: selectedCookbook, selectedCookbookId } = useSelectedCookbook()
   const { themed } = useAppTheme()
 
   // Only restore a draft when the user explicitly tapped "Continue Draft"
-  const { continueDraft, cookbookId: draftCookbookId } = useLocalSearchParams<{
+  const { continueDraft, cookbookId: rawDraftCookbookId } = useLocalSearchParams<{
     continueDraft?: string
     cookbookId?: string
   }>()
   const shouldRestoreDraft = continueDraft === "1"
+  const draftCookbookId = normalizeRouteParam(rawDraftCookbookId)
   const restoreCookbookId = draftCookbookId ?? selectedCookbookId
 
   // Ref exposing the live form state to unmount cleanup without needing a re-render
@@ -55,19 +58,23 @@ export default function AddRecipeScreen() {
     return () => {
       clearRecipeToAdd()
       if (submittedSuccessfullyRef.current) return
+      const formHandle = formRef.current
       const cookbookId = useUiStore.getState().selectedCookbookId
-      if (cookbookId && formRef.current?.isDirty) {
-        // formRef is a plain value ref (not a JSX ref prop), so React never nulls it out.
-        // Reading .current in the cleanup intentionally captures the latest form state at unmount.
-        saveDraft(cookbookId, formRef.current.getValues())
+      const values = formHandle?.getValues()
+      const dirty = formHandle?.isDirty ?? false
+      if (!cookbookId || !values) return
+      if (hasDraftContent(values)) {
+        saveDraft(cookbookId, values)
+      } else if (dirty || shouldRestoreDraft) {
+        deleteDraft(cookbookId)
       }
     }
-  }, [clearRecipeToAdd, saveDraft])
+  }, [clearRecipeToAdd, deleteDraft, saveDraft, shouldRestoreDraft])
 
   /** Map recipeToAdd (from social/URL/voice imports) to form inputs — takes priority over draft */
   const mapRecipeToAddToFormInputs = (): RecipeFormInputs | null => {
     if (!recipeToAdd) return null
-    return {
+    const mapped: RecipeFormInputs = {
       title: recipeToAdd.title,
       summary: recipeToAdd.summary ?? null,
       preparationTimeInMinutes: recipeToAdd.preparationTimeInMinutes ?? null,
@@ -102,7 +109,17 @@ export default function AddRecipeScreen() {
       isDessert: recipeToAdd.isDessert ?? null,
       isSnack: recipeToAdd.isSnack ?? null,
     }
+    return hasDraftContent(mapped) ? mapped : null
   }
+
+  const defaultIngredientSection = (): RecipeFormInputs["ingredientSections"][number] => ({
+    title: "",
+    ingredients: [
+      { name: "", optional: null },
+      { name: "", optional: null },
+      { name: "", optional: null },
+    ],
+  })
 
   /** Map a saved draft to form inputs */
   const mapDraftToFormInputs = (cookbookId: string): RecipeFormInputs | null => {
@@ -119,11 +136,17 @@ export default function AddRecipeScreen() {
       cookingTimeInMinutes: draft.cookingTimeInMinutes ?? null,
       bakingTimeInMinutes: draft.bakingTimeInMinutes ?? null,
       servings: draft.servings ?? null,
-      ingredientSections: draft.ingredientSections.map((section) => ({
-        title: section.title,
-        ingredients: section.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
-      })),
-      directions: draft.directions.map((d) => ({ text: d.text, image: d.image ?? null })),
+      ingredientSections:
+        draft.ingredientSections.length > 0
+          ? draft.ingredientSections.map((section) => ({
+              title: section.title,
+              ingredients: section.ingredients.map((i) => ({ name: i.name, optional: i.optional })),
+            }))
+          : [defaultIngredientSection()],
+      directions:
+        draft.directions.length > 0
+          ? draft.directions.map((d) => ({ text: d.text, image: d.image ?? null }))
+          : [{ text: "", image: null }],
       images: draft.images.map((img) => img.name),
       isVegetarian: draft.isVegetarian ?? null,
       isVegan: draft.isVegan ?? null,
@@ -149,8 +172,8 @@ export default function AddRecipeScreen() {
       return mapDraftToFormInputs(restoreCookbookId) ?? undefined
     }
     return undefined
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- getDraftForCookbook/deleteDraft are stable; draft reads use restoreCookbookId
-  }, [recipeToAdd, shouldRestoreDraft, restoreCookbookId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getDraftForCookbook/deleteDraft are stable; draft reads use restoreCookbookId + drafts
+  }, [recipeToAdd, shouldRestoreDraft, restoreCookbookId, drafts])
 
   const onPressSend = useCallback(
     async (formData: RecipeFormInputs) => {

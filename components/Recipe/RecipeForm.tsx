@@ -128,7 +128,9 @@ export interface RecipeFormProps {
 }
 
 export function RecipeForm(props: RecipeFormProps) {
-  const { onSubmit, onError, formValues = defaultForm, isEdit = false, formRef } = props
+  const { onSubmit, onError, formValues: formValuesProp, isEdit = false, formRef } = props
+  const formValues = formValuesProp ?? defaultForm
+  const hasExternalFormValues = formValuesProp !== undefined
   const { themed, theme } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
   const [isUploading, setIsUploading] = useState(false)
@@ -157,10 +159,11 @@ export function RecipeForm(props: RecipeFormProps) {
 
   const lastResetFormValuesRef = useRef(formValues)
   useEffect(() => {
+    if (!hasExternalFormValues) return
     if (formValues === lastResetFormValuesRef.current) return
     lastResetFormValuesRef.current = formValues
-    reset(formValues)
-  }, [formValues, reset])
+    reset(formValues, { keepDirty: false })
+  }, [formValues, hasExternalFormValues, reset])
 
   // Keep formRef in sync so the parent can read current values and dirty state
   // (including inside useEffect cleanup callbacks on unmount)
