@@ -16,7 +16,8 @@ import {
 import { ImagePickerAsset } from "expo-image-picker"
 import * as SecureStore from "expo-secure-store"
 
-const SOCIAL_IMPORT_TIMEOUT_MS = 35_000
+/** AI / video recipe imports often exceed the default 10s API client timeout. */
+const RECIPE_AI_IMPORT_TIMEOUT_MS = 35_000
 
 const { client } = apiClientInstance
 
@@ -186,7 +187,7 @@ export async function extractRecipeFromSocialUrl(
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
   const baseUrl = Config.API_URL.replace(/\/api\/?$/, "")
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), SOCIAL_IMPORT_TIMEOUT_MS)
+  const timeoutId = setTimeout(() => controller.abort(), RECIPE_AI_IMPORT_TIMEOUT_MS)
 
   try {
     const accessToken = await SecureStore.getItemAsync("accessToken")
@@ -215,23 +216,40 @@ export async function extractRecipeFromSocialUrl(
 export async function extractRecipeFromImage(
   image: ImagePickerAsset,
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+  const baseUrl = Config.API_URL.replace(/\/api\/?$/, "")
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), RECIPE_AI_IMPORT_TIMEOUT_MS)
+
   try {
     const formData = new FormData()
+    const fileName =
+      image.fileName ??
+      image.uri.split("/").pop()?.split("?")[0] ??
+      "image.jpg"
     formData.append("file", {
       uri: image.uri,
-      name: image.fileName ?? "image.jpg",
+      name: fileName,
       type: image.mimeType ?? "image/jpeg",
     } as unknown as Blob)
 
-    const { data, error, response } = await client.POST("/api/Recipes/parse-recipe-img", {
-      body: formData as never,
-      bodySerializer: (b) => b as FormData,
+    const accessToken = await SecureStore.getItemAsync("accessToken")
+    const response = await fetch(`${baseUrl}/api/Recipes/parse-recipe-img`, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      body: formData,
+      signal: controller.signal,
     })
-    if (!response.ok)
-      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    clearTimeout(timeoutId)
+
+    if (!response.ok) return toProblemFromResponse(response, null)
+    const data = await response.json()
     if (!data) return { kind: "not-found" }
     return toOkResult({ recipe: data as unknown as RecipeToAddSnapshotIn })
   } catch (e) {
+    clearTimeout(timeoutId)
     return toProblemFromError(e)
   }
 }

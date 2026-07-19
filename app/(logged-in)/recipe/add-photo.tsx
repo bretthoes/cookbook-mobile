@@ -11,7 +11,7 @@ import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@/hooks/useActionSheet"
 import * as ImagePicker from "expo-image-picker"
 import { router } from "expo-router"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Image, TextStyle, View, ViewStyle, type ImageStyle } from "react-native"
 
@@ -26,7 +26,6 @@ export default function AddRecipePhotoScreen() {
   const [phase, setPhase] = useState<Phase>("idle")
   const [errorMsg, setErrorMsg] = useState("")
   const [previewUri, setPreviewUri] = useState<string | null>(null)
-  const hasAutoLaunchedPicker = useRef(false)
 
   useHeader({
     leftIcon: "back",
@@ -52,6 +51,8 @@ export default function AddRecipePhotoScreen() {
 
       if (importResult.kind === "rate-limited") {
         setErrorMsg(t("recipeAddPhotoScreen:rateLimited"))
+      } else if (importResult.kind === "timeout") {
+        setErrorMsg(t("errors:timeout"))
       } else {
         setErrorMsg(t("recipeAddPhotoScreen:parseFailed"))
       }
@@ -104,13 +105,7 @@ export default function AddRecipePhotoScreen() {
     })
   }, [processPickedAsset, showActionSheetWithOptions, t])
 
-  useEffect(() => {
-    if (hasAutoLaunchedPicker.current) return
-    hasAutoLaunchedPicker.current = true
-    void launchPicker()
-  }, [launchPicker])
-
-  const handleTryAgain = useCallback(() => {
+  const handleChoosePhoto = useCallback(() => {
     setErrorMsg("")
     setPreviewUri(null)
     setPhase("idle")
@@ -121,7 +116,7 @@ export default function AddRecipePhotoScreen() {
     return (
       <LoadingScreen
         text={t("recipeAddPhotoScreen:processing")}
-        estimatedDurationMs={15_000}
+        estimatedDurationMs={25_000}
       />
     )
   }
@@ -149,7 +144,7 @@ export default function AddRecipePhotoScreen() {
         tx="recipeAddPhotoScreen:choosePhoto"
         preset="filled"
         style={themed($actionButton)}
-        onPress={handleTryAgain}
+        onPress={handleChoosePhoto}
       />
     </Screen>
   )
