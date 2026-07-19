@@ -13,7 +13,9 @@
       "icon": "./assets/images/app-icon-all.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
-      "associatedDomains": ["applinks:sharedcookbook.com"],
+      "associatedDomains": [
+        "applinks:sharedcookbook.com"
+      ],
       "infoPlist": {
         "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera to take photos.",
         "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos to select images.",
@@ -49,7 +51,10 @@
               "pathPrefix": "/invite"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         },
         {
           "action": "VIEW",
@@ -61,7 +66,10 @@
               "pathPrefix": "/i"
             }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ],
       "adaptiveIcon": {
@@ -165,7 +173,8 @@
           "organization": "sharedcookbook",
           "project": "react-native"
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true,

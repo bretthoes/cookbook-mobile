@@ -86,7 +86,6 @@ export default function AddRecipePhotoScreen() {
         }
 
         const result = await ImagePicker.launchCameraAsync({
-          allowsEditing: true,
           mediaTypes: ["images"],
         })
         if (!result.canceled && result.assets?.length) {
@@ -96,7 +95,6 @@ export default function AddRecipePhotoScreen() {
         const result = await ImagePicker.launchImageLibraryAsync({
           mediaTypes: ["images"],
           allowsMultipleSelection: false,
-          allowsEditing: true,
         })
         if (!result.canceled && result.assets?.length) {
           await processPickedAsset(result.assets[0])
