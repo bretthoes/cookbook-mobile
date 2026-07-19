@@ -112,6 +112,14 @@ export default function AddRecipeScreen() {
     return hasDraftContent(mapped) ? mapped : null
   }
 
+  useEffect(() => {
+    if (!recipeToAdd) return
+    if (mapRecipeToAddToFormInputs()) return
+    clearRecipeToAdd()
+    router.replace("/(logged-in)/recipe/add-options")
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- redirect when import payload has no saveable content
+  }, [recipeToAdd, clearRecipeToAdd])
+
   const defaultIngredientSection = (): RecipeFormInputs["ingredientSections"][number] => ({
     title: "",
     ingredients: [

@@ -53,18 +53,32 @@ export function getCurrentWeekKey(): string {
   return monday.toISOString().split("T")[0]
 }
 
+/** Backend/AI placeholder when no recipe name is found — not user draft content. */
+export function isPlaceholderDraftTitle(title?: string | null): boolean {
+  if (!hasMeaningfulText(title)) return true
+  return title!.replace(/\u00A0/g, " ").trim().toLowerCase() === "untitled recipe"
+}
+
 export function draftItemHasContent(draft: DraftContentFields): boolean {
-  if (hasMeaningfulText(draft.title)) return true
   if (hasMeaningfulText(draft.summary)) return true
   if (draft.images?.some((img) => hasMeaningfulText(img.name))) return true
-  if (draft.directions?.some((d) => hasMeaningfulText(d.text) || !!d.image)) return true
-  return (
+  if (
+    draft.directions?.some(
+      (d) => hasMeaningfulText(d.text) || hasMeaningfulText(d.image),
+    )
+  ) {
+    return true
+  }
+  if (
     draft.ingredientSections?.some(
       (section) =>
         hasMeaningfulText(section.title) ||
         section.ingredients?.some((ingredient) => hasMeaningfulText(ingredient.name)),
-    ) ?? false
-  )
+    )
+  ) {
+    return true
+  }
+  return hasMeaningfulText(draft.title) && !isPlaceholderDraftTitle(draft.title)
 }
 
 export function hasDraftContent(formData: DraftFormData): boolean {
@@ -84,7 +98,7 @@ export function buildDraftFieldsFromFormData(formData: DraftFormData): DraftFiel
     { sectionIds: "reset" },
   )
   const validDirections = formData.directions
-    .filter((d) => hasMeaningfulText(d.text) || d.image)
+    .filter((d) => hasMeaningfulText(d.text) || hasMeaningfulText(d.image))
     .map((d, idx) => ({
       id: 0,
       text: hasMeaningfulText(d.text) ? d.text.replace(/\u00A0/g, " ").trim() : "",

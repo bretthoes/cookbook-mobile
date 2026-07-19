@@ -86,6 +86,26 @@ describe("hasDraftContent", () => {
     expect(hasDraftContent({ ...base, isVegetarian: true, servings: 4 })).toBe(false)
   })
 
+  it("ignores import placeholder title without other recipe content", () => {
+    const base = emptyDraft()
+    expect(hasDraftContent({ ...base, title: "Untitled Recipe" })).toBe(false)
+    expect(hasDraftContent({ ...base, title: "untitled recipe" })).toBe(false)
+    expect(
+      hasDraftContent({
+        ...base,
+        title: "Untitled Recipe",
+        directions: [{ text: "Mix and bake", image: null }],
+      }),
+    ).toBe(true)
+  })
+
+  it("ignores whitespace-only direction images", () => {
+    const base = emptyDraft()
+    expect(
+      hasDraftContent({ ...base, directions: [{ text: "", image: "   " }] }),
+    ).toBe(false)
+  })
+
   it("ignores section title without ingredients", () => {
     const base = emptyDraft()
     expect(
