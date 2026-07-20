@@ -21,7 +21,7 @@ const welcomeLogo = require("../assets/images/logo.png")
 // @mst replace-next-line export default function WelcomeScreen() {
 export default function WelcomeScreen() {
   const isAuthenticated = useIsAuthenticated()
-  const { themed } = useAppTheme()
+  const { themed, theme } = useAppTheme()
   const { width: winWidth, height: winHeight } = useWindowDimensions()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
   const router = useRouter()
@@ -73,6 +73,7 @@ export default function WelcomeScreen() {
           height={logoSize.height}
           duration={1200}
           delay={250}
+          tintColor={theme.colors.text}
         />
       </View>
 

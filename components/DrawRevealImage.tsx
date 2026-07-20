@@ -16,6 +16,8 @@ export interface DrawRevealImageProps {
   /** Delay before the reveal starts in ms */
   delay?: number
   resizeMode?: ImageProps["resizeMode"]
+  /** Recolors monochrome artwork (e.g. logo.png) for light/dark backgrounds */
+  tintColor?: string
 }
 
 /**
@@ -29,6 +31,7 @@ export function DrawRevealImage({
   duration = 1400,
   delay = 200,
   resizeMode = "contain",
+  tintColor,
 }: DrawRevealImageProps) {
   const progress = useSharedValue(0)
 
@@ -47,7 +50,7 @@ export function DrawRevealImage({
     width: progress.value * width,
   }))
 
-  const imageStyle: ImageStyle = { width, height }
+  const imageStyle: ImageStyle = { width, height, tintColor }
 
   return (
     <Animated.View style={[$clipContainer, { height }, $clip]}>
