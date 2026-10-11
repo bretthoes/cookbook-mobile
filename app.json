@@ -13,6 +13,7 @@
       "icon": "./assets/images/app-icon-all.png",
       "supportsTablet": true,
       "bundleIdentifier": "com.cookbookmobile",
+      "usesAppleSignIn": true,
       "associatedDomains": [
         "applinks:sharedcookbook.com"
       ],
@@ -118,6 +119,7 @@
       "expo-font",
       "expo-router",
       "expo-secure-store",
+      "expo-apple-authentication",
       "expo-router",
       [
         "expo-splash-screen",

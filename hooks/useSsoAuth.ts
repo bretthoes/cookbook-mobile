@@ -28,9 +28,14 @@ export function useSsoAuth(onSuccess: () => void) {
 
   const signInWithApple = useCallback(() => {
     return run(async () => {
-      const credential = await appleSignIn()
-      if (!credential) return false
-      return useAuthStore.getState().loginWithApple(credential.identityToken)
+      const result = await appleSignIn()
+      if (result.status === "cancelled") return false
+      if (result.status !== "success") {
+        useAuthStore.getState().setResult("loginScreen:errors.appleFailed")
+        return false
+      }
+      if (result.email) useAuthStore.getState().setAuthEmail(result.email)
+      return useAuthStore.getState().loginWithApple(result.identityToken)
     })
   }, [run, appleSignIn])
 

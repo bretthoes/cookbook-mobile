@@ -35,6 +35,27 @@ async function writeSessionTokens(
   await SecureStore.setItemAsync("refreshToken", authResult.refreshToken)
 }
 
+async function persistAuthEmail(email: string, set: (patch: Partial<AuthState>) => void) {
+  const authEmail = email.replace(/ /g, "")
+  if (!authEmail) return
+  set({
+    authEmail,
+    userId: authEmail.trim().toLowerCase(),
+  })
+  await SecureStore.setItemAsync("email", authEmail)
+}
+
+/** Apple omits email after the first authorization, so load it from the account when needed. */
+async function ensureAuthEmail(get: () => AuthState, set: (patch: Partial<AuthState>) => void) {
+  const existing = get().authEmail.trim()
+  if (existing) {
+    await SecureStore.setItemAsync("email", existing)
+    return
+  }
+  const response = await api.getEmail()
+  if (response.kind === "ok") await persistAuthEmail(response.email, set)
+}
+
 export interface AuthState {
   authToken?: string
   userId?: string
@@ -60,6 +81,7 @@ export interface AuthState {
   loginWithGoogle: (idToken: string) => Promise<boolean>
   loginWithApple: (identityToken: string) => Promise<boolean>
   loginWithFacebook: (accessToken: string) => Promise<boolean>
+  deleteAccount: () => Promise<boolean>
   resetPassword: (resetCode: string, password: string) => Promise<void>
   update: () => Promise<void>
   saveTokens: (authResult: AuthResultSnapshotIn) => Promise<void>
@@ -231,6 +253,7 @@ export const useAuthStore = create<AuthState>()(
           return false
         }
         await writeSessionTokens(get().authEmail, response.authResult, set)
+        await ensureAuthEmail(get, set)
         return true
       },
 
@@ -243,6 +266,7 @@ export const useAuthStore = create<AuthState>()(
           return false
         }
         await writeSessionTokens(get().authEmail, response.authResult, set)
+        await ensureAuthEmail(get, set)
         return true
       },
 
@@ -255,6 +279,18 @@ export const useAuthStore = create<AuthState>()(
           return false
         }
         await writeSessionTokens(get().authEmail, response.authResult, set)
+        await ensureAuthEmail(get, set)
+        return true
+      },
+
+      deleteAccount: async () => {
+        const response = await api.deleteAccount()
+        if (response.kind !== "ok") {
+          console.error(`Error deleting account: ${JSON.stringify(response)}`)
+          return false
+        }
+        await get().logout()
+        set({ displayName: "", result: "", submittedSuccessfully: false })
         return true
       },
 

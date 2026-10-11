@@ -4,6 +4,7 @@ import { Icon } from "@/components/Icon"
 import { ListItem } from "@/components/ListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { TextField } from "@/components/TextField"
 import { Switch } from "@/components/Toggle"
 import { SectionCard } from "@/components/SectionCard"
 import Config from "@/config"
@@ -21,11 +22,27 @@ import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Application from "expo-application"
 import { useRouter } from "expo-router"
-import React, { useCallback, useEffect } from "react"
-import { Alert, LayoutAnimation, TextStyle, View, ViewStyle } from "react-native"
+import React, { useCallback, useEffect, useState } from "react"
+import {
+  Alert,
+  KeyboardAvoidingView,
+  LayoutAnimation,
+  Modal,
+  Platform,
+  Pressable,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native"
+
+const DELETE_CONFIRMATION = "DELETE"
 
 export default function ProfileScreen() {
   const logout = useAuthStore((s) => s.logout)
+  const deleteAccount = useAuthStore((s) => s.deleteAccount)
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false)
+  const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false)
+  const [deleteConfirmation, setDeleteConfirmation] = useState("")
   const authEmail = useAuthStore((s) => s.authEmail)
   const userId = useAuthStore((s) => s.userId)
   const email = useMembershipStore((s) => s.email)
@@ -36,8 +53,14 @@ export default function ProfileScreen() {
 
   const router = useRouter()
 
-  const { themed, themeContext, setThemeContextOverride, largeFontEnabled, setLargeFontEnabled } =
-    useAppTheme()
+  const {
+    themed,
+    theme,
+    themeContext,
+    setThemeContextOverride,
+    largeFontEnabled,
+    setLargeFontEnabled,
+  } = useAppTheme()
   const isDark = themeContext === "dark"
 
   // Fetch invitations when the profile tab is focused
@@ -86,6 +109,36 @@ export default function ProfileScreen() {
 
     router.push("/(logged-in)/recipe/paywall")
   }, [router, isPro, refreshSubscription, authEmail, userId])
+
+  const runDeleteAccount = useCallback(async () => {
+    setIsDeletingAccount(true)
+    const deleted = await deleteAccount()
+    if (!deleted) {
+      setIsDeletingAccount(false)
+      Alert.alert(translate("profileScreen:deleteAccountFailed"))
+      return
+    }
+    Alert.alert(
+      translate("profileScreen:deleteAccountDoneTitle"),
+      translate("profileScreen:deleteAccountDoneMessage"),
+    )
+  }, [deleteAccount])
+
+  const confirmDeleteAccount = useCallback(() => {
+    setDeleteConfirmation("")
+    setDeleteConfirmVisible(true)
+  }, [])
+
+  const closeDeleteConfirm = useCallback(() => {
+    if (isDeletingAccount) return
+    setDeleteConfirmVisible(false)
+    setDeleteConfirmation("")
+  }, [isDeletingAccount])
+
+  const submitDeleteAccount = useCallback(() => {
+    if (deleteConfirmation !== DELETE_CONFIRMATION || isDeletingAccount) return
+    void runDeleteAccount()
+  }, [deleteConfirmation, isDeletingAccount, runDeleteAccount])
 
   const $themedRoot = React.useMemo(() => themed($root), [themed])
 
@@ -217,8 +270,67 @@ export default function ProfileScreen() {
         />
       </SectionCard>
       <View style={$buttonContainer}>
-        <Button style={$button} tx="common:logOut" onPress={logout} />
+        <Button style={$button} tx="common:logOut" onPress={logout} disabled={isDeletingAccount} />
+        <Button
+          style={[$button, { borderColor: theme.colors.error }]}
+          textStyle={{ color: theme.colors.error }}
+          tx="profileScreen:deleteAccount"
+          onPress={confirmDeleteAccount}
+          loading={isDeletingAccount}
+        />
       </View>
+      <Modal
+        visible={deleteConfirmVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={closeDeleteConfirm}
+      >
+        <KeyboardAvoidingView
+          behavior={Platform.OS === "ios" ? "padding" : undefined}
+          style={$deleteAvoiding}
+        >
+          <Pressable style={themed($deleteOverlay)} onPress={closeDeleteConfirm}>
+            <Pressable style={themed($deleteDialog)} onPress={(event) => event.stopPropagation()}>
+              <Text
+                preset="subheading"
+                tx="profileScreen:deleteAccountTitle"
+                style={themed($deleteTitle)}
+              />
+              <Text tx="profileScreen:deleteAccountMessage" />
+              <Text
+                tx="profileScreen:deleteAccountTypeToConfirm"
+                txOptions={{ word: DELETE_CONFIRMATION }}
+              />
+              <TextField
+                value={deleteConfirmation}
+                onChangeText={setDeleteConfirmation}
+                placeholderTx="profileScreen:deleteAccountConfirmWord"
+                autoCapitalize="characters"
+                autoCorrect={false}
+                autoComplete="off"
+                onSubmitEditing={submitDeleteAccount}
+                editable={!isDeletingAccount}
+              />
+              <View style={$deleteActions}>
+                <Button
+                  tx="common:cancel"
+                  style={$deleteAction}
+                  onPress={closeDeleteConfirm}
+                  disabled={isDeletingAccount}
+                />
+                <Button
+                  tx="profileScreen:deleteAccountConfirm"
+                  style={[$deleteAction, { borderColor: theme.colors.error }]}
+                  textStyle={{ color: theme.colors.error }}
+                  onPress={submitDeleteAccount}
+                  disabled={deleteConfirmation !== DELETE_CONFIRMATION}
+                  loading={isDeletingAccount}
+                />
+              </View>
+            </Pressable>
+          </Pressable>
+        </KeyboardAvoidingView>
+      </Modal>
       {__DEV__ && (
         <SectionCard headingTx="demoDebugScreen:title">
           <ListItem
@@ -321,3 +433,35 @@ const $root: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
   backgroundColor: theme.colors.background,
 })
+
+const $deleteAvoiding: ViewStyle = {
+  flex: 1,
+}
+
+const $deleteOverlay: ThemedStyle<ViewStyle> = (theme) => ({
+  flex: 1,
+  backgroundColor: "rgba(0,0,0,0.45)",
+  justifyContent: "flex-end",
+  paddingHorizontal: theme.spacing.md,
+})
+
+const $deleteDialog: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.background,
+  borderRadius: theme.spacing.md,
+  padding: theme.spacing.lg,
+  gap: theme.spacing.sm,
+  marginBottom: theme.spacing.lg,
+})
+
+const $deleteTitle: ThemedStyle<TextStyle> = () => ({
+  textAlign: "center",
+})
+
+const $deleteActions: ViewStyle = {
+  flexDirection: "row",
+  gap: spacing.sm,
+}
+
+const $deleteAction: ViewStyle = {
+  flex: 1,
+}

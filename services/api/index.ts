@@ -255,6 +255,13 @@ export class Api {
   }
 
   /**
+   * Permanently deletes the signed-in account.
+   */
+  async deleteAccount(): Promise<{ kind: "ok" } | GeneralApiProblem> {
+    return userWrappers.deleteAccount()
+  }
+
+  /**
    * Logs in the user with the provided email and password.
    */
   async login(

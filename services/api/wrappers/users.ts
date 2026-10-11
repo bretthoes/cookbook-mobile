@@ -152,6 +152,17 @@ export async function resetPassword(
   }
 }
 
+export async function deleteAccount(): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  try {
+    const { error, response } = await client.DELETE("/api/Users/account")
+    if (!response.ok)
+      return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
+    return { kind: "ok" }
+  } catch (e) {
+    return toProblemFromError(e)
+  }
+}
+
 export async function getEmail(): Promise<ApiResult<{ email: string }>> {
   try {
     const { data, error, response } = await client.GET("/api/Users/manage/info")

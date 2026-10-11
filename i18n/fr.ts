@@ -48,7 +48,8 @@ const fr: Translations = {
   },
   forgotPasswordScreen: {
     title: "Entrez votre e-mail",
-    subtitle: "Nous vous enverrons un message avec les instructions pour réinitialiser votre mot de passe.",
+    subtitle:
+      "Nous vous enverrons un message avec les instructions pour réinitialiser votre mot de passe.",
     sendButton: "Envoyez-moi le code !",
   },
   resetPasswordScreen: {
@@ -188,7 +189,8 @@ const fr: Translations = {
       invalidCredentials: "L'e-mail ou le mot de passe est incorrect.",
       cannotConnect: "Connexion impossible. Veuillez réessayer plus tard.",
       confirmationResent: "Un e-mail de confirmation a été renvoyé.",
-      confirmationResendFailed: "Une erreur s'est produite lors de l'envoi de l'e-mail. Veuillez réessayer.",
+      confirmationResendFailed:
+        "Une erreur s'est produite lors de l'envoi de l'e-mail. Veuillez réessayer.",
       updateFailed: "Une erreur s'est produite. Veuillez réessayer.",
       updateSuccess: "Mise à jour réussie.",
       googleFailed: "La connexion avec Google a échoué. Veuillez réessayer.",
@@ -359,6 +361,15 @@ const fr: Translations = {
     upgradeToPro: "Passer à Love To Cook Pro",
     manageSubscription: "Gérer l'abonnement",
     customerCenterError: "Impossible d'ouvrir les paramètres d'abonnement. Veuillez réessayer.",
+    deleteAccount: "Supprimer le compte",
+    deleteAccountTitle: "Supprimer votre compte ?",
+    deleteAccountMessage: "C'est définitif.",
+    deleteAccountTypeToConfirm: "Saisissez {{word}} pour confirmer.",
+    deleteAccountConfirmWord: "DELETE",
+    deleteAccountConfirm: "Supprimer le compte",
+    deleteAccountFailed: "Impossible de supprimer votre compte. Veuillez réessayer.",
+    deleteAccountDoneTitle: "Compte supprimé",
+    deleteAccountDoneMessage: "Votre compte a été définitivement supprimé.",
     floatingTabBar: "Barre d'onglets flottante",
     tagLine:
       "Félicitations, vous avez un modèle d'application React Native très avancé ici. Profitez de cette base de code !",
@@ -590,10 +601,13 @@ const fr: Translations = {
   selectCookbookScreen: {
     title: "Sélectionner un livre de recettes",
     placeholder: "Sélectionner un livre de recettes",
-    dropdownDescription: "Sélectionnez le livre de recettes où vous souhaitez ajouter cette recette.",
-    actionForRecipe: "Sélectionnez le livre de recettes où vous souhaitez ajouter une nouvelle recette.",
+    dropdownDescription:
+      "Sélectionnez le livre de recettes où vous souhaitez ajouter cette recette.",
+    actionForRecipe:
+      "Sélectionnez le livre de recettes où vous souhaitez ajouter une nouvelle recette.",
     actionForMembers: "Sélectionnez un livre de recettes pour voir ses membres.",
-    actionForInvite: "Sélectionnez le livre de recettes depuis lequel vous souhaitez envoyer l'invitation.",
+    actionForInvite:
+      "Sélectionnez le livre de recettes depuis lequel vous souhaitez envoyer l'invitation.",
     actionForAddFromCamera: "Sélectionnez un livre de recettes pour y ajouter la recette.",
     emptyState: "Aucun livre de recettes n'a encore été ajouté.",
     allowCameraRollAccess: "Veuillez autoriser l'accès à la pellicule dans les paramètres.",
@@ -689,7 +703,8 @@ const fr: Translations = {
     applyButton: "Appliquer les modifications",
     cancelButton: "Annuler",
     processing: "Application de vos modifications…",
-    parseFailed: "Impossible d'appliquer cette modification. Essayez de reformuler votre instruction.",
+    parseFailed:
+      "Impossible d'appliquer cette modification. Essayez de reformuler votre instruction.",
     rateLimited: "Le service IA est temporairement indisponible. Veuillez réessayer plus tard.",
     microphonePermissionDenied:
       "L'accès au microphone est requis. Veuillez l'autoriser dans les paramètres de votre appareil.",
@@ -723,7 +738,8 @@ const fr: Translations = {
     printRecipe: "Imprimer la recette",
     madeThis: "Je l'ai cuisinée !",
     madeCount: "Cuisinée {{count}} fois",
-    madeThisFailed: "Impossible d'enregistrer que vous avez cuisiné cette recette. Veuillez réessayer.",
+    madeThisFailed:
+      "Impossible d'enregistrer que vous avez cuisiné cette recette. Veuillez réessayer.",
   },
   recipeFormScreen: {
     descriptionEdit: "Glissez vers l'arrière pour quitter sans enregistrer.",
@@ -748,7 +764,7 @@ const fr: Translations = {
     addAnotherSection: "Ajouter une autre section",
     ingredientSectionsInfoTitle: "Sections d'ingrédients",
     ingredientSectionsInfoMessage:
-      'De nombreuses recettes ont des parties distinctes — comme une sauce et un plat principal — chacune avec ses propres ingrédients. Les sections regroupent les lignes d\'ingrédients sous un titre facultatif (par exemple, « Pour la sauce » ou « Galettes ») pour clarifier ce qui va ensemble.\n\nUtilisez une section pour une recette simple, ou ajoutez une autre section lorsque vous souhaitez des groupes d\'ingrédients distincts.',
+      "De nombreuses recettes ont des parties distinctes — comme une sauce et un plat principal — chacune avec ses propres ingrédients. Les sections regroupent les lignes d'ingrédients sous un titre facultatif (par exemple, « Pour la sauce » ou « Galettes ») pour clarifier ce qui va ensemble.\n\nUtilisez une section pour une recette simple, ou ajoutez une autre section lorsque vous souhaitez des groupes d'ingrédients distincts.",
     ingredientSectionsInfoA11y: "Que sont les sections d'ingrédients ?",
     addAnotherDirection: "Ajouter une autre étape",
     zeroPlaceholder: "0",
@@ -779,8 +795,7 @@ const fr: Translations = {
     actionDelete: "Supprimer l'adhésion",
     actionCancel: "Annuler",
     deleteMemberTitle: "Supprimer le membre",
-    deleteMemberMessage:
-      "Cela retirera le membre de ce livre de recettes. Êtes-vous sûr ?",
+    deleteMemberMessage: "Cela retirera le membre de ce livre de recettes. Êtes-vous sûr ?",
     deleteButton: "Supprimer",
     deleteFailed: "Échec de la suppression de l'adhésion",
     updateSuccess: "Adhésion mise à jour avec succès.",
@@ -822,7 +837,8 @@ const fr: Translations = {
     currentRole: "Rôle actuel : {{role}}",
     currentTierSuffix: "(Actuel)",
     youSuffix: "(Vous)",
-    unsavedChanges: "Vous avez des modifications non enregistrées. Appuyez sur Enregistrer pour appliquer.",
+    unsavedChanges:
+      "Vous avez des modifications non enregistrées. Appuyez sur Enregistrer pour appliquer.",
   },
   setDisplayNameScreen: {
     title: "Définir un nom d'affichage",
@@ -848,7 +864,8 @@ const fr: Translations = {
   },
   languageScreen: {
     title: "Sélectionner la langue",
-    support: "Vous ne voyez pas votre langue ? Vous pouvez demander la prise en charge d'une nouvelle langue.",
+    support:
+      "Vous ne voyez pas votre langue ? Vous pouvez demander la prise en charge d'une nouvelle langue.",
   },
   paywallScreen: {
     title: "Love To Cook Pro",

@@ -3,6 +3,7 @@ import { $container, $listContainer, OptionListItem } from "@/components/OptionL
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useSsoAuth } from "@/hooks/useSsoAuth"
+import type { TxKeyPath } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -82,7 +83,9 @@ export default function RegisterOptionsScreen() {
           onPress={signInWithFacebook}
         />
       </View>
-      {result ? <Text text={result} preset="formHelper" style={$themedErrorText} /> : null}
+      {result ? (
+        <Text tx={result as TxKeyPath} preset="formHelper" style={$themedErrorText} />
+      ) : null}
       <View style={$footer}>
         <Text
           tx="registerScreen:alreadyHaveAccount"

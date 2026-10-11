@@ -248,13 +248,13 @@ const ko: Translations = {
     subtitle: "요리책의 새 소식",
     previewLabel: "최근",
     emptyHeading: "아직 아무것도 없습니다",
-    emptyContent:
-      "누군가 레시피를 추가하거나, 요리하거나, 요리책에 참여하면 여기에 표시됩니다.",
+    emptyContent: "누군가 레시피를 추가하거나, 요리하거나, 요리책에 참여하면 여기에 표시됩니다.",
     newRecipe: "{{actorDisplayName}}님이 {{cookbookTitle}}에 {{recipeTitle}}을(를) 추가했습니다.",
     recipeMade: "{{actorDisplayName}}님이 {{cookbookTitle}}의 {{recipeTitle}}을(를) 만들었습니다.",
     memberJoined: "{{subjectDisplayName}}님이 {{cookbookTitle}}에 참여했습니다.",
     memberLeft: "{{subjectDisplayName}}님이 {{cookbookTitle}}을(를) 떠났습니다.",
-    memberRemoved: "{{actorDisplayName}}님이 {{subjectDisplayName}}님을 {{cookbookTitle}}에서 제거했습니다.",
+    memberRemoved:
+      "{{actorDisplayName}}님이 {{subjectDisplayName}}님을 {{cookbookTitle}}에서 제거했습니다.",
   },
   invitationAddOptionsScreen: {
     title: "친구 초대",
@@ -352,6 +352,15 @@ const ko: Translations = {
     upgradeToPro: "Love To Cook Pro로 업그레이드",
     manageSubscription: "구독 관리",
     customerCenterError: "구독 설정을 열 수 없습니다. 다시 시도해 주세요.",
+    deleteAccount: "계정 삭제",
+    deleteAccountTitle: "계정을 삭제할까요?",
+    deleteAccountMessage: "영구적으로 삭제됩니다.",
+    deleteAccountTypeToConfirm: "확인하려면 {{word}}를 입력하세요.",
+    deleteAccountConfirmWord: "DELETE",
+    deleteAccountConfirm: "계정 삭제",
+    deleteAccountFailed: "계정을 삭제하지 못했습니다. 다시 시도해 주세요.",
+    deleteAccountDoneTitle: "계정이 삭제되었습니다",
+    deleteAccountDoneMessage: "계정이 영구적으로 삭제되었습니다.",
     floatingTabBar: "플로팅 탭 바",
     tagLine:
       "축하합니다! 고급 React Native 앱 템플릿을 가지고 계시네요. 이 보일러플레이트를 최대한 활용하세요!",
@@ -608,8 +617,7 @@ const ko: Translations = {
     leaveTransferOwnershipFirst:
       "먼저 다른 멤버에게 소유권을 이전해 주세요 (프로필 탭의 '요리책 관리').",
     leaveConfirmTitle: "요리책 나가기",
-    leaveConfirmMessage:
-      "이 요리책에서 나가시겠습니까? 다시 참여하려면 초대를 받아야 합니다.",
+    leaveConfirmMessage: "이 요리책에서 나가시겠습니까? 다시 참여하려면 초대를 받아야 합니다.",
     leaveButton: "나가기",
     leaveError: "요리책 나가기에 실패했습니다. 다시 시도해 주세요.",
     tags: {
@@ -840,16 +848,14 @@ const ko: Translations = {
     purchaseError: "구매에 실패했습니다. 다시 시도해 주세요.",
     restoreError: "구매를 복원할 수 없습니다. 다시 시도해 주세요.",
     restoreSuccess: "구매가 성공적으로 복원되었습니다!",
-    terms:
-      "구독하면 서비스 약관에 동의하게 됩니다. 구독은 취소하지 않으면 자동 갱신됩니다.",
+    terms: "구독하면 서비스 약관에 동의하게 됩니다. 구독은 취소하지 않으면 자동 갱신됩니다.",
     loadingOfferings: "요금제 로딩 중...",
     noOfferings: "요금제를 사용할 수 없습니다. 나중에 다시 확인해 주세요.",
     noOfferingsNotConfigured: "이 빌드에서는 구독이 구성되지 않았습니다.",
     noOfferingsInvalidApiKey:
       "구독 설정이 유효하지 않습니다. 이 빌드의 RevenueCat API 키를 확인하세요.",
     noOfferingsNotLoggedIn: "구독 요금제를 보려면 로그인하세요.",
-    noOfferingsNoUserId:
-      "구독을 위한 계정을 식별할 수 없습니다. 로그아웃 후 다시 로그인해 보세요.",
+    noOfferingsNoUserId: "구독을 위한 계정을 식별할 수 없습니다. 로그아웃 후 다시 로그인해 보세요.",
     noOfferingsDashboard:
       "RevenueCat에 아직 요금제가 설정되지 않았습니다. 대시보드에서 Test Store 제품 monthly와 yearly를 추가하고, entitlement pro에 연결한 후, Monthly 및 Annual 패키지가 포함된 offering을 Current로 표시하세요.",
     retryOfferings: "다시 시도",

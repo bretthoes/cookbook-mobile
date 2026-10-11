@@ -350,6 +350,15 @@ const en = {
     upgradeToPro: "Upgrade to Love To Cook Pro",
     manageSubscription: "Manage subscription",
     customerCenterError: "Could not open subscription settings. Please try again.",
+    deleteAccount: "Delete account",
+    deleteAccountTitle: "Delete your account?",
+    deleteAccountMessage: "This is permanent.",
+    deleteAccountTypeToConfirm: "Type {{word}} to confirm.",
+    deleteAccountConfirmWord: "DELETE",
+    deleteAccountConfirm: "Delete account",
+    deleteAccountFailed: "Could not delete your account. Please try again.",
+    deleteAccountDoneTitle: "Account deleted",
+    deleteAccountDoneMessage: "Your account has been permanently deleted.",
     floatingTabBar: "Floating Tab Bar",
     tagLine:
       "Congratulations, you've got a very advanced React Native app template here.  Take advantage of this boilerplate!",
@@ -555,7 +564,8 @@ const en = {
     rateLimited: "The AI service is temporarily unavailable. Please try again later.",
     takePhoto: "Take a Photo",
     selectFromRoll: "Select from Camera Roll",
-    cameraRollPermissionDenied: "Camera roll access is required. Please allow it in your device settings.",
+    cameraRollPermissionDenied:
+      "Camera roll access is required. Please allow it in your device settings.",
     cameraPermissionDenied: "Camera access is required. Please allow it in your device settings.",
   },
   recipeSelectUrlScreen: {
