@@ -18,10 +18,10 @@
         "applinks:sharedcookbook.com"
       ],
       "infoPlist": {
-        "NSCameraUsageDescription": "Allow $(PRODUCT_NAME) to access your camera to take photos.",
-        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos to select images.",
-        "NSSpeechRecognitionUsageDescription": "Allow $(PRODUCT_NAME) to recognize your speech to add recipes by voice.",
-        "NSMicrophoneUsageDescription": "Allow $(PRODUCT_NAME) to use your microphone to add recipes by voice.",
+        "NSCameraUsageDescription": "$(PRODUCT_NAME) uses the camera to photograph a dish for a recipe or cookbook, or a printed recipe so its ingredients and steps can be imported. For example, take a picture of your lasagna and attach it to the lasagna recipe.",
+        "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME) uses photos you choose to show a picture on a recipe or cookbook cover, and to import a recipe from a photo of a printed or handwritten recipe. For example, select a photo of chocolate cake to display on your chocolate cake recipe.",
+        "NSSpeechRecognitionUsageDescription": "$(PRODUCT_NAME) uses speech recognition to turn what you say into recipe text. For example, say “2 cups flour” and it is added as an ingredient.",
+        "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) uses the microphone so you can dictate a recipe instead of typing it. For example, say the ingredients and steps for banana bread and they are added to the recipe.",
         "SKAdNetworkItems": [
           {
             "SKAdNetworkIdentifier": "v9wttpbfk9.skadnetwork"
@@ -105,14 +105,14 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
+          "cameraPermission": "$(PRODUCT_NAME) uses the camera to photograph a dish for a recipe or cookbook, or a printed recipe so its ingredients and steps can be imported. For example, take a picture of your lasagna and attach it to the lasagna recipe."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos to select images.",
-          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera to take photos."
+          "photosPermission": "$(PRODUCT_NAME) uses photos you choose to show a picture on a recipe or cookbook cover, and to import a recipe from a photo of a printed or handwritten recipe. For example, select a photo of chocolate cake to display on your chocolate cake recipe.",
+          "cameraPermission": "$(PRODUCT_NAME) uses the camera to photograph a dish for a recipe or cookbook, or a printed recipe so its ingredients and steps can be imported. For example, take a picture of your lasagna and attach it to the lasagna recipe."
         }
       ],
       "expo-localization",
@@ -151,8 +151,8 @@
       [
         "expo-speech-recognition",
         {
-          "microphonePermission": "Allow $(PRODUCT_NAME) to use your microphone to add recipes by voice.",
-          "speechRecognitionPermission": "Allow $(PRODUCT_NAME) to recognize your speech to add recipes by voice."
+          "microphonePermission": "$(PRODUCT_NAME) uses the microphone so you can dictate a recipe instead of typing it. For example, say the ingredients and steps for banana bread and they are added to the recipe.",
+          "speechRecognitionPermission": "$(PRODUCT_NAME) uses speech recognition to turn what you say into recipe text. For example, say “2 cups flour” and it is added as an ingredient."
         }
       ],
       [
