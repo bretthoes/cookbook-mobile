@@ -7,12 +7,14 @@ import { MoreButton } from "@/components/MoreButton"
 import { Popover } from "@/components/Popover"
 import { DirectionText } from "@/components/Recipe/DirectionText"
 import { IngredientItem } from "@/components/Recipe/IngredientItem"
+import { RecipeDetailsSkeleton } from "@/components/Recipe/RecipeDetailsSkeleton"
 import { RecipeImages } from "@/components/Recipe/RecipeImages"
 import RecipeSummary from "@/components/Recipe/RecipeSummary"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
 import {
+  findCachedRecipeBrief,
   useDeleteRecipeMutation,
   useRecordRecipeMadeMutation,
   useRecipeQuery,
@@ -26,18 +28,11 @@ import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import * as Haptics from "expo-haptics"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
+import { useQueryClient } from "@tanstack/react-query"
 import { router, useLocalSearchParams } from "expo-router"
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import {
-  ActivityIndicator,
-  Alert,
-  ImageStyle,
-  TextStyle,
-  TouchableOpacity,
-  View,
-  ViewStyle,
-} from "react-native"
+import { Alert, ImageStyle, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
 import Animated, {
   cancelAnimation,
   Easing,
@@ -53,11 +48,16 @@ export default function RecipeScreen() {
   const ownMembership = useMembershipStore((s) => s.ownMembership)
   const { id } = useLocalSearchParams<{ id: string }>()
   const recipeId = id ?? ""
+  const queryClient = useQueryClient()
   const { data: selected, isPending, isError } = useRecipeQuery(recipeId)
+  const cachedTitle = useMemo(
+    () => findCachedRecipeBrief(queryClient, recipeId)?.title,
+    [queryClient, recipeId],
+  )
   const deleteRecipeMutation = useDeleteRecipeMutation()
   const recordRecipeMadeMutation = useRecordRecipeMadeMutation()
   const { canRecordMade, recordCooldown } = useRecipeMadeCooldown(recipeId)
-  const { themed, theme } = useAppTheme()
+  const { themed } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
   const printRecipe = usePrintRecipe()
@@ -186,13 +186,7 @@ export default function RecipeScreen() {
   }
 
   if (isPending && !selected) {
-    return (
-      <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$loadingContent}>
-        <CustomBackButton onPress={() => router.back()} top={spacing.sm} />
-        <ActivityIndicator size="large" color={theme.colors.tint} />
-        <Text tx="common:loading" style={$loadingLabel} />
-      </Screen>
-    )
+    return <RecipeDetailsSkeleton title={cachedTitle} onBack={() => router.back()} />
   }
 
   const popoverAnchorTop = insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
@@ -507,17 +501,6 @@ const $tickColumn: ViewStyle = {
 }
 
 const $madeCountText: TextStyle = {
-  textAlign: "center",
-}
-
-const $loadingContent: ViewStyle = {
-  flex: 1,
-  justifyContent: "center",
-  alignItems: "center",
-  gap: spacing.md,
-}
-
-const $loadingLabel: TextStyle = {
   textAlign: "center",
 }
 

@@ -17,7 +17,14 @@ import {
   RECIPE_IMPORT_MIN_LOADING_MS,
   RECIPE_SOCIAL_IMPORT_MIN_LOADING_MS,
 } from "@/utils/minimumLoadingDelay"
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type InfiniteData,
+  type QueryClient,
+} from "@tanstack/react-query"
 
 export const RECIPE_LIST_PAGE_SIZE = 50
 
@@ -64,6 +71,24 @@ export function useRecipesList(cookbookId: string, search = "") {
     isListEmpty: query.isSuccess && recipes.length === 0,
     isLoadingMore: query.isFetchingNextPage,
   }
+}
+
+/** Brief already loaded in a cookbook list, when this recipe was opened from one. */
+export function findCachedRecipeBrief(queryClient: QueryClient, recipeId: string) {
+  if (!recipeId) return undefined
+
+  const lists = queryClient.getQueriesData<InfiniteData<{ items?: RecipeBriefItem[] }>>({
+    queryKey: [...queryKeys.recipes.all, "list"],
+  })
+
+  for (const [, data] of lists) {
+    for (const page of data?.pages ?? []) {
+      const match = page.items?.find((item) => item.id === recipeId)
+      if (match) return match
+    }
+  }
+
+  return undefined
 }
 
 export function useRecipeQuery(recipeId: string) {
