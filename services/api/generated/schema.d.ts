@@ -821,6 +821,7 @@ export interface components {
       /** Format: guid */
       id: string
       title: string
+      hasImages?: boolean
       isVegetarian?: boolean | null
       isVegan?: boolean | null
       isGlutenFree?: boolean | null

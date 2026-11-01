@@ -21,6 +21,11 @@ const DIRECTION_WIDTHS = ["92%", "80%", "68%"] as const
 export interface RecipeDetailsSkeletonProps {
   /** Title already known from the cookbook list. Omitted for a cold open. */
   title?: string
+  /**
+   * Whether the recipe has photos. True keeps the title under the hero.
+   * False places it where a photo-less recipe puts the title. Omitted when unknown.
+   */
+  hasImages?: boolean
   onBack: () => void
 }
 
@@ -28,7 +33,7 @@ export interface RecipeDetailsSkeletonProps {
  * Recipe-shaped placeholders for a short fetch. No status label: the page
  * itself is the waiting state.
  */
-export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonProps) {
+export function RecipeDetailsSkeleton({ title, hasImages, onBack }: RecipeDetailsSkeletonProps) {
   const { themed } = useAppTheme()
   const opacity = useSharedValue(0.55)
 
@@ -51,6 +56,7 @@ export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonPr
   const $metaCard = useMemo(() => themed($metaCardStyle), [themed])
   const $metaBlock = useMemo(() => themed($metaBlockStyle), [themed])
   const $summary = useMemo(() => themed($summaryStyle), [themed])
+  const $summaryWithoutImage = useMemo(() => themed($summaryWithoutImageStyle), [themed])
   const $section = useMemo(() => themed($sectionStyle), [themed])
   const $group = useMemo(() => themed($groupStyle), [themed])
   const $line = useMemo(() => themed($lineStyle), [themed])
@@ -59,14 +65,15 @@ export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonPr
   const $action = useMemo(() => themed($actionStyle), [themed])
 
   const knownTitle = title?.trim() ? title : undefined
+  const showHero = hasImages !== false
 
   return (
-    <Screen preset="scroll" safeAreaEdges={[]}>
-      <Animated.View style={[$hero, $pulse]} />
-      <CustomBackButton onPress={onBack} top={spacing.xl} />
-      <View style={$rule} />
+    <Screen preset="scroll" safeAreaEdges={showHero ? [] : ["top"]}>
+      {showHero ? <Animated.View style={[$hero, $pulse]} /> : null}
+      <CustomBackButton onPress={onBack} top={showHero ? spacing.xl : spacing.sm} />
+      {showHero ? <View style={$rule} /> : null}
 
-      <View style={$summary}>
+      <View style={showHero ? $summary : $summaryWithoutImage}>
         {knownTitle ? (
           <Text preset="heading" weight="normal" text={knownTitle} />
         ) : (
@@ -157,6 +164,13 @@ const $authorBarStyle: ThemedStyle<ViewStyle> = (theme) => ({
 const $summaryStyle: ThemedStyle<ViewStyle> = (theme) => ({
   paddingHorizontal: theme.spacing.sm,
   paddingTop: theme.spacing.sm,
+  gap: theme.spacing.sm,
+})
+
+/** Matches a photo-less recipe: the title sits `xxxl` below the safe area. */
+const $summaryWithoutImageStyle: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.sm,
+  paddingTop: theme.spacing.xxxl,
   gap: theme.spacing.sm,
 })
 

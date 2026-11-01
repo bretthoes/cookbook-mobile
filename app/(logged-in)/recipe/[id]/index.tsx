@@ -52,8 +52,8 @@ export default function RecipeScreen() {
   const recipeId = id ?? ""
   const queryClient = useQueryClient()
   const { data: selected, isPending, isError } = useRecipeQuery(recipeId)
-  const cachedTitle = useMemo(
-    () => findCachedRecipeBrief(queryClient, recipeId)?.title,
+  const cachedBrief = useMemo(
+    () => findCachedRecipeBrief(queryClient, recipeId),
     [queryClient, recipeId],
   )
   const deleteRecipeMutation = useDeleteRecipeMutation()
@@ -190,7 +190,13 @@ export default function RecipeScreen() {
   }
 
   if (isPending && !selected) {
-    return <RecipeDetailsSkeleton title={cachedTitle} onBack={() => router.back()} />
+    return (
+      <RecipeDetailsSkeleton
+        title={cachedBrief?.title}
+        hasImages={cachedBrief?.hasImages}
+        onBack={() => router.back()}
+      />
+    )
   }
 
   const popoverAnchorTop = insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
