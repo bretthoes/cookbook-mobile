@@ -57,7 +57,7 @@ export default function RecipeScreen() {
   const deleteRecipeMutation = useDeleteRecipeMutation()
   const recordRecipeMadeMutation = useRecordRecipeMadeMutation()
   const { canRecordMade, recordCooldown } = useRecipeMadeCooldown(recipeId)
-  const { themed } = useAppTheme()
+  const { themed, theme } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
   const printRecipe = usePrintRecipe()
@@ -186,7 +186,13 @@ export default function RecipeScreen() {
   }
 
   if (isPending && !selected) {
-    return <ActivityIndicator />
+    return (
+      <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$loadingContent}>
+        <CustomBackButton onPress={() => router.back()} top={spacing.sm} />
+        <ActivityIndicator size="large" color={theme.colors.tint} />
+        <Text tx="common:loading" style={$loadingLabel} />
+      </Screen>
+    )
   }
 
   const popoverAnchorTop = insets.top + (recipeHasImages ? spacing.xl : spacing.sm) + 40
@@ -389,10 +395,7 @@ function RollingNumber({ value }: { value: number }) {
 
   if (lineHeight <= 0) {
     return (
-      <Text
-        text={String(value)}
-        onLayout={(event) => onMeasure(event.nativeEvent.layout.height)}
-      />
+      <Text text={String(value)} onLayout={(event) => onMeasure(event.nativeEvent.layout.height)} />
     )
   }
 
@@ -504,6 +507,17 @@ const $tickColumn: ViewStyle = {
 }
 
 const $madeCountText: TextStyle = {
+  textAlign: "center",
+}
+
+const $loadingContent: ViewStyle = {
+  flex: 1,
+  justifyContent: "center",
+  alignItems: "center",
+  gap: spacing.md,
+}
+
+const $loadingLabel: TextStyle = {
   textAlign: "center",
 }
 
