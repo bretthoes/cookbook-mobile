@@ -5,6 +5,10 @@
       {
         "command": ".cursor/hooks/allow-apple-deploy.sh",
         "matcher": "apple-upload/scripts/deploy\\.sh|android-upload/scripts/deploy\\.sh|npm run deploy:ios:prod|npm run deploy:android:prod|eas build --platform (ios|android) --profile production|eas submit --platform (ios|android) --profile production"
+      },
+      {
+        "command": ".cursor/hooks/allow-simulator-run.sh",
+        "matcher": "run-ios/scripts/status\\.sh|run-android/scripts/status\\.sh|npm run ios:reinstall|npm run ios|npm run android|dotnet watch run"
       }
     ]
   }
