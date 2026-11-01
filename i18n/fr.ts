@@ -738,6 +738,9 @@ const fr: Translations = {
     printRecipe: "Imprimer la recette",
     madeThis: "Je l'ai cuisinée !",
     madeCount: "Cuisinée {{count}} fois",
+    madeThisLessThanHourAgo: "Vous l'avez cuisinée il y a moins d'une heure",
+    madeThisHoursAgo: "Vous l'avez cuisinée il y a {{count}} heure",
+    madeThisHoursAgo_plural: "Vous l'avez cuisinée il y a {{count}} heures",
     madeThisFailed:
       "Impossible d'enregistrer que vous avez cuisiné cette recette. Veuillez réessayer.",
   },

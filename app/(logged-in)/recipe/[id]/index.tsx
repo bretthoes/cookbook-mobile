@@ -21,8 +21,10 @@ import {
 } from "@/hooks/queries/useRecipesQuery"
 import { useRecipeMadeCooldown } from "@/hooks/useRecipeMadeCooldown"
 import { usePrintRecipe } from "@/hooks/usePrintRecipe"
+import type { TxKeyPath } from "@/i18n"
 import { useMembershipStore } from "@/stores/membershipStore"
 import { canDeleteAnyRecipe, canEditAnyRecipe } from "@/utils/membershipTier"
+import { getRecipeMadeHoursAgo } from "@/utils/recipeMadeCooldown"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -56,7 +58,8 @@ export default function RecipeScreen() {
   )
   const deleteRecipeMutation = useDeleteRecipeMutation()
   const recordRecipeMadeMutation = useRecordRecipeMadeMutation()
-  const { canRecordMade, recordCooldown } = useRecipeMadeCooldown(recipeId)
+  const { canRecordMade, cooldownEndsAt, recordCooldown } = useRecipeMadeCooldown(recipeId)
+  const madeHoursAgo = cooldownEndsAt == null ? null : getRecipeMadeHoursAgo(cooldownEndsAt)
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
@@ -79,6 +82,7 @@ export default function RecipeScreen() {
   )
   const $themedSeparatorBelowImages = React.useMemo(() => themed($separatorBelowImages), [themed])
   const $themedMadeSection = React.useMemo(() => themed($madeSection), [themed])
+  const $themedMadeThisAgo = React.useMemo(() => themed($madeThisAgo), [themed])
   const [cookMode, setCookMode] = useState(false)
   const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
 
@@ -306,12 +310,18 @@ export default function RecipeScreen() {
 
         {selected ? (
           <View style={$themedMadeSection}>
-            <Button
-              tx="recipeDetailsScreen:madeThis"
-              onPress={handlePressMadeThis}
-              disabled={!canRecordMade}
-              loading={recordRecipeMadeMutation.isPending}
-            />
+            <View style={$madeAction}>
+              <Button
+                tx="recipeDetailsScreen:madeThis"
+                onPress={handlePressMadeThis}
+                disabled={!canRecordMade}
+                disabledStyle={$madeThisButtonDisabled}
+                loading={recordRecipeMadeMutation.isPending}
+              />
+              {madeHoursAgo != null ? (
+                <Text {...madeThisAgoTx(madeHoursAgo)} size="xs" style={$themedMadeThisAgo} />
+              ) : null}
+            </View>
             <MadeCountLabel count={selected.madeCount ?? 0} recipeId={recipeId} />
           </View>
         ) : null}
@@ -322,6 +332,17 @@ export default function RecipeScreen() {
 
 const MADE_COUNT_TICK_MS = 200
 const MADE_COUNT_TICK_DELAY_MS = 220
+
+function madeThisAgoTx(hoursAgo: number): { tx: TxKeyPath; txOptions?: { count: number } } {
+  if (hoursAgo < 1) return { tx: "recipeDetailsScreen:madeThisLessThanHourAgo" }
+  return {
+    tx:
+      hoursAgo === 1
+        ? "recipeDetailsScreen:madeThisHoursAgo"
+        : "recipeDetailsScreen:madeThisHoursAgo_plural",
+    txOptions: { count: hoursAgo },
+  }
+}
 
 function splitMadeCountLabel(label: string, count: number) {
   const countLabel = String(count)
@@ -484,6 +505,21 @@ const $madeSection: ThemedStyle<ViewStyle> = (theme) => ({
   paddingBottom: theme.spacing.xxl,
   gap: theme.spacing.md,
   alignItems: "center",
+})
+
+const $madeAction: ViewStyle = {
+  alignSelf: "stretch",
+  alignItems: "center",
+  gap: spacing.xs,
+}
+
+const $madeThisButtonDisabled: ViewStyle = {
+  opacity: 0.45,
+}
+
+const $madeThisAgo: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  textAlign: "center",
 })
 
 const $madeCountRow: ViewStyle = {

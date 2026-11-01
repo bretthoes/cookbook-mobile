@@ -721,6 +721,9 @@ const en = {
     printRecipe: "Print Recipe",
     madeThis: "I made this!",
     madeCount: "Made {{count}} times",
+    madeThisLessThanHourAgo: "You made this less than an hour ago",
+    madeThisHoursAgo: "You made this {{count}} hour ago",
+    madeThisHoursAgo_plural: "You made this {{count}} hours ago",
     madeThisFailed: "Could not record that you made this recipe. Please try again.",
   },
   recipeFormScreen: {

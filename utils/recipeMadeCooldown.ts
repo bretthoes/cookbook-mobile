@@ -5,6 +5,15 @@ const STORAGE_KEY = "recipeMadeCooldowns"
 /** Lightweight client-only guard; not enforced on the server. */
 export const RECIPE_MADE_COOLDOWN_MS = 12 * 60 * 60 * 1000
 
+const HOUR_MS = 60 * 60 * 1000
+
+/** Whole hours since this recipe was recorded as made. 0 means under an hour. */
+export function getRecipeMadeHoursAgo(cooldownEndsAt: number, now = Date.now()): number {
+  const madeAt = cooldownEndsAt - RECIPE_MADE_COOLDOWN_MS
+  const elapsed = Math.max(0, now - madeAt)
+  return Math.floor(elapsed / HOUR_MS)
+}
+
 type CooldownMap = Record<string, number>
 
 async function readCooldownMap(): Promise<CooldownMap> {

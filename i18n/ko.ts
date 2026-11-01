@@ -712,6 +712,9 @@ const ko: Translations = {
     printRecipe: "레시피 인쇄",
     madeThis: "만들어 봤어요!",
     madeCount: "{{count}}번 만들었습니다",
+    madeThisLessThanHourAgo: "1시간 이내에 만들었어요",
+    madeThisHoursAgo: "{{count}}시간 전에 만들었어요",
+    madeThisHoursAgo_plural: "{{count}}시간 전에 만들었어요",
     madeThisFailed: "이 레시피를 만들었다는 기록에 실패했습니다. 다시 시도해 주세요.",
   },
   recipeFormScreen: {

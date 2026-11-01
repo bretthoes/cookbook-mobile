@@ -28,6 +28,7 @@ export function useRecipeMadeCooldown(recipeId: string) {
 
   return {
     canRecordMade: !isRecipeMadeCooldownActive(cooldownEndsAt),
+    cooldownEndsAt,
     recordCooldown,
     refresh,
   }
