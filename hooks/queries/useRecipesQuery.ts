@@ -121,7 +121,12 @@ export function useRecordRecipeMadeMutation() {
       unwrapApiResult(result)
       return recipeId
     },
-    onSuccess: (recipeId) => {
+    onSuccess: async (recipeId) => {
+      await queryClient.cancelQueries({ queryKey: queryKeys.recipes.detail(recipeId) })
+      queryClient.setQueryData<RecipeDetail>(queryKeys.recipes.detail(recipeId), (current) => {
+        if (!current) return current
+        return { ...current, madeCount: (current.madeCount ?? 0) + 1 }
+      })
       void queryClient.invalidateQueries({ queryKey: queryKeys.recipes.detail(recipeId) })
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all })
     },
