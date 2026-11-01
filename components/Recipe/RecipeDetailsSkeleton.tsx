@@ -47,6 +47,7 @@ export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonPr
   const $rule = useMemo(() => themed($ruleStyle), [themed])
   const $bar = useMemo(() => themed($barStyle), [themed])
   const $titleBar = useMemo(() => themed($titleBarStyle), [themed])
+  const $headingBar = useMemo(() => themed($headingBarStyle), [themed])
   const $authorBar = useMemo(() => themed($authorBarStyle), [themed])
   const $metaCard = useMemo(() => themed($metaCardStyle), [themed])
   const $metaBlock = useMemo(() => themed($metaBlockStyle), [themed])
@@ -83,7 +84,7 @@ export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonPr
       </View>
 
       <View style={$section}>
-        <Text preset="subheading" tx="recipeDetailsScreen:ingredients" />
+        <Animated.View style={[$headingBar, $pulse]} />
         <View style={$group}>
           {INGREDIENT_TRAILING.map((trailing, index) => (
             <View
@@ -98,7 +99,7 @@ export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonPr
       </View>
 
       <View style={$section}>
-        <Text preset="subheading" tx="recipeDetailsScreen:directions" />
+        <Animated.View style={[$headingBar, $pulse, $headingBarShort]} />
         <View style={$group}>
           {DIRECTION_WIDTHS.map((width, index) => (
             <View key={width} style={index < DIRECTION_WIDTHS.length - 1 ? $dividedLine : $line}>
@@ -117,6 +118,10 @@ export function RecipeDetailsSkeleton({ title, onBack }: RecipeDetailsSkeletonPr
 
 const $lineBar: ViewStyle = {
   flex: 1,
+}
+
+const $headingBarShort: ViewStyle = {
+  width: "28%",
 }
 
 // #region Styles
@@ -143,6 +148,13 @@ const $barStyle: ThemedStyle<ViewStyle> = (theme) => ({
 const $titleBarStyle: ThemedStyle<ViewStyle> = (theme) => ({
   height: theme.spacing.lg,
   width: "72%",
+  borderRadius: theme.spacing.xs,
+  backgroundColor: theme.colors.border,
+})
+
+const $headingBarStyle: ThemedStyle<ViewStyle> = (theme) => ({
+  height: theme.spacing.lg,
+  width: "40%",
   borderRadius: theme.spacing.xs,
   backgroundColor: theme.colors.border,
 })
