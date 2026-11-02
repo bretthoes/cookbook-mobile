@@ -674,8 +674,9 @@ const ko: Translations = {
   },
   recipeAiEditDialog: {
     title: "AI로 편집",
-    subtitle: "원하는 변경 사항을 설명하세요 — 입력하거나 말로 지시할 수 있습니다.",
-    placeholder: "예: 마늘 두 배, 비건으로 표시, 디저트 태그 추가…",
+    subtitle:
+      "레시피를 설명하거나, 바꾸고 싶은 내용을 말하세요. 입력하거나 음성으로 말할 수 있습니다.",
+    placeholder: "예: 할머니의 바나나 브레드, 또는 마늘을 두 배로 하고 비건으로 표시…",
     applyButton: "변경 적용",
     cancelButton: "취소",
     processing: "변경 사항 적용 중…",

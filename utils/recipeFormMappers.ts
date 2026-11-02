@@ -1,5 +1,6 @@
 import type { RecipeFormInputs } from "@/components/Recipe/RecipeForm"
-import type { RecipeSnapshotIn, RecipeToAddSnapshotIn } from "@/types/recipe"
+import type { components } from "@/services/api/generated/schema"
+import type { RecipeToAddSnapshotIn } from "@/types/recipe"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 
 type RecipeLike = {
@@ -68,10 +69,9 @@ export function recipeLikeToFormInputs(recipe: RecipeLike): RecipeFormInputs {
   }
 }
 
-export function formInputsToRecipeSnapshotIn(
+export function formInputsToAiRecipeDto(
   formData: RecipeFormInputs,
-  existing: RecipeSnapshotIn,
-): RecipeSnapshotIn {
+): components["schemas"]["RecipeDto"] {
   const validDirections = formData.directions
     .filter((direction) => direction.text?.trim())
     .map((direction, index) => ({
@@ -88,9 +88,7 @@ export function formInputsToRecipeSnapshotIn(
     }))
 
   return {
-    ...existing,
-    id: existing.id,
-    title: formData.title.trim(),
+    title: formData.title?.trim() ?? "",
     summary: formData.summary?.trim() || null,
     preparationTimeInMinutes: formData.preparationTimeInMinutes,
     cookingTimeInMinutes: formData.cookingTimeInMinutes,
@@ -115,7 +113,7 @@ export function formInputsToRecipeSnapshotIn(
   }
 }
 
-export function updateDtoToFormInputs(dto: RecipeSnapshotIn): RecipeFormInputs {
+export function updateDtoToFormInputs(dto: RecipeLike): RecipeFormInputs {
   return recipeLikeToFormInputs(dto)
 }
 

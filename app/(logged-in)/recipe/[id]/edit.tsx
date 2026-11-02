@@ -13,7 +13,7 @@ import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import { getCurrentWeekKey, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
 import type { RecipeSnapshotIn } from "@/types/recipe"
 import {
-  formInputsToRecipeSnapshotIn,
+  formInputsToAiRecipeDto,
   recipeLikeToFormInputs,
   updateDtoToFormInputs,
 } from "@/utils/recipeFormMappers"
@@ -73,16 +73,15 @@ export default function EditRecipe() {
       const formValues = formRef.current?.getValues() ?? resolveFormValues
       if (!formValues) return
 
-      const recipePayload = formInputsToRecipeSnapshotIn(formValues, selected)
+      const recipePayload = formInputsToAiRecipeDto(formValues)
 
       const result = await applyAiEdit.mutateAsync({
-        recipeId: selected.id,
         prompt,
         recipe: recipePayload,
       })
 
       if (result.ok) {
-        setAppliedFormValues(updateDtoToFormInputs(result.recipe as RecipeSnapshotIn))
+        setAppliedFormValues(updateDtoToFormInputs(result.recipe))
         setFormKey((k) => k + 1)
         setDialogVisible(false)
         return

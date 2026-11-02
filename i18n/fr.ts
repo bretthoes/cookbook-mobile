@@ -698,8 +698,8 @@ const fr: Translations = {
   },
   recipeAiEditDialog: {
     title: "Modifier avec l'IA",
-    subtitle: "Décrivez les modifications souhaitées — tapez ou parlez votre instruction.",
-    placeholder: "ex. doubler l'ail, marquer comme végan, ajouter l'étiquette dessert…",
+    subtitle: "Décrivez une recette, ou ce que vous voulez modifier. Tapez ou parlez.",
+    placeholder: "ex. banana bread de grand-mère, ou doubler l'ail et marquer comme végan…",
     applyButton: "Appliquer les modifications",
     cancelButton: "Annuler",
     processing: "Application de vos modifications…",

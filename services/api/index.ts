@@ -5,6 +5,7 @@
  * See the [Backend API Integration](https://docs.infinite.red/ignite-cli/boilerplate/app/services/#backend-api-integration)
  * documentation for more details.
  */
+import type { components } from "@/services/api/generated/schema"
 import type { AuthResultSnapshotIn } from "@/types/auth"
 import type {
   CookbookListSnapshotIn,
@@ -226,11 +227,10 @@ export class Api {
   }
 
   async applyRecipeEditFromPrompt(
-    recipeId: string,
     prompt: string,
-    recipe: RecipeSnapshotIn,
-  ): Promise<{ kind: "ok"; recipe: RecipeSnapshotIn } | GeneralApiProblem> {
-    return recipeWrappers.applyRecipeEditFromPrompt(recipeId, prompt, recipe)
+    recipe: components["schemas"]["RecipeDto"],
+  ): Promise<{ kind: "ok"; recipe: components["schemas"]["RecipeDto"] } | GeneralApiProblem> {
+    return recipeWrappers.applyRecipeEditFromPrompt(prompt, recipe)
   }
 
   /**

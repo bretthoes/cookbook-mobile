@@ -1,19 +1,26 @@
+import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/Recipe/RecipeAiEditDialog"
 import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
-import { useCreateRecipeMutation } from "@/hooks/queries/useRecipesQuery"
+import {
+  useApplyRecipeEditFromPromptMutation,
+  useCreateRecipeMutation,
+} from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
-import { useUiStore } from "@/stores/uiStore"
+import { useSubscriptionStore } from "@/stores/subscriptionStore"
+import { getCurrentWeekKey, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
 import type { RecipeToAddSnapshotIn } from "@/types/recipe"
 import { draftItemHasContent, hasDraftContent } from "@/utils/recipeDraftHelpers"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
+import { formInputsToAiRecipeDto, updateDtoToFormInputs } from "@/utils/recipeFormMappers"
 import { normalizeRouteParam } from "@/utils/routeParams"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { router, useLocalSearchParams } from "expo-router"
-import { useCallback, useEffect, useMemo, useRef } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export default function AddRecipeScreen() {
@@ -24,8 +31,17 @@ export default function AddRecipeScreen() {
   const getDraftForCookbook = useUiStore((s) => s.getDraftForCookbook)
   const drafts = useUiStore((s) => s.drafts)
   const createRecipeMutation = useCreateRecipeMutation()
+  const applyAiEdit = useApplyRecipeEditFromPromptMutation()
   const { selected: selectedCookbook, selectedCookbookId } = useSelectedCookbook()
   const { themed } = useAppTheme()
+  const { t } = useTranslation()
+  const isPro = useSubscriptionStore((s) => s.isPro)
+  const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
+  const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
+  const [formKey, setFormKey] = useState(0)
+  const [appliedFormValues, setAppliedFormValues] = useState<RecipeFormInputs | null>(null)
+  const [dialogVisible, setDialogVisible] = useState(false)
+  const [aiErrorMsg, setAiErrorMsg] = useState("")
 
   // Only restore a draft when the user explicitly tapped "Continue Draft"
   const { continueDraft, cookbookId: rawDraftCookbookId } = useLocalSearchParams<{
@@ -38,6 +54,9 @@ export default function AddRecipeScreen() {
 
   // Ref exposing the live form state to unmount cleanup without needing a re-render
   const formRef = useRef<RecipeFormHandle | null>(null)
+  const currentWeek = getCurrentWeekKey()
+  const effectiveImportCount = weeklyImportWeekStart === currentWeek ? weeklyImportCount : 0
+  const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
   // Prevents unmount cleanup from re-saving a draft after successful submit
   const submittedSuccessfullyRef = useRef(false)
 
@@ -183,6 +202,42 @@ export default function AddRecipeScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- getDraftForCookbook/deleteDraft are stable; draft reads use restoreCookbookId + drafts
   }, [recipeToAdd, shouldRestoreDraft, restoreCookbookId, drafts])
 
+  const handleFabPress = useCallback(() => {
+    if (isAtLimit) {
+      router.push("/(logged-in)/recipe/paywall")
+      return
+    }
+    setAiErrorMsg("")
+    setDialogVisible(true)
+  }, [isAtLimit])
+
+  const handleApplyAiEdit = useCallback(
+    async (prompt: string) => {
+      setAiErrorMsg("")
+      const formValues = formRef.current?.getValues() ?? appliedFormValues ?? resolvedFormValues
+      if (!formValues) return
+
+      const result = await applyAiEdit.mutateAsync({
+        prompt,
+        recipe: formInputsToAiRecipeDto(formValues),
+      })
+
+      if (result.ok) {
+        setAppliedFormValues(updateDtoToFormInputs(result.recipe))
+        setFormKey((k) => k + 1)
+        setDialogVisible(false)
+        return
+      }
+
+      if (result.kind === "rate-limited") {
+        setAiErrorMsg(t("recipeAiEditDialog:rateLimited"))
+      } else {
+        setAiErrorMsg(t("recipeAiEditDialog:parseFailed"))
+      }
+    },
+    [applyAiEdit, appliedFormValues, resolvedFormValues, t],
+  )
+
   const onPressSend = useCallback(
     async (formData: RecipeFormInputs) => {
       if (!selectedCookbook) {
@@ -261,24 +316,39 @@ export default function AddRecipeScreen() {
   }
 
   return (
-    <Screen preset="scroll">
-      {selectedCookbook && cookbookImageSource && (
-        <>
-          <Text tx="recipeAddScreen:addingTo" style={$themedCookbookLabel} />
-          <View style={$themedCookbookHeader}>
-            <Image source={cookbookImageSource} style={$themedCookbookImage} />
-            <Text preset="bold" text={selectedCookbook.title} style={$themedCookbookTitle} />
-          </View>
-        </>
-      )}
-      <RecipeForm
-        onSubmit={onPressSend}
-        formValues={resolvedFormValues}
-        onError={onError}
-        formRef={formRef}
+    <View style={$screenRoot}>
+      <Screen preset="scroll">
+        {selectedCookbook && cookbookImageSource && (
+          <>
+            <Text tx="recipeAddScreen:addingTo" style={$themedCookbookLabel} />
+            <View style={$themedCookbookHeader}>
+              <Image source={cookbookImageSource} style={$themedCookbookImage} />
+              <Text preset="bold" text={selectedCookbook.title} style={$themedCookbookTitle} />
+            </View>
+          </>
+        )}
+        <RecipeForm
+          key={formKey}
+          onSubmit={onPressSend}
+          formValues={appliedFormValues ?? resolvedFormValues}
+          onError={onError}
+          formRef={formRef}
+        />
+      </Screen>
+      <RecipeAiEditFab onPress={handleFabPress} showLock={isAtLimit} />
+      <RecipeAiEditDialog
+        visible={dialogVisible}
+        isLoading={applyAiEdit.isPending}
+        errorMsg={aiErrorMsg}
+        onDismiss={() => setDialogVisible(false)}
+        onApply={handleApplyAiEdit}
       />
-    </Screen>
+    </View>
   )
+}
+
+const $screenRoot: ViewStyle = {
+  flex: 1,
 }
 
 const $cookbookLabel: ThemedStyle<TextStyle> = (theme) => ({

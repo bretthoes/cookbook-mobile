@@ -1,4 +1,5 @@
 import Config from "@/config"
+import type { components } from "@/services/api/generated/schema"
 import type {
   RecipeListSnapshotIn,
   RecipeSnapshotIn,
@@ -134,7 +135,7 @@ export async function extractRecipeFromUrl(
   url: string,
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
   try {
-    const { data, error, response } = await client.POST("/api/Recipes/parse-recipe-url", {
+    const { data, error, response } = await client.POST("/api/Recipes/parse-from-url", {
       body: { url },
     })
     if (!response.ok)
@@ -150,10 +151,9 @@ export async function extractRecipeFromVoice(
   transcript: string,
 ): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
   try {
-    const { data, error, response } = await client.POST(
-      "/api/Recipes/parse-recipe-voice" as never,
-      { body: { transcript } } as never,
-    )
+    const { data, error, response } = await client.POST("/api/Recipes/parse-from-voice", {
+      body: { transcript },
+    })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
@@ -164,19 +164,17 @@ export async function extractRecipeFromVoice(
 }
 
 export async function applyRecipeEditFromPrompt(
-  recipeId: string,
   prompt: string,
-  recipe: RecipeSnapshotIn,
-): Promise<ApiResult<{ recipe: RecipeSnapshotIn }>> {
+  recipe: components["schemas"]["RecipeDto"],
+): Promise<ApiResult<{ recipe: components["schemas"]["RecipeDto"] }>> {
   try {
-    const { data, error, response } = await client.POST("/api/Recipes/{id}/apply-prompt", {
-      params: { path: { id: recipeId } },
+    const { data, error, response } = await client.POST("/api/Recipes/apply-prompt", {
       body: { prompt, recipe },
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipe: data as RecipeSnapshotIn })
+    return toOkResult({ recipe: data as components["schemas"]["RecipeDto"] })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -191,7 +189,7 @@ export async function extractRecipeFromSocialUrl(
 
   try {
     const accessToken = await SecureStore.getItemAsync("accessToken")
-    const response = await fetch(`${baseUrl}/api/Recipes/parse-recipe-url`, {
+    const response = await fetch(`${baseUrl}/api/Recipes/parse-from-url`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -222,10 +220,7 @@ export async function extractRecipeFromImage(
 
   try {
     const formData = new FormData()
-    const fileName =
-      image.fileName ??
-      image.uri.split("/").pop()?.split("?")[0] ??
-      "image.jpg"
+    const fileName = image.fileName ?? image.uri.split("/").pop()?.split("?")[0] ?? "image.jpg"
     formData.append("file", {
       uri: image.uri,
       name: fileName,
@@ -233,7 +228,7 @@ export async function extractRecipeFromImage(
     } as unknown as Blob)
 
     const accessToken = await SecureStore.getItemAsync("accessToken")
-    const response = await fetch(`${baseUrl}/api/Recipes/parse-recipe-img`, {
+    const response = await fetch(`${baseUrl}/api/Recipes/parse-from-image`, {
       method: "POST",
       headers: {
         Accept: "application/json",

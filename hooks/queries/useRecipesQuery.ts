@@ -248,15 +248,13 @@ export function useApplyRecipeEditFromPromptMutation() {
   const incrementImportCount = useUiStore((s) => s.incrementImportCount)
   return useMutation({
     mutationFn: async ({
-      recipeId,
       prompt,
       recipe,
     }: {
-      recipeId: string
       prompt: string
-      recipe: import("@/types/recipe").RecipeSnapshotIn
+      recipe: import("@/services/api/generated/schema").components["schemas"]["RecipeDto"]
     }) => {
-      const response = await api.applyRecipeEditFromPrompt(recipeId, prompt, recipe)
+      const response = await api.applyRecipeEditFromPrompt(prompt, recipe)
       if (response.kind === "ok") {
         incrementImportCount()
         return { ok: true as const, recipe: response.recipe }

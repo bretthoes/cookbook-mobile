@@ -682,8 +682,8 @@ const en = {
   },
   recipeAiEditDialog: {
     title: "Edit with AI",
-    subtitle: "Describe the changes you want — type or speak your instruction.",
-    placeholder: "e.g. Double the garlic, mark as vegan, add a dessert tag…",
+    subtitle: "Describe a recipe, or what you want to change. Type or speak.",
+    placeholder: "e.g. Grandma's banana bread, or double the garlic and mark it vegan…",
     applyButton: "Apply Changes",
     cancelButton: "Cancel",
     processing: "Applying your changes…",
