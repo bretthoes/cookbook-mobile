@@ -7,9 +7,14 @@ Expo (dev client) + React Native app using **expo-router** file-based routing. T
 | Area                 | Path                   | Notes                                                                        |
 | -------------------- | ---------------------- | ---------------------------------------------------------------------------- |
 | Screens / routes     | `app/`                 | expo-router — see `app/AGENTS.md`                                            |
+| Reusable UI          | `components/`          | see `components/AGENTS.md`                                                   |
 | Client state         | `stores/`              | Zustand — see `stores/AGENTS.md`                                             |
-| Server state         | `hooks/queries/`       | TanStack Query for cookbooks, recipes, etc.                                  |
-| Types                | `types/`               | Plain TypeScript types (API DTOs / form shapes)                              |
+| Hooks                | `hooks/`               | Screen hooks and TanStack Query — see `hooks/AGENTS.md`                      |
+| Query cache          | `services/query/`      | Keys, invalidation, persistence — see `services/query/AGENTS.md`             |
+| Helpers              | `utils/`               | Pure helpers and MMKV — see `utils/AGENTS.md`                                |
+| Types                | `types/`               | App-facing aliases over generated DTOs — see `types/AGENTS.md`               |
+| Copy                 | `i18n/`                | en / fr / ko — see `i18n/AGENTS.md`                                          |
+| Theme                | `theme/`               | Light and dark tokens — see `theme/AGENTS.md`                                |
 | API layer            | `services/api/`        | OpenAPI client — see `services/api/AGENTS.md` and `services/api/README.md`   |
 | Environment config   | `config/`              | `config.dev.ts` / `config.prod.ts` merged in `config/index.ts` via `__DEV__` |
 | Native / Expo config | `app.json`, `eas.json` | EAS build profiles (`development`, `preview`, `production`)                  |
@@ -54,12 +59,12 @@ npm run web
 
 ## Backend URL (development)
 
-`config/config.dev.ts` sets `API_URL` to `http://<host>:5000/api`:
+`config/config.dev.ts` sets `API_URL` to `http://<host>:<port>/api`. The port is **5055** when the bundler host is macOS, because AirPlay Receiver already listens on **5000** and returns 403. Windows keeps **5000**.
 
 - **iOS simulator**: `127.0.0.1` (same machine as the API).
 - **Android emulator**: `10.0.2.2` (host loopback from the emulator).
 
-Run SharedCookbook from `SharedCookbook/src/Web` with `dotnet watch run` so **HTTP** is available on port **5000** (see that repo’s `launchSettings.json`). Dev uses HTTP, not HTTPS.
+Run SharedCookbook from `SharedCookbook/src/Web` with `dotnet watch run`. On macOS, development HTTP is `http://localhost:5055`. On Windows it stays `http://localhost:5000` (`launchSettings.json`). Dev uses HTTP, not HTTPS.
 
 For a physical device, you will need a reachable host/IP (not documented here by default).
 

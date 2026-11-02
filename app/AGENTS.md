@@ -78,7 +78,9 @@ Full examples: `.cursor/rules/screen-structure.mdc`.
 | Topic                | Location                                  |
 | -------------------- | ----------------------------------------- |
 | Zustand stores       | `stores/AGENTS.md`                        |
-| TanStack Query       | `hooks/queries/`                          |
-| API calls            | `services/api/README.md`                  |
+| Hooks and queries    | `hooks/AGENTS.md`                         |
+| Query cache          | `services/query/AGENTS.md`                |
+| Helpers              | `utils/AGENTS.md`                         |
+| API calls            | `services/api/AGENTS.md`                  |
 | Reusable UI          | `.cursor/skills/add-component/SKILL.md`   |
 | API contract changes | `.cursor/skills/sync-api-client/SKILL.md` |

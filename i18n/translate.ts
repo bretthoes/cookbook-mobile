@@ -32,7 +32,14 @@ export type TranslationOptions = Omit<TOptions, "context"> & { context?: string 
  */
 export function translate(key: TxKeyPath, options?: TranslationOptions): string {
   if (i18n.isInitialized) {
-    return i18n.t(key, options)
+    return avoidBlankMemberLigature(i18n.t(key, options))
   }
   return key
+}
+
+// Playpen Sans ligates the word "member" into a glyph Android does not draw,
+// so a label like "1 member" shows only the count. A zero-width non-joiner
+// keeps the letters from forming that ligature. "members" is unaffected.
+function avoidBlankMemberLigature(value: string): string {
+  return value.replace(/\bmember\b/g, "mem\u200cber")
 }

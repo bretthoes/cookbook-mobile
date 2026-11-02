@@ -86,6 +86,13 @@
         "android.permission.CAMERA",
         "android.permission.RECORD_AUDIO",
         "android.permission.INTERNET"
+      ],
+      "blockedPermissions": [
+        "com.google.android.gms.permission.AD_ID",
+        "android.permission.ACCESS_ADSERVICES_AD_ID",
+        "android.permission.ACCESS_ADSERVICES_ATTRIBUTION",
+        "android.permission.ACCESS_ADSERVICES_CUSTOM_AUDIENCE",
+        "android.permission.ACCESS_ADSERVICES_TOPICS"
       ]
     },
     "web": {

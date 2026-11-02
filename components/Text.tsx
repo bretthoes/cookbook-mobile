@@ -72,6 +72,9 @@ export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef
     weight && (usesSecondaryTitleFont ? $secondaryFontWeightStyles : $fontWeightStyles)[weight],
     size && activeSizeStyles[size],
     $styleOverride,
+    // Last, so a caller style cannot turn this back on. Playpen Sans ligates
+    // "member" into a glyph Android does not draw.
+    $disableLigatures,
   ]
 
   return (
@@ -122,6 +125,10 @@ function makeBaseStyle(sizes: typeof $sizeStyles): ThemedStyle<TextStyle> {
     ...$fontWeightStyles.normal,
     color: theme.colors.text,
   })
+}
+
+const $disableLigatures: TextStyle = {
+  fontVariant: ["no-common-ligatures", "no-discretionary-ligatures", "no-contextual"],
 }
 
 function makePresets(sizes: typeof $sizeStyles): Record<Presets, ThemedStyleArray<TextStyle>> {
