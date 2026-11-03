@@ -35,12 +35,16 @@ const defaultSpeechLocales: Record<SupportedLanguageCode, string> = {
   ko: "ko-KR",
 }
 
-/** BCP 47 tag for expo-speech-recognition (requires region, e.g. en-US not en). */
+/**
+ * BCP 47 tag for expo-speech-recognition.
+ * The recognizer matches locales exactly and rejects a bare code such as "en".
+ */
 export function getSpeechRecognitionLocale(): string {
   const appCode = getActiveLanguageCode()
-  const deviceTag = Localization.getLocales()[0]?.languageTag
+  const deviceLocale = Localization.getLocales()[0]
+  const deviceTag = deviceLocale?.languageTag
 
-  if (deviceTag && normalizeLanguageCode(deviceTag) === appCode) {
+  if (deviceTag && deviceLocale.regionCode && normalizeLanguageCode(deviceTag) === appCode) {
     return deviceTag
   }
 
