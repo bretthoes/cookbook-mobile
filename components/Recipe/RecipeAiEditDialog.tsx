@@ -2,6 +2,7 @@ import { Button } from "@/components/Button"
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
+import { getSpeechRecognitionLocale } from "@/i18n/language"
 import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -37,7 +38,7 @@ export function RecipeAiEditDialog({
   onApply,
 }: RecipeAiEditDialogProps) {
   const { themed, theme } = useAppTheme()
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const insets = useSafeAreaInsets()
 
   const [prompt, setPrompt] = useState("")
@@ -104,7 +105,7 @@ export function RecipeAiEditDialog({
     setIsRecording(true)
     finalTranscriptRef.current = promptRef.current.trim()
     ExpoSpeechRecognitionModule.start({
-      lang: i18n.language,
+      lang: getSpeechRecognitionLocale(),
       interimResults: true,
       continuous: true,
     })
@@ -154,9 +155,7 @@ export function RecipeAiEditDialog({
             </TouchableOpacity>
             <Text
               text={
-                isRecording
-                  ? t("recipeAiEditDialog:listening")
-                  : t("recipeAiEditDialog:tapToSpeak")
+                isRecording ? t("recipeAiEditDialog:listening") : t("recipeAiEditDialog:tapToSpeak")
               }
               style={themed($micHint)}
             />
