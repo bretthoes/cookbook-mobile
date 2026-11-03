@@ -156,7 +156,7 @@ export default function EditRecipe() {
 
   return (
     <View style={$screenRoot}>
-      <Screen preset="scroll">
+      <Screen preset="scroll" keyboardBottomOffset={120} contentContainerStyle={$formScrollContent}>
         <RecipeForm
           key={formKey}
           onSubmit={onPressSend}
@@ -181,4 +181,8 @@ export default function EditRecipe() {
 
 const $screenRoot: ViewStyle = {
   flex: 1,
+}
+
+const $formScrollContent: ViewStyle = {
+  paddingBottom: 140,
 }

@@ -319,7 +319,7 @@ export default function AddRecipeScreen() {
 
   return (
     <View style={$screenRoot}>
-      <Screen preset="scroll">
+      <Screen preset="scroll" keyboardBottomOffset={120} contentContainerStyle={$formScrollContent}>
         {selectedCookbook && cookbookImageSource && (
           <>
             <Text tx="recipeAddScreen:addingTo" style={$themedCookbookLabel} />
@@ -347,6 +347,10 @@ export default function AddRecipeScreen() {
       />
     </View>
   )
+}
+
+const $formScrollContent: ViewStyle = {
+  paddingBottom: 140,
 }
 
 const $screenRoot: ViewStyle = {

@@ -13,10 +13,15 @@ import {
   ActivityIndicator,
   Image,
   ImageStyle,
+  Keyboard,
+  type KeyboardEvent,
   Modal,
+  Platform,
   Pressable,
+  ScrollView,
   TextStyle,
   TouchableOpacity,
+  useWindowDimensions,
   View,
   ViewStyle,
 } from "react-native"
@@ -40,6 +45,8 @@ export function RecipeAiEditDialog({
   const { themed, theme } = useAppTheme()
   const { t } = useTranslation()
   const insets = useSafeAreaInsets()
+  const { height: windowHeight } = useWindowDimensions()
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
 
   const [prompt, setPrompt] = useState("")
   const [isRecording, setIsRecording] = useState(false)
@@ -57,14 +64,42 @@ export function RecipeAiEditDialog({
 
   useEffect(() => {
     if (!visible) {
-      updatePrompt("")
-      finalTranscriptRef.current = ""
-      setSpeechError("")
-      setIsRecording(false)
-      isRecordingRef.current = false
-      isAbortingRef.current = true
-      ExpoSpeechRecognitionModule.abort()
+      setKeyboardHeight(0)
+      return
     }
+
+    const onFrame = (event: KeyboardEvent) => {
+      const overlap =
+        Platform.OS === "ios"
+          ? windowHeight - event.endCoordinates.screenY
+          : event.endCoordinates.height
+      setKeyboardHeight(Math.max(0, overlap))
+    }
+    const showEvent = Platform.OS === "ios" ? "keyboardWillChangeFrame" : "keyboardDidShow"
+    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide"
+    const showSub = Keyboard.addListener(showEvent, onFrame)
+    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardHeight(0))
+    return () => {
+      showSub.remove()
+      hideSub.remove()
+    }
+  }, [visible, windowHeight])
+
+  useEffect(() => {
+    if (visible) {
+      // Drop the recipe form keyboard before this sheet takes over, so both are not up at once.
+      Keyboard.dismiss()
+      return
+    }
+
+    Keyboard.dismiss()
+    updatePrompt("")
+    finalTranscriptRef.current = ""
+    setSpeechError("")
+    setIsRecording(false)
+    isRecordingRef.current = false
+    isAbortingRef.current = true
+    ExpoSpeechRecognitionModule.abort()
   }, [visible, updatePrompt])
 
   useSpeechRecognitionEvent("result", (event) => {
@@ -118,67 +153,91 @@ export function RecipeAiEditDialog({
   }
 
   const displayError = errorMsg || speechError
+  const keyboardLift = keyboardHeight > 0 ? keyboardHeight : insets.bottom
+  const maxDialogHeight = Math.max(220, windowHeight - keyboardLift - insets.top - theme.spacing.lg)
+
+  const dismiss = () => {
+    Keyboard.dismiss()
+    onDismiss()
+  }
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onDismiss}>
-      <Pressable style={themed($overlay)} onPress={onDismiss}>
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={dismiss}>
+      <Pressable style={themed($overlay)} onPress={dismiss}>
         <Pressable
-          style={[themed($dialog), { marginBottom: insets.bottom + theme.spacing.md }]}
+          style={[
+            themed($dialog),
+            {
+              marginBottom: keyboardLift + theme.spacing.md,
+              maxHeight: maxDialogHeight,
+            },
+          ]}
           onPress={(e) => e.stopPropagation()}
         >
-          <Text tx="recipeAiEditDialog:title" preset="subheading" style={themed($title)} />
-          <Text tx="recipeAiEditDialog:subtitle" style={themed($subtitle)} />
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+            automaticallyAdjustKeyboardInsets={false}
+            bounces={false}
+            contentContainerStyle={themed($dialogContent)}
+            style={{ maxHeight: maxDialogHeight }}
+          >
+            <Text tx="recipeAiEditDialog:title" preset="subheading" style={themed($title)} />
+            <Text tx="recipeAiEditDialog:subtitle" style={themed($subtitle)} />
 
-          <TextField
-            value={prompt}
-            onChangeText={updatePrompt}
-            multiline
-            placeholderTx="recipeAiEditDialog:placeholder"
-            style={themed($promptInput)}
-            inputWrapperStyle={themed($promptInputWrapper)}
-            editable={!isLoading}
-          />
-
-          <View style={themed($micRow)}>
-            <TouchableOpacity
-              onPress={isRecording ? handleStopListening : handleStartListening}
-              disabled={isLoading}
-              style={[themed($micButton), isRecording && themed($micButtonActive)]}
-              accessibilityRole="button"
-              accessibilityLabel={
-                isRecording
-                  ? t("recipeAiEditDialog:stopListening")
-                  : t("recipeAiEditDialog:startListening")
-              }
-            >
-              <Text text="🎙" style={$micEmoji} />
-            </TouchableOpacity>
-            <Text
-              text={
-                isRecording ? t("recipeAiEditDialog:listening") : t("recipeAiEditDialog:tapToSpeak")
-              }
-              style={themed($micHint)}
+            <TextField
+              value={prompt}
+              onChangeText={updatePrompt}
+              multiline
+              placeholderTx="recipeAiEditDialog:placeholder"
+              style={themed($promptInput)}
+              inputWrapperStyle={themed($promptInputWrapper)}
+              editable={!isLoading}
             />
-          </View>
 
-          {displayError ? <Text text={displayError} style={themed($errorText)} /> : null}
+            <View style={themed($micRow)}>
+              <TouchableOpacity
+                onPress={isRecording ? handleStopListening : handleStartListening}
+                disabled={isLoading}
+                style={[themed($micButton), isRecording && themed($micButtonActive)]}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  isRecording
+                    ? t("recipeAiEditDialog:stopListening")
+                    : t("recipeAiEditDialog:startListening")
+                }
+              >
+                <Text text="🎙" style={$micEmoji} />
+              </TouchableOpacity>
+              <Text
+                text={
+                  isRecording
+                    ? t("recipeAiEditDialog:listening")
+                    : t("recipeAiEditDialog:tapToSpeak")
+                }
+                style={themed($micHint)}
+              />
+            </View>
 
-          <View style={themed($actions)}>
-            <Button
-              tx="recipeAiEditDialog:cancelButton"
-              preset="default"
-              style={themed($actionButton)}
-              onPress={onDismiss}
-              disabled={isLoading}
-            />
-            <Button
-              tx="recipeAiEditDialog:applyButton"
-              preset="filled"
-              style={themed($actionButton)}
-              onPress={() => onApply(prompt.trim())}
-              disabled={isLoading || !prompt.trim()}
-            />
-          </View>
+            {displayError ? <Text text={displayError} style={themed($errorText)} /> : null}
+
+            <View style={themed($actions)}>
+              <Button
+                tx="recipeAiEditDialog:cancelButton"
+                preset="default"
+                style={themed($actionButton)}
+                onPress={dismiss}
+                disabled={isLoading}
+              />
+              <Button
+                tx="recipeAiEditDialog:applyButton"
+                preset="filled"
+                style={themed($actionButton)}
+                onPress={() => onApply(prompt.trim())}
+                disabled={isLoading || !prompt.trim()}
+              />
+            </View>
+          </ScrollView>
 
           {isLoading ? (
             <View style={themed($loadingOverlay)}>
@@ -236,9 +295,13 @@ const $overlay: ThemedStyle<ViewStyle> = (theme) => ({
 const $dialog: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.background,
   borderRadius: theme.spacing.md,
+  maxHeight: "85%",
+  overflow: "hidden",
+})
+
+const $dialogContent: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.lg,
   gap: theme.spacing.sm,
-  maxHeight: "85%",
 })
 
 const $title: ThemedStyle<TextStyle> = () => ({

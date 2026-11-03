@@ -4,7 +4,7 @@ import { StatusBar, StatusBarProps, StatusBarStyle } from "expo-status-bar"
 import { ReactNode, useRef, useState } from "react"
 import {
   KeyboardAvoidingView,
-  KeyboardAvoidingViewProps,
+  type KeyboardAvoidingViewProps,
   LayoutChangeEvent,
   Platform,
   ScrollView,
@@ -207,6 +207,10 @@ function ScreenWithScrolling(props: ScreenProps) {
   return (
     <KeyboardAwareScrollView
       bottomOffset={keyboardBottomOffset}
+      // Dragging the list dismisses the keyboard. Without this, a tap meant to
+      // dismiss it lands on the next field after the list shifts, and the keyboard stays up.
+      keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
+      automaticallyAdjustKeyboardInsets={false}
       {...{ keyboardShouldPersistTaps, scrollEnabled, ref }}
       {...ScrollViewProps}
       onLayout={(e) => {
@@ -252,6 +256,12 @@ export function Screen(props: ScreenProps) {
   } = props
 
   const $containerInsets = useSafeAreaInsetsStyle(safeAreaEdges)
+  const scrolling = !isNonScrolling(props.preset)
+  const body = scrolling ? (
+    <ScreenWithScrolling {...props} />
+  ) : (
+    <ScreenWithoutScrolling {...props} />
+  )
 
   return (
     <View
@@ -266,18 +276,18 @@ export function Screen(props: ScreenProps) {
         {...StatusBarProps}
       />
 
-      <KeyboardAvoidingView
-        behavior={isIos ? "padding" : "height"}
-        keyboardVerticalOffset={keyboardOffset}
-        {...KeyboardAvoidingViewProps}
-        style={[$styles.flex1, KeyboardAvoidingViewProps?.style]}
-      >
-        {isNonScrolling(props.preset) ? (
-          <ScreenWithoutScrolling {...props} />
-        ) : (
-          <ScreenWithScrolling {...props} />
-        )}
-      </KeyboardAvoidingView>
+      {scrolling ? (
+        body
+      ) : (
+        <KeyboardAvoidingView
+          behavior={isIos ? "padding" : "height"}
+          keyboardVerticalOffset={keyboardOffset}
+          {...KeyboardAvoidingViewProps}
+          style={[$styles.flex1, KeyboardAvoidingViewProps?.style]}
+        >
+          {body}
+        </KeyboardAvoidingView>
+      )}
     </View>
   )
 }
