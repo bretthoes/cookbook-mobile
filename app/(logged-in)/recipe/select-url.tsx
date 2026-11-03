@@ -1,16 +1,25 @@
+import { FormCard } from "@/components/FormCard"
 import { LoadingScreen } from "@/components/LoadingScreen"
+import { SupportedRecipeSites } from "@/components/Recipe/SupportedRecipeSites"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { FormCard } from "@/components/FormCard"
-import { useImportRecipeFromUrlMutation } from "@/hooks/queries/useRecipesQuery"
+import {
+  useImportRecipeFromSocialUrlMutation,
+  useImportRecipeFromUrlMutation,
+} from "@/hooks/queries/useRecipesQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
-import { spacing } from "@/theme"
+import type { ThemedStyle } from "@/theme"
+import { useAppTheme } from "@/theme/context"
+import { recipeUrlUsesVideoExtraction } from "@/utils/recipeImportUrl"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { ViewStyle } from "react-native"
+import { View, type TextStyle, type ViewStyle } from "react-native"
+
+const WEBSITE_LOADING_MS = 8_000
+const VIDEO_LOADING_MS = 25_000
 
 const isValidUrl = (input: string) => {
   const regex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i
@@ -18,12 +27,15 @@ const isValidUrl = (input: string) => {
 }
 
 export default function RecipeUrlScreen() {
+  const { themed } = useAppTheme()
   const importFromUrl = useImportRecipeFromUrlMutation()
+  const importFromSocial = useImportRecipeFromSocialUrlMutation()
   const { isInFlight, run } = useInFlightAction()
 
   const [url, setUrl] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [loadingDurationMs, setLoadingDurationMs] = useState(WEBSITE_LOADING_MS)
   const [result, setResult] = useState("")
 
   const getValidationError = useCallback((urlToValidate: string) => {
@@ -49,22 +61,28 @@ export default function RecipeUrlScreen() {
       const error = getValidationError(url)
       if (error) return
 
+      const usesVideo = recipeUrlUsesVideoExtraction(url)
+      setLoadingDurationMs(usesVideo ? VIDEO_LOADING_MS : WEBSITE_LOADING_MS)
       setIsLoading(true)
-      const importResult = await importFromUrl.mutateAsync(url)
+      const importResult = usesVideo
+        ? await importFromSocial.mutateAsync(url)
+        : await importFromUrl.mutateAsync(url)
       setIsLoading(false)
 
       if (importResult.ok) {
         router.replace("/(logged-in)/recipe/add")
+      } else if (importResult.kind === "rate-limited") {
+        setResult(translate("recipeSelectUrlScreen:rateLimited"))
       } else {
         setResult(translate("recipeSelectUrlScreen:extractFailed"))
       }
       setIsSubmitted(false)
     })
-  }, [url, getValidationError, importFromUrl, run])
+  }, [url, getValidationError, importFromSocial, importFromUrl, run])
 
   useHeader(
     {
-      titleTx: "recipeSelectUrlScreen:title",
+      titleTx: "recipeLinkImport:title",
       onLeftPress: () => router.back(),
       leftIcon: "back",
       onRightPress: isInFlight ? undefined : handleNext,
@@ -74,12 +92,15 @@ export default function RecipeUrlScreen() {
   )
 
   if (isLoading) {
-    return <LoadingScreen estimatedDurationMs={8_000} />
+    return <LoadingScreen estimatedDurationMs={loadingDurationMs} />
   }
 
   return (
     <Screen style={$root} preset="scroll">
-      <Text tx="recipeSelectUrlScreen:subtitle" style={{ paddingHorizontal: spacing.md }} />
+      <View style={themed($intro)}>
+        <Text tx="recipeLinkImport:summary" style={themed($summary)} />
+        <SupportedRecipeSites />
+      </View>
       <FormCard>
         <TextField
           value={url}
@@ -96,7 +117,7 @@ export default function RecipeUrlScreen() {
           helper={validationError}
           status={validationError ? "error" : undefined}
         />
-        <Text text={`${result}`} preset="formHelper" />
+        {result ? <Text text={result} preset="formHelper" /> : null}
       </FormCard>
     </Screen>
   )
@@ -105,3 +126,14 @@ export default function RecipeUrlScreen() {
 const $root: ViewStyle = {
   flex: 1,
 }
+
+const $intro: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.md,
+  paddingTop: theme.spacing.sm,
+  gap: theme.spacing.md,
+})
+
+const $summary: ThemedStyle<TextStyle> = (theme) => ({
+  textAlign: "center",
+  color: theme.colors.text,
+})

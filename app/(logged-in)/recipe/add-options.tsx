@@ -26,9 +26,7 @@ import {
   type ViewStyle,
 } from "react-native"
 
-const tiktokLogo = require("@/assets/images/tiktok.png")
-const instagramLogo = require("@/assets/images/instagram.png")
-const pinterestLogo = require("@/assets/images/pinterest.png")
+const recipeLinkSites = require("@/assets/images/recipe-link-sites.png") as ImageSourcePropType
 
 type RecipeAddOption = {
   title: string
@@ -88,42 +86,8 @@ export default function AddRecipeOptionsScreen() {
   const options = useMemo(() => {
     const baseOptions: RecipeAddOption[] = [
       {
-        title: t("recipeAddOptionsScreen:optionFromTiktok"),
-        description: t("recipeAddOptionsScreen:optionFromTiktokDesc"),
-        image: tiktokLogo as ImageSourcePropType,
-        isPremium: true,
-        action: () =>
-          router.replace({
-            pathname: "../recipe/add-social-import",
-            params: { platform: "tiktok" },
-          }),
-      },
-      {
-        title: t("recipeAddOptionsScreen:optionFromPinterest"),
-        description: t("recipeAddOptionsScreen:optionFromPinterestDesc"),
-        image: pinterestLogo as ImageSourcePropType,
-        isPremium: true,
-        action: () =>
-          router.replace({
-            pathname: "../recipe/add-social-import",
-            params: { platform: "pinterest" },
-          }),
-      },
-      {
-        title: t("recipeAddOptionsScreen:optionFromInstagram"),
-        description: t("recipeAddOptionsScreen:optionFromInstagramDesc"),
-        image: instagramLogo as ImageSourcePropType,
-        isPremium: true,
-        action: () =>
-          router.replace({
-            pathname: "../recipe/add-social-import",
-            params: { platform: "instagram" },
-          }),
-      },
-      {
-        title: t("recipeAddOptionsScreen:optionFromUrl"),
-        description: t("recipeAddOptionsScreen:optionFromUrlDesc"),
-        icon: "web" as IconTypes,
+        title: t("recipeLinkImport:title"),
+        image: recipeLinkSites,
         isPremium: true,
         action: () => router.replace("../recipe/select-url"),
       },
