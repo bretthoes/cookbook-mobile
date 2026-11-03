@@ -5,7 +5,7 @@ import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import {
   draftItemHasContent,
-  getCurrentWeekKey,
+  getEffectiveWeeklyImportCount,
   useUiStore,
   WEEKLY_IMPORT_LIMIT,
 } from "@/stores/uiStore"
@@ -55,8 +55,10 @@ export default function AddRecipeOptionsScreen() {
     onLeftPress: () => router.back(),
   })
 
-  const currentWeek = getCurrentWeekKey()
-  const effectiveImportCount = weeklyImportWeekStart === currentWeek ? weeklyImportCount : 0
+  const effectiveImportCount = getEffectiveWeeklyImportCount(
+    weeklyImportCount,
+    weeklyImportWeekStart,
+  )
   const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
   const progressRatio = Math.min(effectiveImportCount / WEEKLY_IMPORT_LIMIT, 1)
 

@@ -9,7 +9,7 @@ import {
 } from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
-import { getCurrentWeekKey, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
+import { getEffectiveWeeklyImportCount, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
 import type { RecipeToAddSnapshotIn } from "@/types/recipe"
 import { draftItemHasContent, hasDraftContent } from "@/utils/recipeDraftHelpers"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
@@ -54,8 +54,10 @@ export default function AddRecipeScreen() {
 
   // Ref exposing the live form state to unmount cleanup without needing a re-render
   const formRef = useRef<RecipeFormHandle | null>(null)
-  const currentWeek = getCurrentWeekKey()
-  const effectiveImportCount = weeklyImportWeekStart === currentWeek ? weeklyImportCount : 0
+  const effectiveImportCount = getEffectiveWeeklyImportCount(
+    weeklyImportCount,
+    weeklyImportWeekStart,
+  )
   const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
   // Prevents unmount cleanup from re-saving a draft after successful submit
   const submittedSuccessfullyRef = useRef(false)

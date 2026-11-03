@@ -44,29 +44,84 @@ export type DraftFieldsFromForm = Omit<
   "draftId" | "cookbookId" | "thumbnail" | "videoPath" | "savedAt"
 >
 
-export function getCurrentWeekKey(): string {
-  const now = new Date()
-  const day = now.getDay()
-  const diff = now.getDate() - day + (day === 0 ? -6 : 1)
+/** Local calendar date `YYYY-MM-DD`. `toISOString()` would shift the day west of UTC. */
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+  return `${year}-${month}-${day}`
+}
+
+/** Monday 00:00 local time for the week that contains `now`. */
+function startOfLocalWeek(now: Date): Date {
   const monday = new Date(now)
-  monday.setDate(diff)
-  return monday.toISOString().split("T")[0]
+  monday.setHours(0, 0, 0, 0)
+  const day = monday.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+  monday.setDate(monday.getDate() + diff)
+  return monday
+}
+
+function parseLocalDateKey(key: string): Date | null {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(key)
+  if (!match) return null
+  const year = Number(match[1])
+  const month = Number(match[2])
+  const day = Number(match[3])
+  const date = new Date(year, month - 1, day)
+  if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+    return null
+  }
+  return date
+}
+
+/**
+ * Monday of the current local week, as `YYYY-MM-DD`.
+ * Uses the device calendar date so an evening import stays in the same week the next morning.
+ */
+export function getCurrentWeekKey(now: Date = new Date()): string {
+  return formatLocalDate(startOfLocalWeek(now))
+}
+
+/**
+ * True when `weekKey` belongs to the current local week.
+ * Older builds stored `toISOString().slice(0, 10)`, which can be a day off the local Monday.
+ */
+export function isStoredWeekKeyCurrent(weekKey: string, now: Date = new Date()): boolean {
+  const stored = parseLocalDateKey(weekKey)
+  if (!stored) return false
+  const monday = startOfLocalWeek(now)
+  const earliest = new Date(monday)
+  earliest.setDate(monday.getDate() - 1)
+  const nextMonday = new Date(monday)
+  nextMonday.setDate(monday.getDate() + 7)
+  return stored >= earliest && stored < nextMonday
+}
+
+/** Imports already counted this local week, or 0 when the stored week has rolled over. */
+export function getEffectiveWeeklyImportCount(
+  count: number,
+  weekKey: string,
+  now: Date = new Date(),
+): number {
+  return isStoredWeekKeyCurrent(weekKey, now) ? count : 0
 }
 
 /** Backend/AI placeholder when no recipe name is found — not user draft content. */
 export function isPlaceholderDraftTitle(title?: string | null): boolean {
   if (!hasMeaningfulText(title)) return true
-  return title!.replace(/\u00A0/g, " ").trim().toLowerCase() === "untitled recipe"
+  return (
+    title!
+      .replace(/\u00A0/g, " ")
+      .trim()
+      .toLowerCase() === "untitled recipe"
+  )
 }
 
 export function draftItemHasContent(draft: DraftContentFields): boolean {
   if (hasMeaningfulText(draft.summary)) return true
   if (draft.images?.some((img) => hasMeaningfulText(img.name))) return true
-  if (
-    draft.directions?.some(
-      (d) => hasMeaningfulText(d.text) || hasMeaningfulText(d.image),
-    )
-  ) {
+  if (draft.directions?.some((d) => hasMeaningfulText(d.text) || hasMeaningfulText(d.image))) {
     return true
   }
   if (
@@ -110,9 +165,7 @@ export function buildDraftFieldsFromFormData(formData: DraftFormData): DraftFiel
     .map((img, idx) => ({ id: 0, name: img.replace(/\u00A0/g, " ").trim(), ordinal: idx + 1 }))
 
   return {
-    title: hasMeaningfulText(formData.title)
-      ? formData.title.replace(/\u00A0/g, " ").trim()
-      : "",
+    title: hasMeaningfulText(formData.title) ? formData.title.replace(/\u00A0/g, " ").trim() : "",
     summary: hasMeaningfulText(formData.summary)
       ? formData.summary!.replace(/\u00A0/g, " ").trim()
       : null,

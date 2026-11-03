@@ -14,9 +14,9 @@ import {
 import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
 import { useAuthStore } from "@/stores/authStore"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
-import { useUiStore, type LegacyUiSnapshot } from "@/stores/uiStore"
+import { UI_STORE_KEY, useUiStore, type LegacyUiSnapshot } from "@/stores/uiStore"
 import * as SecureStore from "expo-secure-store"
-import { load } from "@/utils/storage"
+import { load, remove } from "@/utils/storage"
 
 const LEGACY_ROOT_STATE_KEY = "root-v1"
 
@@ -87,7 +87,12 @@ export async function setupApp() {
   try {
     const legacy = load<LegacyMstSnapshot>(LEGACY_ROOT_STATE_KEY)
     if (legacy) {
-      useUiStore.getState().migrateFromLegacySnapshot(legacy as LegacyUiSnapshot)
+      // ui-v1 is the live store. Re-applying root-v1 on every launch put the weekly
+      // import count back to the snapshot taken at migration time, so a URL import
+      // that had already incremented the counter showed as 0/5 after the next start.
+      if (load(UI_STORE_KEY) == null) {
+        useUiStore.getState().migrateFromLegacySnapshot(legacy as LegacyUiSnapshot)
+      }
       if (legacy.authenticationStore?.authEmail && !useAuthStore.getState().authEmail) {
         useAuthStore.setState({
           authEmail: legacy.authenticationStore.authEmail,
@@ -95,6 +100,7 @@ export async function setupApp() {
           userId: legacy.authenticationStore.userId,
         })
       }
+      remove(LEGACY_ROOT_STATE_KEY)
     }
   } catch (e) {
     if (__DEV__ && e instanceof Error) console.error(e.message)

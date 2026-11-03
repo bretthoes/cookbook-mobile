@@ -3,6 +3,7 @@ import {
   buildDraftFieldsFromFormData,
   draftItemHasContent,
   getCurrentWeekKey,
+  getEffectiveWeeklyImportCount,
   hasDraftContent,
   type DraftFormData,
 } from "@/utils/recipeDraftHelpers"
@@ -41,6 +42,33 @@ describe("getCurrentWeekKey", () => {
   it("returns same day when today is Monday", () => {
     vi.setSystemTime(new Date("2026-05-25T08:00:00Z"))
     expect(getCurrentWeekKey()).toBe("2026-05-25")
+  })
+
+  it("keeps Monday evening in the local week instead of the next UTC date", () => {
+    vi.setSystemTime(new Date(2026, 10, 2, 20, 0, 0))
+    expect(getCurrentWeekKey()).toBe("2026-11-02")
+  })
+})
+
+describe("getEffectiveWeeklyImportCount", () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it("counts a key stored as the next calendar day after a UTC shift", () => {
+    vi.setSystemTime(new Date(2026, 10, 3, 8, 0, 0))
+    expect(getEffectiveWeeklyImportCount(1, "2026-11-03")).toBe(1)
+    expect(getEffectiveWeeklyImportCount(1, "2026-11-02")).toBe(1)
+  })
+
+  it("drops a key from the previous week", () => {
+    vi.setSystemTime(new Date(2026, 10, 3, 8, 0, 0))
+    expect(getEffectiveWeeklyImportCount(4, "2026-10-26")).toBe(0)
+    expect(getEffectiveWeeklyImportCount(2, "")).toBe(0)
   })
 })
 
@@ -101,9 +129,7 @@ describe("hasDraftContent", () => {
 
   it("ignores whitespace-only direction images", () => {
     const base = emptyDraft()
-    expect(
-      hasDraftContent({ ...base, directions: [{ text: "", image: "   " }] }),
-    ).toBe(false)
+    expect(hasDraftContent({ ...base, directions: [{ text: "", image: "   " }] })).toBe(false)
   })
 
   it("ignores section title without ingredients", () => {
@@ -111,7 +137,9 @@ describe("hasDraftContent", () => {
     expect(
       hasDraftContent({
         ...base,
-        ingredientSections: [{ title: "For the sauce", ingredients: [{ name: "", optional: false }] }],
+        ingredientSections: [
+          { title: "For the sauce", ingredients: [{ name: "", optional: false }] },
+        ],
       }),
     ).toBe(true)
   })
@@ -136,9 +164,13 @@ describe("draftItemHasContent", () => {
       directions: [{ text: "boil", image: null }],
     })
     expect(draftItemHasContent(fields)).toBe(true)
-    expect(hasDraftContent({ ...emptyDraft(), title: "Pasta", directions: [{ text: "boil", image: null }] })).toBe(
-      true,
-    )
+    expect(
+      hasDraftContent({
+        ...emptyDraft(),
+        title: "Pasta",
+        directions: [{ text: "boil", image: null }],
+      }),
+    ).toBe(true)
   })
 
   it("detects direction image on persisted draft", () => {
@@ -158,9 +190,7 @@ describe("buildDraftFieldsFromFormData", () => {
       ...emptyDraft(),
       directions: [{ text: "", image: "uploads/step1.jpg" }],
     })
-    expect(fields.directions).toEqual([
-      { id: 0, text: "", ordinal: 1, image: "uploads/step1.jpg" },
-    ])
+    expect(fields.directions).toEqual([{ id: 0, text: "", ordinal: 1, image: "uploads/step1.jpg" }])
     expect(draftItemHasContent(fields)).toBe(true)
   })
 

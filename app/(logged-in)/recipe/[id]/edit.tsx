@@ -10,7 +10,7 @@ import {
 } from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
-import { getCurrentWeekKey, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
+import { getEffectiveWeeklyImportCount, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
 import type { RecipeSnapshotIn } from "@/types/recipe"
 import {
   formInputsToAiRecipeDto,
@@ -42,8 +42,10 @@ export default function EditRecipe() {
   const [dialogVisible, setDialogVisible] = useState(false)
   const [aiErrorMsg, setAiErrorMsg] = useState("")
 
-  const currentWeek = getCurrentWeekKey()
-  const effectiveImportCount = weeklyImportWeekStart === currentWeek ? weeklyImportCount : 0
+  const effectiveImportCount = getEffectiveWeeklyImportCount(
+    weeklyImportCount,
+    weeklyImportWeekStart,
+  )
   const isAtLimit = !isPro && effectiveImportCount >= WEEKLY_IMPORT_LIMIT
 
   const mapRecipeToFormInputs = useCallback((): RecipeFormInputs | null => {
