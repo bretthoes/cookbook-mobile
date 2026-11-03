@@ -10,6 +10,9 @@ const en = {
     save: "Save",
     goBack: "Go Back",
     error: "Error",
+    copy: "Copy",
+    mailUnavailableTitle: "No mail app available",
+    mailUnavailableMessage: "Send an email to {{email}} instead.",
     paginationLabel: "Page {{currentPage}} of {{totalPages}} ({{totalCount}} items)",
   },
   errors: {

@@ -12,6 +12,9 @@ const fr: Translations = {
     save: "Enregistrer",
     goBack: "Retour",
     error: "Erreur",
+    copy: "Copier",
+    mailUnavailableTitle: "Aucune application mail",
+    mailUnavailableMessage: "Écrivez plutôt à {{email}}.",
     paginationLabel: "Page {{currentPage}} sur {{totalPages}} ({{totalCount}} éléments)",
   },
   errors: {

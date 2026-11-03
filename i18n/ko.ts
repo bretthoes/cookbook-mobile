@@ -12,6 +12,9 @@ const ko: Translations = {
     save: "저장",
     goBack: "돌아가기",
     error: "오류",
+    copy: "복사",
+    mailUnavailableTitle: "메일 앱을 열 수 없습니다",
+    mailUnavailableMessage: "이 주소로 이메일을 보내 주세요: {{email}}",
     paginationLabel: "{{totalPages}}페이지 중 {{currentPage}}페이지 ({{totalCount}}개 항목)",
   },
   errors: {
