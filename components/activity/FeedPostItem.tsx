@@ -18,6 +18,7 @@ export function FeedPostItem({ item }: FeedPostItemProps) {
   const { themed } = useAppTheme()
   const router = useRouter()
   const messageKey = getActivityFeedMessageKey(item.actionType)
+  const isImportant = item.isImportant ?? false
   const canOpenRecipe = item.recipeId != null
 
   const handlePress = () => {
@@ -28,12 +29,16 @@ export function FeedPostItem({ item }: FeedPostItemProps) {
     <Pressable
       onPress={canOpenRecipe ? handlePress : undefined}
       disabled={!canOpenRecipe}
-      style={themed($post)}
+      style={[themed($post), isImportant && themed($postImportant)]}
     >
       {messageKey ? (
-        <Text preset="default" tx={messageKey} txOptions={getActivityFeedMessageOptions(item)} />
+        <Text
+          preset={isImportant ? "bold" : "default"}
+          tx={messageKey}
+          txOptions={getActivityFeedMessageOptions(item)}
+        />
       ) : (
-        <Text preset="default" text={item.cookbookTitle} />
+        <Text preset={isImportant ? "bold" : "default"} text={item.cookbookTitle} />
       )}
       <View style={$metaRow}>
         <Text preset="formHelper" size="xs" text={formatActivityTimeAgo(item.created)} />
@@ -49,6 +54,11 @@ const $post: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.backgroundDim,
   borderWidth: 1,
   borderColor: theme.colors.separator,
+})
+
+const $postImportant: ThemedStyle<ViewStyle> = (theme) => ({
+  borderLeftWidth: 3,
+  borderLeftColor: theme.colors.tint,
 })
 
 const $metaRow: ViewStyle = {
