@@ -105,6 +105,10 @@
         {
           "ios": {
             "useModularHeaders": true
+          },
+          "android": {
+            "enableMinifyInReleaseBuilds": true,
+            "enableShrinkResourcesInReleaseBuilds": true
           }
         }
       ],
