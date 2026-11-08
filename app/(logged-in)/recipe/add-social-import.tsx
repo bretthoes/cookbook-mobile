@@ -102,7 +102,7 @@ export default function AddSocialImportScreen() {
   )
 
   if (isLoading) {
-    return <LoadingScreen estimatedDurationMs={25_000} />
+    return <LoadingScreen estimatedDurationMs={50_000} />
   }
 
   return (

@@ -26,8 +26,8 @@ export interface LoadingScreenProps {
    */
   text?: string
   /**
-   * When provided, shows an estimated progress bar that fills to ~90% over
-   * this duration, then holds until the screen unmounts. Useful for long
+   * When provided, shows an estimated progress bar that fills steadily to ~90%
+   * over this duration, then holds until the screen unmounts. Useful for long
    * operations where real progress is unavailable.
    */
   estimatedDurationMs?: number
@@ -78,7 +78,7 @@ export function LoadingScreen(props: LoadingScreenProps) {
 
     progressWidth.value = withTiming(90, {
       duration: props.estimatedDurationMs,
-      easing: Easing.out(Easing.cubic),
+      easing: Easing.linear,
     })
   }, [props.estimatedDurationMs, progressWidth])
 

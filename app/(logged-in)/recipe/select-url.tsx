@@ -18,8 +18,8 @@ import { router } from "expo-router"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { View, type TextStyle, type ViewStyle } from "react-native"
 
-const WEBSITE_LOADING_MS = 8_000
-const VIDEO_LOADING_MS = 25_000
+const WEBSITE_LOADING_MS = 20_000
+const VIDEO_LOADING_MS = 50_000
 
 const isValidUrl = (input: string) => {
   const regex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i
