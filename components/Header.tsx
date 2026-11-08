@@ -241,14 +241,21 @@ function HeaderAction(props: HeaderActionProps) {
   if (ActionComponent) return ActionComponent
 
   if (content) {
+    const disabled = !onPress
+
     return (
       <TouchableOpacity
         style={themed([$actionTextContainer, { backgroundColor }])}
         onPress={onPress}
-        disabled={!onPress}
+        disabled={disabled}
         activeOpacity={0.8}
       >
-        <Text weight="medium" size="md" text={content} style={themed($actionText)} />
+        <Text
+          weight="medium"
+          size="md"
+          text={content}
+          style={themed([$actionText, disabled && $actionTextDisabled])}
+        />
       </TouchableOpacity>
     )
   }
@@ -294,6 +301,10 @@ const $actionTextContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
 
 const $actionText: ThemedStyle<TextStyle> = ({ colors }) => ({
   color: colors.tint,
+})
+
+const $actionTextDisabled: ThemedStyle<TextStyle> = ({ colors }) => ({
+  color: colors.textDim,
 })
 
 const $actionIconContainer: ThemedStyle<ViewStyle> = ({ spacing }) => ({
