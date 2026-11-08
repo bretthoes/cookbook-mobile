@@ -241,12 +241,14 @@ export function MeasurementConverterDialog({
                   <Text
                     tx="measurementConverter:resultValue"
                     txOptions={{ amount: formatted, unit: t(resultUnit) }}
-                    size="lg"
+                    size="md"
+                    weight="normal"
                   />
                 ) : (
                   <Text
                     tx="measurementConverter:emptyResult"
-                    size="lg"
+                    size="md"
+                    weight="normal"
                     style={$themedEmptyResult}
                   />
                 )}

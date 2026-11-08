@@ -236,7 +236,7 @@ export default function RecipeScreen() {
               <Text preset="subheading" tx="recipeDetailsScreen:ingredients" />
               <PressableIcon
                 icon="convert"
-                size={22}
+                size={18}
                 onPress={() => setConverterVisible(true)}
                 accessibilityRole="button"
                 accessibilityLabel={t("measurementConverter:openA11y")}
