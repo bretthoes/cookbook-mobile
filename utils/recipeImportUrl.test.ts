@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest"
-import { recipeUrlUsesVideoExtraction } from "@/utils/recipeImportUrl"
+import {
+  recipeUrlIsLongFormYouTube,
+  recipeUrlUsesVideoExtraction,
+} from "@/utils/recipeImportUrl"
 
 describe("recipeUrlUsesVideoExtraction", () => {
   it("turns video extraction on for TikTok, Instagram, Pinterest, and YouTube Shorts", () => {
@@ -17,5 +20,20 @@ describe("recipeUrlUsesVideoExtraction", () => {
     expect(recipeUrlUsesVideoExtraction("https://www.youtube.com/watch?v=abc")).toBe(false)
     expect(recipeUrlUsesVideoExtraction("https://youtu.be/abc")).toBe(false)
     expect(recipeUrlUsesVideoExtraction("not a url")).toBe(false)
+  })
+})
+
+describe("recipeUrlIsLongFormYouTube", () => {
+  it("rejects watch, share, and live links", () => {
+    expect(recipeUrlIsLongFormYouTube("https://www.youtube.com/watch?v=abc")).toBe(true)
+    expect(recipeUrlIsLongFormYouTube("https://youtu.be/abc")).toBe(true)
+    expect(recipeUrlIsLongFormYouTube("https://www.youtube.com/live/abc")).toBe(true)
+  })
+
+  it("allows Shorts and non-YouTube links", () => {
+    expect(recipeUrlIsLongFormYouTube("https://www.youtube.com/shorts/abc")).toBe(false)
+    expect(recipeUrlIsLongFormYouTube("https://m.youtube.com/shorts/abc?si=1")).toBe(false)
+    expect(recipeUrlIsLongFormYouTube("https://www.tiktok.com/@cook/video/1")).toBe(false)
+    expect(recipeUrlIsLongFormYouTube("not a url")).toBe(false)
   })
 })

@@ -506,9 +506,10 @@ const ko: Translations = {
     title: "웹사이트나 짧은 영상에서 레시피 추가",
     summary: "YouTube Shorts, TikTok, Instagram, Pinterest 또는 아무 레시피 웹사이트",
     siteTiktok: "TikTok",
-    siteInstagram: "Instagram",
+    siteInstagram: "Instagram Reels",
     sitePinterest: "Pinterest",
-    siteShorts: "Shorts",
+    siteShorts: "YouTube Shorts",
+    youtubeShortsOnly: "YouTube Shorts만 허용됩니다.",
     siteWebsite: "레시피 사이트",
   },
   recipeAddSocialImportScreen: {

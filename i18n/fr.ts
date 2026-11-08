@@ -520,9 +520,10 @@ const fr: Translations = {
     title: "Ajouter une recette depuis un site ou une courte vidéo",
     summary: "YouTube Shorts, TikTok, Instagram, Pinterest ou n'importe quel site de recettes",
     siteTiktok: "TikTok",
-    siteInstagram: "Instagram",
+    siteInstagram: "Instagram Reels",
     sitePinterest: "Pinterest",
-    siteShorts: "Shorts",
+    siteShorts: "YouTube Shorts",
+    youtubeShortsOnly: "Seuls les YouTube Shorts sont autorisés.",
     siteWebsite: "Site de recettes",
   },
   recipeAddSocialImportScreen: {

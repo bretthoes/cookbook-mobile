@@ -6,6 +6,7 @@ import { FormCard } from "@/components/FormCard"
 import { useImportRecipeFromSocialUrlMutation } from "@/hooks/queries/useRecipesQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate, TxKeyPath } from "@/i18n"
+import { recipeUrlIsLongFormYouTube } from "@/utils/recipeImportUrl"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
@@ -56,6 +57,8 @@ export default function AddSocialImportScreen() {
       return translate("recipeAddSocialImportScreen:validation.cantBeBlank")
     if (!isValidUrl(urlToValidate))
       return translate("recipeAddSocialImportScreen:validation.mustBeValidUrl")
+    if (recipeUrlIsLongFormYouTube(urlToValidate))
+      return translate("recipeLinkImport:youtubeShortsOnly")
     return ""
   }, [])
 

@@ -12,7 +12,10 @@ import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { recipeUrlUsesVideoExtraction } from "@/utils/recipeImportUrl"
+import {
+  recipeUrlIsLongFormYouTube,
+  recipeUrlUsesVideoExtraction,
+} from "@/utils/recipeImportUrl"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
@@ -42,6 +45,8 @@ export default function RecipeUrlScreen() {
     if (urlToValidate.length === 0) return translate("recipeSelectUrlScreen:validation.cantBeBlank")
     if (!isValidUrl(urlToValidate))
       return translate("recipeSelectUrlScreen:validation.mustBeValidUrl")
+    if (recipeUrlIsLongFormYouTube(urlToValidate))
+      return translate("recipeLinkImport:youtubeShortsOnly")
     return ""
   }, [])
 

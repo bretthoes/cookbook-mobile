@@ -510,9 +510,10 @@ const en = {
     title: "Add Recipe from website or short video",
     summary: "YouTube Shorts, TikTok, Instagram, Pinterest, or any recipe website",
     siteTiktok: "TikTok",
-    siteInstagram: "Instagram",
+    siteInstagram: "Instagram Reels",
     sitePinterest: "Pinterest",
-    siteShorts: "Shorts",
+    siteShorts: "YouTube Shorts",
+    youtubeShortsOnly: "Only YouTube Shorts are allowed.",
     siteWebsite: "Any recipe site",
   },
   recipeAddSocialImportScreen: {
