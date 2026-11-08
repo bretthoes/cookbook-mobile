@@ -120,6 +120,7 @@ export const iconRegistry = {
   check: require("../assets/icons/check.png"),
   community: require("../assets/icons/community.png"),
   copy: require("../assets/icons/copy.png"),
+  convert: require("../assets/icons/convert.png"),
   crown: require("../assets/icons/crown.png"),
   cookbooks: require("../assets/icons/cookbooks.png"),
   create: require("../assets/icons/create.png"),

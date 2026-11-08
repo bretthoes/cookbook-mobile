@@ -2,11 +2,13 @@ import { AutoImage } from "@/components/AutoImage"
 import { Button } from "@/components/Button"
 import { CustomBackButton } from "@/components/CustomBackButton"
 import { Divider } from "@/components/Divider"
+import { PressableIcon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { MoreButton } from "@/components/MoreButton"
 import { Popover } from "@/components/Popover"
 import { DirectionText } from "@/components/Recipe/DirectionText"
 import { IngredientItem } from "@/components/Recipe/IngredientItem"
+import { MeasurementConverterDialog } from "@/components/Recipe/MeasurementConverterDialog"
 import { RecipeDetailsSkeleton } from "@/components/Recipe/RecipeDetailsSkeleton"
 import { RecipeImages } from "@/components/Recipe/RecipeImages"
 import RecipeSummary from "@/components/Recipe/RecipeSummary"
@@ -84,6 +86,7 @@ export default function RecipeScreen() {
   const $themedMadeSection = React.useMemo(() => themed($madeSection), [themed])
   const $themedMadeThisAgo = React.useMemo(() => themed($madeThisAgo), [themed])
   const [cookMode, setCookMode] = useState(false)
+  const [converterVisible, setConverterVisible] = useState(false)
   const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
 
   const toggleDirectionCompleted = (index: number) => {
@@ -209,6 +212,10 @@ export default function RecipeScreen() {
         options={popoverOptions}
         anchorTop={popoverAnchorTop}
       />
+      <MeasurementConverterDialog
+        visible={converterVisible}
+        onDismiss={() => setConverterVisible(false)}
+      />
       <Screen safeAreaEdges={recipeHasImages ? [] : ["top"]} preset="scroll">
         <CustomBackButton
           onPress={() => router.back()}
@@ -225,11 +232,17 @@ export default function RecipeScreen() {
 
         {selected && (
           <View style={$themedIngredientsContainer}>
-            <Text
-              preset="subheading"
-              tx="recipeDetailsScreen:ingredients"
-              style={{ paddingBottom: spacing.md }}
-            />
+            <View style={$ingredientsHeaderRow}>
+              <Text preset="subheading" tx="recipeDetailsScreen:ingredients" />
+              <PressableIcon
+                icon="convert"
+                size={22}
+                onPress={() => setConverterVisible(true)}
+                accessibilityRole="button"
+                accessibilityLabel={t("measurementConverter:openA11y")}
+                hitSlop={spacing.sm}
+              />
+            </View>
             {(() => {
               const sections = [...(selected.ingredientSections ?? [])].sort(
                 (a, b) => a.ordinal - b.ordinal,
@@ -454,6 +467,13 @@ const $directionsContainer: ThemedStyle<ViewStyle> = (theme) => ({
   padding: theme.spacing.md,
   paddingBottom: theme.spacing.xl,
 })
+
+const $ingredientsHeaderRow: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
+  paddingBottom: spacing.md,
+}
 
 const $directionsHeaderRow: ViewStyle = {
   flexDirection: "row",

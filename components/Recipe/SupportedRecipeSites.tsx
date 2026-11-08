@@ -16,11 +16,13 @@ import {
 const tiktokLogo = require("@/assets/images/tiktok.png") as ImageSourcePropType
 const instagramLogo = require("@/assets/images/instagram.png") as ImageSourcePropType
 const pinterestLogo = require("@/assets/images/pinterest.png") as ImageSourcePropType
+const youtubeShortsLogo = require("@/assets/images/youtube-shorts.png") as ImageSourcePropType
 
 const SITES: { labelTx: TxKeyPath; image?: ImageSourcePropType }[] = [
   { labelTx: "recipeLinkImport:siteTiktok", image: tiktokLogo },
   { labelTx: "recipeLinkImport:siteInstagram", image: instagramLogo },
   { labelTx: "recipeLinkImport:sitePinterest", image: pinterestLogo },
+  { labelTx: "recipeLinkImport:siteShorts", image: youtubeShortsLogo },
   { labelTx: "recipeLinkImport:siteWebsite" },
 ]
 
