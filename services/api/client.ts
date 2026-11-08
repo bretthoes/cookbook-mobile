@@ -41,6 +41,16 @@ const UNPROTECTED_PATHS = [
 
 const DEFAULT_TIMEOUT_MS = 10000
 
+/** openapi-fetch copies non-Request fields onto the Request object before fetch. */
+function readRequestTimeout(input: RequestInfo | URL, init?: RequestInit): number | undefined {
+  if (init && "timeout" in init && typeof init.timeout === "number") return init.timeout
+  if (typeof input === "object" && input !== null && "timeout" in input) {
+    const timeout = input.timeout
+    if (typeof timeout === "number") return timeout
+  }
+  return undefined
+}
+
 /**
  * Derives server base URL from Config.API_URL.
  * Config.API_URL = "http://10.0.2.2:5000/api" -> baseUrl = "http://10.0.2.2:5000"
@@ -137,7 +147,12 @@ export function createApiClient(
     }
     headers.set("Accept", "application/json")
 
-    const requestInit: RequestInit = { ...init, headers }
+    const timeout = readRequestTimeout(input, init)
+    const requestInit: RequestInit & { timeout?: number } = {
+      ...init,
+      headers,
+      ...(timeout === undefined ? {} : { timeout }),
+    }
 
     let response = await fetchWithTimeout(input, requestInit)
 
@@ -146,7 +161,11 @@ export function createApiClient(
       if (!newAccessToken) return response
 
       headers.set("Authorization", `Bearer ${newAccessToken}`)
-      const retryInit: RequestInit = { ...init, headers }
+      const retryInit: RequestInit & { timeout?: number } = {
+        ...init,
+        headers,
+        ...(timeout === undefined ? {} : { timeout }),
+      }
       response = await fetchWithTimeout(input, retryInit)
     }
 

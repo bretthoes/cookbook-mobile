@@ -20,6 +20,9 @@ import * as SecureStore from "expo-secure-store"
 /** AI / video recipe imports often exceed the default 10s API client timeout. */
 const RECIPE_AI_IMPORT_TIMEOUT_MS = 35_000
 
+/** A full-recipe rewrite is still in flight past 10s and can include one OpenAI retry. */
+const RECIPE_AI_APPLY_TIMEOUT_MS = 45_000
+
 const { client } = apiClientInstance
 
 export async function getRecipes(
@@ -170,6 +173,7 @@ export async function applyRecipeEditFromPrompt(
   try {
     const { data, error, response } = await client.POST("/api/Recipes/apply-prompt", {
       body: { prompt, recipe },
+      timeout: RECIPE_AI_APPLY_TIMEOUT_MS,
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
