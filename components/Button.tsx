@@ -49,6 +49,10 @@ export interface ButtonProps extends PressableProps {
    */
   textStyle?: StyleProp<TextStyle>
   /**
+   * Limits the label to this many lines. Extra text is truncated.
+   */
+  numberOfLines?: TextProps["numberOfLines"]
+  /**
    * An optional style override for the button text when in the "pressed" state.
    */
   pressedTextStyle?: StyleProp<TextStyle>
@@ -116,6 +120,7 @@ export function Button(props: ButtonProps) {
     style: $viewStyleOverride,
     pressedStyle: $pressedViewStyleOverride,
     textStyle: $textStyleOverride,
+    numberOfLines,
     pressedTextStyle: $pressedTextStyleOverride,
     disabledTextStyle: $disabledTextStyleOverride,
     children,
@@ -186,7 +191,13 @@ export function Button(props: ButtonProps) {
             />
           )}
 
-          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)}>
+          <Text
+            tx={tx}
+            text={text}
+            txOptions={txOptions}
+            numberOfLines={numberOfLines}
+            style={$textStyle(state)}
+          >
             {children}
           </Text>
 

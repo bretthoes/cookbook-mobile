@@ -291,9 +291,11 @@ function InvitationCard({
 
   const $themedItem = useMemo(() => themed($item), [themed])
   const $themedItemThumbnail = useMemo(() => themed($itemThumbnail), [themed])
+  const $themedCardCopy = useMemo(() => themed($cardCopy), [themed])
   const $themedMetadata = useMemo(() => themed($metadata), [themed])
   const $themedMetadataText = useMemo(() => themed($metadataText), [themed])
   const $themedActionButton = useMemo(() => themed($actionButton), [themed])
+  const $themedActionButtonText = useMemo(() => themed($actionButtonText), [themed])
   const $themedAcceptButton = useMemo(() => themed($acceptButton), [themed])
   const $themedRejectButton = useMemo(() => themed($rejectButton), [themed])
 
@@ -308,45 +310,51 @@ function InvitationCard({
           },
         ]}
         verticalAlignment="force-footer-bottom"
+        {...accessibilityHintProps}
         HeadingComponent={
-          <View style={$themedMetadata}>
-            <Text
-              style={$themedMetadataText}
-              size="xxs"
-              accessibilityLabel={getInvitationSenderInfo(invitation)}
-            >
-              {getInvitationSenderInfo(invitation)}
-            </Text>
-            <Text
-              style={$themedMetadataText}
-              size="xxs"
-              accessibilityLabel={getInvitationTimeAgo(invitation)}
-            >
-              {getInvitationTimeAgo(invitation)}
-            </Text>
+          <View style={$cardBody}>
+            <View style={$themedCardCopy}>
+              <View style={$themedMetadata}>
+                <Text
+                  style={$themedMetadataText}
+                  size="xxs"
+                  accessibilityLabel={getInvitationSenderInfo(invitation)}
+                >
+                  {getInvitationSenderInfo(invitation)}
+                </Text>
+                <Text
+                  style={$themedMetadataText}
+                  size="xxs"
+                  accessibilityLabel={getInvitationTimeAgo(invitation)}
+                >
+                  {getInvitationTimeAgo(invitation)}
+                </Text>
+              </View>
+              <Text text={getParsedInvitationMessage(invitation)} />
+            </View>
+            <Image source={imageUri} style={$themedItemThumbnail} />
           </View>
         }
-        content={getParsedInvitationMessage(invitation)}
-        {...accessibilityHintProps}
-        RightComponent={<Image source={imageUri} style={$themedItemThumbnail} />}
         FooterComponent={
           <View style={$buttonContainer}>
             <Button
+              tx="pendingInvitationScreen:accept"
               onPress={() => handleRespond(true)}
               style={[$themedActionButton, $themedAcceptButton]}
+              textStyle={$themedActionButtonText}
+              numberOfLines={1}
               accessibilityLabel={translate("pendingInvitationScreen:accept")}
               LeftAccessory={AcceptButtonLeftAccessory}
-            >
-              <Text size="xxs" weight="medium" tx="pendingInvitationScreen:accept" />
-            </Button>
+            />
             <Button
+              tx="pendingInvitationScreen:reject"
               onPress={() => handleRespond(false)}
               style={[$themedActionButton, $themedRejectButton]}
+              textStyle={$themedActionButtonText}
+              numberOfLines={1}
               accessibilityLabel={translate("pendingInvitationScreen:reject")}
               LeftAccessory={RejectButtonLeftAccessory}
-            >
-              <Text size="xxs" weight="medium" tx="pendingInvitationScreen:reject" />
-            </Button>
+            />
           </View>
         }
       />
@@ -370,6 +378,16 @@ const $item: ThemedStyle<ViewStyle> = (theme) => ({
   backgroundColor: theme.colors.backgroundDim,
 })
 
+const $cardBody: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "flex-start",
+}
+
+const $cardCopy: ThemedStyle<ViewStyle> = (theme) => ({
+  flex: 1,
+  marginEnd: theme.spacing.md,
+})
+
 const $itemThumbnail: ThemedStyle<ImageStyle> = (theme) => ({
   marginTop: theme.spacing.sm,
   height: 90,
@@ -381,7 +399,7 @@ const $iconContainer: ThemedStyle<ViewStyle> = (theme) => ({
   height: ICON_SIZE,
   width: ICON_SIZE,
   flexDirection: "row",
-  marginEnd: theme.spacing.sm,
+  marginEnd: theme.spacing.xs,
 })
 
 const $metadata: ThemedStyle<ViewStyle> = (theme) => ({
@@ -397,19 +415,27 @@ const $metadataText: ThemedStyle<TextStyle> = (theme) => ({
 
 const $buttonContainer: ViewStyle = {
   flexDirection: "row",
-  justifyContent: "space-between",
+  alignItems: "center",
+  alignSelf: "stretch",
   marginTop: spacing.md,
   gap: spacing.sm,
 }
 
 const $actionButton: ThemedStyle<ViewStyle> = (theme) => ({
   flex: 1,
-  borderRadius: 17,
+  borderRadius: 22,
   justifyContent: "center",
-  paddingHorizontal: theme.spacing.md,
-  paddingTop: theme.spacing.xxxs,
-  paddingBottom: 0,
-  minHeight: 32,
+  alignItems: "center",
+  paddingHorizontal: theme.spacing.sm,
+  paddingVertical: theme.spacing.xs,
+  minHeight: 44,
+})
+
+const $actionButtonText: ThemedStyle<TextStyle> = ({ typography }) => ({
+  fontSize: 14,
+  lineHeight: 18,
+  fontFamily: typography.primary.medium,
+  flexShrink: 0,
 })
 
 const $acceptButton: ThemedStyle<ViewStyle> = (theme) => ({
