@@ -87,7 +87,7 @@ export default function RecipeUrlScreen() {
 
   useHeader(
     {
-      titleTx: "recipeLinkImport:title",
+      titleTx: "recipeSelectUrlScreen:title",
       onLeftPress: () => router.back(),
       leftIcon: "back",
       onRightPress: isInFlight ? undefined : handleNext,

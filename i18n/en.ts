@@ -574,7 +574,7 @@ const en = {
     cameraPermissionDenied: "Camera access is required. Please allow it in your device settings.",
   },
   recipeSelectUrlScreen: {
-    title: "Add Recipe",
+    title: "Add from link",
     next: "Next",
     subtitle: "Enter a valid link and we'll extract the recipe for you.",
     urlLabel: "Link",

@@ -569,7 +569,7 @@ const ko: Translations = {
     cameraPermissionDenied: "카메라 접근 권한이 필요합니다. 기기 설정에서 허용해 주세요.",
   },
   recipeSelectUrlScreen: {
-    title: "레시피 추가",
+    title: "링크에서 추가",
     next: "다음",
     subtitle: "유효한 링크를 입력하면 레시피를 추출해 드립니다.",
     urlLabel: "링크",

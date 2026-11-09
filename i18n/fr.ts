@@ -586,7 +586,7 @@ const fr: Translations = {
       "L'accès à l'appareil photo est requis. Veuillez l'autoriser dans les paramètres de votre appareil.",
   },
   recipeSelectUrlScreen: {
-    title: "Ajouter une recette",
+    title: "Ajouter depuis un lien",
     next: "Suivant",
     subtitle: "Entrez un lien valide et nous extrairons la recette pour vous.",
     urlLabel: "Lien",
