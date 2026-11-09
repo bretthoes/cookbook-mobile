@@ -140,6 +140,7 @@ export async function extractRecipeFromUrl(
   try {
     const { data, error, response } = await client.POST("/api/Recipes/parse-from-url", {
       body: { url },
+      timeout: RECIPE_AI_IMPORT_TIMEOUT_MS,
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
