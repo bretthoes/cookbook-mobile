@@ -260,12 +260,17 @@ const fr: Translations = {
     previewLabel: "Récent",
     emptyHeading: "Rien pour le moment",
     emptyContent:
-      "Lorsque quelqu'un ajoute une recette, en cuisine une ou rejoint un livre de recettes, cela apparaîtra ici.",
+      "Lorsqu'une recette est ajoutée ou cuisinée, ou que quelqu'un rejoint ou quitte un livre de recettes, cela apparaît ici.",
     newRecipe: "{{actorDisplayName}} a ajouté {{recipeTitle}} à {{cookbookTitle}}.",
+    newRecipeYou: "Vous avez ajouté {{recipeTitle}} à {{cookbookTitle}}.",
     recipeMade: "{{actorDisplayName}} a cuisiné {{recipeTitle}} de {{cookbookTitle}}.",
+    recipeMadeYou: "Vous avez cuisiné {{recipeTitle}} de {{cookbookTitle}}.",
     memberJoined: "{{subjectDisplayName}} a rejoint {{cookbookTitle}}.",
+    memberJoinedYou: "Vous avez rejoint {{cookbookTitle}}.",
     memberLeft: "{{subjectDisplayName}} a quitté {{cookbookTitle}}.",
+    memberLeftYou: "Vous avez quitté {{cookbookTitle}}.",
     memberRemoved: "{{actorDisplayName}} a retiré {{subjectDisplayName}} de {{cookbookTitle}}.",
+    memberRemovedYou: "Vous avez retiré {{subjectDisplayName}} de {{cookbookTitle}}.",
   },
   invitationAddOptionsScreen: {
     title: "Inviter des amis",

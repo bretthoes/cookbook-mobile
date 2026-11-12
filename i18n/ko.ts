@@ -251,13 +251,19 @@ const ko: Translations = {
     subtitle: "요리책의 새 소식",
     previewLabel: "최근",
     emptyHeading: "아직 아무것도 없습니다",
-    emptyContent: "누군가 레시피를 추가하거나, 요리하거나, 요리책에 참여하면 여기에 표시됩니다.",
+    emptyContent:
+      "레시피가 추가되거나 요리되거나, 누군가 요리책에 참여하거나 떠나면 여기에 표시됩니다.",
     newRecipe: "{{actorDisplayName}}님이 {{cookbookTitle}}에 {{recipeTitle}}을(를) 추가했습니다.",
+    newRecipeYou: "{{cookbookTitle}}에 {{recipeTitle}}을(를) 추가했습니다.",
     recipeMade: "{{actorDisplayName}}님이 {{cookbookTitle}}의 {{recipeTitle}}을(를) 만들었습니다.",
+    recipeMadeYou: "{{cookbookTitle}}의 {{recipeTitle}}을(를) 만들었습니다.",
     memberJoined: "{{subjectDisplayName}}님이 {{cookbookTitle}}에 참여했습니다.",
+    memberJoinedYou: "{{cookbookTitle}}에 참여했습니다.",
     memberLeft: "{{subjectDisplayName}}님이 {{cookbookTitle}}을(를) 떠났습니다.",
+    memberLeftYou: "{{cookbookTitle}}을(를) 떠났습니다.",
     memberRemoved:
       "{{actorDisplayName}}님이 {{subjectDisplayName}}님을 {{cookbookTitle}}에서 제거했습니다.",
+    memberRemovedYou: "{{subjectDisplayName}}님을 {{cookbookTitle}}에서 제거했습니다.",
   },
   invitationAddOptionsScreen: {
     title: "친구 초대",

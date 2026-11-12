@@ -2,18 +2,27 @@ import type { TxKeyPath } from "@/i18n"
 import type { NotificationItem } from "@/types/notification"
 import { NotificationActionTypeValues } from "@/types/notification"
 
-export function getActivityFeedMessageKey(actionType: number): TxKeyPath | null {
-  switch (actionType) {
+type ActivityFeedMessage = {
+  actionType: number
+  actorIsCurrentUser?: boolean
+  subjectIsCurrentUser?: boolean
+}
+
+export function getActivityFeedMessageKey(notification: ActivityFeedMessage): TxKeyPath | null {
+  const actorIsYou = notification.actorIsCurrentUser === true
+  const subjectIsYou = notification.subjectIsCurrentUser === true
+
+  switch (notification.actionType) {
     case NotificationActionTypeValues.NewRecipe:
-      return "activityFeedScreen:newRecipe"
+      return actorIsYou ? "activityFeedScreen:newRecipeYou" : "activityFeedScreen:newRecipe"
     case NotificationActionTypeValues.RecipeMade:
-      return "activityFeedScreen:recipeMade"
+      return actorIsYou ? "activityFeedScreen:recipeMadeYou" : "activityFeedScreen:recipeMade"
     case NotificationActionTypeValues.MemberJoined:
-      return "activityFeedScreen:memberJoined"
+      return subjectIsYou ? "activityFeedScreen:memberJoinedYou" : "activityFeedScreen:memberJoined"
     case NotificationActionTypeValues.MemberLeft:
-      return "activityFeedScreen:memberLeft"
+      return subjectIsYou ? "activityFeedScreen:memberLeftYou" : "activityFeedScreen:memberLeft"
     case NotificationActionTypeValues.MemberRemoved:
-      return "activityFeedScreen:memberRemoved"
+      return actorIsYou ? "activityFeedScreen:memberRemovedYou" : "activityFeedScreen:memberRemoved"
     default:
       return null
   }

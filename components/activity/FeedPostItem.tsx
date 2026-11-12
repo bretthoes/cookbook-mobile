@@ -17,7 +17,7 @@ interface FeedPostItemProps {
 export function FeedPostItem({ item }: FeedPostItemProps) {
   const { themed } = useAppTheme()
   const router = useRouter()
-  const messageKey = getActivityFeedMessageKey(item.actionType)
+  const messageKey = getActivityFeedMessageKey(item)
   const isImportant = item.isImportant ?? false
   const canOpenRecipe = item.recipeId != null
 

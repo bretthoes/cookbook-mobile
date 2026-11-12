@@ -26,6 +26,7 @@ export function LatestActivitySection() {
   )
 
   const openFeed = () => router.push("/(logged-in)/activity")
+  const messageKey = latest ? getActivityFeedMessageKey(latest) : null
 
   return (
     <View style={$section}>
@@ -37,11 +38,11 @@ export function LatestActivitySection() {
           accessibilityRole="button"
           accessibilityLabel={t("cookbooksScreen:activityFeedAccessibility")}
         >
-          {getActivityFeedMessageKey(latest.actionType) ? (
+          {messageKey ? (
             <Text
               preset="default"
               numberOfLines={3}
-              tx={getActivityFeedMessageKey(latest.actionType)!}
+              tx={messageKey}
               txOptions={getActivityFeedMessageOptions(latest)}
             />
           ) : (

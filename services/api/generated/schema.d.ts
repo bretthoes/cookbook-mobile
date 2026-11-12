@@ -800,6 +800,8 @@ export interface components {
       recipeTitle?: string | null
       actorDisplayName?: string | null
       subjectDisplayName?: string | null
+      actorIsCurrentUser?: boolean
+      subjectIsCurrentUser?: boolean
       isImportant?: boolean
     }
     /** @enum {integer} */

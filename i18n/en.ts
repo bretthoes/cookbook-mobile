@@ -250,12 +250,17 @@ const en = {
     previewLabel: "Latest",
     emptyHeading: "Nothing here yet",
     emptyContent:
-      "When someone adds a recipe, makes one, or joins a cookbook, it will show up here.",
+      "When a recipe is added or made, or someone joins or leaves a cookbook, it shows up here.",
     newRecipe: "{{actorDisplayName}} added {{recipeTitle}} to {{cookbookTitle}}.",
+    newRecipeYou: "You added {{recipeTitle}} to {{cookbookTitle}}.",
     recipeMade: "{{actorDisplayName}} made {{recipeTitle}} from {{cookbookTitle}}.",
+    recipeMadeYou: "You made {{recipeTitle}} from {{cookbookTitle}}.",
     memberJoined: "{{subjectDisplayName}} joined {{cookbookTitle}}.",
+    memberJoinedYou: "You joined {{cookbookTitle}}.",
     memberLeft: "{{subjectDisplayName}} left {{cookbookTitle}}.",
+    memberLeftYou: "You left {{cookbookTitle}}.",
     memberRemoved: "{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
+    memberRemovedYou: "You removed {{subjectDisplayName}} from {{cookbookTitle}}.",
   },
   invitationAddOptionsScreen: {
     title: "Invite Friends",
