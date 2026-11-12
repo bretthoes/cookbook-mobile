@@ -20,6 +20,7 @@ When the user wants a production Apple deploy:
 4. **No questions** unless the deploy script exits non-zero.
 5. **No TodoWrite, Task subagents, or extra file reads** before running deploy.
 6. **Short reply** — paste the `=== Apple Deploy Report ===` block from script output; add at most 2 lines of context on failure.
+7. **Closed version train** — `autoIncrement` only raises the build number. `expo.version` in `app.json` is the App Store version. Do not query iTunes or App Store Connect from the script to guess whether the train is open. If Apple returns 90186 or 90062, bump the patch in `app.json` (`1.0.2` → `1.0.3`), commit, push, and run the deploy command again. Do not ask first.
 
 ### Command
 
@@ -83,6 +84,7 @@ Submit is preconfigured: `ascAppId` in `eas.json`; ASC API key on EAS (`[Expo] E
 | Symptom                   | Fix                                                |
 | ------------------------- | -------------------------------------------------- |
 | `CHANGEME` in prod config | Set `API_URL` in `config/config.prod.ts`, redeploy |
+| App Store already on this version (90186, 90062) | Bump `expo.version` in `app.json`, commit, push, redeploy. Do not upload another build of the same version. |
 | Not logged in to EAS      | User runs `eas login` locally, then redeploy       |
 | Signing / credentials     | `eas credentials` → iOS → production               |
 | Submit agreement errors   | App Store Connect → Agreements, Tax, and Banking   |

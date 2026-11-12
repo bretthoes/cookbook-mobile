@@ -64,7 +64,8 @@ else
   warn_msg "eas.json has no ascAppId — non-interactive submit will fail (add submit.production.ios.ascAppId from App Store Connect → App Information → Apple ID)"
 fi
 
-# Version info
+# Version info. EAS autoIncrement raises the build number only.
+# expo.version is the App Store marketing version and is not checked here.
 version=$(node -e "console.log(require('./app.json').expo.version)" 2>/dev/null || echo "?")
 build=$(node -e "console.log(require('./app.json').expo.ios?.buildNumber ?? '?')" 2>/dev/null || echo "?")
 ok "app version $version (ios buildNumber in app.json: $build; EAS may auto-increment on build)"
