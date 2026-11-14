@@ -1,9 +1,11 @@
+import { Image } from "expo-image"
 import { useEffect, useMemo } from "react"
 import { useTranslation } from "react-i18next"
-import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 import Animated, {
   Easing,
   useAnimatedStyle,
+  useReducedMotion,
   useSharedValue,
   withDelay,
   withRepeat,
@@ -17,7 +19,7 @@ import { useAppTheme } from "@/theme/context"
 import { Screen } from "./Screen"
 import { Text } from "./Text"
 
-const loadingImage = require("../assets/images/loading.png")
+const loadingImage = require("../assets/images/loading.webp")
 
 export interface LoadingScreenProps {
   /**
@@ -39,6 +41,7 @@ export interface LoadingScreenProps {
 export function LoadingScreen(props: LoadingScreenProps) {
   const { t } = useTranslation()
   const { themed } = useAppTheme()
+  const reduceMotion = useReducedMotion()
   const text = props.text ?? t("common:loading")
 
   const dot1Y = useSharedValue(0)
@@ -87,7 +90,7 @@ export function LoadingScreen(props: LoadingScreenProps) {
 
   return (
     <Screen style={$root} preset="fixed" contentContainerStyle={$container}>
-      <Image source={loadingImage} style={$image} resizeMode="contain" />
+      <Image source={loadingImage} style={$image} contentFit="contain" autoplay={!reduceMotion} />
       <View style={$textRow}>
         <Text preset="subheading" text={text} />
         <Animated.Text style={[dot1Style, $dot]}>.</Animated.Text>
