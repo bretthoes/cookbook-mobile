@@ -514,6 +514,7 @@ const en = {
     optionFromVoice: "Add by Speaking",
     optionFromVoiceDesc: "Describe your recipe out loud and we'll build it",
     optionLoadingPreview: "Preview Loading Screen",
+    optionSignInPreview: "Preview Sign-in Progress",
     proUnlimitedLabel: "Pro — Unlimited imports",
     weeklyUsageLabel: "{{used}} / {{limit}} imports used this week",
     weeklyLimitReachedTitle: "Weekly Limit Reached",

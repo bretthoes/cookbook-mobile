@@ -1,6 +1,6 @@
 import { Button } from "@/components/Button"
 import { FormCard } from "@/components/FormCard"
-import { LoadingScreen } from "@/components/LoadingScreen"
+import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { Screen } from "@/components/Screen"
 import { StepIndicator } from "@/components/StepIndicator"
 import { Text } from "@/components/Text"
@@ -133,7 +133,12 @@ export default function OnboardingScreen() {
 
   // Done step — full-screen loading screen
   if (currentStep === STEP_DONE) {
-    return <LoadingScreen text={translate("onboardingScreen:gettingReady")} />
+    return (
+      <CircularProgressScreen
+        durationMs={1_000}
+        accessibilityLabel={translate("onboardingScreen:gettingReady")}
+      />
+    )
   }
 
   return (

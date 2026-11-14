@@ -1,7 +1,7 @@
 import { Button } from "@/components/Button"
 import { EmptyState } from "@/components/EmptyState"
 import { Header } from "@/components/Header"
-import { LoadingScreen } from "@/components/LoadingScreen"
+import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
@@ -157,7 +157,12 @@ export default function InvitationTokenScreen() {
   }, [token, respondToInvitation, run])
 
   if (isInFlight) {
-    return <LoadingScreen text={translate("invitationLinkScreen:loadingShort")} />
+    return (
+      <CircularProgressScreen
+        durationMs={1_000}
+        accessibilityLabel={translate("invitationLinkScreen:loadingShort")}
+      />
+    )
   }
 
   if (acceptedSuccessfully && invitation) {

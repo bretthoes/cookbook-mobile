@@ -135,6 +135,13 @@ export default function AddRecipeOptionsScreen() {
         isPremium: false,
         action: () => router.push("../recipe/loading-preview"),
       })
+      baseOptions.push({
+        title: t("recipeAddOptionsScreen:optionSignInPreview"),
+        icon: "user" as IconTypes,
+        isPremium: false,
+        action: () =>
+          router.push({ pathname: "../recipe/loading-preview", params: { variant: "signIn" } }),
+      })
     }
 
     if (!latestDraft) return baseOptions

@@ -1,5 +1,5 @@
 import { Button } from "@/components/Button"
-import { LoadingScreen } from "@/components/LoadingScreen"
+import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { Divider } from "@/components/Divider"
 import { FormCard } from "@/components/FormCard"
 import { PressableIcon } from "@/components/Icon"
@@ -258,7 +258,12 @@ export default function Register() {
   )
 
   if (currentStep === 6) {
-    return <LoadingScreen text={translate("registerScreen:gettingReady")} />
+    return (
+      <CircularProgressScreen
+        durationMs={SUCCESS_DELAY_MS}
+        accessibilityLabel={translate("registerScreen:gettingReady")}
+      />
+    )
   }
 
   return (

@@ -524,6 +524,7 @@ const fr: Translations = {
     optionFromVoice: "Ajouter à la voix",
     optionFromVoiceDesc: "Décrivez votre recette à voix haute et nous la créerons",
     optionLoadingPreview: "Aperçu du chargement",
+    optionSignInPreview: "Aperçu de la connexion",
     proUnlimitedLabel: "Pro — Imports illimités",
     weeklyUsageLabel: "{{used}} / {{limit}} imports utilisés cette semaine",
     weeklyLimitReachedTitle: "Limite hebdomadaire atteinte",

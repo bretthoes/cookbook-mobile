@@ -1,4 +1,4 @@
-import { LoadingScreen } from "@/components/LoadingScreen"
+import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
@@ -46,7 +46,7 @@ export default function RegisterOptionsScreen() {
   const $themedErrorText = useMemo(() => themed($errorText), [themed])
 
   if (isSsoLoading) {
-    return <LoadingScreen text={t("common:signingIn")} />
+    return <CircularProgressScreen accessibilityLabel={t("common:signingIn")} />
   }
 
   return (

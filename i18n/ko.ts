@@ -511,6 +511,7 @@ const ko: Translations = {
     optionFromVoice: "음성으로 추가",
     optionFromVoiceDesc: "레시피를 말로 설명하면 만들어 드립니다",
     optionLoadingPreview: "로딩 화면 미리보기",
+    optionSignInPreview: "로그인 진행 미리보기",
     proUnlimitedLabel: "Pro — 무제한 가져오기",
     weeklyUsageLabel: "이번 주 {{used}} / {{limit}}회 가져오기 사용",
     weeklyLimitReachedTitle: "주간 한도 도달",
