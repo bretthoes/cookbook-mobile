@@ -157,6 +157,7 @@ export async function extractRecipeFromVoice(
   try {
     const { data, error, response } = await client.POST("/api/Recipes/parse-from-voice", {
       body: { transcript },
+      timeout: RECIPE_AI_IMPORT_TIMEOUT_MS,
     })
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)

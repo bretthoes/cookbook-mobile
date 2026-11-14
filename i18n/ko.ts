@@ -2,7 +2,6 @@ import { Translations } from "./en"
 
 const ko: Translations = {
   common: {
-    loading: "아직 요리 중",
     signingIn: "로그인 중",
     ok: "확인!",
     cancel: "취소",
@@ -16,6 +15,16 @@ const ko: Translations = {
     mailUnavailableTitle: "메일 앱을 열 수 없습니다",
     mailUnavailableMessage: "이 주소로 이메일을 보내 주세요: {{email}}",
     paginationLabel: "{{totalPages}}페이지 중 {{currentPage}}페이지 ({{totalCount}}개 항목)",
+  },
+  loadingScreen: {
+    stillCooking: "아직 요리 중",
+    preheatingTheOven: "오븐 예열 중",
+    gatheringIngredients: "재료 모으는 중",
+    stirringThePot: "냄비 젓는 중",
+    lettingItSimmer: "뭉근히 끓이는 중",
+    addingAPinchOfSalt: "소금 한 꼬집 넣는 중",
+    tasteTesting: "맛보는 중",
+    takingAWhile: "아직 보글보글, 잠시만요",
   },
   errors: {
     timeout: "요청 시간이 초과되었습니다. 다시 시도해 주세요.",
@@ -501,6 +510,7 @@ const ko: Translations = {
     optionFromPhotoDesc: "사진에서 레시피 가져오기",
     optionFromVoice: "음성으로 추가",
     optionFromVoiceDesc: "레시피를 말로 설명하면 만들어 드립니다",
+    optionLoadingPreview: "로딩 화면 미리보기",
     proUnlimitedLabel: "Pro — 무제한 가져오기",
     weeklyUsageLabel: "이번 주 {{used}} / {{limit}}회 가져오기 사용",
     weeklyLimitReachedTitle: "주간 한도 도달",
@@ -545,7 +555,6 @@ const ko: Translations = {
     title: "음성으로 레시피 말하기",
     tapToStart: "시작하려면 마이크를 탭하세요",
     listening: "듣는 중...",
-    processing: "레시피를 만드는 중",
     stopButton: "완료 — 전사 확인",
     cancelButton: "취소",
     startButton: "듣기 시작",
@@ -563,7 +572,6 @@ const ko: Translations = {
   recipeAddPhotoScreen: {
     title: "사진에서 가져오기",
     subtitle: "가져올 레시피 사진을 선택하세요.",
-    processing: "레시피를 읽는 중",
     choosePhoto: "사진 선택",
     errorTitle: "사진을 읽을 수 없습니다",
     parseFailed:

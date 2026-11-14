@@ -86,6 +86,8 @@ export default function AddSocialImportScreen() {
         router.replace("/(logged-in)/recipe/add")
       } else if (importResult.kind === "rate-limited") {
         setResult(t("recipeAddSocialImportScreen:rateLimited"))
+      } else if (importResult.kind === "timeout") {
+        setResult(t("errors:timeout"))
       } else {
         setResult(t("recipeAddSocialImportScreen:extractFailed"))
       }
@@ -105,7 +107,7 @@ export default function AddSocialImportScreen() {
   )
 
   if (isLoading) {
-    return <LoadingScreen estimatedDurationMs={50_000} />
+    return <LoadingScreen />
   }
 
   return (

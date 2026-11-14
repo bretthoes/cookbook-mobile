@@ -1,6 +1,5 @@
 const en = {
   common: {
-    loading: "Still cooking",
     signingIn: "Signing you in",
     ok: "OK!",
     cancel: "Cancel",
@@ -14,6 +13,16 @@ const en = {
     mailUnavailableTitle: "No mail app available",
     mailUnavailableMessage: "Send an email to {{email}} instead.",
     paginationLabel: "Page {{currentPage}} of {{totalPages}} ({{totalCount}} items)",
+  },
+  loadingScreen: {
+    stillCooking: "Still cooking",
+    preheatingTheOven: "Preheating the oven",
+    gatheringIngredients: "Gathering ingredients",
+    stirringThePot: "Stirring the pot",
+    lettingItSimmer: "Letting it simmer",
+    addingAPinchOfSalt: "Adding a pinch of salt",
+    tasteTesting: "Taste testing",
+    takingAWhile: "Still simmering, hang tight",
   },
   errors: {
     timeout: "The request timed out. Please try again.",
@@ -504,6 +513,7 @@ const en = {
     optionFromPhotoDesc: "Import a recipe from a photo",
     optionFromVoice: "Add by Speaking",
     optionFromVoiceDesc: "Describe your recipe out loud and we'll build it",
+    optionLoadingPreview: "Preview Loading Screen",
     proUnlimitedLabel: "Pro — Unlimited imports",
     weeklyUsageLabel: "{{used}} / {{limit}} imports used this week",
     weeklyLimitReachedTitle: "Weekly Limit Reached",
@@ -548,7 +558,6 @@ const en = {
     title: "Speak Your Recipe",
     tapToStart: "Tap the microphone to start",
     listening: "Listening...",
-    processing: "Building your recipe",
     stopButton: "Done — Review Transcript",
     cancelButton: "Cancel",
     startButton: "Start Listening",
@@ -567,7 +576,6 @@ const en = {
   recipeAddPhotoScreen: {
     title: "Import from Photo",
     subtitle: "Choose a photo of a recipe to import.",
-    processing: "Reading your recipe",
     choosePhoto: "Choose Photo",
     errorTitle: "Couldn't read that photo",
     parseFailed: "Couldn't build a recipe from that photo. Try a clearer image of the recipe text.",

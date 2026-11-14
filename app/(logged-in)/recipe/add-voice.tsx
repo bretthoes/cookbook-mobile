@@ -118,6 +118,9 @@ export default function AddRecipeVoiceScreen() {
     } else if (result.kind === "rate-limited") {
       setErrorMsg(t("recipeAddVoiceScreen:rateLimited"))
       updatePhase("review")
+    } else if (result.kind === "timeout") {
+      setErrorMsg(t("errors:timeout"))
+      updatePhase("review")
     } else {
       setErrorMsg(t("recipeAddVoiceScreen:parseFailed"))
       updatePhase("review")
@@ -198,9 +201,7 @@ export default function AddRecipeVoiceScreen() {
   }
 
   if (phase === "processing") {
-    return (
-      <LoadingScreen text={t("recipeAddVoiceScreen:processing")} estimatedDurationMs={10_000} />
-    )
+    return <LoadingScreen />
   }
 
   const isRecording = phase === "recording"

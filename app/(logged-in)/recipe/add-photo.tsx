@@ -111,12 +111,7 @@ export default function AddRecipePhotoScreen() {
   }, [launchPicker])
 
   if (phase === "processing") {
-    return (
-      <LoadingScreen
-        text={t("recipeAddPhotoScreen:processing")}
-        estimatedDurationMs={25_000}
-      />
-    )
+    return <LoadingScreen />
   }
 
   return (

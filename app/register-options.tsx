@@ -46,7 +46,7 @@ export default function RegisterOptionsScreen() {
   const $themedErrorText = useMemo(() => themed($errorText), [themed])
 
   if (isSsoLoading) {
-    return <LoadingScreen text={t("common:signingIn")} estimatedDurationMs={6_000} />
+    return <LoadingScreen text={t("common:signingIn")} />
   }
 
   return (

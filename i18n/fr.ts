@@ -2,7 +2,6 @@ import { Translations } from "./en"
 
 const fr: Translations = {
   common: {
-    loading: "Encore en cuisine",
     signingIn: "Connexion en cours",
     ok: "OK !",
     cancel: "Annuler",
@@ -16,6 +15,16 @@ const fr: Translations = {
     mailUnavailableTitle: "Aucune application mail",
     mailUnavailableMessage: "Écrivez plutôt à {{email}}.",
     paginationLabel: "Page {{currentPage}} sur {{totalPages}} ({{totalCount}} éléments)",
+  },
+  loadingScreen: {
+    stillCooking: "Encore en cuisine",
+    preheatingTheOven: "On préchauffe le four",
+    gatheringIngredients: "On rassemble les ingrédients",
+    stirringThePot: "On remue la marmite",
+    lettingItSimmer: "On laisse mijoter",
+    addingAPinchOfSalt: "Une pincée de sel",
+    tasteTesting: "On goûte",
+    takingAWhile: "Ça mijote encore, patience",
   },
   errors: {
     timeout: "La requête a expiré. Veuillez réessayer.",
@@ -514,6 +523,7 @@ const fr: Translations = {
     optionFromPhotoDesc: "Importer une recette depuis une photo",
     optionFromVoice: "Ajouter à la voix",
     optionFromVoiceDesc: "Décrivez votre recette à voix haute et nous la créerons",
+    optionLoadingPreview: "Aperçu du chargement",
     proUnlimitedLabel: "Pro — Imports illimités",
     weeklyUsageLabel: "{{used}} / {{limit}} imports utilisés cette semaine",
     weeklyLimitReachedTitle: "Limite hebdomadaire atteinte",
@@ -558,7 +568,6 @@ const fr: Translations = {
     title: "Dictez votre recette",
     tapToStart: "Appuyez sur le microphone pour commencer",
     listening: "Écoute en cours...",
-    processing: "Création de votre recette",
     stopButton: "Terminé — Vérifier la transcription",
     cancelButton: "Annuler",
     startButton: "Commencer l'écoute",
@@ -577,7 +586,6 @@ const fr: Translations = {
   recipeAddPhotoScreen: {
     title: "Importer depuis une photo",
     subtitle: "Choisissez une photo de recette à importer.",
-    processing: "Lecture de votre recette",
     choosePhoto: "Choisir une photo",
     errorTitle: "Impossible de lire cette photo",
     parseFailed:

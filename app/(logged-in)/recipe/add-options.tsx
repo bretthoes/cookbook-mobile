@@ -128,6 +128,15 @@ export default function AddRecipeOptionsScreen() {
       },
     ]
 
+    if (__DEV__) {
+      baseOptions.push({
+        title: t("recipeAddOptionsScreen:optionLoadingPreview"),
+        icon: "view" as IconTypes,
+        isPremium: false,
+        action: () => router.push("../recipe/loading-preview"),
+      })
+    }
+
     if (!latestDraft) return baseOptions
 
     const draftOption: RecipeAddOption = {

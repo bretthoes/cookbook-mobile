@@ -21,9 +21,6 @@ import { router } from "expo-router"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { View, type TextStyle, type ViewStyle } from "react-native"
 
-const WEBSITE_LOADING_MS = 20_000
-const VIDEO_LOADING_MS = 50_000
-
 const isValidUrl = (input: string) => {
   const regex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/i
   return regex.test(input)
@@ -38,7 +35,6 @@ export default function RecipeUrlScreen() {
   const [url, setUrl] = useState("")
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [loadingDurationMs, setLoadingDurationMs] = useState(WEBSITE_LOADING_MS)
   const [result, setResult] = useState("")
 
   const getValidationError = useCallback((urlToValidate: string) => {
@@ -67,7 +63,6 @@ export default function RecipeUrlScreen() {
       if (error) return
 
       const usesVideo = recipeUrlUsesVideoExtraction(url)
-      setLoadingDurationMs(usesVideo ? VIDEO_LOADING_MS : WEBSITE_LOADING_MS)
       setIsLoading(true)
       const importResult = usesVideo
         ? await importFromSocial.mutateAsync(url)
@@ -78,6 +73,8 @@ export default function RecipeUrlScreen() {
         router.replace("/(logged-in)/recipe/add")
       } else if (importResult.kind === "rate-limited") {
         setResult(translate("recipeSelectUrlScreen:rateLimited"))
+      } else if (importResult.kind === "timeout") {
+        setResult(translate("errors:timeout"))
       } else {
         setResult(translate("recipeSelectUrlScreen:extractFailed"))
       }
@@ -97,7 +94,7 @@ export default function RecipeUrlScreen() {
   )
 
   if (isLoading) {
-    return <LoadingScreen estimatedDurationMs={loadingDurationMs} />
+    return <LoadingScreen />
   }
 
   return (
