@@ -399,6 +399,7 @@ const ko: Translations = {
   },
   cookbooksScreen: {
     title: "책장",
+    loadingCookbooks: "요리책을 불러오는 중",
     activityFeedAccessibility: "활동 피드",
     latestActivityHeading: "최근 활동",
     seeAllActivity: "모든 활동 보기",

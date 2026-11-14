@@ -396,6 +396,7 @@ const en = {
   },
   cookbooksScreen: {
     title: "Your shelf",
+    loadingCookbooks: "Loading your cookbooks",
     activityFeedAccessibility: "Activity feed",
     latestActivityHeading: "Latest activity",
     seeAllActivity: "See all activity",

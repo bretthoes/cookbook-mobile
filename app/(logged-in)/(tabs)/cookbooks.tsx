@@ -1,4 +1,5 @@
 import { LatestActivitySection } from "@/components/activity/LatestActivitySection"
+import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
@@ -47,6 +48,10 @@ export default function CookbooksScreen(_props: void) {
     [isDark],
   )
 
+  if (isListPending) {
+    return <CircularProgressScreen accessibilityLabel={t("cookbooksScreen:loadingCookbooks")} />
+  }
+
   return (
     <Screen preset="fixed" safeAreaEdges={["top"]} contentContainerStyle={$screenContentContainer}>
       <FlatList
@@ -58,19 +63,15 @@ export default function CookbooksScreen(_props: void) {
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.4}
         ListEmptyComponent={
-          isListPending ? (
-            <ActivityIndicator />
-          ) : (
-            <EmptyState
-              preset="generic"
-              style={$emptyState}
-              contentTx="cookbooksScreen:cookbookListScreen.noCookbooksEmptyState"
-              contentTxOptions={{ tabName: t("tabNavigator:createTab") }}
-              buttonOnPress={onRefresh}
-              imageStyle={$emptyStateImage}
-              ImageProps={{ resizeMode: "contain" }}
-            />
-          )
+          <EmptyState
+            preset="generic"
+            style={$emptyState}
+            contentTx="cookbooksScreen:cookbookListScreen.noCookbooksEmptyState"
+            contentTxOptions={{ tabName: t("tabNavigator:createTab") }}
+            buttonOnPress={onRefresh}
+            imageStyle={$emptyStateImage}
+            ImageProps={{ resizeMode: "contain" }}
+          />
         }
         ListHeaderComponent={
           <View style={$heading}>

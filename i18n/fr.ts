@@ -407,6 +407,7 @@ const fr: Translations = {
   },
   cookbooksScreen: {
     title: "Votre étagère",
+    loadingCookbooks: "Chargement de vos livres de recettes",
     activityFeedAccessibility: "Fil d'activité",
     latestActivityHeading: "Activité récente",
     seeAllActivity: "Voir toute l'activité",
