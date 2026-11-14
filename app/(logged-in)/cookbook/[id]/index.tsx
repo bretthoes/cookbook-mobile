@@ -166,7 +166,7 @@ export default function CookbookScreen() {
             if (result) {
               setSelectedCookbookId(null)
               void invalidateCookbookLists(queryClient)
-              router.replace("/(logged-in)/(tabs)/cookbooks")
+              router.dismissTo("/(logged-in)/(tabs)/cookbooks")
             } else {
               Alert.alert(t("common:error"), t("cookbookDetailScreen:leaveError"))
             }
@@ -233,7 +233,8 @@ export default function CookbookScreen() {
     {
       title: selected?.title ?? "",
       leftIcon: "back",
-      onLeftPress: () => router.replace("../../(tabs)/cookbooks"),
+      onLeftPress: () =>
+        router.canGoBack() ? router.back() : router.replace("/(logged-in)/(tabs)/cookbooks"),
       rightIcon: "more",
       onRightPress: selected ? () => handlePressMore() : undefined,
     },

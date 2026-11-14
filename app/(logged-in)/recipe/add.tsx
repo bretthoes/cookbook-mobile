@@ -137,7 +137,7 @@ export default function AddRecipeScreen() {
     if (!recipeToAdd) return
     if (mapRecipeToAddToFormInputs()) return
     clearRecipeToAdd()
-    router.replace("/(logged-in)/recipe/add-options")
+    router.dismissTo("/(logged-in)/recipe/add-options")
     // eslint-disable-next-line react-hooks/exhaustive-deps -- redirect when import payload has no saveable content
   }, [recipeToAdd, clearRecipeToAdd])
 
@@ -296,7 +296,8 @@ export default function AddRecipeScreen() {
         await createRecipeMutation.mutateAsync(newRecipe)
         submittedSuccessfullyRef.current = true
         deleteDraft(selectedCookbook.id)
-        router.replace(`/(logged-in)/cookbook/${selectedCookbook.id}`)
+        router.dismissTo("/(logged-in)/(tabs)/cookbooks")
+        router.push(`/(logged-in)/cookbook/${selectedCookbook.id}`)
       } catch (e) {
         console.error("Add recipe failed:", e)
 

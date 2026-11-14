@@ -96,7 +96,7 @@ export default function AddCookbookScreen() {
       }
       try {
         await createCookbook.mutateAsync(newCookbook)
-        router.replace("../../(tabs)/cookbooks")
+        router.dismissTo("/(logged-in)/(tabs)/cookbooks")
       } catch {
         setCreateError(translate("cookbookAddScreen:createFailed"))
       }

@@ -91,7 +91,7 @@ export default function AddRecipeOptionsScreen() {
         title: t("recipeLinkImport:title"),
         image: recipeLinkSites,
         isPremium: true,
-        action: () => router.replace("../recipe/select-url"),
+        action: () => router.push("../recipe/select-url"),
       },
       {
         title: t("recipeAddOptionsScreen:optionFromPhoto"),
@@ -100,9 +100,9 @@ export default function AddRecipeOptionsScreen() {
         isPremium: true,
         action: () => {
           if (selected) {
-            router.replace("../recipe/add-photo")
+            router.push("../recipe/add-photo")
           } else {
-            router.replace({
+            router.push({
               pathname: "../select-cookbook",
               params: {
                 nextRoute: "/(logged-in)/recipe/add-photo",
@@ -117,14 +117,14 @@ export default function AddRecipeOptionsScreen() {
         description: t("recipeAddOptionsScreen:optionFromVoiceDesc"),
         icon: "menu" as IconTypes,
         isPremium: true,
-        action: () => router.replace("../recipe/add-voice"),
+        action: () => router.push("../recipe/add-voice"),
       },
       {
         title: t("recipeAddOptionsScreen:optionManual"),
         description: t("recipeAddOptionsScreen:optionManualDesc"),
         icon: "pen" as IconTypes,
         isPremium: false,
-        action: () => router.replace("../recipe/add"),
+        action: () => router.push("../recipe/add"),
       },
     ]
 
@@ -147,7 +147,7 @@ export default function AddRecipeOptionsScreen() {
       showDraftBadge: true,
       action: () => {
         setSelectedById(latestDraft.cookbookId)
-        router.replace({
+        router.push({
           pathname: "../recipe/add",
           params: { continueDraft: "1", cookbookId: latestDraft.cookbookId },
         })

@@ -141,7 +141,7 @@ export default function EditRecipe() {
 
     try {
       await updateRecipe.mutateAsync(updatedRecipe)
-      router.replace(`/(logged-in)/cookbook/${cookbook?.id ?? ""}`)
+      router.dismissTo(`/(logged-in)/cookbook/${cookbook?.id ?? ""}`)
     } catch (error) {
       console.error("Update recipe failed:", error)
       alert(translate("recipeEditScreen:updateFailed"))
