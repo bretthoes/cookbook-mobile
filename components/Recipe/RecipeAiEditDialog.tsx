@@ -1,4 +1,5 @@
 import { Button } from "@/components/Button"
+import { CircularProgress } from "@/components/CircularProgress"
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
@@ -10,7 +11,6 @@ import { ExpoSpeechRecognitionModule, useSpeechRecognitionEvent } from "expo-spe
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
-  ActivityIndicator,
   Image,
   ImageStyle,
   Keyboard,
@@ -26,6 +26,8 @@ import {
   ViewStyle,
 } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+
+const AI_EDIT_PROGRESS_MS = 10_000
 
 export interface RecipeAiEditDialogProps {
   visible: boolean
@@ -241,7 +243,10 @@ export function RecipeAiEditDialog({
 
           {isLoading ? (
             <View style={themed($loadingOverlay)}>
-              <ActivityIndicator size="large" color={theme.colors.tint} />
+              <CircularProgress
+                durationMs={AI_EDIT_PROGRESS_MS}
+                accessibilityLabel={t("recipeAiEditDialog:processing")}
+              />
               <Text tx="recipeAiEditDialog:processing" style={themed($loadingText)} />
             </View>
           ) : null}
