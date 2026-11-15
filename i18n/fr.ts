@@ -36,6 +36,7 @@ const fr: Translations = {
     notFound: "Cet élément est introuvable.",
     conflict: "Cette action est en conflit avec des données existantes.",
     rateLimited: "Trop de requêtes. Veuillez patienter et réessayer.",
+    tooManyAttempts: "Trop de tentatives. Veuillez patienter quelques minutes et réessayer.",
     imageTooLarge:
       "Cette image est trop volumineuse. Choisissez une photo de moins de {{maxSizeMb}} Mo.",
     rejected: "La requête a été rejetée. Veuillez vérifier votre saisie.",
@@ -72,7 +73,6 @@ const fr: Translations = {
     resetCodePlaceholder: "Collez le code de réinitialisation ici",
     updateButton: "Mettre à jour le mot de passe",
     backToLogin: "Retour à la connexion",
-    successMessage: "Mot de passe réinitialisé avec succès.",
   },
   emailVerificationScreen: {
     title: "Confirmez votre compte",
@@ -116,9 +116,14 @@ const fr: Translations = {
       needsLowercase: "doit contenir au moins une lettre minuscule",
       needsDigit: "doit contenir au moins un chiffre",
       needsSpecialChar: "doit contenir au moins un caractère spécial",
+      emailTooLong: "doit contenir moins de 100 caractères",
+      emailInvalid: "doit être une adresse e-mail valide",
     },
     errors: {
-      emailTaken: "Cette adresse e-mail est déjà utilisée.",
+      emailRegistered:
+        "Cette adresse e-mail est déjà enregistrée. Connectez-vous plutôt. Si vous ne l'avez pas encore confirmée, nous vous renverrons l'e-mail de confirmation.",
+      invalidEmail: "Cette adresse e-mail n'est pas prise en charge. Vérifiez-la et réessayez.",
+      passwordRejected: "Ce mot de passe ne respecte pas les exigences.",
       generic: "Une erreur s'est produite, veuillez réessayer plus tard.",
     },
   },
@@ -204,7 +209,6 @@ const fr: Translations = {
       confirmationResendFailed:
         "Une erreur s'est produite lors de l'envoi de l'e-mail. Veuillez réessayer.",
       updateFailed: "Une erreur s'est produite. Veuillez réessayer.",
-      updateSuccess: "Mise à jour réussie.",
       googleFailed: "La connexion avec Google a échoué. Veuillez réessayer.",
       appleFailed: "La connexion avec Apple a échoué. Veuillez réessayer.",
       facebookFailed: "La connexion avec Facebook a échoué. Veuillez réessayer.",

@@ -154,9 +154,15 @@ export function createApiClient(
       ...(timeout === undefined ? {} : { timeout }),
     }
 
+    // A 401 from login/register means bad credentials or an unconfirmed email, not an expired
+    // session, so it must not trigger a refresh (which logs out when there is no refresh token).
+    const canRefresh = !isUnprotected
+    // The first fetch consumes a Request body; keep an unread copy for the retry.
+    const retryInput = canRefresh && input instanceof Request ? input.clone() : input
+
     let response = await fetchWithTimeout(input, requestInit)
 
-    if (response.status === 401 && !url.includes("/Users/refresh")) {
+    if (response.status === 401 && canRefresh) {
       const newAccessToken = await refreshAccessToken()
       if (!newAccessToken) return response
 
@@ -166,7 +172,7 @@ export function createApiClient(
         headers,
         ...(timeout === undefined ? {} : { timeout }),
       }
-      response = await fetchWithTimeout(input, retryInit)
+      response = await fetchWithTimeout(retryInput, retryInit)
     }
 
     return response

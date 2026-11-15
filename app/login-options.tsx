@@ -2,26 +2,18 @@ import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { $container, $listContainer, OptionListItem } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useNavigateAfterAuth } from "@/hooks/useNavigateAfterAuth"
 import { useSsoAuth } from "@/hooks/useSsoAuth"
 import type { TxKeyPath } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import { useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
-
-function navigateAfterAuth() {
-  if (storage.getBoolean("hasCompletedOnboarding")) {
-    router.replace("/(logged-in)/(tabs)/cookbooks")
-  } else {
-    router.replace({ pathname: "/(logged-in)/onboarding" as any })
-  }
-}
 
 const appleLogo = require("@/assets/images/apple.png")
 const facebookLogo = require("@/assets/images/facebook.png")
@@ -31,7 +23,8 @@ export default function LoginOptionsScreen() {
   const { themed } = useAppTheme()
   const { t } = useTranslation()
   const result = useAuthStore((s) => s.result)
-  const onAuthSuccess = useCallback(() => navigateAfterAuth(), [])
+  const navigateAfterAuth = useNavigateAfterAuth()
+  const onAuthSuccess = useCallback(() => void navigateAfterAuth(), [navigateAfterAuth])
   const { isSsoLoading, signInWithApple, signInWithGoogle, signInWithFacebook } =
     useSsoAuth(onAuthSuccess)
 

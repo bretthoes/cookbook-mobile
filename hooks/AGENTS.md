@@ -6,19 +6,20 @@ Pure helpers stay in `utils/`. `useHeader` is the exception: the implementation 
 
 ## Feature hooks
 
-| Hook | Role |
-| --- | --- |
-| `useAppInit` | Calls `setupApp()` once from the root layout. `ready` flips after SecureStore sync, API callbacks, and RevenueCat. |
-| `useHeader` | Sets the React Navigation header to `components/Header`. |
-| `useActionSheet` | Action sheet. Applies `androidActionSheetSafeArea` on Android. |
-| `useSelectedCookbook` | Current cookbook from `uiStore`. |
-| `useManualRefresh` | Pull-to-refresh around a query refetch. |
-| `useInFlightAction` | Ignores a second press while an async action is running. |
-| `usePaywall` | RevenueCat offerings and purchase. |
-| `useAppleSignIn`, `useGoogleSignIn`, `useFacebookSignIn`, `useSsoAuth` | SSO. `useSsoAuth` runs the shared post-login path. |
-| `useEmailVerificationPolling` | Polls until the account is verified. |
-| `usePrintRecipe` | Print or share a recipe. |
-| `useRecipeMadeCooldown` | UI for the 12-hour cooldown in `utils/recipeMadeCooldown.ts`. |
+| Hook                                                                   | Role                                                                                                                                   |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `useAppInit`                                                           | Calls `setupApp()` once from the root layout. `ready` flips after SecureStore sync, API callbacks, and RevenueCat.                     |
+| `useHeader`                                                            | Sets the React Navigation header to `components/Header`.                                                                               |
+| `useActionSheet`                                                       | Action sheet. Applies `androidActionSheetSafeArea` on Android.                                                                         |
+| `useSelectedCookbook`                                                  | Current cookbook from `uiStore`.                                                                                                       |
+| `useManualRefresh`                                                     | Pull-to-refresh around a query refetch.                                                                                                |
+| `useInFlightAction`                                                    | Ignores a second press while an async action is running.                                                                               |
+| `usePaywall`                                                           | RevenueCat offerings and purchase.                                                                                                     |
+| `useAppleSignIn`, `useGoogleSignIn`, `useFacebookSignIn`, `useSsoAuth` | SSO. `useSsoAuth` runs the shared post-login path.                                                                                     |
+| `useEmailVerificationPolling`                                          | Polls until the account is verified. Takes the password from screen state; it is never stored.                                         |
+| `useNavigateAfterAuth`                                                 | After sign-in, routes to onboarding when the account has no display name or the device has not finished onboarding, else to cookbooks. |
+| `usePrintRecipe`                                                       | Print or share a recipe.                                                                                                               |
+| `useRecipeMadeCooldown`                                                | UI for the 12-hour cooldown in `utils/recipeMadeCooldown.ts`.                                                                          |
 
 ## Query hooks
 

@@ -1,5 +1,4 @@
 import { useAuthStore } from "@/stores/authStore"
-import * as SecureStore from "expo-secure-store"
 import { useCallback, useEffect, useRef } from "react"
 
 const POLL_INTERVAL_MS = 8000
@@ -7,18 +6,26 @@ const POLL_INTERVAL_MS = 8000
 /**
  * Polls login while on the email verification step. When the user has clicked
  * the verification link in their email, login will succeed and onVerified is called.
+ * The password stays in memory; it is never written to storage.
  */
-export function useEmailVerificationPolling(isActive: boolean, onVerified: () => void) {
+export function useEmailVerificationPolling(
+  isActive: boolean,
+  password: string,
+  onVerified: () => void,
+) {
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const inFlightRef = useRef(false)
 
   const checkVerification = useCallback(async () => {
-    const password = await SecureStore.getItemAsync("password")
-    if (!password) return
-    const success = await useAuthStore.getState().login(password, true, true)
-    if (success) {
-      onVerified()
+    if (!password || inFlightRef.current) return
+    inFlightRef.current = true
+    try {
+      const success = await useAuthStore.getState().login(password, true)
+      if (success) onVerified()
+    } finally {
+      inFlightRef.current = false
     }
-  }, [onVerified])
+  }, [password, onVerified])
 
   useEffect(() => {
     if (!isActive) {
@@ -39,6 +46,4 @@ export function useEmailVerificationPolling(isActive: boolean, onVerified: () =>
       }
     }
   }, [isActive, checkVerification])
-
-  return null
 }

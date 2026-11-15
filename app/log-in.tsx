@@ -7,6 +7,7 @@ import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { Checkbox } from "@/components/Toggle"
 import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import { useNavigateAfterAuth } from "@/hooks/useNavigateAfterAuth"
 import type { TxKeyPath } from "@/i18n"
 import { getAuthEmailValidationError, useAuthStore, useIsAuthenticated } from "@/stores/authStore"
 import { router } from "expo-router"
@@ -27,6 +28,8 @@ export default function Login(_props: void) {
   } = useAppTheme()
   const authPasswordInput = useRef<TextInput>(null)
   const hasLoadedCredentials = useRef(false)
+  const hasNavigated = useRef(false)
+  const navigateAfterAuth = useNavigateAfterAuth()
 
   const [authPassword, setAuthPassword] = useState("")
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
@@ -67,7 +70,8 @@ export default function Login(_props: void) {
 
   // Add effect to handle authentication state changes
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !hasNavigated.current) {
+      hasNavigated.current = true
       const persistCredentials = async () => {
         try {
           if (rememberMe) {
@@ -83,9 +87,9 @@ export default function Login(_props: void) {
       }
       persistCredentials()
       setIsSubmitted(false)
-      router.replace("/(logged-in)/(tabs)/cookbooks")
+      void navigateAfterAuth()
     }
-  }, [isAuthenticated, rememberMe, authEmail, authPassword])
+  }, [isAuthenticated, rememberMe, authEmail, authPassword, navigateAfterAuth])
 
   const error = isSubmitted ? validationError : ""
 

@@ -17,9 +17,9 @@ import { useInFlightAction } from "@/hooks/useInFlightAction"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
-import * as SecureStore from "expo-secure-store"
 import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
+import { usePreventRemove } from "@react-navigation/native"
 import { router, useNavigation } from "expo-router"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
@@ -33,6 +33,7 @@ import {
 
 const TOTAL_STEPS = 5
 const SUCCESS_DELAY_MS = 1000
+const RESEND_SUCCESS_TX: TxKeyPath = "loginScreen:errors.confirmationResent"
 const isValidDisplayName = (input: string) => /^[\p{L}\p{M} \-']+$/u.test(input)
 
 export default function Register() {
@@ -47,10 +48,9 @@ export default function Register() {
   const [isPasswordHidden, setIsPasswordHidden] = useState(true)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const { isInFlight, run } = useInFlightAction()
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isCooldown, setIsCooldown] = useState(false)
+  const { isInFlight: isResending, run: runResend } = useInFlightAction()
   const [cooldownTime, setCooldownTime] = useState(0)
-  const [verificationEmail, setVerificationEmail] = useState("")
+  const [registeredPassword, setRegisteredPassword] = useState("")
   const [selectedLanguage, setSelectedLanguage] =
     useState<SupportedLanguageCode>(getActiveLanguageCode())
 
@@ -63,23 +63,23 @@ export default function Register() {
   const result = useAuthStore((s) => s.result)
   const setResult = useAuthStore((s) => s.setResult)
   const validationError = getAuthEmailValidationError(authEmail)
+  const isCooldown = cooldownTime > 0
 
-  const advanceStep = useCallback(() => {
+  /** Only moves forward from `fromStep`, so a poll and a button press can't both advance. */
+  const advanceFrom = useCallback((fromStep: number) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-    setCurrentStep((s) => Math.min(s + 1, 6))
+    setCurrentStep((s) => (s === fromStep ? s + 1 : s))
   }, [])
 
-  useEmailVerificationPolling(currentStep === 4, advanceStep)
+  const handleVerified = useCallback(() => advanceFrom(4), [advanceFrom])
+
+  useEmailVerificationPolling(currentStep === 4, registeredPassword, handleVerified)
 
   useEffect(() => {
-    if (currentStep === 4 && !verificationEmail) {
-      if (authEmail) {
-        setVerificationEmail(authEmail)
-      } else {
-        SecureStore.getItemAsync("email").then((e) => e && setVerificationEmail(e))
-      }
-    }
-  }, [currentStep, authEmail, verificationEmail])
+    if (cooldownTime <= 0) return
+    const t = setTimeout(() => setCooldownTime((s) => s - 1), 1000)
+    return () => clearTimeout(t)
+  }, [cooldownTime])
 
   useEffect(() => {
     return () => {
@@ -100,10 +100,10 @@ export default function Register() {
   }, [password])
 
   const displayNameError = useMemo(() => {
-    if (localDisplayName.length === 0)
-      return translate("setDisplayNameScreen:validation.cantBeBlank")
-    if (localDisplayName.length > 60) return translate("setDisplayNameScreen:validation.tooLong60")
-    if (!isValidDisplayName(localDisplayName))
+    const trimmed = localDisplayName.trim()
+    if (trimmed.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
+    if (trimmed.length > 60) return translate("setDisplayNameScreen:validation.tooLong60")
+    if (!isValidDisplayName(trimmed))
       return translate("setDisplayNameScreen:validation.invalidChars")
     return ""
   }, [localDisplayName])
@@ -118,13 +118,13 @@ export default function Register() {
   }, [])
 
   const handleLanguageStepSubmit = () => {
-    advanceStep()
+    advanceFrom(1)
   }
 
   const handleEmailStepSubmit = () => {
     setIsSubmitted(true)
     if (validationError) return
-    advanceStep()
+    advanceFrom(2)
     setIsSubmitted(false)
   }
 
@@ -134,72 +134,68 @@ export default function Register() {
       if (passwordValidationError) return
       const success = await register(password)
       if (success) {
+        setRegisteredPassword(password)
         setPassword("")
-        setVerificationEmail(authEmail)
-        advanceStep()
+        advanceFrom(3)
       }
       setIsSubmitted(false)
     })
-  }, [passwordValidationError, register, password, authEmail, advanceStep, run])
+  }, [passwordValidationError, register, password, advanceFrom, run])
 
   const handleVerify = useCallback(() => {
     run(async () => {
-      setErrorMessage("")
       setResult("")
-
-      if (!authEmail) {
-        const emailToUse = verificationEmail || (await SecureStore.getItemAsync("email"))
-        if (emailToUse) setAuthEmail(emailToUse)
-      }
-
-      const storedPassword = await SecureStore.getItemAsync("password")
-      const loginSuccess = await login(storedPassword ?? "", true, true)
+      const loginSuccess = await login(registeredPassword, true)
       if (loginSuccess) {
-        advanceStep()
+        advanceFrom(4)
       } else {
-        setErrorMessage(translate("emailVerificationScreen:notYetVerified"))
+        setResult("emailVerificationScreen:notYetVerified")
       }
     })
-  }, [authEmail, verificationEmail, setAuthEmail, setResult, login, advanceStep, run])
+  }, [registeredPassword, setResult, login, advanceFrom, run])
 
   const handleResendEmail = () => {
-    if (isCooldown) return
-    resendConfirmationEmail()
-    setErrorMessage("")
-    setIsCooldown(true)
-    setCooldownTime(60)
-    const timer = setInterval(() => {
-      setCooldownTime((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer)
-          setIsCooldown(false)
-          return 0
-        }
-        return prev - 1
-      })
-    }, 1000)
+    runResend(async () => {
+      if (isCooldown) return
+      const sent = await resendConfirmationEmail()
+      if (sent) setCooldownTime(60)
+    })
   }
 
-  const handleStep3Continue = useCallback(() => {
+  const handleDisplayNameContinue = useCallback(() => {
     run(async () => {
       setIsSubmitted(true)
+      setResult("")
       if (displayNameError) return
       const success = await updateDisplayName(localDisplayName.trim())
       if (success) {
-        advanceStep()
+        advanceFrom(5)
       }
       setIsSubmitted(false)
     })
-  }, [displayNameError, localDisplayName, updateDisplayName, advanceStep, run])
+  }, [displayNameError, localDisplayName, updateDisplayName, setResult, advanceFrom, run])
 
+  // Once the account exists, going back to the password step would only re-register the same
+  // email. Step 4 returns to the email step so a typo can be fixed; step 5 (already signed in)
+  // and the final step have no back.
+  const canGoBack = currentStep <= 4
   const handleBack = () => {
     if (currentStep === 1) {
       router.back()
+      return
+    }
+    if (!canGoBack) return
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
+    setResult("")
+    if (currentStep === 4) {
+      setRegisteredPassword("")
+      setCurrentStep(2)
     } else {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
-      setCurrentStep((s) => Math.max(s - 1, 1))
+      setCurrentStep((s) => s - 1)
     }
   }
+
+  usePreventRemove(currentStep > 1 && currentStep < 6, handleBack)
 
   useEffect(() => {
     if (currentStep === 6) {
@@ -235,10 +231,10 @@ export default function Register() {
   useHeader(
     {
       titleTx: headerTitle,
-      leftIcon: "back",
-      onLeftPress: handleBack,
+      leftIcon: canGoBack ? "back" : undefined,
+      onLeftPress: canGoBack ? handleBack : undefined,
     },
-    [currentStep, headerTitle],
+    [currentStep, headerTitle, canGoBack],
   )
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
@@ -349,7 +345,9 @@ export default function Register() {
               onSubmitEditing={handlePasswordStepSubmit}
             />
             <PasswordRequirements password={password} />
-            {result ? <Text tx={result as TxKeyPath} preset="formHelper" /> : null}
+            {result ? (
+              <Text tx={result as TxKeyPath} preset="formHelper" style={themed($errorText)} />
+            ) : null}
           </FormCard>
           <View style={$content}>
             <Button
@@ -373,12 +371,16 @@ export default function Register() {
         <>
           <FormCard>
             <Text tx="emailVerificationScreen:sentToPrefix" preset="formHelper" />
-            <Text weight="bold">{verificationEmail || authEmail}</Text>
+            <Text weight="bold">{authEmail}</Text>
             <Divider />
             <Text tx="emailVerificationScreen:sentToSuffix" preset="formHelper" />
             <Text tx="emailVerificationScreen:returnHereHint" preset="formHelper" style={$hint} />
-            {result && !errorMessage ? (
-              <Text tx={result as TxKeyPath} preset="formHelper" style={themed($formHelper)} />
+            {result ? (
+              <Text
+                tx={result as TxKeyPath}
+                preset="formHelper"
+                style={result === RESEND_SUCCESS_TX ? $hint : themed($errorText)}
+              />
             ) : null}
             {isInFlight && (
               <React.Fragment>
@@ -389,9 +391,6 @@ export default function Register() {
                 </View>
               </React.Fragment>
             )}
-            {errorMessage ? (
-              <Text text={errorMessage} preset="formHelper" style={themed($errorText)} />
-            ) : null}
           </FormCard>
           <View style={$content}>
             <Button
@@ -411,6 +410,7 @@ export default function Register() {
               preset="default"
               onPress={handleResendEmail}
               disabled={isCooldown}
+              loading={isResending}
               style={$resendButton}
             />
           </View>
@@ -431,14 +431,17 @@ export default function Register() {
               autoCorrect={false}
               labelTx="setDisplayNameScreen:label"
               placeholderTx="setDisplayNameScreen:placeholder"
-              onSubmitEditing={handleStep3Continue}
+              onSubmitEditing={handleDisplayNameContinue}
             />
+            {result ? (
+              <Text tx={result as TxKeyPath} preset="formHelper" style={themed($errorText)} />
+            ) : null}
           </FormCard>
           <View style={$content}>
             <Button
               tx="common:next"
               preset="reversed"
-              onPress={handleStep3Continue}
+              onPress={handleDisplayNameContinue}
               loading={isInFlight}
               style={$tapButton}
             />
@@ -483,11 +486,6 @@ const $verifyingRow: ViewStyle = {
   alignItems: "center",
   gap: spacing.xs,
 }
-
-const $formHelper: ThemedStyle<TextStyle> = (theme) => ({
-  color: theme.colors.error,
-  marginTop: theme.spacing.xs,
-})
 
 const $errorText: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.error,

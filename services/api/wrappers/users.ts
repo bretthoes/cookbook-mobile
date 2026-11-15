@@ -91,14 +91,22 @@ export async function loginWithFacebook(
   }
 }
 
-export async function register(
-  email: string,
-  password: string,
-): Promise<{ kind: "ok" } | GeneralApiProblem> {
+/**
+ * Identity rejects a registration with 400 and its error codes (DuplicateUserName,
+ * InvalidUserName, PasswordTooShort, …) as the keys of `errors`.
+ */
+export type RegisterResult =
+  { kind: "ok" } | { kind: "validation"; codes: string[] } | GeneralApiProblem
+
+export async function register(email: string, password: string): Promise<RegisterResult> {
   try {
     const { error, response } = await client.POST("/api/Users/register", {
       body: { email, password },
     })
+    if (response.status === 400) {
+      const errors = (error as { errors?: Record<string, unknown> } | undefined)?.errors
+      return { kind: "validation", codes: Object.keys(errors ?? {}) }
+    }
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     return { kind: "ok" }

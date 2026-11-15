@@ -7,7 +7,7 @@ import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { Switch } from "@/components/Toggle"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
-import { translate } from "@/i18n"
+import { translate, type TxKeyPath } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
@@ -47,6 +47,8 @@ export default function OnboardingScreen() {
     useAppTheme()
 
   const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
+  const result = useAuthStore((s) => s.result)
+  const setResult = useAuthStore((s) => s.setResult)
   const { isInFlight, run } = useInFlightAction()
 
   const [localDisplayName, setLocalDisplayName] = useState("")
@@ -69,10 +71,10 @@ export default function OnboardingScreen() {
 
   // Display name validation
   const displayNameError = useMemo(() => {
-    if (localDisplayName.length === 0)
-      return translate("setDisplayNameScreen:validation.cantBeBlank")
-    if (localDisplayName.length > 60) return translate("setDisplayNameScreen:validation.tooLong60")
-    if (!isValidDisplayName(localDisplayName))
+    const trimmed = localDisplayName.trim()
+    if (trimmed.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
+    if (trimmed.length > 60) return translate("setDisplayNameScreen:validation.tooLong60")
+    if (!isValidDisplayName(trimmed))
       return translate("setDisplayNameScreen:validation.invalidChars")
     return ""
   }, [localDisplayName])
@@ -82,6 +84,7 @@ export default function OnboardingScreen() {
   const handleDisplayNameContinue = useCallback(() => {
     run(async () => {
       setIsSubmitted(true)
+      setResult("")
       if (displayNameError) return
       const success = await updateDisplayName(localDisplayName.trim())
       if (success) {
@@ -89,7 +92,7 @@ export default function OnboardingScreen() {
         advanceStep()
       }
     })
-  }, [displayNameError, localDisplayName, updateDisplayName, advanceStep, run])
+  }, [displayNameError, localDisplayName, updateDisplayName, setResult, advanceStep, run])
 
   // Header title per step
   const headerTitle = useMemo(() => {
@@ -168,6 +171,9 @@ export default function OnboardingScreen() {
               placeholderTx="setDisplayNameScreen:placeholder"
               onSubmitEditing={handleDisplayNameContinue}
             />
+            {result ? (
+              <Text tx={result as TxKeyPath} preset="formHelper" style={themed($errorText)} />
+            ) : null}
           </FormCard>
           <View style={$content}>
             <Button
@@ -262,3 +268,8 @@ const $toggleRow: ThemedStyle<ViewStyle> = (theme) => ({
 const $actionButton: ViewStyle = {
   marginBottom: spacing.sm,
 }
+
+const $errorText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+  marginTop: theme.spacing.xs,
+})

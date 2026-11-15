@@ -2,29 +2,43 @@ import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
+import { useInFlightAction } from "@/hooks/useInFlightAction"
+import type { TxKeyPath } from "@/i18n"
 import { getAuthEmailValidationError, useAuthStore } from "@/stores/authStore"
+import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useAppTheme } from "@/theme/context"
 import { router } from "expo-router"
-import React, { useState } from "react"
-import { ViewStyle } from "react-native"
+import React, { useEffect, useState } from "react"
+import { TextStyle, ViewStyle } from "react-native"
 
 export default function ForgotPassword() {
+  const { themed } = useAppTheme()
   const authEmail = useAuthStore((s) => s.authEmail)
   const result = useAuthStore((s) => s.result)
+  const setResult = useAuthStore((s) => s.setResult)
   const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
   const forgotPassword = useAuthStore((s) => s.forgotPassword)
   const validationError = getAuthEmailValidationError(authEmail)
+  const { isInFlight, run } = useInFlightAction()
 
   const [isSubmitted, setIsSubmitted] = useState(false)
 
   const error = isSubmitted ? validationError : ""
 
-  async function sendForgotPasswordEmail() {
-    setIsSubmitted(true)
-    if (validationError) return
-    setIsSubmitted(false)
-    await forgotPassword()
-    router.push("../reset-password")
+  // Drop any message left over from the login screen.
+  useEffect(() => {
+    setResult("")
+  }, [setResult])
+
+  function sendForgotPasswordEmail() {
+    run(async () => {
+      setIsSubmitted(true)
+      if (validationError) return
+      setIsSubmitted(false)
+      const sent = await forgotPassword()
+      if (sent) router.push("../reset-password")
+    })
   }
 
   return (
@@ -46,11 +60,14 @@ export default function ForgotPassword() {
         status={error ? "error" : undefined}
       />
 
-      <Text text={`${result}`} preset="formHelper" />
+      {result ? (
+        <Text tx={result as TxKeyPath} preset="formHelper" style={themed($errorText)} />
+      ) : null}
 
       <Button
         tx="forgotPasswordScreen:sendButton"
         onPress={sendForgotPasswordEmail}
+        disabled={isInFlight}
         style={$tapButton}
       />
     </Screen>
@@ -71,3 +88,7 @@ const $tapButton: ViewStyle = {
 const $textField: ViewStyle = {
   marginBottom: spacing.lg,
 }
+
+const $errorText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.error,
+})

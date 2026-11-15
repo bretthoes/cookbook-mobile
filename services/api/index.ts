@@ -289,7 +289,7 @@ export class Api {
     return userWrappers.loginWithFacebook(accessToken)
   }
 
-  async register(email: string, password: string): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async register(email: string, password: string): Promise<userWrappers.RegisterResult> {
     return userWrappers.register(email, password)
   }
 

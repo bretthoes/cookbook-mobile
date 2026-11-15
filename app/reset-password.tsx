@@ -3,7 +3,7 @@ import { PressableIcon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
-import { translate } from "@/i18n"
+import { translate, type TxKeyPath } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -19,7 +19,6 @@ export default function ResetPassword() {
   const resetPassword = useAuthStore((s) => s.resetPassword)
   const result = useAuthStore((s) => s.result)
   const setResult = useAuthStore((s) => s.setResult)
-  const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
 
   const [resetCode, setResetCode] = useState("")
   const authPasswordInput = useRef<TextInput>(null)
@@ -56,9 +55,8 @@ export default function ResetPassword() {
   useEffect(() => {
     return () => {
       setResult("")
-      setPassword("")
     }
-  }, [setAuthEmail, setResult])
+  }, [setResult])
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
     () =>
@@ -77,7 +75,7 @@ export default function ResetPassword() {
   )
 
   // TODO determine 200 in a less hacky way; just to disable button to prevent multiple reset submits
-  const passwordSuccessfullyReset = result === translate("resetPasswordScreen:successMessage")
+  const passwordSuccessfullyReset = result === "loginScreen:errors.passwordResetSuccess"
 
   return (
     <Screen contentContainerStyle={$root} preset="auto" safeAreaEdges={["top", "bottom"]}>
@@ -115,7 +113,7 @@ export default function ResetPassword() {
           status={passwordError ? "error" : undefined}
         />
 
-        <Text text={`${result}`} preset="formHelper" />
+        {result ? <Text tx={result as TxKeyPath} preset="formHelper" /> : null}
 
         <Button
           disabled={passwordSuccessfullyReset}

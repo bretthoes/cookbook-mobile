@@ -1,21 +1,30 @@
 import type { AuthResultSnapshotIn } from "@/types/auth"
+import { translate, type TxKeyPath } from "@/i18n"
 import { api } from "@/services/api"
+import type { GeneralApiProblem } from "@/services/api/apiProblem"
 import { bumpAuthSession, setAccessToken } from "@/services/api/client"
 import { clearQueryClient } from "@/services/query/queryClient"
 import { zustandPersistStorage } from "@/stores/persistStorage"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
+import { getAuthEmailValidationTxKey } from "@/utils/authEmailValidation"
+import { getRegisterErrorTxKey } from "@/utils/registerErrorTxKey"
 import * as SecureStore from "expo-secure-store"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
 
 const AUTH_STORE_KEY = "auth-v1"
+/** Older builds kept the registration password here until the first login. */
+const LEGACY_REGISTER_PASSWORD_KEY = "password"
 
 export function getAuthEmailValidationError(authEmail: string): string {
-  if (authEmail.length === 0) return "can't be blank"
-  if (authEmail.length < 6) return "must be at least 6 characters"
-  if (authEmail.length > 99) return "must be less than 100 characters"
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(authEmail)) return "must be a valid email address"
-  return ""
+  const txKey = getAuthEmailValidationTxKey(authEmail)
+  return txKey ? translate(txKey) : ""
+}
+
+function getEmailSendErrorTxKey(problem: GeneralApiProblem): TxKeyPath {
+  return problem.kind === "rate-limited"
+    ? "errors:tooManyAttempts"
+    : "loginScreen:errors.confirmationResendFailed"
 }
 
 async function writeSessionTokens(
@@ -63,28 +72,23 @@ export interface AuthState {
   result: string
   displayName: string
   authResult?: AuthResultSnapshotIn
-  submittedSuccessfully: boolean
 
   setAuthToken: (value?: string) => void
-  setSubmittedSuccessfully: (value: boolean) => void
   setAuthEmail: (value: string) => void
   setResult: (value: string) => void
-  setDisplayName: (value: string) => void
   fetchDisplayName: () => Promise<void>
   updateDisplayName: (name?: string) => Promise<boolean>
-  setAuthResult: (value: AuthResultSnapshotIn) => void
   logout: () => Promise<void>
-  login: (password: string, isFirstLogin?: boolean, silent?: boolean) => Promise<boolean>
+  /** `silent` (used while waiting for email verification) shows no messages and doesn't resend the confirmation email. */
+  login: (password: string, silent?: boolean) => Promise<boolean>
   register: (password: string) => Promise<boolean>
-  resendConfirmationEmail: () => Promise<void>
-  forgotPassword: () => Promise<void>
+  resendConfirmationEmail: () => Promise<boolean>
+  forgotPassword: () => Promise<boolean>
   loginWithGoogle: (idToken: string) => Promise<boolean>
   loginWithApple: (identityToken: string) => Promise<boolean>
   loginWithFacebook: (accessToken: string) => Promise<boolean>
   deleteAccount: () => Promise<boolean>
   resetPassword: (resetCode: string, password: string) => Promise<void>
-  update: () => Promise<void>
-  saveTokens: (authResult: AuthResultSnapshotIn) => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -96,7 +100,6 @@ export const useAuthStore = create<AuthState>()(
       result: "",
       displayName: "",
       authResult: undefined,
-      submittedSuccessfully: false,
 
       setAuthToken: (value) => {
         setAccessToken(value ?? null)
@@ -106,8 +109,6 @@ export const useAuthStore = create<AuthState>()(
           authResult: value ? get().authResult : undefined,
         })
       },
-
-      setSubmittedSuccessfully: (value) => set({ submittedSuccessfully: value }),
 
       setAuthEmail: (value) => {
         const authEmail = value.replace(/ /g, "")
@@ -119,8 +120,6 @@ export const useAuthStore = create<AuthState>()(
       },
 
       setResult: (value) => set({ result: value }),
-
-      setDisplayName: (value) => set({ displayName: value }),
 
       fetchDisplayName: async () => {
         if (get().displayName) return
@@ -137,18 +136,8 @@ export const useAuthStore = create<AuthState>()(
           set({ result: "loginScreen:errors.updateFailed" })
           return false
         }
-        set({ displayName, submittedSuccessfully: true })
+        set({ displayName })
         return true
-      },
-
-      setAuthResult: (value) => {
-        setAccessToken(value.accessToken)
-        const authEmail = get().authEmail
-        set({
-          authResult: value,
-          authToken: value.accessToken,
-          userId: authEmail.trim() ? authEmail.trim().toLowerCase() : undefined,
-        })
       },
 
       logout: async () => {
@@ -160,14 +149,16 @@ export const useAuthStore = create<AuthState>()(
           userId: undefined,
           authEmail: "",
           authResult: undefined,
+          displayName: "",
         })
         useSubscriptionStore.getState().reset()
         await SecureStore.deleteItemAsync("accessToken")
         await SecureStore.deleteItemAsync("refreshToken")
         await SecureStore.deleteItemAsync("email")
+        await SecureStore.deleteItemAsync(LEGACY_REGISTER_PASSWORD_KEY)
       },
 
-      login: async (password, isFirstLogin = false, silent = false) => {
+      login: async (password, silent = false) => {
         if (!silent) set({ result: "" })
         const authEmail = get().authEmail
         const response = await api.login(authEmail, password)
@@ -175,29 +166,18 @@ export const useAuthStore = create<AuthState>()(
           case "ok":
             await SecureStore.setItemAsync("email", authEmail)
             await writeSessionTokens(authEmail, response.authResult, set)
-            if (isFirstLogin) {
-              await SecureStore.deleteItemAsync("password")
-              if (get().displayName) {
-                const updateResponse = await api.updateUser(get().displayName)
-                if (updateResponse.kind !== "ok") {
-                  console.error(`Error updating user: ${JSON.stringify(updateResponse)}`)
-                  set({ result: "loginScreen:errors.updateFailed" })
-                } else {
-                  set({ result: "loginScreen:errors.updateSuccess" })
-                }
-              }
-            }
+            await SecureStore.deleteItemAsync(LEGACY_REGISTER_PASSWORD_KEY)
             return true
           case "unauthorized":
             if (!silent) set({ result: "loginScreen:errors.invalidCredentials" })
             return false
           case "notallowed":
-            if (isFirstLogin) return false
+            if (silent) return false
             const resendResponse = await api.resendConfirmationEmail(authEmail)
             if (resendResponse.kind === "ok") {
               set({ result: "loginScreen:errors.confirmationResent" })
             } else {
-              set({ result: "loginScreen:errors.confirmationResendFailed" })
+              set({ result: getEmailSendErrorTxKey(resendResponse) })
               console.error(`error in resendConfirmationEmail: ${JSON.stringify(resendResponse)}`)
             }
             return false
@@ -212,36 +192,35 @@ export const useAuthStore = create<AuthState>()(
         set({ result: "" })
         const authEmail = get().authEmail
         const response = await api.register(authEmail, password)
-        switch (response.kind) {
-          case "ok":
-            await SecureStore.setItemAsync("email", authEmail)
-            await SecureStore.setItemAsync("password", password)
-            return true
-          case "rejected":
-            set({ result: "registerScreen:errors.emailTaken" })
-            return false
-          default:
-            set({ result: "registerScreen:errors.generic" })
-            console.error(`Error registering: ${JSON.stringify(response)}`)
-            return false
+        if (response.kind === "ok") {
+          await SecureStore.setItemAsync("email", authEmail)
+          return true
         }
+        set({ result: getRegisterErrorTxKey(response) })
+        if (response.kind !== "validation") {
+          console.error(`Error registering: ${JSON.stringify(response)}`)
+        }
+        return false
       },
 
       resendConfirmationEmail: async () => {
         const response = await api.resendConfirmationEmail(get().authEmail)
         if (response.kind === "ok") {
           set({ result: "loginScreen:errors.confirmationResent" })
-        } else {
-          set({ result: "loginScreen:errors.confirmationResendFailed" })
-          console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
+          return true
         }
+        set({ result: getEmailSendErrorTxKey(response) })
+        console.error(`error in resendConfirmationEmail: ${JSON.stringify(response)}`)
+        return false
       },
 
       forgotPassword: async () => {
+        set({ result: "" })
         const response = await api.forgotPassword(get().authEmail)
-        if (response.kind !== "ok") {
-          console.error(`Error in forgotPassword: ${JSON.stringify(response)}`)
-        }
+        if (response.kind === "ok") return true
+        set({ result: getEmailSendErrorTxKey(response) })
+        console.error(`Error in forgotPassword: ${JSON.stringify(response)}`)
+        return false
       },
 
       loginWithGoogle: async (idToken) => {
@@ -290,7 +269,7 @@ export const useAuthStore = create<AuthState>()(
           return false
         }
         await get().logout()
-        set({ displayName: "", result: "", submittedSuccessfully: false })
+        set({ result: "" })
         return true
       },
 
@@ -303,20 +282,6 @@ export const useAuthStore = create<AuthState>()(
           console.error(`Error registering: ${JSON.stringify(response)}`)
         }
       },
-
-      update: async () => {
-        const response = await api.updateUser(get().displayName)
-        if (response.kind !== "ok") {
-          console.error(`Error updating user: ${JSON.stringify(response)}`)
-          set({ result: "loginScreen:errors.updateFailed" })
-        } else {
-          set({ result: "loginScreen:errors.updateSuccess" })
-        }
-      },
-
-      saveTokens: async (authResult) => {
-        await writeSessionTokens(get().authEmail, authResult, set)
-      },
     }),
     {
       name: AUTH_STORE_KEY,
@@ -325,7 +290,6 @@ export const useAuthStore = create<AuthState>()(
         authEmail: state.authEmail,
         displayName: state.displayName,
         userId: state.userId,
-        submittedSuccessfully: state.submittedSuccessfully,
       }),
     },
   ),
