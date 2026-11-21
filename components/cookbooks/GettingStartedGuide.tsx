@@ -1,3 +1,4 @@
+import { guideCaptionFitsBelow } from "@/components/cookbooks/guideCaptionFitsBelow"
 import { Text } from "@/components/Text"
 import type { TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
@@ -8,9 +9,11 @@ import {
   StyleSheet,
   useWindowDimensions,
   View,
+  type LayoutChangeEvent,
   type TextStyle,
   type ViewStyle,
 } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -59,6 +62,8 @@ export function GettingStartedGuide({
   primaryTx,
   target = null,
   revealScreen = false,
+  pinToBottom = false,
+  placeAbove = false,
   onPrimary,
   onClose,
 }: {
@@ -67,13 +72,18 @@ export function GettingStartedGuide({
   target?: GuideTarget | null
   /** Shows the screen through a light scrim instead of spotlighting one control. */
   revealScreen?: boolean
+  /** Bottom note with no spotlight, for a message that has no control to point at. */
+  pinToBottom?: boolean
+  /** Point down at the control. Use when it sits on the bottom edge. */
+  placeAbove?: boolean
   onPrimary?: () => void
   onClose: () => void
 }) {
   const { themed, theme } = useAppTheme()
   const { width: windowWidth, height: windowHeight } = useWindowDimensions()
+  const insets = useSafeAreaInsets()
   const rootRef = useRef<View>(null)
-  const [origin, setOrigin] = useState({ x: 0, y: 0 })
+  const [frame, setFrame] = useState({ x: 0, y: 0, height: 0 })
   const pulse = useSharedValue(0)
   const $themedDim = useMemo(() => themed($dim), [themed])
   const $themedScrim = useMemo(() => themed($scrim), [themed])
@@ -86,9 +96,17 @@ export function GettingStartedGuide({
   const $themedRing = useMemo(() => themed($ring), [themed])
   const $themedPulse = useMemo(() => themed($pulse), [themed])
 
-  const measureOrigin = useCallback(() => {
+  const measureOrigin = useCallback((event?: LayoutChangeEvent) => {
+    // `top` is relative to this view's layout box. measureInWindow's height can
+    // include space under the tab bar, which drops the note out of sight.
+    const layoutHeight = event?.nativeEvent.layout.height
     rootRef.current?.measureInWindow((x, y) => {
-      setOrigin((current) => (current.x === x && current.y === y ? current : { x, y }))
+      setFrame((current) => {
+        const height = layoutHeight ?? current.height
+        return current.x === x && current.y === y && current.height === height
+          ? current
+          : { x, y, height }
+      })
     })
   }, [])
 
@@ -110,13 +128,16 @@ export function GettingStartedGuide({
   }))
 
   const pad = theme.spacing.xs
+  // Window coordinates are meaningless until this overlay has been laid out.
+  // Showing the note earlier parks it beside the button, then it jumps.
+  const measured = frame.height > 0
   // A header control sits above this overlay. It stays lit, and the note points up at it.
-  const targetAbove = target ? target.y + target.height <= origin.y : false
+  const targetAbove = Boolean(measured && target && target.y + target.height <= frame.y)
   const hole =
-    target && !targetAbove
+    measured && target && !targetAbove
       ? {
-          x: Math.max(0, target.x - origin.x - pad),
-          y: Math.max(0, target.y - origin.y - pad),
+          x: Math.max(0, target.x - frame.x - pad),
+          y: Math.max(0, target.y - frame.y - pad),
           width: target.width + pad * 2,
           height: target.height + pad * 2,
         }
@@ -124,15 +145,30 @@ export function GettingStartedGuide({
   const pointAt = hole
     ? { x: hole.x, width: hole.width }
     : target && targetAbove
-      ? { x: target.x - origin.x, width: target.width }
+      ? { x: target.x - frame.x, width: target.width }
       : null
 
   // Compact coach mark — sits near the highlight, not a full-width card.
+  // Flip above when the note would run into the overlay edge or the nav bar.
+  // The floating + buttons pass placeAbove so they always point from the top.
   const maxCaption = Math.min(260, windowWidth - theme.spacing.xl * 2)
   const estimatedCaption = primaryTx ? 104 : 60
-  const placeBelow =
+  const fitsBelow =
     !hole ||
-    hole.y + hole.height + theme.spacing.sm + estimatedCaption < windowHeight - theme.spacing.xl
+    guideCaptionFitsBelow({
+      holeBottom: hole.y + hole.height,
+      captionHeight: estimatedCaption,
+      gap: theme.spacing.sm,
+      overlayTop: frame.y,
+      overlayHeight: frame.height,
+      windowHeight,
+      bottomInset: insets.bottom,
+      edgeMargin: theme.spacing.sm,
+    })
+  // A target at the top has nowhere to put the note above it. Covering the
+  // control is worse than sitting underneath.
+  const fitsAbove = !hole || hole.y >= estimatedCaption + theme.spacing.xs + theme.spacing.md
+  const placeBelow = !placeAbove && (fitsBelow || !fitsAbove)
   const captionTop = hole
     ? placeBelow
       ? hole.y + hole.height + theme.spacing.xs
@@ -153,6 +189,7 @@ export function GettingStartedGuide({
       )
     : 0
   const showArrowUp = (hole && placeBelow) || targetAbove
+  const showNote = revealScreen || pinToBottom || (measured && target != null)
 
   return (
     <View ref={rootRef} pointerEvents="box-none" style={$fill} onLayout={measureOrigin}>
@@ -210,34 +247,36 @@ export function GettingStartedGuide({
           style={[$themedDim, { top: 0, left: 0, right: 0, bottom: 0 }]}
         />
       )}
-      <View
-        pointerEvents="box-none"
-        style={[
-          $note,
-          { left: captionLeft, maxWidth: maxCaption },
-          captionTop === undefined ? { bottom: theme.spacing.xl } : { top: captionTop },
-        ]}
-      >
-        {showArrowUp ? (
-          <View pointerEvents="none" style={[$themedArrowUp, { marginLeft: arrowOffset }]} />
-        ) : null}
-        <View pointerEvents="none" style={$themedCaption} accessibilityRole="text">
-          <Text tx={messageTx} size="sm" style={$themedCopy} />
+      {showNote ? (
+        <View
+          pointerEvents="box-none"
+          style={[
+            $note,
+            { left: captionLeft, maxWidth: maxCaption },
+            captionTop === undefined ? { bottom: theme.spacing.xl } : { top: captionTop },
+          ]}
+        >
+          {showArrowUp ? (
+            <View pointerEvents="none" style={[$themedArrowUp, { marginLeft: arrowOffset }]} />
+          ) : null}
+          <View pointerEvents="none" style={$themedCaption} accessibilityRole="text">
+            <Text tx={messageTx} size="sm" style={$themedCopy} />
+          </View>
+          {hole && !placeBelow ? (
+            <View pointerEvents="none" style={[$themedArrowDown, { marginLeft: arrowOffset }]} />
+          ) : null}
+          {primaryTx && onPrimary ? (
+            <Pressable
+              accessibilityRole="button"
+              onPress={onPrimary}
+              hitSlop={8}
+              style={$themedAction}
+            >
+              <Text tx={primaryTx} size="sm" weight="medium" style={$themedActionText} />
+            </Pressable>
+          ) : null}
         </View>
-        {hole && !placeBelow ? (
-          <View pointerEvents="none" style={[$themedArrowDown, { marginLeft: arrowOffset }]} />
-        ) : null}
-        {primaryTx && onPrimary ? (
-          <Pressable
-            accessibilityRole="button"
-            onPress={onPrimary}
-            hitSlop={8}
-            style={$themedAction}
-          >
-            <Text tx={primaryTx} size="sm" weight="medium" style={$themedActionText} />
-          </Pressable>
-        ) : null}
-      </View>
+      ) : null}
     </View>
   )
 }

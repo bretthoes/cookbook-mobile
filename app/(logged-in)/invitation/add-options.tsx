@@ -69,26 +69,28 @@ export default function AddInvitationOptionsScreen() {
   const $themedListContainer = useMemo(() => themed($listContainer), [themed])
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$themedScreenContainer}>
-      <View
-        ref={optionsAnchor.ref}
-        onLayout={optionsAnchor.onLayout}
-        collapsable={false}
-        style={$themedListContainer}
-      >
-        <OptionListItem
-          title={t("invitationAddOptionsScreen:inviteByEmail")}
-          description={t("invitationAddOptionsScreen:inviteByEmailDesc")}
-          leftIcon="mail"
-          onPress={() => openOption("../invitation/add-email")}
-        />
-        <OptionListItem
-          title={t("invitationAddOptionsScreen:inviteByLink")}
-          description={t("invitationAddOptionsScreen:inviteByLinkDesc")}
-          leftIcon="web"
-          onPress={() => openOption("../invitation/add-link")}
-        />
-      </View>
+    <View style={$root}>
+      <Screen preset="scroll" contentContainerStyle={$themedScreenContainer}>
+        <View
+          ref={optionsAnchor.ref}
+          onLayout={optionsAnchor.onLayout}
+          collapsable={false}
+          style={$themedListContainer}
+        >
+          <OptionListItem
+            title={t("invitationAddOptionsScreen:inviteByEmail")}
+            description={t("invitationAddOptionsScreen:inviteByEmailDesc")}
+            leftIcon="mail"
+            onPress={() => openOption("../invitation/add-email")}
+          />
+          <OptionListItem
+            title={t("invitationAddOptionsScreen:inviteByLink")}
+            description={t("invitationAddOptionsScreen:inviteByLinkDesc")}
+            leftIcon="web"
+            onPress={() => openOption("../invitation/add-link")}
+          />
+        </View>
+      </Screen>
       {showGuide ? (
         <GettingStartedGuide
           messageTx="gettingStarted:guideInviteOptions"
@@ -98,8 +100,12 @@ export default function AddInvitationOptionsScreen() {
           onClose={leaveGettingStartedTour}
         />
       ) : null}
-    </Screen>
+    </View>
   )
+}
+
+const $root: ViewStyle = {
+  flex: 1,
 }
 
 const $screenContainer: ThemedStyle<ViewStyle> = (theme) => ({

@@ -16,6 +16,7 @@ Expo (dev client) + React Native app using **expo-router** file-based routing. T
 | Copy                 | `i18n/`                | en / fr / ko — see `i18n/AGENTS.md`                                          |
 | Theme                | `theme/`               | Light and dark tokens — see `theme/AGENTS.md`                                |
 | API layer            | `services/api/`        | OpenAPI client — see `services/api/AGENTS.md` and `services/api/README.md`   |
+| Feature docs         | `docs/features/`       | Deep dives on cross-screen features — see `docs/features/README.md`          |
 | Environment config   | `config/`              | `config.dev.ts` / `config.prod.ts` merged in `config/index.ts` via `__DEV__` |
 | Native / Expo config | `app.json`, `eas.json` | EAS build profiles (`development`, `preview`, `production`)                  |
 

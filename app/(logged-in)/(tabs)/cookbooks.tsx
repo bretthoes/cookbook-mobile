@@ -248,6 +248,7 @@ export default function CookbooksScreen(_props: void) {
         <GettingStartedGuide
           messageTx="gettingStarted:guideCookbookFab"
           target={fabAnchor.target}
+          placeAbove
           onClose={leaveGettingStartedTour}
         />
       ) : null}

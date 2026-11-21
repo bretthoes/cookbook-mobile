@@ -457,6 +457,8 @@ export default function CookbookScreen() {
             canContribute ? "gettingStarted:guideRecipeFab" : "gettingStarted:guideViewOnly"
           }
           target={canContribute ? fabAnchor.target : null}
+          pinToBottom={!canContribute}
+          placeAbove={canContribute}
           onClose={leaveGettingStartedTour}
         />
       ) : null}
@@ -464,6 +466,7 @@ export default function CookbookScreen() {
         <GettingStartedGuide
           messageTx={canInvite ? "gettingStarted:guideInviteMenu" : "gettingStarted:guideViewOnly"}
           target={canInvite ? menuAnchor.target : null}
+          pinToBottom={!canInvite}
           onClose={leaveGettingStartedTour}
         />
       ) : null}
