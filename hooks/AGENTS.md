@@ -20,6 +20,7 @@ Pure helpers stay in `utils/`. `useHeader` is the exception: the implementation 
 | `useNavigateAfterAuth`                                                 | After sign-in, routes to onboarding when the account has no display name or the device has not finished onboarding, else to cookbooks. |
 | `usePrintRecipe`                                                       | Print or share a recipe.                                                                                                               |
 | `useRecipeMadeCooldown`                                                | UI for the 12-hour cooldown in `utils/recipeMadeCooldown.ts`.                                                                          |
+| `useFeedHasUnseen`, `markFeedSeen`                                     | Feed tab dot. Unseen means someone else's activity is newer than the per-account marker the Feed tab writes on focus and blur.         |
 
 ## Query hooks
 

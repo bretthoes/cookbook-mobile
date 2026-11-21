@@ -1,4 +1,5 @@
 import { AutoImage } from "@/components/AutoImage"
+import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
 import { Button } from "@/components/Button"
 import { Divider } from "@/components/Divider"
 import { Screen } from "@/components/Screen"
@@ -6,20 +7,37 @@ import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
 import {
+  useCookbooksList,
   useCreateCookbookMutation,
   useUploadCookbookCoverMutation,
 } from "@/hooks/queries/useCookbooksQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
+import { useAuthStore } from "@/stores/authStore"
 import type { CookbookToAddSnapshotIn } from "@/types/cookbook"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
+import {
+  GETTING_STARTED_DEV_PREVIEW_KEY,
+  shouldOpenCookbookAfterCreate,
+} from "@/utils/gettingStarted"
+import {
+  advanceGettingStartedTour,
+  completeGettingStartedTour,
+  endGettingStartedTour,
+  getGettingStartedTour,
+  markGettingStartedStepDone,
+  useGettingStartedTour,
+} from "@/utils/gettingStartedTour"
+import { storage } from "@/utils/storage"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
+import { useFocusEffect } from "@react-navigation/native"
 import { router } from "expo-router"
 import { useCallback, useState } from "react"
+import { useMMKVBoolean } from "react-native-mmkv"
 import { Controller, useForm } from "react-hook-form"
 import { ActivityIndicator, ImageStyle, View, ViewStyle } from "react-native"
 
@@ -29,8 +47,20 @@ interface CookbookFormInputs {
 }
 
 export default function AddCookbookScreen() {
+  const userId = useAuthStore((s) => s.userId)
+  const tour = useGettingStartedTour()
+
+  useFocusEffect(
+    useCallback(() => {
+      if (getGettingStartedTour()?.step === "cookbook") advanceGettingStartedTour("screen")
+    }, []),
+  )
   const createCookbook = useCreateCookbookMutation()
   const uploadCover = useUploadCookbookCoverMutation()
+  const { data: cookbookPages } = useCookbooksList()
+  const cookbookTotalCount = cookbookPages?.pages[0]?.totalCount
+  const [devPreview = false] = useMMKVBoolean(GETTING_STARTED_DEV_PREVIEW_KEY, storage)
+  const previewGettingStarted = __DEV__ && devPreview
   const { isInFlight, run } = useInFlightAction()
 
   const {
@@ -95,13 +125,21 @@ export default function AddCookbookScreen() {
         image: formData.image,
       }
       try {
-        await createCookbook.mutateAsync(newCookbook)
+        const created = await createCookbook.mutateAsync(newCookbook)
+        markGettingStartedStepDone(userId, "cookbook")
+        if (
+          shouldOpenCookbookAfterCreate(cookbookTotalCount, previewGettingStarted) &&
+          created.cookbookId
+        ) {
+          router.replace(`/(logged-in)/cookbook/${created.cookbookId}`)
+          return
+        }
         router.dismissTo("/(logged-in)/(tabs)/cookbooks")
       } catch {
         setCreateError(translate("cookbookAddScreen:createFailed"))
       }
     },
-    [createCookbook],
+    [createCookbook, cookbookTotalCount, previewGettingStarted, userId],
   )
 
   const onError = useCallback((errors: unknown) => {
@@ -124,41 +162,56 @@ export default function AddCookbookScreen() {
   )
 
   return (
-    <Screen preset="scroll" contentContainerStyle={$root}>
-      <Text tx="cookbookAddScreen:subtitle" />
-      <FormCard>
-        {imageLocal && (
-          <View style={$imagePreviewContainer}>
-            <AutoImage source={{ uri: imageLocal }} style={$imagePreview} />
-          </View>
-        )}
-
-        <Button tx="cookbookAddScreen:addCoverPhoto" onPress={pickImage} disabled={isUploading} />
-
-        {isUploading && <ActivityIndicator style={$uploadIndicator} />}
-
-        <Divider size={spacing.xxl} line />
-
-        <Controller
-          name={"title"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value}
-              labelTx="cookbookAddScreen:titleLabel"
-              onChangeText={(text) => {
-                onChange(text)
-                if (createError) setCreateError(null)
-              }}
-              placeholderTx="cookbookAddScreen:titlePlaceholder"
-              status={errors.title || createError ? "error" : undefined}
-              helper={errors.title?.message ?? createError ?? ""}
-            />
+    <View style={$tourRoot}>
+      <Screen preset="scroll" contentContainerStyle={$root}>
+        <Text tx="cookbookAddScreen:subtitle" />
+        <FormCard>
+          {imageLocal && (
+            <View style={$imagePreviewContainer}>
+              <AutoImage source={{ uri: imageLocal }} style={$imagePreview} />
+            </View>
           )}
+
+          <Button tx="cookbookAddScreen:addCoverPhoto" onPress={pickImage} disabled={isUploading} />
+
+          {isUploading && <ActivityIndicator style={$uploadIndicator} />}
+
+          <Divider size={spacing.xxl} line />
+
+          <Controller
+            name={"title"}
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                value={value}
+                labelTx="cookbookAddScreen:titleLabel"
+                onChangeText={(text) => {
+                  onChange(text)
+                  if (createError) setCreateError(null)
+                }}
+                placeholderTx="cookbookAddScreen:titlePlaceholder"
+                status={errors.title || createError ? "error" : undefined}
+                helper={errors.title?.message ?? createError ?? ""}
+              />
+            )}
+          />
+        </FormCard>
+      </Screen>
+      {tour?.step === "cookbook" && tour.phase === "screen" ? (
+        <GettingStartedGuide
+          revealScreen
+          messageTx="gettingStarted:guideCookbookScreen"
+          primaryTx="gettingStarted:gotIt"
+          onPrimary={() => completeGettingStartedTour(userId)}
+          onClose={endGettingStartedTour}
         />
-      </FormCard>
-    </Screen>
+      ) : null}
+    </View>
   )
+}
+
+const $tourRoot: ViewStyle = {
+  flex: 1,
 }
 
 const $root: ViewStyle = {

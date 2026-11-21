@@ -20,5 +20,6 @@ Conventions for a new component: `.cursor/skills/add-component/SKILL.md`. Themed
 | `Icon` | `icon` is a key of the map in `Icon.tsx`. Add the asset and the key together. |
 | `LoadingScreen` | Blocking wait, including recipe import. |
 | `ItemNotFound` | Missing cookbook or recipe. |
+| `FloatingActionButton` | Bottom-right round button. New cookbook on Cookbooks, add recipe in a cookbook, AI edit in the recipe form. Defaults to an outlined plus sign; the AI button uses `variant="filled"`. |
 
 UI that only one screen uses stays in that screen until a second caller needs it.

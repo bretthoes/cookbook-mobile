@@ -38,13 +38,14 @@ export default function Layout() {
         }}
       />
       <Tabs.Screen
-        name="create"
+        name="feed"
         options={{
-          href: "./create",
+          href: "./feed",
           headerShown: false,
-          tabBarLabel: translate("tabNavigator:createTab"),
+          tabBarAccessibilityLabel: translate("tabNavigator:feedTab"),
+          tabBarLabel: translate("tabNavigator:feedTab"),
           tabBarIcon: ({ focused }) => (
-            <Icon icon="create" size={30} color={focused ? colors.tint : undefined} />
+            <Icon icon="feed" size={30} color={focused ? colors.tint : undefined} />
           ),
         }}
       />

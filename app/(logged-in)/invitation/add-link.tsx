@@ -5,9 +5,11 @@ import { Text } from "@/components/Text"
 import { SectionCard } from "@/components/SectionCard"
 import { translate } from "@/i18n"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import { useAuthStore } from "@/stores/authStore"
 import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { markGettingStartedStepDone } from "@/utils/gettingStartedTour"
 import { toInviteUrl } from "@/utils/invitations"
 import { useHeader } from "@/utils/useHeader"
 import * as Clipboard from "expo-clipboard"
@@ -17,6 +19,7 @@ import { ActivityIndicator, Share, TextStyle, View, ViewStyle } from "react-nati
 
 export default function AddInvitationLinkScreen() {
   const { selected } = useSelectedCookbook()
+  const userId = useAuthStore((s) => s.userId)
   const link = useInvitationStore((s) => s.link)
   const { themed, theme } = useAppTheme()
 
@@ -69,10 +72,11 @@ export default function AddInvitationLinkScreen() {
   const onCopyLink = useCallback(async () => {
     if (!inviteUrl || isMinting) return
     await Clipboard.setStringAsync(inviteUrl)
+    markGettingStartedStepDone(userId, "invite")
     setCopied(true)
     if (copiedTimeoutRef.current) clearTimeout(copiedTimeoutRef.current)
     copiedTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
-  }, [inviteUrl, isMinting])
+  }, [inviteUrl, isMinting, userId])
 
   const onShareLink = async () => {
     const cookbookId = selected?.id ?? ""
@@ -87,7 +91,8 @@ export default function AddInvitationLinkScreen() {
       }
       const url = toInviteUrl(res.token)
       setInviteUrl(url)
-      await Share.share({ message: url })
+      const shared = await Share.share({ message: url })
+      if (shared.action === Share.sharedAction) markGettingStartedStepDone(userId, "invite")
     } finally {
       setIsMinting(false)
     }

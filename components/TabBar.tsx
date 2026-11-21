@@ -1,4 +1,5 @@
 import { Text } from "@/components/Text"
+import { useFeedHasUnseen } from "@/hooks/useFeedUnseen"
 import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -13,6 +14,7 @@ export function TabBar(props: BottomTabBarProps) {
   const { state, descriptors, navigation } = props
   const { themed, theme } = useAppTheme()
   const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
+  const feedHasUnseen = useFeedHasUnseen(state.routes[state.index]?.name ?? "")
 
   return (
     <View style={[themed($tabBar), { bottom: FLOATING_TAB_BAR_BOTTOM_OFFSET }]}>
@@ -60,6 +62,7 @@ export function TabBar(props: BottomTabBarProps) {
         }
 
         const showBadge = route.name === "profile" && invitationTotalCount > 0
+        const showDot = route.name === "feed" && feedHasUnseen && !isFocused
 
         return (
           <TouchableOpacity
@@ -81,6 +84,7 @@ export function TabBar(props: BottomTabBarProps) {
                 text={label.toString()}
               />
               {showBadge && <Badge count={invitationTotalCount} style={$badge} />}
+              {showDot && <View style={themed($dot)} />}
             </View>
           </TouchableOpacity>
         )
@@ -125,3 +129,15 @@ const $badge: ViewStyle = {
   top: -8,
   right: -8,
 }
+
+const $dot: ThemedStyle<ViewStyle> = (theme) => ({
+  position: "absolute",
+  top: -2,
+  right: -2,
+  width: 10,
+  height: 10,
+  borderRadius: 5,
+  backgroundColor: theme.colors.tint,
+  borderWidth: 2,
+  borderColor: theme.colors.backgroundDim,
+})

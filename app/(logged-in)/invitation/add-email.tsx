@@ -5,17 +5,20 @@ import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
+import { useAuthStore } from "@/stores/authStore"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { validateInviteEmail } from "@/utils/invitations"
 import { useHeader } from "@/utils/useHeader"
+import { markGettingStartedStepDone } from "@/utils/gettingStartedTour"
 import { router } from "expo-router"
 import { useCallback, useMemo, useState } from "react"
 import { TextStyle, View, ViewStyle } from "react-native"
 
 export default function AddInvitationEmailScreen() {
+  const userId = useAuthStore((s) => s.userId)
   const { selected } = useSelectedCookbook()
   const invite = useInvitationStore((s) => s.invite)
   const { themed } = useAppTheme()
@@ -49,11 +52,12 @@ export default function AddInvitationEmailScreen() {
       const cookbookId = selected?.id ?? ""
       const res = await invite(cookbookId, inviteEmail.trim())
       setIsSubmitted(false)
+      if (res.sent) markGettingStartedStepDone(userId, "invite")
 
-      setEmailMsg(res)
+      setEmailMsg(res.message)
       setInviteEmail("")
     })
-  }, [inviteEmail, invite, selected?.id, run])
+  }, [inviteEmail, invite, selected?.id, run, userId])
 
   const $themedIntro = useMemo(() => themed($intro), [themed])
   const $themedSection = useMemo(() => themed($section), [themed])
@@ -61,43 +65,49 @@ export default function AddInvitationEmailScreen() {
   const $themedButton = useMemo(() => themed($buttonSpacer), [themed])
 
   return (
-    <Screen preset="scroll">
-      <Text
-        tx="invitationAddEmailScreen:inviteIntro"
-        txOptions={{
-          cookbookName: selected?.title ?? translate("invitationAddEmailScreen:yourCookbook"),
-        }}
-        style={$themedIntro}
-      />
+    <View style={$root}>
+      <Screen preset="scroll">
+        <Text
+          tx="invitationAddEmailScreen:inviteIntro"
+          txOptions={{
+            cookbookName: selected?.title ?? translate("invitationAddEmailScreen:yourCookbook"),
+          }}
+          style={$themedIntro}
+        />
 
-      <View style={$themedSection}>
-        <FormCard>
-          <TextField
-            value={inviteEmail}
-            onChangeText={(text) => {
-              setInviteEmail(text.replace(/\s/g, ""))
-              setEmailMsg("")
-            }}
-            autoCapitalize="none"
-            labelTx="invitationAddEmailScreen:emailLabel"
-            autoComplete="email"
-            autoCorrect={false}
-            keyboardType="email-address"
-            placeholderTx="invitationAddEmailScreen:emailPlaceholder"
-            helper={validationError}
-            status={validationError ? "error" : undefined}
-          />
-          <Button
-            tx="invitationAddEmailScreen:sendButton"
-            onPress={onSendEmail}
-            disabled={isInFlight}
-            style={$themedButton}
-          />
-          {!!emailMsg && <Text text={emailMsg} preset="formHelper" style={$themedHelper} />}
-        </FormCard>
-      </View>
-    </Screen>
+        <View style={$themedSection}>
+          <FormCard>
+            <TextField
+              value={inviteEmail}
+              onChangeText={(text) => {
+                setInviteEmail(text.replace(/\s/g, ""))
+                setEmailMsg("")
+              }}
+              autoCapitalize="none"
+              labelTx="invitationAddEmailScreen:emailLabel"
+              autoComplete="email"
+              autoCorrect={false}
+              keyboardType="email-address"
+              placeholderTx="invitationAddEmailScreen:emailPlaceholder"
+              helper={validationError}
+              status={validationError ? "error" : undefined}
+            />
+            <Button
+              tx="invitationAddEmailScreen:sendButton"
+              onPress={onSendEmail}
+              disabled={isInFlight}
+              style={$themedButton}
+            />
+            {!!emailMsg && <Text text={emailMsg} preset="formHelper" style={$themedHelper} />}
+          </FormCard>
+        </View>
+      </Screen>
+    </View>
   )
+}
+
+const $root: ViewStyle = {
+  flex: 1,
 }
 
 const $intro: ThemedStyle<TextStyle> = (theme) => ({

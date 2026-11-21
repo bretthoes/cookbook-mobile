@@ -8,18 +8,25 @@ import {
 } from "@/utils/activityFeedMessage"
 import { formatActivityTimeAgo } from "@/utils/formatActivityTimeAgo"
 import { useRouter } from "expo-router"
-import { Pressable, View, ViewStyle } from "react-native"
+import { useMemo } from "react"
+import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 
 interface FeedPostItemProps {
   item: NotificationItem
+  /** Happened since the person last opened the feed. */
+  isNew?: boolean
 }
 
-export function FeedPostItem({ item }: FeedPostItemProps) {
+export function FeedPostItem({ item, isNew = false }: FeedPostItemProps) {
   const { themed } = useAppTheme()
   const router = useRouter()
   const messageKey = getActivityFeedMessageKey(item)
   const isImportant = item.isImportant ?? false
   const canOpenRecipe = item.recipeId != null
+  const $themedPost = useMemo(() => themed($post), [themed])
+  const $themedPostImportant = useMemo(() => themed($postImportant), [themed])
+  const $themedNewPill = useMemo(() => themed($newPill), [themed])
+  const $themedNewText = useMemo(() => themed($newText), [themed])
 
   const handlePress = () => {
     if (canOpenRecipe) router.push(`/(logged-in)/recipe/${item.recipeId}`)
@@ -29,7 +36,7 @@ export function FeedPostItem({ item }: FeedPostItemProps) {
     <Pressable
       onPress={canOpenRecipe ? handlePress : undefined}
       disabled={!canOpenRecipe}
-      style={[themed($post), isImportant && themed($postImportant)]}
+      style={[$themedPost, (isImportant || isNew) && $themedPostImportant]}
     >
       {messageKey ? (
         <Text
@@ -42,6 +49,11 @@ export function FeedPostItem({ item }: FeedPostItemProps) {
       )}
       <View style={$metaRow}>
         <Text preset="formHelper" size="xs" text={formatActivityTimeAgo(item.created)} />
+        {isNew ? (
+          <View style={$themedNewPill}>
+            <Text tx="feedScreen:new" size="xxs" weight="medium" style={$themedNewText} />
+          </View>
+        ) : null}
       </View>
     </Pressable>
   )
@@ -63,4 +75,18 @@ const $postImportant: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $metaRow: ViewStyle = {
   marginTop: 8,
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "space-between",
 }
+
+const $newPill: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingHorizontal: theme.spacing.xs,
+  paddingVertical: theme.spacing.xxxs,
+  borderRadius: theme.spacing.xs,
+  backgroundColor: theme.colors.tint,
+})
+
+const $newText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.background,
+})

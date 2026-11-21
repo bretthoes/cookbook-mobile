@@ -1,5 +1,6 @@
 import { Button } from "@/components/Button"
 import { CircularProgress } from "@/components/CircularProgress"
+import { FloatingActionButton } from "@/components/FloatingActionButton"
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
@@ -263,22 +264,15 @@ interface RecipeAiEditFabProps {
 }
 
 export function RecipeAiEditFab({ onPress, showLock, disabled }: RecipeAiEditFabProps) {
-  const { themed, theme } = useAppTheme()
+  const { themed } = useAppTheme()
   const { t } = useTranslation()
-  const insets = useSafeAreaInsets()
 
   return (
-    <TouchableOpacity
+    <FloatingActionButton
       onPress={onPress}
       disabled={disabled}
-      activeOpacity={0.85}
-      accessibilityRole="button"
+      variant="filled"
       accessibilityLabel={t("recipeAiEditDialog:fabAccessibilityLabel")}
-      style={[
-        themed($fab),
-        { bottom: insets.bottom + theme.spacing.lg },
-        disabled && themed($fabDisabled),
-      ]}
     >
       <Image source={require("@/assets/icons/ai.png")} style={$fabIcon} />
       {showLock ? (
@@ -286,7 +280,7 @@ export function RecipeAiEditFab({ onPress, showLock, disabled }: RecipeAiEditFab
           <Icon icon="lock" size={10} color={colors.palette.accent500} />
         </View>
       ) : null}
-    </TouchableOpacity>
+    </FloatingActionButton>
   )
 }
 
@@ -396,31 +390,11 @@ const $loadingText: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
 })
 
-const $fab: ThemedStyle<ViewStyle> = (theme) => ({
-  position: "absolute",
-  right: theme.spacing.lg,
-  width: 56,
-  height: 56,
-  borderRadius: 28,
-  backgroundColor: theme.colors.tint,
-  alignItems: "center",
-  justifyContent: "center",
-  elevation: 6,
-  shadowColor: "#000",
-  shadowOffset: { width: 0, height: 2 },
-  shadowOpacity: 0.25,
-  shadowRadius: 4,
-})
-
 const $fabIcon: ImageStyle = {
   width: 28,
   height: 28,
   tintColor: colors.palette.neutral100,
 }
-
-const $fabDisabled: ThemedStyle<ViewStyle> = () => ({
-  opacity: 0.55,
-})
 
 const $fabLockBadge: ThemedStyle<ViewStyle> = (theme) => ({
   position: "absolute",

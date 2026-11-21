@@ -8,7 +8,7 @@ import type {
 import type { GeneralApiProblem } from "@/services/api/apiProblem"
 import { api } from "@/services/api"
 import { getRecipe, getRecipes, recordRecipeMade } from "@/services/api/wrappers/recipes"
-import { invalidateRecipeLists } from "@/services/query/invalidateQueries"
+import { invalidateCookbookLists, invalidateRecipeLists } from "@/services/query/invalidateQueries"
 import { queryKeys } from "@/services/query/queryKeys"
 import { ApiQueryError, unwrapApiResult } from "@/services/query/unwrapApiResult"
 import { useUiStore } from "@/stores/uiStore"
@@ -118,6 +118,7 @@ export function useCreateRecipeMutation() {
       void queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.list(variables.cookbookId, ""),
       })
+      void invalidateCookbookLists(queryClient)
       void queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all })
     },
   })
@@ -172,6 +173,7 @@ export function useDeleteRecipeMutation() {
     onSuccess: (recipeId) => {
       queryClient.removeQueries({ queryKey: queryKeys.recipes.detail(recipeId) })
       void invalidateRecipeLists(queryClient)
+      void invalidateCookbookLists(queryClient)
     },
   })
 }

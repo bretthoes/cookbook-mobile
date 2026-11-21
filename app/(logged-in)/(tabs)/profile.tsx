@@ -17,8 +17,10 @@ import type { ThemedStyle } from "@/theme"
 import { colors, spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { isRevenueCatConfigured, presentCustomerCenter } from "@/services/subscription/revenueCat"
+import { GETTING_STARTED_DEV_PREVIEW_KEY, gettingStartedResetKeys } from "@/utils/gettingStarted"
 import { openLinkInBrowser } from "@/utils/openLinkInBrowser"
 import { resolveRevenueCatAppUserId } from "@/utils/resolveRevenueCatAppUserId"
+import { remove, storage } from "@/utils/storage"
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import * as Application from "expo-application"
 import { useRouter } from "expo-router"
@@ -333,6 +335,30 @@ export default function ProfileScreen() {
       </Modal>
       {__DEV__ && (
         <SectionCard headingTx="demoDebugScreen:title">
+          <ListItem
+            tx="demoDebugScreen:previewGettingStarted"
+            bottomSeparator
+            onPress={() => {
+              for (const key of gettingStartedResetKeys(userId)) remove(key)
+              storage.set(GETTING_STARTED_DEV_PREVIEW_KEY, true)
+              router.navigate("/(logged-in)/(tabs)/cookbooks")
+            }}
+          />
+          <ListItem
+            tx="demoDebugScreen:previewLoadingScreen"
+            bottomSeparator
+            onPress={() => router.push("/(logged-in)/recipe/loading-preview")}
+          />
+          <ListItem
+            tx="demoDebugScreen:previewSignInProgress"
+            bottomSeparator
+            onPress={() =>
+              router.push({
+                pathname: "/(logged-in)/recipe/loading-preview",
+                params: { variant: "signIn" },
+              })
+            }
+          />
           <ListItem
             LeftComponent={
               <View>

@@ -15,7 +15,7 @@ export interface InvitationState {
     accepted: boolean,
     byToken?: boolean,
   ) => Promise<boolean | { success: false; conflict: boolean }>
-  invite: (cookbookId: string, email: string) => Promise<string>
+  invite: (cookbookId: string, email: string) => Promise<{ sent: boolean; message: string }>
   link: (cookbookId: string) => Promise<{ token: string } | { message: string }>
 }
 
@@ -81,13 +81,13 @@ export const useInvitationStore = create<InvitationState>((set, get) => ({
     const response = await api.createInvite(cookbookId, email)
     switch (response.kind) {
       case "ok":
-        return "Your invite has been sent!"
+        return { sent: true, message: "Your invite has been sent!" }
       case "not-found":
-        return "No account exists with that email."
+        return { sent: false, message: "No account exists with that email." }
       case "conflict":
-        return "They've already been invited."
+        return { sent: false, message: "They've already been invited." }
       default:
-        return "Something went wrong, please try again later."
+        return { sent: false, message: "Something went wrong, please try again later." }
     }
   },
 

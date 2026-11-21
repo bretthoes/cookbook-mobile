@@ -163,12 +163,7 @@ export default function SelectCookbookScreen() {
       setAutoSelecting(true)
       router.replace(params.nextRoute as any)
     }
-  }, [
-    cookbooks,
-    isListPending,
-    setSelectedCookbookId,
-    params.nextRoute,
-  ])
+  }, [cookbooks, isListPending, setSelectedCookbookId, params.nextRoute])
 
   const handleItemPress = useCallback(
     (cookbookId: string) => {

@@ -85,6 +85,16 @@ export function assignableTiers(
   return []
 }
 
+/** Matches `CookbookMembership.CanAddRecipe` on the API. */
+export function canAddRecipe(tier: MembershipTier | undefined): boolean {
+  return tier !== undefined && tier >= MEMBERSHIP_TIER.Contributor
+}
+
+/** Matches `CookbookMembership.CanSendInvite` on the API. */
+export function canSendInvite(tier: MembershipTier | undefined): boolean {
+  return tier !== undefined && tier >= MEMBERSHIP_TIER.Contributor
+}
+
 export function canEditAnyRecipe(tier: MembershipTier | undefined): boolean {
   return isAdminOrOwner(tier)
 }

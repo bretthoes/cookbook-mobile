@@ -1,7 +1,9 @@
+import { GettingStartedGuide, useGuideAnchor } from "@/components/cookbooks/GettingStartedGuide"
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
+import type { TxKeyPath } from "@/i18n"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import {
   draftItemHasContent,
@@ -13,10 +15,18 @@ import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
+import {
+  advanceGettingStartedTour,
+  getGettingStartedTour,
+  leaveGettingStartedTour,
+  useGettingStartedTour,
+} from "@/utils/gettingStartedTour"
+import { useFocusEffect } from "@react-navigation/native"
 import { router } from "expo-router"
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo, type RefObject } from "react"
 import { useTranslation } from "react-i18next"
 import {
+  BackHandler,
   Image,
   TouchableOpacity,
   View,
@@ -29,12 +39,13 @@ import {
 const recipeLinkSites = require("@/assets/images/recipe-link-sites.png") as ImageSourcePropType
 
 type RecipeAddOption = {
-  title: string
-  description?: string
+  titleTx: TxKeyPath
+  descriptionTx: TxKeyPath
   icon?: IconTypes
   image?: ImageSourcePropType
   isPremium: boolean
   showDraftBadge?: boolean
+  tourAnchor?: boolean
   action: () => void
 }
 
@@ -48,11 +59,37 @@ export default function AddRecipeOptionsScreen() {
   const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
   const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
   const isPro = useSubscriptionStore((s) => s.isPro)
+  const tour = useGettingStartedTour()
+  const manualAnchor = useGuideAnchor(tour?.step === "recipe" && tour.phase === "options")
+
+  useFocusEffect(
+    useCallback(() => {
+      if (getGettingStartedTour()?.step === "recipe") advanceGettingStartedTour("options")
+    }, []),
+  )
+
+  const handleBack = useCallback(() => {
+    if (router.canGoBack()) {
+      router.back()
+    } else {
+      router.replace("/(logged-in)/(tabs)/cookbooks")
+    }
+  }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+        handleBack()
+        return true
+      })
+      return () => sub.remove()
+    }, [handleBack]),
+  )
 
   useHeader({
     leftIcon: "back",
     titleTx: "recipeAddOptionsScreen:title",
-    onLeftPress: () => router.back(),
+    onLeftPress: handleBack,
   })
 
   const effectiveImportCount = getEffectiveWeeklyImportCount(
@@ -88,14 +125,15 @@ export default function AddRecipeOptionsScreen() {
   const options = useMemo(() => {
     const baseOptions: RecipeAddOption[] = [
       {
-        title: t("recipeLinkImport:title"),
+        titleTx: "recipeLinkImport:title",
+        descriptionTx: "recipeLinkImport:summary",
         image: recipeLinkSites,
         isPremium: true,
         action: () => router.push("../recipe/select-url"),
       },
       {
-        title: t("recipeAddOptionsScreen:optionFromPhoto"),
-        description: t("recipeAddOptionsScreen:optionFromPhotoDesc"),
+        titleTx: "recipeAddOptionsScreen:optionFromPhoto",
+        descriptionTx: "recipeAddOptionsScreen:optionFromPhotoDesc",
         icon: "camera" as IconTypes,
         isPremium: true,
         action: () => {
@@ -113,42 +151,27 @@ export default function AddRecipeOptionsScreen() {
         },
       },
       {
-        title: t("recipeAddOptionsScreen:optionFromVoice"),
-        description: t("recipeAddOptionsScreen:optionFromVoiceDesc"),
+        titleTx: "recipeAddOptionsScreen:optionFromVoice",
+        descriptionTx: "recipeAddOptionsScreen:optionFromVoiceDesc",
         icon: "menu" as IconTypes,
         isPremium: true,
         action: () => router.push("../recipe/add-voice"),
       },
       {
-        title: t("recipeAddOptionsScreen:optionManual"),
-        description: t("recipeAddOptionsScreen:optionManualDesc"),
+        titleTx: "recipeAddOptionsScreen:optionManual",
+        descriptionTx: "recipeAddOptionsScreen:optionManualDesc",
         icon: "pen" as IconTypes,
         isPremium: false,
+        tourAnchor: true,
         action: () => router.push("../recipe/add"),
       },
     ]
 
-    if (__DEV__) {
-      baseOptions.push({
-        title: t("recipeAddOptionsScreen:optionLoadingPreview"),
-        icon: "view" as IconTypes,
-        isPremium: false,
-        action: () => router.push("../recipe/loading-preview"),
-      })
-      baseOptions.push({
-        title: t("recipeAddOptionsScreen:optionSignInPreview"),
-        icon: "user" as IconTypes,
-        isPremium: false,
-        action: () =>
-          router.push({ pathname: "../recipe/loading-preview", params: { variant: "signIn" } }),
-      })
-    }
-
     if (!latestDraft) return baseOptions
 
     const draftOption: RecipeAddOption = {
-      title: t("recipeAddOptionsScreen:continueDraft"),
-      description: t("recipeAddOptionsScreen:continueDraftDesc"),
+      titleTx: "recipeAddOptionsScreen:continueDraft",
+      descriptionTx: "recipeAddOptionsScreen:continueDraftDesc",
       icon: "progressPen" as IconTypes,
       isPremium: false,
       showDraftBadge: true,
@@ -165,20 +188,23 @@ export default function AddRecipeOptionsScreen() {
   }, [t, selected, setSelectedById, latestDraft])
 
   const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
-  const $themedGrid = useMemo(() => themed($grid), [themed])
+  const $themedList = useMemo(() => themed($list), [themed])
 
   return (
     <Screen preset="scroll" contentContainerStyle={$themedScreenContainer}>
-      <View style={$themedGrid}>
-        {options.map((option, index) => (
-          <OptionTile
-            key={index}
-            title={option.title}
+      <View style={$themedList}>
+        {options.map((option) => (
+          <OptionRow
+            key={option.titleTx}
+            titleTx={option.titleTx}
+            descriptionTx={option.descriptionTx}
             icon={option.icon}
             image={option.image}
             isPremium={option.isPremium && !isPro}
             showDraftBadge={option.showDraftBadge}
             isDisabled={option.isPremium && isAtLimit}
+            anchorRef={option.tourAnchor ? manualAnchor.ref : undefined}
+            onAnchorLayout={option.tourAnchor ? manualAnchor.onLayout : undefined}
             onPress={() => {
               if (option.isPremium) {
                 handlePremiumPress(option.action)
@@ -199,6 +225,13 @@ export default function AddRecipeOptionsScreen() {
           isAtLimit={isAtLimit}
         />
       )}
+      {tour?.step === "recipe" && tour.phase === "options" ? (
+        <GettingStartedGuide
+          messageTx="gettingStarted:guideRecipeOptions"
+          target={manualAnchor.target}
+          onClose={leaveGettingStartedTour}
+        />
+      ) : null}
     </Screen>
   )
 }
@@ -252,77 +285,81 @@ function WeeklyUsageBanner({ used, limit, progressRatio, isAtLimit }: WeeklyUsag
 
 // #endregion
 
-// #region OptionTile
+// #region OptionRow
 
-interface OptionTileProps {
-  title: string
-  description?: string
+interface OptionRowProps {
+  titleTx: TxKeyPath
+  descriptionTx: TxKeyPath
   icon?: IconTypes
   image?: ImageSourcePropType
   isPremium?: boolean
   showDraftBadge?: boolean
   isDisabled?: boolean
+  anchorRef?: RefObject<View | null>
+  onAnchorLayout?: () => void
   onPress: () => void
 }
 
-function OptionTile({
-  title,
+function OptionRow({
+  titleTx,
+  descriptionTx,
   icon,
   image,
   isPremium,
   showDraftBadge,
   isDisabled,
+  anchorRef,
+  onAnchorLayout,
   onPress,
-}: OptionTileProps) {
-  const { themed } = useAppTheme()
-  const $themedTileOuter = useMemo(() => themed($tileOuter), [themed])
+}: OptionRowProps) {
+  const { themed, theme } = useAppTheme()
   const $themedIconBox = useMemo(() => themed($iconBox), [themed])
-  const $themedTitle = useMemo(() => themed($tileTitle), [themed])
+  const $themedTitle = useMemo(() => themed($rowTitle), [themed])
+  const $themedDescription = useMemo(() => themed($rowDescription), [themed])
 
-  const tileInnerStyle = useMemo(
-    () => [
-      themed($tileInner),
-      isPremium && themed($tileInnerPremium),
-      isDisabled && themed($tileInnerDisabled),
-    ],
+  const rowStyle = useMemo(
+    () => [themed($row), isPremium && themed($rowPremium), isDisabled && themed($rowDisabled)],
     [themed, isPremium, isDisabled],
   )
 
   const iconColor = isDisabled ? colors.palette.neutral400 : colors.tint
 
   return (
-    <View style={$themedTileOuter}>
-      <TouchableOpacity style={tileInnerStyle} onPress={onPress} activeOpacity={0.75}>
-        {isPremium && (
-          <View style={themed($premiumBadge)}>
-            <Icon icon="lock" size={11} color={colors.palette.accent500} />
-          </View>
-        )}
-        {showDraftBadge && (
-          <Icon
-            icon="notification"
-            size={22}
-            color={colors.palette.angry500}
-            containerStyle={themed($draftBadge)}
-          />
-        )}
+    <View ref={anchorRef} onLayout={onAnchorLayout} collapsable={false}>
+      <TouchableOpacity
+        style={rowStyle}
+        onPress={onPress}
+        activeOpacity={0.75}
+        accessibilityRole="button"
+      >
         <View style={$themedIconBox}>
           {icon ? (
-            <Icon icon={icon} size={40} color={iconColor} />
+            <Icon icon={icon} size={44} color={iconColor} />
           ) : image ? (
             <Image
               source={image}
-              style={[themed($tileImage), isDisabled && themed($tileImageDisabled)]}
+              style={[$rowImage, isDisabled && $rowImageDisabled]}
               resizeMode="contain"
             />
           ) : null}
         </View>
-        <Text
-          preset="subheading"
-          text={title}
-          numberOfLines={2}
-          style={[$themedTitle, isDisabled && themed($disabledTitle)]}
-        />
+        <View style={$rowText}>
+          <Text
+            preset="bold"
+            tx={titleTx}
+            style={[$themedTitle, isDisabled && themed($disabledTitle)]}
+          />
+          <Text tx={descriptionTx} size="xs" style={$themedDescription} />
+        </View>
+        {showDraftBadge ? (
+          <Icon icon="notification" size={20} color={colors.palette.angry500} />
+        ) : isPremium ? (
+          <View style={themed($premiumBadge)}>
+            <Icon icon="lock" size={11} color={colors.palette.accent500} />
+          </View>
+        ) : (
+          <Icon icon="caretRight" size={18} color={theme.colors.textDim} />
+        )}
       </TouchableOpacity>
     </View>
   )
@@ -334,46 +371,38 @@ function OptionTile({
 
 const $screenContainer: ThemedStyle<ViewStyle> = (theme) => ({
   paddingTop: theme.spacing.sm,
-  paddingHorizontal: theme.spacing.sm,
+  paddingHorizontal: theme.spacing.md,
   paddingBottom: theme.spacing.xl,
 })
 
-const $grid: ThemedStyle<ViewStyle> = () => ({
+const $list: ThemedStyle<ViewStyle> = (theme) => ({
+  gap: theme.spacing.sm - 2,
+})
+
+const $row: ThemedStyle<ViewStyle> = (theme) => ({
   flexDirection: "row",
-  flexWrap: "wrap",
-})
-
-const $tileOuter: ThemedStyle<ViewStyle> = (theme) => ({
-  width: "50%",
-  padding: theme.spacing.xxs,
-})
-
-const $tileInner: ThemedStyle<ViewStyle> = (theme) => ({
+  alignItems: "center",
+  gap: theme.spacing.sm,
   backgroundColor: theme.colors.backgroundDim,
   borderRadius: theme.spacing.md,
-  paddingHorizontal: theme.spacing.xs,
-  paddingVertical: theme.spacing.xs,
-  alignItems: "center",
-  height: 142,
-  justifyContent: "center",
+  paddingVertical: theme.spacing.md,
+  paddingHorizontal: theme.spacing.md,
+  minHeight: 120,
 })
 
-const $tileInnerPremium: ThemedStyle<ViewStyle> = (theme) => ({
+const $rowPremium: ThemedStyle<ViewStyle> = (theme) => ({
   borderWidth: 1.5,
   borderColor: theme.colors.separator,
 })
 
-const $tileInnerDisabled: ThemedStyle<ViewStyle> = (theme) => ({
+const $rowDisabled: ThemedStyle<ViewStyle> = (theme) => ({
   opacity: 0.55,
   borderColor: theme.colors.border,
 })
 
 const $premiumBadge: ThemedStyle<ViewStyle> = (theme) => ({
-  position: "absolute",
-  top: theme.spacing.xs,
-  right: theme.spacing.xs,
   backgroundColor: theme.colors.background,
-  borderRadius: 10,
+  borderRadius: 11,
   width: 22,
   height: 22,
   alignItems: "center",
@@ -382,36 +411,36 @@ const $premiumBadge: ThemedStyle<ViewStyle> = (theme) => ({
   borderColor: colors.palette.accent400,
 })
 
-const $draftBadge: ThemedStyle<ViewStyle> = (theme) => ({
-  position: "absolute",
-  top: theme.spacing.xs,
-  right: theme.spacing.xs,
-})
-
 const $iconBox: ThemedStyle<ViewStyle> = (theme) => ({
-  width: 68,
-  height: 68,
+  width: 84,
+  height: 84,
   backgroundColor: theme.colors.background,
-  borderRadius: 34,
+  borderRadius: 42,
   alignItems: "center",
   justifyContent: "center",
-  marginBottom: theme.spacing.xs,
 })
 
-const $tileImage: ThemedStyle<ImageStyle> = () => ({
-  width: 56,
-  height: 56,
-})
+const $rowImage: ImageStyle = {
+  width: 72,
+  height: 72,
+}
 
-const $tileImageDisabled: ThemedStyle<ImageStyle> = () => ({
+const $rowImageDisabled: ImageStyle = {
   opacity: 0.4,
+}
+
+const $rowText: ViewStyle = {
+  flex: 1,
+}
+
+const $rowTitle: ThemedStyle<TextStyle> = () => ({
+  fontSize: 17,
+  lineHeight: 22,
 })
 
-const $tileTitle: ThemedStyle<TextStyle> = () => ({
-  fontSize: 15,
-  lineHeight: 18,
-  minHeight: 36,
-  textAlign: "center",
+const $rowDescription: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.textDim,
+  marginTop: 2,
 })
 
 const $disabledTitle: ThemedStyle<TextStyle> = (theme) => ({

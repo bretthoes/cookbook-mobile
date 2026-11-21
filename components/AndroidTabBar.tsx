@@ -1,4 +1,5 @@
 import { Text } from "@/components/Text"
+import { useFeedHasUnseen } from "@/hooks/useFeedUnseen"
 import { useInvitationStore } from "@/stores/invitationStore"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
@@ -15,6 +16,7 @@ export function AndroidTabBar(props: BottomTabBarProps) {
   const { themed, theme } = useAppTheme()
   const { bottom } = useSafeAreaInsets()
   const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
+  const feedHasUnseen = useFeedHasUnseen(state.routes[state.index]?.name ?? "")
 
   return (
     <View style={[themed($tabBar), { paddingBottom: bottom, minHeight: TAB_BAR_HEIGHT + bottom }]}>
@@ -32,13 +34,13 @@ export function AndroidTabBar(props: BottomTabBarProps) {
         const isFocused = state.index === index
         const inactiveColor = theme.colors.textDim
         const activeColor = theme.colors.tint
-        const Icon = options.tabBarIcon ? (
-          options.tabBarIcon({
-            focused: isFocused,
-            color: isFocused ? activeColor : inactiveColor,
-            size: 24,
-          })
-        ) : null
+        const Icon = options.tabBarIcon
+          ? options.tabBarIcon({
+              focused: isFocused,
+              color: isFocused ? activeColor : inactiveColor,
+              size: 24,
+            })
+          : null
 
         const onPress = () => {
           const event = navigation.emit({
@@ -60,6 +62,7 @@ export function AndroidTabBar(props: BottomTabBarProps) {
         }
 
         const showBadge = route.name === "profile" && invitationTotalCount > 0
+        const showDot = route.name === "feed" && feedHasUnseen && !isFocused
 
         return (
           <TouchableOpacity
@@ -82,6 +85,7 @@ export function AndroidTabBar(props: BottomTabBarProps) {
                 text={label.toString()}
               />
               {showBadge && <Badge count={invitationTotalCount} style={$badge} />}
+              {showDot && <View style={themed($dot)} />}
             </View>
           </TouchableOpacity>
         )
@@ -116,3 +120,15 @@ const $badge: ViewStyle = {
   top: -8,
   right: -8,
 }
+
+const $dot: ThemedStyle<ViewStyle> = (theme) => ({
+  position: "absolute",
+  top: -2,
+  right: -2,
+  width: 10,
+  height: 10,
+  borderRadius: 5,
+  backgroundColor: theme.colors.tint,
+  borderWidth: 2,
+  borderColor: theme.colors.background,
+})

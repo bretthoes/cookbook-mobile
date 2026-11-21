@@ -33,10 +33,12 @@ export interface PopoverProps {
   options: PopoverOption[]
   /** Override top position (e.g. for screens without a header). Default: insets.top + 56 */
   anchorTop?: number
+  /** Outlines one option, e.g. the one a guided walk is pointing at. */
+  highlightKey?: string
 }
 
 export function Popover(props: PopoverProps) {
-  const { visible, onDismiss, options, anchorTop: anchorTopOverride } = props
+  const { visible, onDismiss, options, anchorTop: anchorTopOverride, highlightKey } = props
   const { themed, theme } = useAppTheme()
   const insets = useSafeAreaInsets()
 
@@ -48,6 +50,7 @@ export function Popover(props: PopoverProps) {
   const $themedPopover = useMemo(() => themed($popover), [themed])
   const $themedPopoverItem = useMemo(() => themed($popoverItem), [themed])
   const $themedPopoverItemDestructive = useMemo(() => themed($popoverItemDestructive), [themed])
+  const $themedPopoverItemHighlight = useMemo(() => themed($popoverItemHighlight), [themed])
   const $themedDestructiveText = useMemo(
     () => themed($destructiveText(theme.colors.error)),
     [themed, theme.colors.error],
@@ -137,7 +140,10 @@ export function Popover(props: PopoverProps) {
             }
             disabled={opt.disabled}
             onPress={() => handleOptionPress(opt)}
-            style={opt.destructive ? $themedPopoverItemDestructive : $themedPopoverItem}
+            style={[
+              opt.destructive ? $themedPopoverItemDestructive : $themedPopoverItem,
+              opt.key === highlightKey && $themedPopoverItemHighlight,
+            ]}
           />
         ))}
       </Animated.View>
@@ -170,6 +176,12 @@ const $popoverItem: ThemedStyle<ViewStyle> = (theme) => ({
 
 const $popoverItemDestructive: ThemedStyle<ViewStyle> = (theme) => ({
   ...$popoverItem(theme),
+})
+
+const $popoverItemHighlight: ThemedStyle<ViewStyle> = (theme) => ({
+  borderWidth: 2,
+  borderColor: theme.colors.tint,
+  borderRadius: theme.spacing.xs,
 })
 
 const $destructiveText =

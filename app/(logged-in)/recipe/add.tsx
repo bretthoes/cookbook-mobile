@@ -1,8 +1,10 @@
+import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
 import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/Recipe/RecipeAiEditDialog"
 import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
+import { useAuthStore } from "@/stores/authStore"
 import {
   useApplyRecipeEditFromPromptMutation,
   useCreateRecipeMutation,
@@ -18,12 +20,29 @@ import { normalizeRouteParam } from "@/utils/routeParams"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
+import {
+  advanceGettingStartedTour,
+  completeGettingStartedTour,
+  endGettingStartedTour,
+  getGettingStartedTour,
+  markGettingStartedStepDone,
+  useGettingStartedTour,
+} from "@/utils/gettingStartedTour"
 import { router, useLocalSearchParams } from "expo-router"
+import { useFocusEffect } from "@react-navigation/native"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export default function AddRecipeScreen() {
+  const userId = useAuthStore((s) => s.userId)
+  const tour = useGettingStartedTour()
+
+  useFocusEffect(
+    useCallback(() => {
+      if (getGettingStartedTour()?.step === "recipe") advanceGettingStartedTour("screen")
+    }, []),
+  )
   const recipeToAdd = useUiStore((s) => s.recipeToAdd)
   const clearRecipeToAdd = useUiStore((s) => s.clearRecipeToAdd)
   const saveDraft = useUiStore((s) => s.saveDraft)
@@ -295,6 +314,7 @@ export default function AddRecipeScreen() {
       try {
         await createRecipeMutation.mutateAsync(newRecipe)
         submittedSuccessfullyRef.current = true
+        markGettingStartedStepDone(userId, "recipe")
         deleteDraft(selectedCookbook.id)
         router.dismissTo("/(logged-in)/(tabs)/cookbooks")
         router.push(`/(logged-in)/cookbook/${selectedCookbook.id}`)
@@ -311,7 +331,7 @@ export default function AddRecipeScreen() {
         alert(translate("recipeAddScreen:createFailed"))
       }
     },
-    [createRecipeMutation, deleteDraft, saveDraft, selectedCookbook],
+    [createRecipeMutation, deleteDraft, saveDraft, selectedCookbook, userId],
   )
 
   const onError = (errors: any) => {
@@ -346,6 +366,15 @@ export default function AddRecipeScreen() {
         onDismiss={() => setDialogVisible(false)}
         onApply={handleApplyAiEdit}
       />
+      {tour?.step === "recipe" && tour.phase === "screen" ? (
+        <GettingStartedGuide
+          revealScreen
+          messageTx="gettingStarted:guideRecipeScreen"
+          primaryTx="gettingStarted:gotIt"
+          onPrimary={() => completeGettingStartedTour(userId)}
+          onClose={endGettingStartedTour}
+        />
+      ) : null}
     </View>
   )
 }

@@ -125,6 +125,7 @@ export const iconRegistry = {
   cookbooks: require("../assets/icons/cookbooks.png"),
   create: require("../assets/icons/create.png"),
   darkMode: require("../assets/icons/darkMode.png"),
+  feed: require("../assets/icons/feed.png"),
   filter: require("../assets/icons/filter.png"),
   filterFilled: require("../assets/icons/filterFilled.png"),
   heart: require("../assets/icons/heart.png"),

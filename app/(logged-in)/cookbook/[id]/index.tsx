@@ -1,6 +1,9 @@
-import { Popover } from "@/components/Popover"
+import { Popover, type PopoverOption } from "@/components/Popover"
 import { Divider } from "@/components/Divider"
 import { EmptyState } from "@/components/EmptyState"
+import { FloatingActionButton } from "@/components/FloatingActionButton"
+import { GettingStartedGuide, useGuideAnchor } from "@/components/cookbooks/GettingStartedGuide"
+import { PressableIcon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { RecipeListItem } from "@/components/Recipe/RecipeListItem"
 import {
@@ -15,7 +18,14 @@ import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { TxKeyPath, isRTL } from "@/i18n"
 import { invalidateCookbookLists } from "@/services/query/invalidateQueries"
-import { isOwnerTier } from "@/utils/membershipTier"
+import { canAddRecipe, canSendInvite, isOwnerTier } from "@/utils/membershipTier"
+import { cookbookDetailTourPhase } from "@/utils/gettingStarted"
+import {
+  advanceGettingStartedTour,
+  getGettingStartedTour,
+  leaveGettingStartedTour,
+  useGettingStartedTour,
+} from "@/utils/gettingStartedTour"
 import { useMembershipStore } from "@/stores/membershipStore"
 import { useUiStore } from "@/stores/uiStore"
 import type { RecipeBriefItem } from "@/types/recipe"
@@ -23,6 +33,7 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
+import { useFocusEffect, useIsFocused } from "@react-navigation/native"
 import { useQueryClient } from "@tanstack/react-query"
 import { router, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -62,6 +73,7 @@ function tagLabelTx(tag: TagKey): TxKeyPath {
 export default function CookbookScreen() {
   const queryClient = useQueryClient()
   const ownMembership = useMembershipStore((s) => s.ownMembership)
+  const loadedMembershipCookbookId = useMembershipStore((s) => s.loadedCookbookId)
   const singleByCookbookId = useMembershipStore((s) => s.singleByCookbookId)
   const deleteMembership = useMembershipStore((s) => s.delete)
   const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
@@ -113,6 +125,7 @@ export default function CookbookScreen() {
 
   const q = searchQuery.trim().toLowerCase()
   const hasActiveFilters = q.length > 0 || selectedTags.size > 0
+  const showAddFirstRecipe = !isListPending && recipes.length === 0 && !hasActiveFilters
   let filteredItems = recipes.slice()
   if (q) {
     filteredItems = filteredItems.filter((r) => r.title.toLowerCase().includes(q))
@@ -178,14 +191,31 @@ export default function CookbookScreen() {
 
   const handlePressMore = () => setPopoverVisible(true)
 
-  const popoverOptions = useMemo(
+  const openAddRecipeOptions = useCallback(() => {
+    router.push("/(logged-in)/recipe/add-options")
+  }, [])
+
+  const openInviteOptions = useCallback(() => {
+    router.push("/(logged-in)/invitation/add-options")
+  }, [])
+
+  // Until this cookbook's membership loads, assume the person can act; the API still enforces it.
+  const membershipLoaded = loadedMembershipCookbookId === cookbookId && ownMembership != null
+  const canContribute = !membershipLoaded || canAddRecipe(ownMembership?.tier)
+  const canInvite = !membershipLoaded || canSendInvite(ownMembership?.tier)
+
+  const popoverOptions = useMemo<PopoverOption[]>(
     () => [
-      {
-        key: "addRecipe",
-        tx: "cookbookDetailScreen:addRecipe" as const,
-        leftIcon: "create" as const,
-        onPress: () => router.push("/(logged-in)/recipe/add-options"),
-      },
+      ...(canInvite
+        ? [
+            {
+              key: SEND_INVITE_KEY,
+              tx: "cookbookDetailScreen:sendInvite" as const,
+              leftIcon: "mail" as const,
+              onPress: openInviteOptions,
+            },
+          ]
+        : []),
       {
         key: "viewMembers",
         tx: "cookbookDetailScreen:viewMembers" as const,
@@ -210,7 +240,22 @@ export default function CookbookScreen() {
         onPress: handlePressLeave,
       },
     ],
-    [isAuthor, handlePressEdit, handlePressLeave],
+    [canInvite, isAuthor, handlePressEdit, handlePressLeave, openInviteOptions],
+  )
+
+  const isFocused = useIsFocused()
+  const tour = useGettingStartedTour()
+  const showFabGuide = isFocused && tour?.step === "recipe" && tour.phase === "fab"
+  const showMenuGuide = isFocused && tour?.step === "invite" && tour.phase === "menu"
+  const fabAnchor = useGuideAnchor(showFabGuide && canContribute)
+  const menuAnchor = useGuideAnchor(showMenuGuide && canInvite)
+
+  useFocusEffect(
+    useCallback(() => {
+      const current = getGettingStartedTour()
+      const phase = current ? cookbookDetailTourPhase(current.step) : null
+      if (phase) advanceGettingStartedTour(phase)
+    }, []),
   )
 
   // Stale-while-revalidate: keep list when revisiting same cookbook; refresh in background.
@@ -237,8 +282,25 @@ export default function CookbookScreen() {
         router.canGoBack() ? router.back() : router.replace("/(logged-in)/(tabs)/cookbooks"),
       rightIcon: "more",
       onRightPress: selected ? () => handlePressMore() : undefined,
+      RightActionComponent: showMenuGuide ? (
+        <View
+          ref={menuAnchor.ref}
+          onLayout={menuAnchor.onLayout}
+          collapsable={false}
+          style={$headerActionGuide}
+        >
+          <PressableIcon
+            icon="more"
+            size={24}
+            color={theme.colors.tint}
+            onPress={handlePressMore}
+            accessibilityLabel={t("cookbookDetailScreen:moreOptionsA11y")}
+            containerStyle={themed($headerActionRing)}
+          />
+        </View>
+      ) : undefined,
     },
-    [selected?.title, id],
+    [selected?.title, id, showMenuGuide, theme.colors.tint],
   )
 
   const handlePressRecipe = (recipeId: string) => {
@@ -248,19 +310,35 @@ export default function CookbookScreen() {
   if (!selected) return <ItemNotFound messageTx="itemNotFound:cookbook" />
 
   return (
-    <>
+    <View style={$tourRoot}>
       <Popover
         visible={popoverVisible}
         onDismiss={() => setPopoverVisible(false)}
         options={popoverOptions}
+        highlightKey={showMenuGuide ? SEND_INVITE_KEY : undefined}
       />
       <Screen preset="fixed" style={$themedRoot}>
         <FlatList<RecipeBriefItem>
           data={filteredItems}
           keyExtractor={(item) => String(item.id)}
+          contentContainerStyle={canContribute ? $listContentWithFab : undefined}
           ListEmptyComponent={
             isListPending ? (
               <ActivityIndicator />
+            ) : showAddFirstRecipe ? (
+              <EmptyState
+                preset="generic"
+                headingTx="cookbookDetailScreen:addFirstRecipeTitle"
+                contentTx={
+                  canContribute
+                    ? "cookbookDetailScreen:addFirstRecipeDescription"
+                    : "cookbookDetailScreen:noRecipesEmpty"
+                }
+                button=""
+                style={$themedEmptyState}
+                imageStyle={$themedEmptyStateImage}
+                ImageProps={{ resizeMode: "contain" }}
+              />
             ) : (
               <EmptyState
                 preset="generic"
@@ -273,75 +351,79 @@ export default function CookbookScreen() {
             )
           }
           ListHeaderComponent={
-            <View>
-              <SearchBar
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder={t("recipeListScreen:searchPlaceholder")}
-                leftIcon={filterExpanded ? "filterFilled" : "filter"}
-                leftIconColor={selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim}
-                onLeftIconPress={() => setFilterExpanded((v) => !v)}
-              />
-              {filterExpanded && (
-                <View style={themed($tagChipContainer)}>
-                  {RECIPE_TAG_KEYS.map((tag) => {
-                    const isSelected = selectedTags.has(tag)
-                    const chipColor = isSelected ? getRecipeTagChipColor(tag) : undefined
-                    return (
-                      <TouchableOpacity
-                        key={tag}
-                        onPress={() => toggleTag(tag)}
-                        style={[
-                          themed($tagChip),
-                          chipColor && {
-                            backgroundColor: chipColor,
-                            borderColor: chipColor,
-                          },
-                        ]}
-                        activeOpacity={0.7}
-                      >
-                        <Text
-                          size="xs"
-                          weight={isSelected ? "semiBold" : "normal"}
-                          tx={tagLabelTx(tag)}
-                          style={chipColor ? { color: RECIPE_TAG_CHIP_TEXT_COLOR } : undefined}
-                        />
-                      </TouchableOpacity>
-                    )
-                  })}
-                </View>
-              )}
-              <Divider size={spacing.sm} />
-            </View>
+            showAddFirstRecipe ? null : (
+              <View>
+                <SearchBar
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder={t("recipeListScreen:searchPlaceholder")}
+                  leftIcon={filterExpanded ? "filterFilled" : "filter"}
+                  leftIconColor={selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim}
+                  onLeftIconPress={() => setFilterExpanded((v) => !v)}
+                />
+                {filterExpanded && (
+                  <View style={themed($tagChipContainer)}>
+                    {RECIPE_TAG_KEYS.map((tag) => {
+                      const isSelected = selectedTags.has(tag)
+                      const chipColor = isSelected ? getRecipeTagChipColor(tag) : undefined
+                      return (
+                        <TouchableOpacity
+                          key={tag}
+                          onPress={() => toggleTag(tag)}
+                          style={[
+                            themed($tagChip),
+                            chipColor && {
+                              backgroundColor: chipColor,
+                              borderColor: chipColor,
+                            },
+                          ]}
+                          activeOpacity={0.7}
+                        >
+                          <Text
+                            size="xs"
+                            weight={isSelected ? "semiBold" : "normal"}
+                            tx={tagLabelTx(tag)}
+                            style={chipColor ? { color: RECIPE_TAG_CHIP_TEXT_COLOR } : undefined}
+                          />
+                        </TouchableOpacity>
+                      )
+                    })}
+                  </View>
+                )}
+                <Divider size={spacing.sm} />
+              </View>
+            )
           }
           onRefresh={onRefresh}
           refreshing={refreshing}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.4}
           ListFooterComponent={
-            <View style={$themedListFooter}>
-              {isLoadingMore && <ActivityIndicator />}
-              <Text
-                weight="light"
-                tx={
-                  hasActiveFilters
-                    ? "cookbookDetailScreen:recipeCount"
-                    : recipeListTotalCount > recipes.length
-                      ? "cookbookDetailScreen:recipeCountLoaded"
-                      : "cookbookDetailScreen:recipeCount"
-                }
-                txOptions={
-                  hasActiveFilters
-                    ? { count: filteredItems.length }
-                    : recipeListTotalCount > recipes.length
-                      ? {
-                          loaded: recipes.length,
-                          total: recipeListTotalCount,
-                        }
-                      : { count: recipeListTotalCount }
-                }
-              />
-            </View>
+            showAddFirstRecipe ? null : (
+              <View style={$themedListFooter}>
+                {isLoadingMore && <ActivityIndicator />}
+                <Text
+                  weight="light"
+                  tx={
+                    hasActiveFilters
+                      ? "cookbookDetailScreen:recipeCount"
+                      : recipeListTotalCount > recipes.length
+                        ? "cookbookDetailScreen:recipeCountLoaded"
+                        : "cookbookDetailScreen:recipeCount"
+                  }
+                  txOptions={
+                    hasActiveFilters
+                      ? { count: filteredItems.length }
+                      : recipeListTotalCount > recipes.length
+                        ? {
+                            loaded: recipes.length,
+                            total: recipeListTotalCount,
+                          }
+                        : { count: recipeListTotalCount }
+                  }
+                />
+              </View>
+            )
           }
           renderItem={({ item, index }) => (
             <View
@@ -361,9 +443,58 @@ export default function CookbookScreen() {
           )}
         />
       </Screen>
-    </>
+      {canContribute ? (
+        <FloatingActionButton
+          onPress={openAddRecipeOptions}
+          accessibilityLabel={t("cookbookDetailScreen:addRecipe")}
+          anchorRef={fabAnchor.ref}
+          onAnchorLayout={fabAnchor.onLayout}
+        />
+      ) : null}
+      {showFabGuide ? (
+        <GettingStartedGuide
+          messageTx={
+            canContribute ? "gettingStarted:guideRecipeFab" : "gettingStarted:guideViewOnly"
+          }
+          target={canContribute ? fabAnchor.target : null}
+          onClose={leaveGettingStartedTour}
+        />
+      ) : null}
+      {showMenuGuide ? (
+        <GettingStartedGuide
+          messageTx={canInvite ? "gettingStarted:guideInviteMenu" : "gettingStarted:guideViewOnly"}
+          target={canInvite ? menuAnchor.target : null}
+          onClose={leaveGettingStartedTour}
+        />
+      ) : null}
+    </View>
   )
 }
+
+const SEND_INVITE_KEY = "sendInvite"
+const FAB_CLEARANCE = 56 + spacing.xl
+
+const $tourRoot: ViewStyle = {
+  flex: 1,
+}
+
+const $listContentWithFab: ViewStyle = {
+  paddingBottom: FAB_CLEARANCE,
+}
+
+const $headerActionGuide: ViewStyle = {
+  height: "100%",
+  justifyContent: "center",
+  paddingHorizontal: spacing.xs,
+  zIndex: 2,
+}
+
+const $headerActionRing: ThemedStyle<ViewStyle> = (theme) => ({
+  padding: theme.spacing.xxs,
+  borderWidth: 2,
+  borderColor: theme.colors.tint,
+  borderRadius: theme.spacing.sm,
+})
 
 const $emptyState: ThemedStyle<ViewStyle> = (theme) => ({
   marginTop: theme.spacing.xxl,
