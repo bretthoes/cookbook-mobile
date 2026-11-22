@@ -76,7 +76,7 @@ export interface AuthState {
   setAuthToken: (value?: string) => void
   setAuthEmail: (value: string) => void
   setResult: (value: string) => void
-  fetchDisplayName: () => Promise<void>
+  fetchDisplayName: () => Promise<string>
   updateDisplayName: (name?: string) => Promise<boolean>
   logout: () => Promise<void>
   /** `silent` (used while waiting for email verification) shows no messages and doesn't resend the confirmation email. */
@@ -122,10 +122,14 @@ export const useAuthStore = create<AuthState>()(
       setResult: (value) => set({ result: value }),
 
       fetchDisplayName: async () => {
-        if (get().displayName) return
         const response = await api.getDisplayName()
-        if (response.kind === "ok") set({ displayName: response.displayName ?? "" })
-        else console.error(`Error fetching display name: ${JSON.stringify(response)}`)
+        if (response.kind !== "ok") {
+          console.error(`Error fetching display name: ${JSON.stringify(response)}`)
+          return get().displayName
+        }
+        const displayName = response.displayName ?? ""
+        set({ displayName })
+        return displayName
       },
 
       updateDisplayName: async (name) => {

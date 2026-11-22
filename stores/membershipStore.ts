@@ -6,6 +6,8 @@ import { create } from "zustand"
 
 export interface MembershipState {
   memberships: PaginatedList<Membership>
+  /** Cookbook the `memberships` list was loaded for. Null until the first response. */
+  membershipsCookbookId: string | null
   ownMembership: Membership | null
   loadedCookbookId: string | null
   email: string | null
@@ -27,12 +29,17 @@ export interface MembershipState {
 
 const inFlightLoads = new Map<string, Promise<void>>()
 
+/** Latest list or own-membership request. An older response must not overwrite a newer cookbook. */
+let membershipListRequest = 0
+let ownMembershipRequest = 0
+
 function loadKey(cookbookId: string, pageNumber: number, pageSize: number) {
   return `${cookbookId}:${pageNumber}:${pageSize}`
 }
 
 export const useMembershipStore = create<MembershipState>((set, get) => ({
   memberships: emptyPaginatedList(),
+  membershipsCookbookId: null,
   ownMembership: null,
   loadedCookbookId: null,
   email: null,
@@ -66,11 +73,21 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
   },
 
   fetch: async (cookbookId, pageNumber = 1, pageSize = 10) => {
+    const requestId = ++membershipListRequest
     const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
+    if (requestId !== membershipListRequest) return
+
     if (response.kind === "ok") {
-      set({ memberships: response.memberships as PaginatedList<Membership> })
-    } else {
-      console.error(`Error fetching memberships: ${JSON.stringify(response)}`)
+      set({
+        memberships: response.memberships as PaginatedList<Membership>,
+        membershipsCookbookId: cookbookId,
+      })
+      return
+    }
+
+    console.error(`Error fetching memberships: ${JSON.stringify(response)}`)
+    if (get().membershipsCookbookId !== cookbookId) {
+      set({ memberships: emptyPaginatedList(), membershipsCookbookId: cookbookId })
     }
   },
 
@@ -79,7 +96,10 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
       return true
     }
 
+    const requestId = ++ownMembershipRequest
     const response = await api.getMembership(cookbookId)
+    if (requestId !== ownMembershipRequest) return false
+
     if (response.kind === "ok") {
       set({
         ownMembership: response.membership as Membership,

@@ -19,6 +19,7 @@ import { ActivityIndicator, FlatList, ImageStyle, View, ViewStyle } from "react-
 
 export default function Cookbook() {
   const memberships = useMembershipStore((s) => s.memberships)
+  const membershipsCookbookId = useMembershipStore((s) => s.membershipsCookbookId)
   const ownMembership = useMembershipStore((s) => s.ownMembership)
   const loadForCookbook = useMembershipStore((s) => s.loadForCookbook)
   const fetch = useMembershipStore((s) => s.fetch)
@@ -72,13 +73,17 @@ export default function Cookbook() {
 
   if (!id) return null
 
+  const listIsForCookbook = membershipsCookbookId === id
+  const members = listIsForCookbook ? (memberships?.items?.slice() ?? []) : []
+  const showLoading = isLoading || !listIsForCookbook
+
   return (
     <Screen preset="fixed" style={$themedRoot}>
       <FlatList<Membership>
-        data={memberships?.items?.slice() ?? []}
+        data={members}
         keyExtractor={(item) => String(item.id)}
         ListEmptyComponent={
-          isLoading ? (
+          showLoading ? (
             <ActivityIndicator />
           ) : (
             <EmptyState
@@ -105,12 +110,12 @@ export default function Cookbook() {
               style={[
                 $themedListItemStyle,
                 index === 0 && $themedBorderTop,
-                index === memberships?.items?.length - 1 && $themedBorderBottom,
+                index === members.length - 1 && $themedBorderBottom,
               ]}
             >
               <RecipeListItem
                 index={index}
-                lastIndex={memberships?.items?.length - 1}
+                lastIndex={members.length - 1}
                 text={`${item.name ?? ""}`}
                 isOwner={isOwnerTier(item.tier)}
                 onPress={async () => {
@@ -123,7 +128,7 @@ export default function Cookbook() {
         }}
         ListFooterComponent={
           <>
-            {(memberships?.totalPages ?? 1) > 1 && (
+            {listIsForCookbook && (memberships?.totalPages ?? 1) > 1 && (
               <PaginationControls
                 currentPage={memberships.pageNumber}
                 totalPages={memberships.totalPages}

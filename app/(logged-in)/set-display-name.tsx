@@ -17,10 +17,13 @@ const isValidDisplayName = (input: string) => {
 
 export default function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [localDisplayName, setLocalDisplayName] = useState("")
+  const [localDisplayName, setLocalDisplayName] = useState(
+    () => useAuthStore.getState().displayName,
+  )
   const [result, setResult] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const isSavingRef = useRef(false)
+  const userEdited = useRef(false)
   const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
   const fetchDisplayName = useAuthStore((s) => s.fetchDisplayName)
   const displayName = useAuthStore((s) => s.displayName)
@@ -38,20 +41,21 @@ export default function SetDisplayName() {
   )
 
   useEffect(() => {
-    setLocalDisplayName("")
+    let active = true
     setIsSubmitted(false)
     setResult("")
 
     const load = async () => {
-      await fetchDisplayName()
-      setLocalDisplayName(displayName)
+      const name = await fetchDisplayName()
+      if (active && !userEdited.current) setLocalDisplayName(name)
     }
-    load()
+    void load()
 
     return () => {
+      active = false
       setResult("")
     }
-  }, [fetchDisplayName, displayName])
+  }, [fetchDisplayName])
 
   const handleSave = useCallback(async () => {
     if (isSavingRef.current) return
@@ -103,7 +107,10 @@ export default function SetDisplayName() {
       <FormCard>
         <TextField
           value={localDisplayName}
-          onChangeText={setLocalDisplayName}
+          onChangeText={(value) => {
+            userEdited.current = true
+            setLocalDisplayName(value)
+          }}
           helper={validationError}
           status={validationError ? "error" : undefined}
           autoCapitalize="none"
