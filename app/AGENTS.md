@@ -17,7 +17,7 @@ Expo Router file-based routes. Each `*.tsx` file under `app/` is a screen; folde
 | `(logged-in)/recipe/`                                                                           | `…/recipe/:id`, `…/recipe/add`, `add-options`, …     | Recipe CRUD and import flows                                                             |
 | `(logged-in)/membership/`                                                                       | `…/membership/list`, `…/membership/:id`              | Members list and detail                                                                  |
 | `(logged-in)/invitation/`                                                                       | `…/invitation`, `add-email`, `add-link`              | Invite collaborators                                                                     |
-| `(logged-in)/onboarding.tsx`, `set-display-name.tsx`, `language.tsx`, `select-cookbook.tsx`     | various                                              | Onboarding and settings                                                                  |
+| `(logged-in)/onboarding.tsx`, `set-display-name.tsx`, `language.tsx`                            | various                                              | Onboarding and settings                                                                  |
 
 **Route groups** `(logged-in)` and `(tabs)` do **not** appear in the URL.
 

@@ -370,7 +370,6 @@ const en = {
     manageInfo: "Manage your info.",
     title: "Profile",
     pendingInvites: "View your pending invitations",
-    manageMemberships: "Manage your cookbook memberships",
     preferences: "Preferences",
     customize: "Customize your experience.",
     darkMode: "Dark Mode",
@@ -607,18 +606,6 @@ const en = {
     createFailed: "Failed to create recipe",
     draftRestored: "Draft restored",
   },
-  selectCookbookScreen: {
-    title: "Select a Cookbook",
-    placeholder: "Select a cookbook",
-    dropdownDescription: "Select the cookbook where you would like to add this recipe.",
-    actionForMembers: "Select a cookbook to view its members.",
-    actionForAddFromCamera: "Select a cookbook to add the recipe to.",
-    emptyState: "No cookbooks have been added yet.",
-    allowCameraRollAccess: "Please allow camera roll access in settings.",
-    takePhoto: "Take a Photo",
-    selectFromRoll: "Select from Camera Roll",
-    imageParsingFailed: "Image parsing failed",
-  },
 
   // Recipe related translations
   recipeListScreen: {
@@ -645,7 +632,7 @@ const en = {
     leaveCannotRemoveFavoritesTitle: "Cannot Leave Cookbook",
     leaveCannotRemoveFavorites: "Please remove this cookbook from your favorites before leaving.",
     leaveTransferOwnershipFirst:
-      "Please transfer ownership to another member first ('Manage your cookbooks' in the Profile tab).",
+      "Please transfer ownership to another member first. Open View Members and choose a new owner.",
     leaveConfirmTitle: "Leave Cookbook",
     leaveConfirmMessage:
       "Are you sure you want to leave this cookbook? You will have to be invited back to join again.",

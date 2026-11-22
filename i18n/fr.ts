@@ -381,7 +381,6 @@ const fr: Translations = {
     manageInfo: "Gérer vos informations.",
     title: "Profil",
     pendingInvites: "Voir vos invitations en attente",
-    manageMemberships: "Gérer vos adhésions aux livres de recettes",
     preferences: "Préférences",
     customize: "Personnalisez votre expérience.",
     darkMode: "Mode sombre",
@@ -619,19 +618,6 @@ const fr: Translations = {
     createFailed: "Échec de la création de la recette",
     draftRestored: "Brouillon restauré",
   },
-  selectCookbookScreen: {
-    title: "Sélectionner un livre de recettes",
-    placeholder: "Sélectionner un livre de recettes",
-    dropdownDescription:
-      "Sélectionnez le livre de recettes où vous souhaitez ajouter cette recette.",
-    actionForMembers: "Sélectionnez un livre de recettes pour voir ses membres.",
-    actionForAddFromCamera: "Sélectionnez un livre de recettes pour y ajouter la recette.",
-    emptyState: "Aucun livre de recettes n'a encore été ajouté.",
-    allowCameraRollAccess: "Veuillez autoriser l'accès à la pellicule dans les paramètres.",
-    takePhoto: "Prendre une photo",
-    selectFromRoll: "Sélectionner depuis la pellicule",
-    imageParsingFailed: "Échec de l'analyse de l'image",
-  },
   recipeListScreen: {
     title: "Recettes",
     searchPlaceholder: "Rechercher",
@@ -657,7 +643,7 @@ const fr: Translations = {
     leaveCannotRemoveFavorites:
       "Veuillez retirer ce livre de recettes de vos favoris avant de le quitter.",
     leaveTransferOwnershipFirst:
-      "Veuillez d'abord transférer la propriété à un autre membre (« Gérer vos livres de recettes » dans l'onglet Profil).",
+      "Veuillez d'abord transférer la propriété à un autre membre. Ouvrez Voir les membres et choisissez un nouveau propriétaire.",
     leaveConfirmTitle: "Quitter le livre de recettes",
     leaveConfirmMessage:
       "Êtes-vous sûr de vouloir quitter ce livre de recettes ? Vous devrez être invité à nouveau pour le rejoindre.",

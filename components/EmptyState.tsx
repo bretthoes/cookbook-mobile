@@ -234,7 +234,7 @@ export function EmptyState(props: EmptyStateProps) {
   )
 }
 
-const $image: ImageStyle = { alignSelf: "center" }
+const $image: ImageStyle = { alignSelf: "center", height: 256, width: 256 }
 const $heading: ThemedStyle<TextStyle> = ({ spacing }) => ({
   textAlign: "center",
   paddingHorizontal: spacing.lg,

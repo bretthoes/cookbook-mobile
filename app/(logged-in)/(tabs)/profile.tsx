@@ -178,26 +178,6 @@ export default function ProfileScreen() {
           onPress={() => router.push("../invitation")}
         />
         <ListItem
-          tx="profileScreen:manageMemberships"
-          bottomSeparator
-          rightIcon={isRTL ? "caretLeft" : "caretRight"}
-          rightIconColor={isDark ? colors.border : colors.text}
-          LeftComponent={
-            <View style={$iconContainer}>
-              <Icon icon="membership" size={30} color={isDark ? colors.border : colors.text} />
-            </View>
-          }
-          onPress={() =>
-            router.push({
-              pathname: "../select-cookbook",
-              params: {
-                nextRoute: "../membership/list",
-                action: translate("selectCookbookScreen:actionForMembers"),
-              },
-            })
-          }
-        />
-        <ListItem
           tx="profileScreen:setName"
           bottomSeparator
           rightIcon={isRTL ? "caretLeft" : "caretRight"}

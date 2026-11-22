@@ -2,7 +2,6 @@ import { GettingStartedGuide, useGuideAnchor } from "@/components/cookbooks/Gett
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
-import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import type { TxKeyPath } from "@/i18n"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import {
@@ -24,7 +23,6 @@ import {
 import { useFocusEffect } from "@react-navigation/native"
 import { router } from "expo-router"
 import { useCallback, useEffect, useMemo, type RefObject } from "react"
-import { useTranslation } from "react-i18next"
 import {
   BackHandler,
   Image,
@@ -51,8 +49,6 @@ type RecipeAddOption = {
 
 export default function AddRecipeOptionsScreen() {
   const { themed } = useAppTheme()
-  const { t } = useTranslation()
-  const { selected } = useSelectedCookbook()
   const setSelectedById = useUiStore((s) => s.setSelectedCookbookId)
   const drafts = useUiStore((s) => s.drafts)
   const pruneEmptyDrafts = useUiStore((s) => s.pruneEmptyDrafts)
@@ -136,19 +132,7 @@ export default function AddRecipeOptionsScreen() {
         descriptionTx: "recipeAddOptionsScreen:optionFromPhotoDesc",
         icon: "camera" as IconTypes,
         isPremium: true,
-        action: () => {
-          if (selected) {
-            router.push("../recipe/add-photo")
-          } else {
-            router.push({
-              pathname: "../select-cookbook",
-              params: {
-                nextRoute: "/(logged-in)/recipe/add-photo",
-                action: t("selectCookbookScreen:actionForAddFromCamera"),
-              },
-            })
-          }
-        },
+        action: () => router.push("../recipe/add-photo"),
       },
       {
         titleTx: "recipeAddOptionsScreen:optionFromVoice",
@@ -185,7 +169,7 @@ export default function AddRecipeOptionsScreen() {
     }
 
     return [...baseOptions, draftOption]
-  }, [t, selected, setSelectedById, latestDraft])
+  }, [setSelectedById, latestDraft])
 
   const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
   const $themedList = useMemo(() => themed($list), [themed])
