@@ -12,7 +12,7 @@ import {
   DarkTheme as NavDarkTheme,
   DefaultTheme as NavDefaultTheme,
   Theme as NavTheme,
-} from "@react-navigation/native"
+} from "expo-router/react-navigation"
 import { useMMKVBoolean, useMMKVString } from "react-native-mmkv"
 
 import { storage } from "../utils/storage"

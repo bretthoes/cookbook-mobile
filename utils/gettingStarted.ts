@@ -12,7 +12,7 @@ export type GettingStartedStep = (typeof GETTING_STARTED_STEPS)[number]
  * Where a guided walk is. Every walk starts on the Cookbooks tab.
  * - cookbook: `fab` (new-cookbook button) → `screen` (add cookbook)
  * - recipe: `choose` (a cookbook card) → `fab` (add-recipe button) → `options` → `screen`
- * - invite: `choose` (a cookbook card) → `menu` (cookbook ⋯ menu) → `options`, which ends it
+ * - invite: `choose` (a cookbook card) → `menu` (cookbook ⋯ menu) → `screen` (share link), which ends it
  */
 export type GettingStartedTourPhase = "fab" | "choose" | "menu" | "options" | "screen"
 

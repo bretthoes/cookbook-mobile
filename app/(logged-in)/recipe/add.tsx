@@ -29,7 +29,7 @@ import {
   useGettingStartedTour,
 } from "@/utils/gettingStartedTour"
 import { router, useLocalSearchParams } from "expo-router"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect } from "expo-router/react-navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"

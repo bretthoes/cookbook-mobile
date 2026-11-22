@@ -27,7 +27,7 @@ function Root() {
 
   useEffect(() => {
     registerNavigationContainer(
-      navigationContainerRef as Parameters<typeof registerNavigationContainer>[0],
+      navigationContainerRef as unknown as Parameters<typeof registerNavigationContainer>[0],
     )
   }, [navigationContainerRef])
 

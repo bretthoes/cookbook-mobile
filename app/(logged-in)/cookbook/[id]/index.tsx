@@ -33,7 +33,7 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
-import { useFocusEffect, useIsFocused } from "@react-navigation/native"
+import { useFocusEffect, useIsFocused } from "expo-router/react-navigation"
 import { useQueryClient } from "@tanstack/react-query"
 import { router, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
@@ -195,8 +195,8 @@ export default function CookbookScreen() {
     router.push("/(logged-in)/recipe/add-options")
   }, [])
 
-  const openInviteOptions = useCallback(() => {
-    router.push("/(logged-in)/invitation/add-options")
+  const openSendInvite = useCallback(() => {
+    router.push("/(logged-in)/invitation/add-link")
   }, [])
 
   // Until this cookbook's membership loads, assume the person can act; the API still enforces it.
@@ -212,7 +212,7 @@ export default function CookbookScreen() {
               key: SEND_INVITE_KEY,
               tx: "cookbookDetailScreen:sendInvite" as const,
               leftIcon: "mail" as const,
-              onPress: openInviteOptions,
+              onPress: openSendInvite,
             },
           ]
         : []),
@@ -240,7 +240,7 @@ export default function CookbookScreen() {
         onPress: handlePressLeave,
       },
     ],
-    [canInvite, isAuthor, handlePressEdit, handlePressLeave, openInviteOptions],
+    [canInvite, isAuthor, handlePressEdit, handlePressLeave, openSendInvite],
   )
 
   const isFocused = useIsFocused()

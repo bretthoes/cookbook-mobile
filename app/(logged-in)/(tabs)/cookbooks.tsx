@@ -36,8 +36,8 @@ import {
   useGettingStartedTour,
 } from "@/utils/gettingStartedTour"
 import { storage } from "@/utils/storage"
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs"
-import { useFocusEffect, useIsFocused } from "@react-navigation/native"
+import { useBottomTabBarHeight } from "expo-router/js-tabs"
+import { useFocusEffect, useIsFocused } from "expo-router/react-navigation"
 import { useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useMMKVBoolean } from "react-native-mmkv"

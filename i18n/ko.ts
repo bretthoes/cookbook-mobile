@@ -284,13 +284,6 @@ const ko: Translations = {
       "{{actorDisplayName}}님이 {{subjectDisplayName}}님을 {{cookbookTitle}}에서 제거했습니다.",
     memberRemovedYou: "{{subjectDisplayName}}님을 {{cookbookTitle}}에서 제거했습니다.",
   },
-  invitationAddOptionsScreen: {
-    title: "친구 초대",
-    inviteByEmail: "이메일로 초대",
-    inviteByEmailDesc: "이메일로 직접 초대장 보내기",
-    inviteByLink: "공유 링크로 초대",
-    inviteByLinkDesc: "누구나 참여할 수 있는 공유 링크 만들기",
-  },
   invitationAddEmailScreen: {
     title: "이메일로 초대",
     inviteIntro: "친구를 {{cookbookName}}에 초대하세요.",
@@ -327,7 +320,7 @@ const ko: Translations = {
     declineFailed: "초대 거절에 실패했습니다. 다시 시도해 주세요.",
   },
   invitationAddLinkScreen: {
-    title: "링크로 초대",
+    title: "친구 초대",
     inviteIntro: "친구를 {{cookbookName}}에 초대하세요.",
     yourCookbook: "내 요리책",
     inviteLinkLabel: "초대 링크",
@@ -337,6 +330,9 @@ const ko: Translations = {
     copyButton: "링크 복사",
     linkCopied: "클립보드에 복사됨",
     failedToCreateLink: "링크 생성에 실패했습니다.",
+    or: "또는",
+    inviteByEmail: "이메일로 초대",
+    inviteByEmailDesc: "특정 주소로 초대장 보내기",
   },
   demoDebugScreen: {
     howTo: "사용방법",
@@ -907,7 +903,7 @@ const ko: Translations = {
     guideRecipeScreen: "여기가 레시피 추가 화면입니다. 레시피를 여기에 적습니다.",
     guideInviteChoose: "공유할 요리책을 여세요.",
     guideInviteMenu: "위의 메뉴를 누른 뒤 초대 보내기를 누르세요.",
-    guideInviteOptions: "이메일로 초대하거나 링크를 공유하세요.",
+    guideInviteOptions: "링크를 공유하면 참여할 수 있습니다. 이메일로 보낼 수도 있습니다.",
     gotIt: "알겠어요",
     guideViewOnly:
       "이 요리책은 보기만 할 수 있습니다. 뒤로 가서 레시피를 추가할 수 있는 요리책을 여세요.",

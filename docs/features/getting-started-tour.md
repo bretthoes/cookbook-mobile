@@ -73,20 +73,20 @@ stateDiagram-v2
     state "Invite someone" as invite {
         i_choose : choose (first cookbook card)
         i_menu : menu (cookbook ⋯, Send Invite)
-        i_options : options (email or link)
+        i_screen : screen (share link)
         i_choose --> i_menu
-        i_menu --> i_options
+        i_menu --> i_screen
     }
 ```
 
-| Screen             | Phase it sets                                                           | What the guide shows                                           |
-| ------------------ | ----------------------------------------------------------------------- | -------------------------------------------------------------- |
-| Cookbooks tab      | `fab` (cookbook walk) or `choose` (others), via `cookbooksTabTourPhase` | Spotlight on the floating +, or on the first cookbook card     |
-| Add Cookbook       | `screen`                                                                | Light scrim over the form with Got it                          |
-| Cookbook detail    | `fab` (recipe) or `menu` (invite), via `cookbookDetailTourPhase`        | Spotlight on the + button, or a note pointing up at the ⋯ menu |
-| Add Recipe options | `options`                                                               | Spotlight on "Type it in"                                      |
-| Add Recipe form    | `screen`                                                                | Light scrim over the form with Got it                          |
-| Invite Friends     | `options`                                                               | Spotlight on both invite options with Got it                   |
+| Screen             | Phase it sets                                                           | What the guide shows                                              |
+| ------------------ | ----------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Cookbooks tab      | `fab` (cookbook walk) or `choose` (others), via `cookbooksTabTourPhase` | Spotlight on the floating +, or on the first cookbook card        |
+| Add Cookbook       | `screen`                                                                | Light scrim over the form with Got it                             |
+| Cookbook detail    | `fab` (recipe) or `menu` (invite), via `cookbookDetailTourPhase`        | Spotlight on the + button, or a note pointing up at the ⋯ menu    |
+| Add Recipe options | `options`                                                               | Spotlight on "Type it in"                                         |
+| Add Recipe form    | `screen`                                                                | Light scrim over the form with Got it                             |
+| Invite Friends     | `screen`                                                                | Spotlight on the share-link card with Got it. Email is outside it |
 
 ### Cookbook detail specifics
 
@@ -95,14 +95,13 @@ stateDiagram-v2
 
 ## Ending a walk
 
-| How                                                               | Step       | Where the person ends up           |
-| ----------------------------------------------------------------- | ---------- | ---------------------------------- |
-| Got it on Add Cookbook or the recipe form                         | Done       | Stays on that screen to keep going |
-| Got it on Invite Friends                                          | Done       | Back on Cookbooks                  |
-| Tap an invite option on Invite Friends                            | Done       | The email or link screen           |
-| Tap the dimmed area on a final screen (Add Cookbook, recipe form) | Still open | Stays on that screen               |
-| Tap the dimmed area mid-walk                                      | Still open | Back on Cookbooks                  |
-| Do the real thing (see below)                                     | Done       | Wherever that action normally goes |
+| How                                                                               | Step       | Where the person ends up           |
+| --------------------------------------------------------------------------------- | ---------- | ---------------------------------- |
+| Got it on Add Cookbook or the recipe form                                         | Done       | Stays on that screen to keep going |
+| Got it on Invite Friends                                                          | Done       | Stays on the link screen           |
+| Tap the dimmed area on a final screen (Add Cookbook, recipe form, Invite Friends) | Still open | Stays on that screen               |
+| Tap the dimmed area mid-walk                                                      | Still open | Back on Cookbooks                  |
+| Do the real thing (see below)                                                     | Done       | Wherever that action normally goes |
 
 The matching functions in [gettingStartedTour.ts](../../utils/gettingStartedTour.ts):
 
@@ -137,7 +136,7 @@ Ending the walk here matters. Saving a recipe navigates back through Cookbooks i
 | Pointing up | The target is above the overlay (the header ⋯) | Full dim, the note pinned to the top with an arrow under the target                                           |
 | Reveal      | `revealScreen`                                 | A light scrim over the whole screen, note at the bottom                                                       |
 
-The note sits below the hole when there's room and flips above it otherwise. If flipping above would cover the target, the note stays below. Room is the overlay's own layout height, stopping at the system navigation bar, so the notes on the floating + buttons (create a cookbook, add a recipe) point down at the icon. The Invite Friends note sits under the two options; that guide is a sibling of the screen so it covers the empty area under the list, not just the list itself. The note stays hidden until that layout is measured, so it does not flash beside the control. Every dimmed area calls `onClose`.
+The note sits below the hole when there's room and flips above it otherwise. If flipping above would cover the target, the note stays below. Room is the overlay's own layout height, stopping at the system navigation bar, so the notes on the floating + buttons (create a cookbook, add a recipe) point down at the icon. The Invite Friends note sits under the share-link card. That guide is a sibling of the screen, so the dim covers the email row under the card. A tap there ends the walk and stays on the screen. The note stays hidden until that layout is measured, so it does not flash beside the control. Every dimmed area calls `onClose`.
 
 ## Development
 
@@ -148,17 +147,17 @@ Profile tab → Debug (dev builds only):
 
 ## Where to look in code
 
-| Area                                          | Path                                                                                                                                                                                                                                                                               |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Step rules, phases, storage keys              | [utils/gettingStarted.ts](../../utils/gettingStarted.ts)                                                                                                                                                                                                                           |
-| Walk store and end/complete helpers           | [utils/gettingStartedTour.ts](../../utils/gettingStartedTour.ts)                                                                                                                                                                                                                   |
-| Checklist card                                | [components/cookbooks/GettingStartedCard.tsx](../../components/cookbooks/GettingStartedCard.tsx)                                                                                                                                                                                   |
-| Guide overlay and anchor hook                 | [components/cookbooks/GettingStartedGuide.tsx](../../components/cookbooks/GettingStartedGuide.tsx)                                                                                                                                                                                 |
-| Floating + button                             | [components/FloatingActionButton.tsx](../../components/FloatingActionButton.tsx)                                                                                                                                                                                                   |
-| Popover highlight                             | [components/Popover.tsx](../../components/Popover.tsx)                                                                                                                                                                                                                             |
-| Cookbooks tab (checklist, `fab` and `choose`) | [app/(logged-in)/(tabs)/cookbooks.tsx](<../../app/(logged-in)/(tabs)/cookbooks.tsx>)                                                                                                                                                                                               |
-| Cookbook detail (`fab` and `menu`)            | [app/(logged-in)/cookbook/[id]/index.tsx](<../../app/(logged-in)/cookbook/[id]/index.tsx>)                                                                                                                                                                                         |
-| Final and options screens                     | [cookbook/add.tsx](<../../app/(logged-in)/cookbook/add.tsx>), [recipe/add-options.tsx](<../../app/(logged-in)/recipe/add-options.tsx>), [recipe/add.tsx](<../../app/(logged-in)/recipe/add.tsx>), [invitation/add-options.tsx](<../../app/(logged-in)/invitation/add-options.tsx>) |
-| Permission helpers                            | [utils/membershipTier.ts](../../utils/membershipTier.ts)                                                                                                                                                                                                                           |
-| Copy                                          | `gettingStarted` section in [i18n/en.ts](../../i18n/en.ts) (plus `fr.ts`, `ko.ts`)                                                                                                                                                                                                 |
-| Tests                                         | [utils/gettingStarted.test.ts](../../utils/gettingStarted.test.ts), [utils/membershipTier.test.ts](../../utils/membershipTier.test.ts)                                                                                                                                             |
+| Area                                          | Path                                                                                                                                                                                                                                                                         |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Step rules, phases, storage keys              | [utils/gettingStarted.ts](../../utils/gettingStarted.ts)                                                                                                                                                                                                                     |
+| Walk store and end/complete helpers           | [utils/gettingStartedTour.ts](../../utils/gettingStartedTour.ts)                                                                                                                                                                                                             |
+| Checklist card                                | [components/cookbooks/GettingStartedCard.tsx](../../components/cookbooks/GettingStartedCard.tsx)                                                                                                                                                                             |
+| Guide overlay and anchor hook                 | [components/cookbooks/GettingStartedGuide.tsx](../../components/cookbooks/GettingStartedGuide.tsx)                                                                                                                                                                           |
+| Floating + button                             | [components/FloatingActionButton.tsx](../../components/FloatingActionButton.tsx)                                                                                                                                                                                             |
+| Popover highlight                             | [components/Popover.tsx](../../components/Popover.tsx)                                                                                                                                                                                                                       |
+| Cookbooks tab (checklist, `fab` and `choose`) | [app/(logged-in)/(tabs)/cookbooks.tsx](<../../app/(logged-in)/(tabs)/cookbooks.tsx>)                                                                                                                                                                                         |
+| Cookbook detail (`fab` and `menu`)            | [app/(logged-in)/cookbook/[id]/index.tsx](<../../app/(logged-in)/cookbook/[id]/index.tsx>)                                                                                                                                                                                   |
+| Final and options screens                     | [cookbook/add.tsx](<../../app/(logged-in)/cookbook/add.tsx>), [recipe/add-options.tsx](<../../app/(logged-in)/recipe/add-options.tsx>), [recipe/add.tsx](<../../app/(logged-in)/recipe/add.tsx>), [invitation/add-link.tsx](<../../app/(logged-in)/invitation/add-link.tsx>) |
+| Permission helpers                            | [utils/membershipTier.ts](../../utils/membershipTier.ts)                                                                                                                                                                                                                     |
+| Copy                                          | `gettingStarted` section in [i18n/en.ts](../../i18n/en.ts) (plus `fr.ts`, `ko.ts`)                                                                                                                                                                                           |
+| Tests                                         | [utils/gettingStarted.test.ts](../../utils/gettingStarted.test.ts), [utils/membershipTier.test.ts](../../utils/membershipTier.test.ts)                                                                                                                                       |

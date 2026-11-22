@@ -281,13 +281,6 @@ const en = {
     memberRemoved: "{{actorDisplayName}} removed {{subjectDisplayName}} from {{cookbookTitle}}.",
     memberRemovedYou: "You removed {{subjectDisplayName}} from {{cookbookTitle}}.",
   },
-  invitationAddOptionsScreen: {
-    title: "Invite Friends",
-    inviteByEmail: "Invite by Email",
-    inviteByEmailDesc: "Send an invitation directly to their email",
-    inviteByLink: "Invite by Shared Link",
-    inviteByLinkDesc: "Create a shareable link for anyone to join",
-  },
   invitationAddEmailScreen: {
     title: "Invite by Email",
     inviteIntro: "Invite friends to join {{cookbookName}}.",
@@ -324,7 +317,7 @@ const en = {
     declineFailed: "Failed to decline invitation. Please try again.",
   },
   invitationAddLinkScreen: {
-    title: "Invite by Link",
+    title: "Invite Friends",
     inviteIntro: "Invite friends to join {{cookbookName}}.",
     yourCookbook: "your cookbook",
     inviteLinkLabel: "Invite link",
@@ -334,6 +327,9 @@ const en = {
     copyButton: "Copy Link",
     linkCopied: "Copied to clipboard",
     failedToCreateLink: "Failed to create link.",
+    or: "or",
+    inviteByEmail: "Invite by email",
+    inviteByEmailDesc: "Send an invitation to a specific address",
   },
   demoDebugScreen: {
     howTo: "HOW TO",
@@ -920,7 +916,7 @@ const en = {
     guideRecipeScreen: "This is the add-recipe screen. The recipe is typed in here.",
     guideInviteChoose: "Open the cookbook you want to share.",
     guideInviteMenu: "Tap the menu up here, then Send Invite.",
-    guideInviteOptions: "Invite someone by email, or share a link with them.",
+    guideInviteOptions: "Share a link so they can join. You can also send an email.",
     gotIt: "Got it",
     guideViewOnly: "You can only view this cookbook. Go back and open one you can add to.",
     pendingA11y: "{{count}} step left",

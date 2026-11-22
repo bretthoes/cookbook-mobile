@@ -23,7 +23,7 @@ export function Badge({ count, style, textStyle }: BadgeProps) {
 }
 
 const $badge: ThemedStyle<ViewStyle> = (theme) => ({
-  backgroundColor: theme.colors.error,
+  backgroundColor: theme.colors.tint,
   borderRadius: 10,
   minWidth: 20,
   height: 20,

@@ -5,6 +5,17 @@ export function toInviteUrl(token: string): string {
   return `${Config.INVITE_BASE_URL}/invite/?t=${encodeURIComponent(token)}`
 }
 
+/** Host and path only. The token stays off the screen; copy and share still use the full URL. */
+export function inviteLinkPreview(url: string): string {
+  try {
+    const parsed = new URL(url)
+    const path = parsed.pathname.replace(/\/$/, "")
+    return `${parsed.host}${path}/…`
+  } catch {
+    return url
+  }
+}
+
 /**
  * Validate an invite email. Returns an error string or "" if valid.
  */

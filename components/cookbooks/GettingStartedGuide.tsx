@@ -282,7 +282,7 @@ export function GettingStartedGuide({
 }
 
 const $fill: ViewStyle = {
-  ...StyleSheet.absoluteFillObject,
+  ...StyleSheet.absoluteFill,
   zIndex: 20,
 }
 

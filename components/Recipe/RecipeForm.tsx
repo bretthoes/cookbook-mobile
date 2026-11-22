@@ -190,6 +190,8 @@ export function RecipeForm(props: RecipeFormProps) {
         mediaTypes: ["images"],
         allowsMultipleSelection: false,
         aspect: [1, 1],
+        base64: true,
+        quality: 0.8,
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {
@@ -270,6 +272,8 @@ export function RecipeForm(props: RecipeFormProps) {
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
         aspect: [1, 1],
+        base64: true,
+        quality: 0.8,
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {

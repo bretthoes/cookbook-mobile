@@ -19,7 +19,7 @@ import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
-import { usePreventRemove } from "@react-navigation/native"
+import { usePreventRemove } from "expo-router/react-navigation"
 import { router, useNavigation } from "expo-router"
 import React, { ComponentType, useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
@@ -239,7 +239,7 @@ export default function Register() {
 
   const PasswordRightAccessory: ComponentType<TextFieldAccessoryProps> = useMemo(
     () =>
-      function PasswordRightAccessory(props: TextFieldAccessoryProps) {
+      (function PasswordRightAccessory(props: TextFieldAccessoryProps) {
         return (
           <PressableIcon
             icon={isPasswordHidden ? "view" : "hidden"}
@@ -249,7 +249,7 @@ export default function Register() {
             onPress={() => setIsPasswordHidden(!isPasswordHidden)}
           />
         )
-      },
+      }),
     [isPasswordHidden, colors.text],
   )
 

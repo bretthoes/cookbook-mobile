@@ -7,7 +7,6 @@
     "icon": "./assets/images/app-icon-all.png",
     "scheme": "cookbookmobile",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "ios": {
       "buildNumber": "6",
       "icon": "./assets/images/app-icon-all.png",
@@ -79,7 +78,6 @@
         "backgroundImage": "./assets/images/app-icon-android-adaptive-background.png",
         "monochromeImage": "./assets/images/app-icon-android-adaptive-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.cookbookmobile",
       "permissions": [
@@ -104,7 +102,8 @@
         "expo-build-properties",
         {
           "ios": {
-            "useModularHeaders": true
+            "useModularHeaders": true,
+            "enableSceneSupport": true
           },
           "android": {
             "enableMinifyInReleaseBuilds": true,
@@ -187,7 +186,9 @@
           "project": "react-native"
         }
       ],
-      "@sentry/react-native"
+      "@sentry/react-native",
+      "expo-image",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true,

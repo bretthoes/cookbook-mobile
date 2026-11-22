@@ -10,7 +10,7 @@ import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import type { NotificationItem } from "@/types/notification"
 import { groupActivityFeed, isUnseenActivity, type ActivityFeedSection } from "@/utils/activityFeed"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect } from "expo-router/react-navigation"
 import { useCallback, useMemo, useState } from "react"
 import { ActivityIndicator, Platform, SectionList, TextStyle, View, ViewStyle } from "react-native"
 

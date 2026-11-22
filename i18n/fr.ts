@@ -291,13 +291,6 @@ const fr: Translations = {
     memberRemoved: "{{actorDisplayName}} a retiré {{subjectDisplayName}} de {{cookbookTitle}}.",
     memberRemovedYou: "Vous avez retiré {{subjectDisplayName}} de {{cookbookTitle}}.",
   },
-  invitationAddOptionsScreen: {
-    title: "Inviter des amis",
-    inviteByEmail: "Inviter par e-mail",
-    inviteByEmailDesc: "Envoyer une invitation directement à leur adresse e-mail",
-    inviteByLink: "Inviter par lien partagé",
-    inviteByLinkDesc: "Créer un lien partageable pour que n'importe qui puisse rejoindre",
-  },
   invitationAddEmailScreen: {
     title: "Inviter par e-mail",
     inviteIntro: "Invitez des amis à rejoindre {{cookbookName}}.",
@@ -335,7 +328,7 @@ const fr: Translations = {
     declineFailed: "Échec du refus de l'invitation. Veuillez réessayer.",
   },
   invitationAddLinkScreen: {
-    title: "Inviter par lien",
+    title: "Inviter des amis",
     inviteIntro: "Invitez des amis à rejoindre {{cookbookName}}.",
     yourCookbook: "votre livre de recettes",
     inviteLinkLabel: "Lien d'invitation",
@@ -345,6 +338,9 @@ const fr: Translations = {
     copyButton: "Copier le lien",
     linkCopied: "Copié dans le presse-papiers",
     failedToCreateLink: "Échec de la création du lien.",
+    or: "ou",
+    inviteByEmail: "Inviter par e-mail",
+    inviteByEmailDesc: "Envoyer une invitation à une adresse précise",
   },
   demoDebugScreen: {
     howTo: "COMMENT FAIRE",
@@ -943,7 +939,8 @@ const fr: Translations = {
     guideRecipeScreen: "Voici l'écran d'ajout d'une recette. La recette se saisit ici.",
     guideInviteChoose: "Ouvrez le livre de recettes à partager.",
     guideInviteMenu: "Touchez le menu ici, puis Envoyer une invitation.",
-    guideInviteOptions: "Invitez quelqu'un par e-mail, ou partagez-lui un lien.",
+    guideInviteOptions:
+      "Partagez un lien pour qu'ils puissent rejoindre. Vous pouvez aussi envoyer un e-mail.",
     gotIt: "Compris",
     guideViewOnly:
       "Vous pouvez seulement consulter ce livre de recettes. Revenez en arrière et ouvrez-en un où vous pouvez ajouter des recettes.",

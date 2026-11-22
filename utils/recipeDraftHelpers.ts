@@ -34,11 +34,6 @@ export interface DraftFormData {
   isSnack?: boolean | null
 }
 
-export type DraftContentFields = Pick<
-  RecipeDraftItem,
-  "title" | "summary" | "images" | "directions" | "ingredientSections"
->
-
 export type DraftFieldsFromForm = Omit<
   RecipeDraftItem,
   "draftId" | "cookbookId" | "thumbnail" | "videoPath" | "savedAt"
@@ -118,7 +113,16 @@ export function isPlaceholderDraftTitle(title?: string | null): boolean {
   )
 }
 
-export function draftItemHasContent(draft: DraftContentFields): boolean {
+export function draftItemHasContent(draft: {
+  title?: string | null
+  summary?: string | null
+  images?: { name?: string | null }[] | null
+  directions?: { text?: string | null; image?: string | null }[] | null
+  ingredientSections?: {
+    title?: string | null
+    ingredients?: { name?: string | null }[] | null
+  }[] | null
+}): boolean {
   if (hasMeaningfulText(draft.summary)) return true
   if (draft.images?.some((img) => hasMeaningfulText(img.name))) return true
   if (draft.directions?.some((d) => hasMeaningfulText(d.text) || hasMeaningfulText(d.image))) {

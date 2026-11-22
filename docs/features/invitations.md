@@ -6,36 +6,36 @@ Who can send is `canSendInvite` in [membershipTier.ts](../../utils/membershipTie
 
 ## Sending
 
-Send Invite on the cookbook opens [add-options.tsx](<../../app/(logged-in)/invitation/add-options.tsx>): email, or a link.
+Send Invite on the cookbook opens [add-link.tsx](<../../app/(logged-in)/invitation/add-link.tsx>) with a link already minted. Invite by email is a quieter row under that card and opens [add-email.tsx](<../../app/(logged-in)/invitation/add-email.tsx>). Back from email returns to the link.
 
 **Email** ([add-email.tsx](<../../app/(logged-in)/invitation/add-email.tsx>)). The address is checked on the device: non-empty, at least 6 characters, and a single `@` with a dot in the domain. The store turns the API result into a message on the screen:
 
-| API result | Message | Getting-started invite step |
-| --- | --- | --- |
-| ok | "Your invite has been sent!" | Done |
-| not-found | "No account exists with that email." | Unchanged |
-| conflict | "They've already been invited." | Unchanged |
-| anything else | "Something went wrong, please try again later." | Unchanged |
+| API result    | Message                                         | Getting-started invite step |
+| ------------- | ----------------------------------------------- | --------------------------- |
+| ok            | "Your invite has been sent!"                    | Done                        |
+| not-found     | "No account exists with that email."            | Unchanged                   |
+| conflict      | "They've already been invited."                 | Unchanged                   |
+| anything else | "Something went wrong, please try again later." | Unchanged                   |
 
 The field clears after every response. Those four strings are fixed in [invitationStore.ts](../../stores/invitationStore.ts).
 
-**Link** ([add-link.tsx](<../../app/(logged-in)/invitation/add-link.tsx>)). Opening the screen mints one token for the selected cookbook and shows `https://sharedcookbook.com/invite/?t=` plus the token (`INVITE_BASE_URL` in [config.base.ts](../../config/config.base.ts)). Copy puts that URL on the clipboard and marks the getting-started invite step done. Share mints a second token, shares that new URL, and marks the step done only when the share sheet reports `Share.sharedAction`. A cancelled sheet on iOS does not. The screen mints again if Share is tapped, so the copied URL and the shared URL can differ.
+**Link** ([add-link.tsx](<../../app/(logged-in)/invitation/add-link.tsx>)). Opening the screen mints one token for the selected cookbook. The box shows `sharedcookbook.com/invite/…` (`inviteLinkPreview`). Copy and share still use the full `https://sharedcookbook.com/invite/?t=` URL (`INVITE_BASE_URL` in [config.base.ts](../../config/config.base.ts)). The copy icon puts that URL on the clipboard and marks the getting-started invite step done. Share sends that same URL and marks the step done only when the share sheet reports `Share.sharedAction`. A cancelled sheet on iOS does not. Minting again is a new token; the previous one stays redeemable until it expires.
 
 ## Opening a link
 
 `https://sharedcookbook.com/invite/?t=<token>` hits [invite/index.tsx](../../app/invite/index.tsx), which redirects to `/i/<token>` ([i/[token].tsx](../../app/i/[token].tsx)). A missing `t` redirects home. The token screen sits outside the logged-in layout, so it can render signed out. The logged-in layout would have sent the person to login and dropped the token.
 
-| State | What the screen shows |
-| --- | --- |
-| Signed out | "Please log in to view and accept this invitation" and a button to `/login-options`. The invitation is not fetched |
-| Signed in, loading | A spinner |
-| Signed in, token found | Cookbook image and title, Accept, Decline |
-| Missing token, or the fetch returned nothing | The empty state "We couldn't find your invitation anywhere" |
-| Accept or decline in flight | The circular progress screen, at least one second |
-| Accepted | Success, then Back to cookbooks |
-| Declined | Declined, then Back to cookbooks |
-| API conflict | "This invitation link has already been redeemed." |
-| Other accept or decline failure | The matching failed message |
+| State                                        | What the screen shows                                                                                              |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Signed out                                   | "Please log in to view and accept this invitation" and a button to `/login-options`. The invitation is not fetched |
+| Signed in, loading                           | A spinner                                                                                                          |
+| Signed in, token found                       | Cookbook image and title, Accept, Decline                                                                          |
+| Missing token, or the fetch returned nothing | The empty state "We couldn't find your invitation anywhere"                                                        |
+| Accept or decline in flight                  | The circular progress screen, at least one second                                                                  |
+| Accepted                                     | Success, then Back to cookbooks                                                                                    |
+| Declined                                     | Declined, then Back to cookbooks                                                                                   |
+| API conflict                                 | "This invitation link has already been redeemed."                                                                  |
+| Other accept or decline failure              | The matching failed message                                                                                        |
 
 Accept and decline call the token endpoint (`byToken: true`). Conflict is the client's label for a 409. What the API treats as a conflict is in the share-link doc.
 
@@ -47,10 +47,10 @@ Profile → pending invitations opens [invitation/index.tsx](<../../app/(logged-
 
 ## Where to look in code
 
-| Area | Path |
-| --- | --- |
-| Email, link, and the pending list | [app/(logged-in)/invitation/](<../../app/(logged-in)/invitation/>) |
-| Link entry and the token screen | [app/invite/index.tsx](../../app/invite/index.tsx), [app/i/[token].tsx](../../app/i/[token].tsx) |
-| Invite URL and email check | [utils/invitations.ts](../../utils/invitations.ts) |
-| Send, mint, accept, decline | [stores/invitationStore.ts](../../stores/invitationStore.ts) |
-| Card copy on the pending list | [utils/invitationFormat.ts](../../utils/invitationFormat.ts) |
+| Area                              | Path                                                                                             |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Email, link, and the pending list | [app/(logged-in)/invitation/](<../../app/(logged-in)/invitation/>)                               |
+| Link entry and the token screen   | [app/invite/index.tsx](../../app/invite/index.tsx), [app/i/[token].tsx](../../app/i/[token].tsx) |
+| Invite URL and email check        | [utils/invitations.ts](../../utils/invitations.ts)                                               |
+| Send, mint, accept, decline       | [stores/invitationStore.ts](../../stores/invitationStore.ts)                                     |
+| Card copy on the pending list     | [utils/invitationFormat.ts](../../utils/invitationFormat.ts)                                     |

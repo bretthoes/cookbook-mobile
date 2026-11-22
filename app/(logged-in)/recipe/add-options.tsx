@@ -20,7 +20,7 @@ import {
   leaveGettingStartedTour,
   useGettingStartedTour,
 } from "@/utils/gettingStartedTour"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect } from "expo-router/react-navigation"
 import { router } from "expo-router"
 import { useCallback, useEffect, useMemo, type RefObject } from "react"
 import {

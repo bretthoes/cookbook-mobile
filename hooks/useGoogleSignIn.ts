@@ -85,9 +85,9 @@ export function useGoogleSignIn() {
         return { status: "cancelled" }
       }
 
-      const message = `Google Sign-In returned unexpected response type: ${response.type}`
-      reportGoogleSignInFailure(response.type, message)
-      return { status: "failed", code: response.type, message }
+      const message = "Google Sign-In returned an unexpected response"
+      reportGoogleSignInFailure(undefined, message)
+      return { status: "failed", message }
     } catch (error) {
       if (isErrorWithCode(error)) {
         if (error.code === statusCodes.SIGN_IN_CANCELLED) {

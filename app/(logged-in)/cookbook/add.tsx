@@ -34,7 +34,7 @@ import { storage } from "@/utils/storage"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
-import { useFocusEffect } from "@react-navigation/native"
+import { useFocusEffect } from "expo-router/react-navigation"
 import { router } from "expo-router"
 import { useCallback, useState } from "react"
 import { useMMKVBoolean } from "react-native-mmkv"
@@ -92,8 +92,8 @@ export default function AddCookbookScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [3, 4],
+        base64: true,
+        quality: 0.8,
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {

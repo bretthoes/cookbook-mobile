@@ -82,9 +82,8 @@ export default function EditCookbookScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [3, 4],
-        quality: 1,
+        base64: true,
+        quality: 0.8,
       })
 
       if (!result.canceled && result.assets && result.assets.length > 0) {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest"
-import { toInviteUrl, validateInviteEmail } from "@/utils/invitations"
+import { inviteLinkPreview, toInviteUrl, validateInviteEmail } from "@/utils/invitations"
 
 vi.mock("@/config", () => ({
   default: {
@@ -10,6 +10,18 @@ vi.mock("@/config", () => ({
 describe("toInviteUrl", () => {
   it("builds an encoded invite URL", () => {
     expect(toInviteUrl("abc+token")).toBe("https://cookbook.example/invite/?t=abc%2Btoken")
+  })
+})
+
+describe("inviteLinkPreview", () => {
+  it("hides the token and keeps the host and path", () => {
+    expect(inviteLinkPreview("https://sharedcookbook.com/invite/?t=secret.token")).toBe(
+      "sharedcookbook.com/invite/…",
+    )
+  })
+
+  it("returns the original string when it is not a URL", () => {
+    expect(inviteLinkPreview("not a url")).toBe("not a url")
   })
 })
 

@@ -1,5 +1,5 @@
 import * as Sentry from "@sentry/react-native"
-import type { NavigationContainerRef, ParamListBase } from "@react-navigation/native"
+import type { NavigationContainerRef, ParamListBase } from "expo-router/react-navigation"
 import Config from "@/config"
 
 const navigationIntegration = Sentry.reactNavigationIntegration({
