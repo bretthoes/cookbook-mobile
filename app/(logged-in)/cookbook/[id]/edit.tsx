@@ -82,6 +82,8 @@ export default function EditCookbookScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [3, 4],
         base64: true,
         quality: 0.8,
       })
@@ -169,7 +171,7 @@ export default function EditCookbookScreen() {
       <FormCard>
         {localImage && (
           <View style={$imagePreviewContainer}>
-            <Image source={{ uri: localImage }} style={$imagePreview} />
+            <Image source={{ uri: localImage }} style={$imagePreview} resizeMode="cover" />
           </View>
         )}
 

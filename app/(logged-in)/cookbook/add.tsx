@@ -1,4 +1,3 @@
-import { AutoImage } from "@/components/AutoImage"
 import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
 import { Button } from "@/components/Button"
 import { Divider } from "@/components/Divider"
@@ -33,6 +32,7 @@ import {
 import { storage } from "@/utils/storage"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
+import { Image } from "expo-image"
 import * as ImagePicker from "expo-image-picker"
 import { useFocusEffect } from "expo-router/react-navigation"
 import { router } from "expo-router"
@@ -92,6 +92,8 @@ export default function AddCookbookScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
+        allowsEditing: true,
+        aspect: [3, 4],
         base64: true,
         quality: 0.8,
       })
@@ -168,7 +170,7 @@ export default function AddCookbookScreen() {
         <FormCard>
           {imageLocal && (
             <View style={$imagePreviewContainer}>
-              <AutoImage source={{ uri: imageLocal }} style={$imagePreview} />
+              <Image source={{ uri: imageLocal }} style={$imagePreview} contentFit="cover" />
             </View>
           )}
 
