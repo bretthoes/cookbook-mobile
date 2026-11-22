@@ -13,12 +13,12 @@ import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
+import { Image } from "expo-image"
 import { router, useLocalSearchParams } from "expo-router"
 import React, { useCallback, useEffect, useMemo, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ImageStyle,
   TextStyle,
   View,
@@ -184,7 +184,7 @@ export default function InvitationTokenScreen() {
         />
         <View style={$cookbookContainer}>
           {cookbookImageSource && (
-            <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
+            <Image source={cookbookImageSource} style={$themedCookbookImage} contentFit="cover" />
           )}
           {invitation.cookbookTitle && (
             <Text
@@ -222,7 +222,7 @@ export default function InvitationTokenScreen() {
         />
         <View style={$cookbookContainer}>
           {cookbookImageSource && (
-            <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
+            <Image source={cookbookImageSource} style={$themedCookbookImage} contentFit="cover" />
           )}
           {invitation.cookbookTitle && (
             <Text
@@ -349,7 +349,7 @@ export default function InvitationTokenScreen() {
 
       <View style={$cookbookContainer}>
         {cookbookImageSource && (
-          <Image source={cookbookImageSource} style={$themedCookbookImage} resizeMode="cover" />
+          <Image source={cookbookImageSource} style={$themedCookbookImage} contentFit="cover" />
         )}
         {invitation.cookbookTitle && (
           <Text text={invitation.cookbookTitle} preset="subheading" style={$themedCookbookTitle} />

@@ -15,12 +15,11 @@ import {
 } from "@/utils/invitationFormat"
 import { colors, spacing } from "@/theme"
 import React, { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
+import { Image, type ImageSource } from "expo-image"
 import {
   AccessibilityProps,
   ActivityIndicator,
   FlatList,
-  Image,
-  ImageSourcePropType,
   ImageStyle,
   LayoutAnimation,
   Platform,
@@ -158,12 +157,12 @@ function InvitationCard({
     }
   })
 
-  const imageUri = useMemo<ImageSourcePropType>(() => {
+  const imageUri = useMemo<ImageSource | number>(() => {
     if (invitation.cookbookImage) {
       return { uri: invitation.cookbookImage }
     }
-    return getCookbookImage(invitation.id)
-  }, [invitation.cookbookImage, invitation.id])
+    return getCookbookImage(invitation.cookbookId ?? invitation.id)
+  }, [invitation.cookbookImage, invitation.cookbookId, invitation.id])
 
   const handlePressFavorite = useCallback(() => {
     onPressFavorite()
@@ -332,7 +331,7 @@ function InvitationCard({
               </View>
               <Text text={getParsedInvitationMessage(invitation)} />
             </View>
-            <Image source={imageUri} style={$themedItemThumbnail} />
+            <Image source={imageUri} style={$themedItemThumbnail} contentFit="cover" />
           </View>
         }
         FooterComponent={
