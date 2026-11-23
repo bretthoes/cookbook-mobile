@@ -5,7 +5,6 @@ import { FloatingActionButton } from "@/components/FloatingActionButton"
 import { GettingStartedGuide, useGuideAnchor } from "@/components/cookbooks/GettingStartedGuide"
 import { PressableIcon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { RecipeListItem } from "@/components/Recipe/RecipeListItem"
 import {
   getRecipeTagChipColor,
   RECIPE_TAG_CHIP_TEXT_COLOR,
@@ -17,6 +16,7 @@ import { useRecipesList } from "@/hooks/queries/useRecipesQuery"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { TxKeyPath, isRTL } from "@/i18n"
+import { normalizeLanguageCode } from "@/i18n/language"
 import { invalidateCookbookLists } from "@/services/query/invalidateQueries"
 import { canAddRecipe, canSendInvite, isOwnerTier } from "@/utils/membershipTier"
 import { cookbookDetailTourPhase } from "@/utils/gettingStarted"
@@ -32,20 +32,23 @@ import type { RecipeBriefItem } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { groupRecipesBySection, type RecipeIndexSection } from "@/utils/recipeIndex"
 import { useHeader } from "@/utils/useHeader"
 import { useFocusEffect, useIsFocused } from "expo-router/react-navigation"
 import { useQueryClient } from "@tanstack/react-query"
 import { router, useLocalSearchParams } from "expo-router"
 import { useTranslation } from "react-i18next"
-import { useCallback, useLayoutEffect, useMemo, useState } from "react"
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
-  FlatList,
   ImageStyle,
+  SectionList,
+  TextStyle,
   TouchableOpacity,
   View,
   ViewStyle,
+  type ViewToken,
 } from "react-native"
 
 const RECIPE_TAG_KEYS = [
@@ -80,7 +83,7 @@ export default function CookbookScreen() {
   const { selected, setSelectedById } = useSelectedCookbook()
   const { id } = useLocalSearchParams<{ id: string }>()
   const { themed, theme } = useAppTheme()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const isAuthor = isOwnerTier(ownMembership?.tier)
 
@@ -100,16 +103,22 @@ export default function CookbookScreen() {
   const { refreshing, onRefresh } = useManualRefresh(useCallback(() => refetch(), [refetch]))
   const [selectedTags, setSelectedTags] = useState<Set<TagKey>>(new Set())
   const [filterExpanded, setFilterExpanded] = useState(false)
+  const [activeSection, setActiveSection] = useState<string | null>(null)
+  const listRef = useRef<SectionList<RecipeBriefItem, RecipeIndexSection<RecipeBriefItem>>>(null)
+  const pendingSectionIndex = useRef<number | null>(null)
   //const debouncedSearchQuery = useDebounce(searchQuery)
 
-  // Memoize themed styles
   const $themedEmptyState = useMemo(() => themed($emptyState), [themed])
   const $themedEmptyStateImage = useMemo(() => themed($emptyStateImage), [themed])
-  const $themedBorderTop = useMemo(() => themed($borderTop), [themed])
-  const $themedBorderBottom = useMemo(() => themed($borderBottom), [themed])
-  const $themedListItemStyle = useMemo(() => themed($listItemStyle), [themed])
   const $themedRoot = useMemo(() => themed($root), [themed])
   const $themedListFooter = useMemo(() => themed($listFooter), [themed])
+  const $themedSectionHeader = useMemo(() => themed($sectionHeader), [themed])
+  const $themedSectionHeaderText = useMemo(() => themed($sectionHeaderText), [themed])
+  const $themedRecipeRow = useMemo(() => themed($recipeRow), [themed])
+  const $themedRecipeTitle = useMemo(() => themed($recipeTitle), [themed])
+  const $themedIndexRail = useMemo(() => themed($indexRail), [themed])
+  const $themedRailLetter = useMemo(() => themed($railLetter), [themed])
+  const $themedRailLetterActive = useMemo(() => themed($railLetterActive), [themed])
 
   const toggleTag = useCallback((tag: TagKey) => {
     setSelectedTags((prev) => {
@@ -126,15 +135,57 @@ export default function CookbookScreen() {
   const q = searchQuery.trim().toLowerCase()
   const hasActiveFilters = q.length > 0 || selectedTags.size > 0
   const showAddFirstRecipe = !isListPending && recipes.length === 0 && !hasActiveFilters
-  let filteredItems = recipes.slice()
-  if (q) {
-    filteredItems = filteredItems.filter((r) => r.title.toLowerCase().includes(q))
-  }
-  if (selectedTags.size > 0) {
-    filteredItems = filteredItems.filter((r) =>
-      Array.from(selectedTags).every((tag) => r[tag] === true),
-    )
-  }
+  const language = normalizeLanguageCode(i18n.language) ?? "en"
+  const filteredItems = useMemo(() => {
+    let items = recipes
+    if (q) items = items.filter((recipe) => recipe.title.toLowerCase().includes(q))
+    if (selectedTags.size > 0) {
+      items = items.filter((recipe) =>
+        Array.from(selectedTags).every((tag) => recipe[tag] === true),
+      )
+    }
+    return items
+  }, [recipes, q, selectedTags])
+  const sections = useMemo(
+    () => groupRecipesBySection(filteredItems, language),
+    [filteredItems, language],
+  )
+  const highlightedSection = sections.some((section) => section.title === activeSection)
+    ? activeSection
+    : (sections[0]?.title ?? null)
+  const showRail = sections.length > 1
+
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
+      const sectionTitle = viewableItems.find((token) => token.section)?.section?.title
+      if (typeof sectionTitle !== "string") return
+      setActiveSection((current) => (current === sectionTitle ? current : sectionTitle))
+    },
+    [],
+  )
+
+  const jumpToSection = useCallback((sectionIndex: number) => {
+    pendingSectionIndex.current = sectionIndex
+    listRef.current?.scrollToLocation({
+      sectionIndex,
+      itemIndex: 0,
+      animated: false,
+      viewOffset: spacing.xl,
+    })
+  }, [])
+
+  const onScrollToIndexFailed = useCallback(() => {
+    const sectionIndex = pendingSectionIndex.current
+    if (sectionIndex == null) return
+    setTimeout(() => {
+      listRef.current?.scrollToLocation({
+        sectionIndex,
+        itemIndex: 0,
+        animated: false,
+        viewOffset: spacing.xl,
+      })
+    }, 80)
+  }, [])
 
   const handleLoadMore = useCallback(() => {
     if (!listHasNextPage || isLoadingMore) return
@@ -317,131 +368,169 @@ export default function CookbookScreen() {
         options={popoverOptions}
         highlightKey={showMenuGuide ? SEND_INVITE_KEY : undefined}
       />
-      <Screen preset="fixed" style={$themedRoot}>
-        <FlatList<RecipeBriefItem>
-          data={filteredItems}
-          keyExtractor={(item) => String(item.id)}
-          contentContainerStyle={canContribute ? $listContentWithFab : undefined}
-          ListEmptyComponent={
-            isListPending ? (
-              <ActivityIndicator />
-            ) : showAddFirstRecipe ? (
-              <EmptyState
-                preset="generic"
-                headingTx="cookbookDetailScreen:addFirstRecipeTitle"
-                contentTx={
-                  canContribute
-                    ? "cookbookDetailScreen:addFirstRecipeDescription"
-                    : "cookbookDetailScreen:noRecipesEmpty"
-                }
-                button=""
-                style={$themedEmptyState}
-                imageStyle={$themedEmptyStateImage}
-                ImageProps={{ resizeMode: "contain" }}
-              />
-            ) : (
-              <EmptyState
-                preset="generic"
-                contentTx="cookbookDetailScreen:noRecipesEmpty"
-                style={$themedEmptyState}
-                buttonOnPress={onRefresh}
-                imageStyle={$themedEmptyStateImage}
-                ImageProps={{ resizeMode: "contain" }}
-              />
-            )
-          }
-          ListHeaderComponent={
-            showAddFirstRecipe ? null : (
-              <View>
-                <SearchBar
-                  value={searchQuery}
-                  onChangeText={setSearchQuery}
-                  placeholder={t("recipeListScreen:searchPlaceholder")}
-                  leftIcon={filterExpanded ? "filterFilled" : "filter"}
-                  leftIconColor={selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim}
-                  onLeftIconPress={() => setFilterExpanded((v) => !v)}
-                />
-                {filterExpanded && (
-                  <View style={themed($tagChipContainer)}>
-                    {RECIPE_TAG_KEYS.map((tag) => {
-                      const isSelected = selectedTags.has(tag)
-                      const chipColor = isSelected ? getRecipeTagChipColor(tag) : undefined
-                      return (
-                        <TouchableOpacity
-                          key={tag}
-                          onPress={() => toggleTag(tag)}
-                          style={[
-                            themed($tagChip),
-                            chipColor && {
-                              backgroundColor: chipColor,
-                              borderColor: chipColor,
-                            },
-                          ]}
-                          activeOpacity={0.7}
-                        >
-                          <Text
-                            size="xs"
-                            weight={isSelected ? "semiBold" : "normal"}
-                            tx={tagLabelTx(tag)}
-                            style={chipColor ? { color: RECIPE_TAG_CHIP_TEXT_COLOR } : undefined}
-                          />
-                        </TouchableOpacity>
-                      )
-                    })}
-                  </View>
-                )}
-                <Divider size={spacing.sm} />
+      <Screen preset="fixed" style={$themedRoot} contentContainerStyle={$screenBody}>
+        {showAddFirstRecipe ? null : (
+          <View>
+            <SearchBar
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder={t("recipeListScreen:searchPlaceholder")}
+              leftIcon={filterExpanded ? "filterFilled" : "filter"}
+              leftIconColor={selectedTags.size > 0 ? theme.colors.tint : theme.colors.textDim}
+              onLeftIconPress={() => setFilterExpanded((v) => !v)}
+            />
+            {filterExpanded && (
+              <View style={themed($tagChipContainer)}>
+                {RECIPE_TAG_KEYS.map((tag) => {
+                  const isSelected = selectedTags.has(tag)
+                  const chipColor = isSelected ? getRecipeTagChipColor(tag) : undefined
+                  return (
+                    <TouchableOpacity
+                      key={tag}
+                      onPress={() => toggleTag(tag)}
+                      style={[
+                        themed($tagChip),
+                        chipColor && {
+                          backgroundColor: chipColor,
+                          borderColor: chipColor,
+                        },
+                      ]}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        size="xs"
+                        weight={isSelected ? "semiBold" : "normal"}
+                        tx={tagLabelTx(tag)}
+                        style={chipColor ? { color: RECIPE_TAG_CHIP_TEXT_COLOR } : undefined}
+                      />
+                    </TouchableOpacity>
+                  )
+                })}
               </View>
-            )
-          }
-          onRefresh={onRefresh}
-          refreshing={refreshing}
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.4}
-          ListFooterComponent={
-            showAddFirstRecipe ? null : (
-              <View style={$themedListFooter}>
-                {isLoadingMore && <ActivityIndicator />}
+            )}
+            <Divider size={spacing.xs} />
+          </View>
+        )}
+        <View style={$listFrame}>
+          <SectionList<RecipeBriefItem, RecipeIndexSection<RecipeBriefItem>>
+            ref={listRef}
+            style={$listFrame}
+            sections={sections}
+            keyExtractor={(item) => String(item.id)}
+            stickySectionHeadersEnabled
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={[
+              canContribute ? $listContentWithFab : undefined,
+              showRail ? $listContentWithRail : undefined,
+            ]}
+            ListEmptyComponent={
+              isListPending ? (
+                <ActivityIndicator />
+              ) : showAddFirstRecipe ? (
+                <EmptyState
+                  preset="generic"
+                  headingTx="cookbookDetailScreen:addFirstRecipeTitle"
+                  contentTx={
+                    canContribute
+                      ? "cookbookDetailScreen:addFirstRecipeDescription"
+                      : "cookbookDetailScreen:noRecipesEmpty"
+                  }
+                  button=""
+                  style={$themedEmptyState}
+                  imageStyle={$themedEmptyStateImage}
+                  ImageProps={{ resizeMode: "contain" }}
+                />
+              ) : (
+                <EmptyState
+                  preset="generic"
+                  contentTx="cookbookDetailScreen:noRecipesEmpty"
+                  style={$themedEmptyState}
+                  buttonOnPress={onRefresh}
+                  imageStyle={$themedEmptyStateImage}
+                  ImageProps={{ resizeMode: "contain" }}
+                />
+              )
+            }
+            onRefresh={onRefresh}
+            refreshing={refreshing}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.4}
+            ListFooterComponent={
+              showAddFirstRecipe ? null : (
+                <View style={$themedListFooter}>
+                  {isLoadingMore && <ActivityIndicator />}
+                  <Text
+                    weight="light"
+                    tx={
+                      hasActiveFilters
+                        ? "cookbookDetailScreen:recipeCount"
+                        : recipeListTotalCount > recipes.length
+                          ? "cookbookDetailScreen:recipeCountLoaded"
+                          : "cookbookDetailScreen:recipeCount"
+                    }
+                    txOptions={
+                      hasActiveFilters
+                        ? { count: filteredItems.length }
+                        : recipeListTotalCount > recipes.length
+                          ? {
+                              loaded: recipes.length,
+                              total: recipeListTotalCount,
+                            }
+                          : { count: recipeListTotalCount }
+                    }
+                  />
+                </View>
+              )
+            }
+            renderSectionHeader={({ section }) => (
+              <View style={$themedSectionHeader}>
                 <Text
-                  weight="light"
-                  tx={
-                    hasActiveFilters
-                      ? "cookbookDetailScreen:recipeCount"
-                      : recipeListTotalCount > recipes.length
-                        ? "cookbookDetailScreen:recipeCountLoaded"
-                        : "cookbookDetailScreen:recipeCount"
-                  }
-                  txOptions={
-                    hasActiveFilters
-                      ? { count: filteredItems.length }
-                      : recipeListTotalCount > recipes.length
-                        ? {
-                            loaded: recipes.length,
-                            total: recipeListTotalCount,
-                          }
-                        : { count: recipeListTotalCount }
-                  }
+                  accessibilityRole="header"
+                  text={section.title}
+                  size="xs"
+                  style={$themedSectionHeaderText}
                 />
               </View>
-            )
-          }
-          renderItem={({ item, index }) => (
-            <View
-              style={[
-                $themedListItemStyle,
-                index === 0 && $themedBorderTop,
-                index === filteredItems.length - 1 && $themedBorderBottom,
-              ]}
-            >
-              <RecipeListItem
-                text={item.title}
-                index={index}
-                lastIndex={filteredItems.length - 1}
+            )}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                accessibilityRole="button"
                 onPress={() => handlePressRecipe(item.id)}
-              />
+                style={$themedRecipeRow}
+              >
+                <Text numberOfLines={2} text={item.title} size="sm" style={$themedRecipeTitle} />
+              </TouchableOpacity>
+            )}
+            onViewableItemsChanged={onViewableItemsChanged}
+            viewabilityConfig={VIEWABILITY_CONFIG}
+            onScrollToIndexFailed={onScrollToIndexFailed}
+          />
+          {showRail ? (
+            <View style={$themedIndexRail} pointerEvents="box-none">
+              {sections.map((section, index) => {
+                const selected = section.title === highlightedSection
+                return (
+                  <TouchableOpacity
+                    key={section.title}
+                    accessibilityRole="button"
+                    accessibilityLabel={t("cookbookDetailScreen:jumpToSection", {
+                      letter: section.title,
+                    })}
+                    accessibilityState={{ selected }}
+                    hitSlop={{ left: 8, right: 8 }}
+                    onPress={() => jumpToSection(index)}
+                  >
+                    <Text
+                      text={section.title}
+                      size="xxs"
+                      style={selected ? $themedRailLetterActive : $themedRailLetter}
+                    />
+                  </TouchableOpacity>
+                )
+              })}
             </View>
-          )}
-        />
+          ) : null}
+        </View>
       </Screen>
       {canContribute ? (
         <FloatingActionButton
@@ -475,6 +564,7 @@ export default function CookbookScreen() {
 }
 
 const SEND_INVITE_KEY = "sendInvite"
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 30 }
 const FAB_CLEARANCE = 56 + spacing.xl
 
 const $tourRoot: ViewStyle = {
@@ -483,6 +573,18 @@ const $tourRoot: ViewStyle = {
 
 const $listContentWithFab: ViewStyle = {
   paddingBottom: FAB_CLEARANCE,
+}
+
+const $screenBody: ViewStyle = {
+  flex: 1,
+}
+
+const $listFrame: ViewStyle = {
+  flex: 1,
+}
+
+const $listContentWithRail: ViewStyle = {
+  paddingEnd: spacing.xl,
 }
 
 const $headerActionGuide: ViewStyle = {
@@ -508,22 +610,54 @@ const $emptyStateImage: ThemedStyle<ImageStyle> = (theme) => ({
   transform: [{ scaleX: isRTL ? -1 : 1 }],
 })
 
-const $borderTop: ThemedStyle<ViewStyle> = (theme) => ({
-  borderTopLeftRadius: theme.spacing.xs,
-  borderTopRightRadius: theme.spacing.xs,
-  paddingTop: theme.spacing.lg,
+const $sectionHeader: ThemedStyle<ViewStyle> = (theme) => ({
+  backgroundColor: theme.colors.background,
+  paddingHorizontal: theme.spacing.md,
+  paddingTop: theme.spacing.sm,
+  paddingBottom: theme.spacing.xxs,
 })
 
-const $borderBottom: ThemedStyle<ViewStyle> = (theme) => ({
-  borderBottomLeftRadius: theme.spacing.xs,
-  borderBottomRightRadius: theme.spacing.xs,
-  paddingBottom: theme.spacing.lg,
+const $sectionHeaderText: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.tint,
+  fontFamily: theme.typography.secondary.medium,
 })
 
-const $listItemStyle: ThemedStyle<ViewStyle> = (theme) => ({
-  backgroundColor: theme.colors.backgroundDim,
-  paddingHorizontal: theme.spacing.sm,
-  marginHorizontal: theme.spacing.sm,
+const $recipeRow: ThemedStyle<ViewStyle> = (theme) => ({
+  paddingVertical: theme.spacing.sm,
+  paddingHorizontal: theme.spacing.md,
+  borderTopWidth: 1,
+  borderTopColor: theme.colors.separator,
+})
+
+const $recipeTitle: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.text,
+  fontFamily: theme.typography.secondary.normal,
+})
+
+const $indexRail: ThemedStyle<ViewStyle> = (theme) => ({
+  position: "absolute",
+  top: theme.spacing.xs,
+  bottom: theme.spacing.xs,
+  end: 0,
+  width: theme.spacing.lg,
+  justifyContent: "center",
+  alignItems: "center",
+})
+
+const $railLetter: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.tint,
+  fontFamily: theme.typography.secondary.medium,
+  fontSize: 11,
+  lineHeight: 14,
+  textAlign: "center",
+})
+
+const $railLetterActive: ThemedStyle<TextStyle> = (theme) => ({
+  color: theme.colors.text,
+  fontFamily: theme.typography.secondary.medium,
+  fontSize: 11,
+  lineHeight: 14,
+  textAlign: "center",
 })
 
 const $root: ThemedStyle<ViewStyle> = (theme) => ({

@@ -616,6 +616,7 @@ const en = {
     addRecipe: "Add Recipe",
     sendInvite: "Send Invite",
     moreOptionsA11y: "More options",
+    jumpToSection: "Jump to {{letter}}",
     viewMembers: "View Members",
     editCookbook: "Edit Cookbook",
     leaveCookbook: "Leave Cookbook",

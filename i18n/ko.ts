@@ -609,6 +609,7 @@ const ko: Translations = {
     addRecipe: "레시피 추가",
     sendInvite: "초대 보내기",
     moreOptionsA11y: "더 보기",
+    jumpToSection: "{{letter}} 섹션으로 이동",
     viewMembers: "멤버 보기",
     editCookbook: "요리책 편집",
     leaveCookbook: "요리책 나가기",

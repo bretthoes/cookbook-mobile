@@ -626,6 +626,7 @@ const fr: Translations = {
     addRecipe: "Ajouter une recette",
     sendInvite: "Envoyer une invitation",
     moreOptionsA11y: "Plus d'options",
+    jumpToSection: "Aller à {{letter}}",
     viewMembers: "Voir les membres",
     editCookbook: "Modifier le livre de recettes",
     leaveCookbook: "Quitter le livre de recettes",
