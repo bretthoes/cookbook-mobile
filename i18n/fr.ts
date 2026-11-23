@@ -993,6 +993,10 @@ const fr: Translations = {
       kg_plural: "kg",
     },
   },
+  imageCropper: {
+    usePhoto: "Utiliser la photo",
+    failed: "Impossible de recadrer cette photo. Veuillez réessayer.",
+  },
 }
 
 export default fr

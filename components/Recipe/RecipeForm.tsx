@@ -1,6 +1,7 @@
 import { AutoImage } from "@/components/AutoImage"
 import { Button } from "@/components/Button"
 import { Divider } from "@/components/Divider"
+import { ImageCropper } from "@/components/ImageCropper"
 import { PressableIcon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
@@ -11,6 +12,7 @@ import {
   RECIPE_TAG_CHIP_TEXT_COLOR,
 } from "@/components/Recipe/recipeTagColors"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import { useImageCropSession } from "@/hooks/useImageCropSession"
 import { translate } from "@/i18n"
 import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
@@ -18,6 +20,7 @@ import { spacing } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
+import { RECIPE_IMAGE_ASPECT } from "@/utils/imageCrop"
 import { MAX_INGREDIENT_SECTIONS } from "@/utils/recipeIngredientSections"
 import { recipeSchema } from "@/validators/recipeSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
@@ -134,6 +137,7 @@ export function RecipeForm(props: RecipeFormProps) {
   const { themed, theme } = useAppTheme()
   const { isInFlight, run } = useInFlightAction()
   const [isUploading, setIsUploading] = useState(false)
+  const crop = useImageCropSession()
 
   const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])
   const $themedDirectionItemContainer = React.useMemo(
@@ -189,24 +193,24 @@ export function RecipeForm(props: RecipeFormProps) {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         allowsMultipleSelection: false,
-        aspect: [1, 1],
-        base64: true,
-        quality: 0.8,
+        quality: 1,
       })
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const uploadResponse = await api.uploadImage(result.assets)
-        if (uploadResponse.kind !== "ok") {
-          alert(getImageUploadErrorMessage(uploadResponse, "recipeFormScreen:imageUploadFailed"))
-        } else if (uploadResponse.keys.length > 0) {
-          const key = uploadResponse.keys[0]
-          setValue(`directions.${directionIndex}.image`, key)
-          if (result.assets[0]?.uri) {
-            setNewImageKeysToLocalUri((prev) => ({ ...prev, [key]: result.assets[0].uri }))
-          }
-        } else {
-          alert(translate("recipeFormScreen:imageUploadFailed"))
+      if (result.canceled || !result.assets?.length) return
+      const cropped = await crop.start(result.assets, RECIPE_IMAGE_ASPECT)
+      if (!cropped?.length) return
+
+      const uploadResponse = await api.uploadImage(cropped)
+      if (uploadResponse.kind !== "ok") {
+        alert(getImageUploadErrorMessage(uploadResponse, "recipeFormScreen:imageUploadFailed"))
+      } else if (uploadResponse.keys.length > 0) {
+        const key = uploadResponse.keys[0]
+        setValue(`directions.${directionIndex}.image`, key)
+        if (cropped[0]?.uri) {
+          setNewImageKeysToLocalUri((prev) => ({ ...prev, [key]: cropped[0].uri }))
         }
+      } else {
+        alert(translate("recipeFormScreen:imageUploadFailed"))
       }
     } finally {
       setUploadingDirectionIndex(null)
@@ -271,25 +275,25 @@ export function RecipeForm(props: RecipeFormProps) {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
         allowsMultipleSelection: true,
-        aspect: [1, 1],
-        base64: true,
-        quality: 0.8,
+        quality: 1,
       })
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const uploadResponse = await api.uploadImage(result.assets)
-        if (uploadResponse.kind === "ok") {
-          const existing = isEdit ? (getValues("images") ?? []) : []
-          const combined = [...existing, ...uploadResponse.keys].slice(0, 6)
-          setValue("images", combined)
-          const keyToUri: Record<string, string> = {}
-          uploadResponse.keys.forEach((key, i) => {
-            if (result.assets[i]?.uri) keyToUri[key] = result.assets[i].uri
-          })
-          setNewImageKeysToLocalUri((prev) => ({ ...prev, ...keyToUri }))
-        } else {
-          alert(getImageUploadErrorMessage(uploadResponse, "recipeFormScreen:imageUploadFailed"))
-        }
+      if (result.canceled || !result.assets?.length) return
+      const cropped = await crop.start(result.assets, RECIPE_IMAGE_ASPECT)
+      if (!cropped?.length) return
+
+      const uploadResponse = await api.uploadImage(cropped)
+      if (uploadResponse.kind === "ok") {
+        const existing = isEdit ? (getValues("images") ?? []) : []
+        const combined = [...existing, ...uploadResponse.keys].slice(0, 6)
+        setValue("images", combined)
+        const keyToUri: Record<string, string> = {}
+        uploadResponse.keys.forEach((key, i) => {
+          if (cropped[i]?.uri) keyToUri[key] = cropped[i].uri
+        })
+        setNewImageKeysToLocalUri((prev) => ({ ...prev, ...keyToUri }))
+      } else {
+        alert(getImageUploadErrorMessage(uploadResponse, "recipeFormScreen:imageUploadFailed"))
       }
     } finally {
       setIsUploading(false)
@@ -626,6 +630,15 @@ export function RecipeForm(props: RecipeFormProps) {
 
         {isInFlight && <ActivityIndicator />}
       </SectionCard>
+      {crop.pending ? (
+        <ImageCropper
+          key={crop.pending.asset.uri}
+          asset={crop.pending.asset}
+          aspect={crop.pending.aspect}
+          onCancel={crop.cancel}
+          onConfirm={crop.accept}
+        />
+      ) : null}
     </View>
   )
 }

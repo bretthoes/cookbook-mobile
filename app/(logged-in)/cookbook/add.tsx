@@ -1,6 +1,7 @@
 import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
 import { Button } from "@/components/Button"
 import { Divider } from "@/components/Divider"
+import { ImageCropper } from "@/components/ImageCropper"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
@@ -11,12 +12,14 @@ import {
   useUploadCookbookCoverMutation,
 } from "@/hooks/queries/useCookbooksQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import { useImageCropSession } from "@/hooks/useImageCropSession"
 import { translate } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import type { CookbookToAddSnapshotIn } from "@/types/cookbook"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
+import { COOKBOOK_COVER_ASPECT } from "@/utils/imageCrop"
 import {
   GETTING_STARTED_DEV_PREVIEW_KEY,
   shouldOpenCookbookAfterCreate,
@@ -80,6 +83,7 @@ export default function AddCookbookScreen() {
   const [imageLocal, setImageLocal] = useState<string | null>(null)
   const [createError, setCreateError] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
+  const crop = useImageCropSession()
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
@@ -92,27 +96,24 @@ export default function AddCookbookScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [3, 4],
-        base64: true,
-        quality: 0.8,
+        allowsEditing: false,
+        quality: 1,
       })
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        setImageLocal(result.assets[0]?.uri ?? null)
-        const uploadResponse = await uploadCover.mutateAsync(result.assets)
-        if (uploadResponse.ok) {
-          setValue("image", uploadResponse.key)
-        } else {
-          setImageLocal(null)
-          setValue("image", null)
-          alert(
-            getImageUploadErrorMessage(
-              uploadResponse.problem,
-              "cookbookAddScreen:imageUploadFailed",
-            ),
-          )
-        }
+      if (result.canceled || !result.assets?.length) return
+      const cropped = await crop.start(result.assets, COOKBOOK_COVER_ASPECT)
+      if (!cropped?.length) return
+
+      setImageLocal(cropped[0]?.uri ?? null)
+      const uploadResponse = await uploadCover.mutateAsync(cropped)
+      if (uploadResponse.ok) {
+        setValue("image", uploadResponse.key)
+      } else {
+        setImageLocal(null)
+        setValue("image", null)
+        alert(
+          getImageUploadErrorMessage(uploadResponse.problem, "cookbookAddScreen:imageUploadFailed"),
+        )
       }
     } finally {
       setIsUploading(false)
@@ -206,6 +207,15 @@ export default function AddCookbookScreen() {
           primaryTx="gettingStarted:gotIt"
           onPrimary={() => completeGettingStartedTour(userId)}
           onClose={endGettingStartedTour}
+        />
+      ) : null}
+      {crop.pending ? (
+        <ImageCropper
+          key={crop.pending.asset.uri}
+          asset={crop.pending.asset}
+          aspect={crop.pending.aspect}
+          onCancel={crop.cancel}
+          onConfirm={crop.accept}
         />
       ) : null}
     </View>

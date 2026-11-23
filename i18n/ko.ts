@@ -956,6 +956,10 @@ const ko: Translations = {
       kg_plural: "kg",
     },
   },
+  imageCropper: {
+    usePhoto: "사진 사용",
+    failed: "사진을 자를 수 없습니다. 다시 시도해 주세요.",
+  },
 }
 
 export default ko

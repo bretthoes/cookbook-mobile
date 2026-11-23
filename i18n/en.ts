@@ -968,6 +968,10 @@ const en = {
       kg_plural: "kg",
     },
   },
+  imageCropper: {
+    usePhoto: "Use photo",
+    failed: "Could not crop this photo. Please try again.",
+  },
 }
 
 export default en

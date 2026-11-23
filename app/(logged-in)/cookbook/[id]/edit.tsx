@@ -1,4 +1,5 @@
 import { Button } from "@/components/Button"
+import { ImageCropper } from "@/components/ImageCropper"
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
@@ -10,11 +11,13 @@ import {
   useUploadCookbookCoverMutation,
 } from "@/hooks/queries/useCookbooksQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
+import { useImageCropSession } from "@/hooks/useImageCropSession"
 import { useUiStore } from "@/stores/uiStore"
 import { translate } from "@/i18n"
 import { colors, spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
+import { COOKBOOK_COVER_ASPECT } from "@/utils/imageCrop"
 import { cookbookSchema } from "@/validators/cookbookSchema"
 import { yupResolver } from "@hookform/resolvers/yup"
 import * as ImagePicker from "expo-image-picker"
@@ -40,6 +43,7 @@ export default function EditCookbookScreen() {
   const [result, setResult] = useState<string>("")
   const [resultIsSuccess, setResultIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const crop = useImageCropSession()
   const { isInFlight, run } = useInFlightAction()
 
   useEffect(() => {
@@ -82,28 +86,29 @@ export default function EditCookbookScreen() {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
-        allowsEditing: true,
-        aspect: [3, 4],
-        base64: true,
-        quality: 0.8,
+        allowsEditing: false,
+        quality: 1,
       })
 
-      if (!result.canceled && result.assets && result.assets.length > 0) {
-        const previousImage = selected?.image ?? null
-        setLocalImage(result.assets[0].uri)
+      if (result.canceled || !result.assets?.length) return
+      const cropped = await crop.start(result.assets, COOKBOOK_COVER_ASPECT)
+      if (!cropped?.length) return
 
-        const uploadResponse = await uploadCover.mutateAsync(result.assets)
-        if (uploadResponse.ok) {
-          setValue("image", uploadResponse.key)
-        } else {
-          alert(
-            getImageUploadErrorMessage(
-              uploadResponse.problem,
-              "cookbookEditScreen:imageUploadFailed",
-            ),
-          )
-          setLocalImage(previousImage)
-        }
+      const previousImage = selected?.image ?? null
+      const croppedUri = cropped[0]?.uri
+      if (!croppedUri) return
+      setLocalImage(croppedUri)
+      const uploadResponse = await uploadCover.mutateAsync(cropped)
+      if (uploadResponse.ok) {
+        setValue("image", uploadResponse.key)
+      } else {
+        alert(
+          getImageUploadErrorMessage(
+            uploadResponse.problem,
+            "cookbookEditScreen:imageUploadFailed",
+          ),
+        )
+        setLocalImage(previousImage)
       }
     } finally {
       setIsLoading(false)
@@ -162,46 +167,61 @@ export default function EditCookbookScreen() {
   }
 
   return (
-    <Screen
-      preset="scroll"
-      contentContainerStyle={$root}
-      safeAreaEdges={["bottom"]}
-      keyboardOffset={100}
-    >
-      <FormCard>
-        {localImage && (
-          <View style={$imagePreviewContainer}>
-            <Image source={{ uri: localImage }} style={$imagePreview} resizeMode="cover" />
-          </View>
-        )}
-
-        <Button tx="cookbookEditScreen:changeCoverPhoto" onPress={pickImage} disabled={isLoading} />
-
-        {isLoading && <ActivityIndicator style={$uploadIndicator} />}
-
-        <Controller
-          name="title"
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value}
-              labelTx="cookbookEditScreen:titleLabel"
-              onChangeText={onChange}
-              placeholderTx="cookbookEditScreen:titlePlaceholder"
-              status={errors.title ? "error" : undefined}
-              helper={errors.title?.message}
-            />
+    <>
+      <Screen
+        preset="scroll"
+        contentContainerStyle={$root}
+        safeAreaEdges={["bottom"]}
+        keyboardOffset={100}
+      >
+        <FormCard>
+          {localImage && (
+            <View style={$imagePreviewContainer}>
+              <Image source={{ uri: localImage }} style={$imagePreview} resizeMode="cover" />
+            </View>
           )}
-        />
 
-        {result ? (
-          <Text
-            text={result}
-            style={[$resultText, resultIsSuccess ? $resultSuccess : $resultError]}
+          <Button
+            tx="cookbookEditScreen:changeCoverPhoto"
+            onPress={pickImage}
+            disabled={isLoading}
           />
-        ) : null}
-      </FormCard>
-    </Screen>
+
+          {isLoading && <ActivityIndicator style={$uploadIndicator} />}
+
+          <Controller
+            name="title"
+            control={control}
+            render={({ field: { onChange, value } }) => (
+              <TextField
+                value={value}
+                labelTx="cookbookEditScreen:titleLabel"
+                onChangeText={onChange}
+                placeholderTx="cookbookEditScreen:titlePlaceholder"
+                status={errors.title ? "error" : undefined}
+                helper={errors.title?.message}
+              />
+            )}
+          />
+
+          {result ? (
+            <Text
+              text={result}
+              style={[$resultText, resultIsSuccess ? $resultSuccess : $resultError]}
+            />
+          ) : null}
+        </FormCard>
+      </Screen>
+      {crop.pending ? (
+      <ImageCropper
+        key={crop.pending.asset.uri}
+        asset={crop.pending.asset}
+          aspect={crop.pending.aspect}
+          onCancel={crop.cancel}
+          onConfirm={crop.accept}
+        />
+      ) : null}
+    </>
   )
 }
 
