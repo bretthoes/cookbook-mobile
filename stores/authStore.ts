@@ -1,6 +1,7 @@
 import type { AuthResultSnapshotIn } from "@/types/auth"
 import { translate, type TxKeyPath } from "@/i18n"
 import { api } from "@/services/api"
+import type { ExternalLoginProvider } from "@/services/api/wrappers/users"
 import type { GeneralApiProblem } from "@/services/api/apiProblem"
 import { bumpAuthSession, setAccessToken } from "@/services/api/client"
 import { clearQueryClient } from "@/services/query/queryClient"
@@ -11,6 +12,12 @@ import { getRegisterErrorTxKey } from "@/utils/registerErrorTxKey"
 import * as SecureStore from "expo-secure-store"
 import { create } from "zustand"
 import { createJSONStorage, persist } from "zustand/middleware"
+
+const ssoFailureTx = {
+  Google: "loginScreen:errors.googleFailed",
+  Apple: "loginScreen:errors.appleFailed",
+  Facebook: "loginScreen:errors.facebookFailed",
+} as const satisfies Record<ExternalLoginProvider, TxKeyPath>
 
 const AUTH_STORE_KEY = "auth-v1"
 /** Older builds kept the registration password here until the first login. */
@@ -84,9 +91,7 @@ export interface AuthState {
   register: (password: string) => Promise<boolean>
   resendConfirmationEmail: () => Promise<boolean>
   forgotPassword: () => Promise<boolean>
-  loginWithGoogle: (idToken: string) => Promise<boolean>
-  loginWithApple: (identityToken: string) => Promise<boolean>
-  loginWithFacebook: (accessToken: string) => Promise<boolean>
+  loginWithProvider: (provider: ExternalLoginProvider, token: string) => Promise<boolean>
   deleteAccount: () => Promise<boolean>
   resetPassword: (resetCode: string, password: string) => Promise<void>
 }
@@ -227,38 +232,12 @@ export const useAuthStore = create<AuthState>()(
         return false
       },
 
-      loginWithGoogle: async (idToken) => {
+      loginWithProvider: async (provider, token) => {
         set({ result: "" })
-        const response = await api.loginWithGoogle(idToken)
+        const response = await api.loginWithProvider(provider, token)
         if (response.kind !== "ok") {
-          set({ result: "loginScreen:errors.googleFailed" })
-          console.error(`Error logging in with Google: ${JSON.stringify(response)}`)
-          return false
-        }
-        await writeSessionTokens(get().authEmail, response.authResult, set)
-        await ensureAuthEmail(get, set)
-        return true
-      },
-
-      loginWithApple: async (identityToken) => {
-        set({ result: "" })
-        const response = await api.loginWithApple(identityToken)
-        if (response.kind !== "ok") {
-          set({ result: "loginScreen:errors.appleFailed" })
-          console.error(`Error logging in with Apple: ${JSON.stringify(response)}`)
-          return false
-        }
-        await writeSessionTokens(get().authEmail, response.authResult, set)
-        await ensureAuthEmail(get, set)
-        return true
-      },
-
-      loginWithFacebook: async (accessToken) => {
-        set({ result: "" })
-        const response = await api.loginWithFacebook(accessToken)
-        if (response.kind !== "ok") {
-          set({ result: "loginScreen:errors.facebookFailed" })
-          console.error(`Error logging in with Facebook: ${JSON.stringify(response)}`)
+          set({ result: ssoFailureTx[provider] })
+          console.error(`Error logging in with ${provider}: ${JSON.stringify(response)}`)
           return false
         }
         await writeSessionTokens(get().authEmail, response.authResult, set)

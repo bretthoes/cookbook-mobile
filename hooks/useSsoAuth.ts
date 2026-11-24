@@ -42,7 +42,7 @@ export function useSsoAuth(onSuccess: () => void) {
         return null
       }
       if (result.email) useAuthStore.getState().setAuthEmail(result.email)
-      return () => useAuthStore.getState().loginWithApple(result.identityToken)
+      return () => useAuthStore.getState().loginWithProvider("Apple", result.identityToken)
     })
   }, [run, appleSignIn])
 
@@ -54,7 +54,7 @@ export function useSsoAuth(onSuccess: () => void) {
         useAuthStore.getState().setResult("loginScreen:errors.googleFailed")
         return null
       }
-      return () => useAuthStore.getState().loginWithGoogle(result.idToken)
+      return () => useAuthStore.getState().loginWithProvider("Google", result.idToken)
     })
   }, [run, googleSignIn])
 
@@ -62,7 +62,7 @@ export function useSsoAuth(onSuccess: () => void) {
     return run(async () => {
       const credential = await facebookSignIn()
       if (!credential) return null
-      return () => useAuthStore.getState().loginWithFacebook(credential.accessToken)
+      return () => useAuthStore.getState().loginWithProvider("Facebook", credential.accessToken)
     })
   }, [run, facebookSignIn])
 

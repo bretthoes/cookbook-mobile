@@ -271,22 +271,11 @@ export class Api {
     return userWrappers.login(email, password)
   }
 
-  async loginWithGoogle(
-    idToken: string,
+  async loginWithProvider(
+    provider: userWrappers.ExternalLoginProvider,
+    token: string,
   ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
-    return userWrappers.loginWithGoogle(idToken)
-  }
-
-  async loginWithApple(
-    identityToken: string,
-  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
-    return userWrappers.loginWithApple(identityToken)
-  }
-
-  async loginWithFacebook(
-    accessToken: string,
-  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
-    return userWrappers.loginWithFacebook(accessToken)
+    return userWrappers.loginWithProvider(provider, token)
   }
 
   async register(email: string, password: string): Promise<userWrappers.RegisterResult> {

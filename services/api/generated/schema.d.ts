@@ -308,74 +308,6 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  "/api/Recipes/parse-recipe-url": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @deprecated */
-    post: operations["RecipesParseRecipeFromUrl"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/api/Recipes/parse-recipe-img": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @deprecated */
-    post: operations["RecipesParseRecipeFromImage"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/api/Recipes/parse-recipe-voice": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @deprecated */
-    post: operations["RecipesParseRecipeFromVoice"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/api/Recipes/{id}/apply-prompt": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    /** @deprecated */
-    post: operations["RecipesApplySavedRecipeEditFromPrompt"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
   "/api/Recipes/apply-prompt": {
     parameters: {
       query?: never
@@ -472,7 +404,7 @@ export interface paths {
     patch?: never
     trace?: never
   }
-  "/api/Users/login-google": {
+  "/api/Users/login-external": {
     parameters: {
       query?: never
       header?: never
@@ -481,39 +413,7 @@ export interface paths {
     }
     get?: never
     put?: never
-    post: operations["UsersLoginGoogle"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/api/Users/login-apple": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations["UsersLoginApple"]
-    delete?: never
-    options?: never
-    head?: never
-    patch?: never
-    trace?: never
-  }
-  "/api/Users/login-facebook": {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    get?: never
-    put?: never
-    post: operations["UsersLoginFacebook"]
+    post: operations["UsersLoginExternal"]
     delete?: never
     options?: never
     head?: never
@@ -689,6 +589,14 @@ export interface components {
       /** Format: int32 */
       recipeCount?: number
     }
+    HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
+      ({
+        errors?: {
+          [key: string]: string[]
+        }
+      } & {
+        [key: string]: unknown
+      })
     ProblemDetails: {
       type?: string | null
       title?: string | null
@@ -699,14 +607,6 @@ export interface components {
     } & {
       [key: string]: unknown
     }
-    HttpValidationProblemDetails: components["schemas"]["ProblemDetails"] &
-      ({
-        errors?: {
-          [key: string]: string[]
-        }
-      } & {
-        [key: string]: unknown
-      })
     CreateCookbookCommand: {
       title?: string
       image?: string | null
@@ -957,10 +857,6 @@ export interface components {
     ParseRecipeFromVoiceCommand: {
       transcript?: string
     }
-    ApplySavedRecipeEditFromPromptBody: {
-      prompt?: string
-      recipe?: components["schemas"]["UpdateRecipeDto"]
-    }
     ApplyRecipeEditFromPromptCommand: {
       prompt?: string
       recipe?: components["schemas"]["RecipeDto"]
@@ -982,25 +878,22 @@ export interface components {
     DisplayNameDto: {
       displayName?: string
     }
-    LoginWithGoogleCommand: {
-      idToken?: string
-    }
-    LoginWithAppleCommand: {
-      identityToken?: string
-    }
-    LoginWithFacebookCommand: {
-      accessToken?: string
-    }
-    RegisterRequest: {
-      email: string
-      password: string
-    }
     AccessTokenResponse: {
       tokenType?: string
       accessToken: string
       /** Format: int64 */
       expiresIn: number
       refreshToken: string
+    }
+    ExternalLoginCommand: {
+      provider?: components["schemas"]["ExternalLoginProvider"]
+      token?: string
+    }
+    /** @enum {string} */
+    ExternalLoginProvider: "Google" | "Apple" | "Facebook"
+    RegisterRequest: {
+      email: string
+      password: string
     }
     LoginRequest: {
       email: string
@@ -2295,6 +2188,14 @@ export interface operations {
           "application/json": components["schemas"]["ProblemDetails"]
         }
       }
+      422: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["ProblemDetails"]
+        }
+      }
       429: {
         headers: {
           [name: string]: unknown
@@ -2385,223 +2286,6 @@ export interface operations {
         }
       }
       401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      429: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-    }
-  }
-  RecipesParseRecipeFromUrl: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ParseRecipeFromUrlCommand"]
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["CreateRecipeDto"]
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HttpValidationProblemDetails"]
-        }
-      }
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      429: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-    }
-  }
-  RecipesParseRecipeFromImage: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody?: {
-      content: {
-        "multipart/form-data": {
-          /** Format: binary */
-          file?: string | null
-        }
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["CreateRecipeDto"]
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HttpValidationProblemDetails"]
-        }
-      }
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      429: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-    }
-  }
-  RecipesParseRecipeFromVoice: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ParseRecipeFromVoiceCommand"]
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["CreateRecipeDto"]
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HttpValidationProblemDetails"]
-        }
-      }
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      429: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-    }
-  }
-  RecipesApplySavedRecipeEditFromPrompt: {
-    parameters: {
-      query?: never
-      header?: never
-      path: {
-        id: string
-      }
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["ApplySavedRecipeEditFromPromptBody"]
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["UpdateRecipeDto"]
-        }
-      }
-      400: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["HttpValidationProblemDetails"]
-        }
-      }
-      401: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      403: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      404: {
-        headers: {
-          [name: string]: unknown
-        }
-        content: {
-          "application/json": components["schemas"]["ProblemDetails"]
-        }
-      }
-      422: {
         headers: {
           [name: string]: unknown
         }
@@ -2843,7 +2527,7 @@ export interface operations {
       }
     }
   }
-  UsersLoginGoogle: {
+  UsersLoginExternal: {
     parameters: {
       query?: never
       header?: never
@@ -2852,73 +2536,25 @@ export interface operations {
     }
     requestBody: {
       content: {
-        "application/json": components["schemas"]["LoginWithGoogleCommand"]
+        "application/json": components["schemas"]["ExternalLoginCommand"]
       }
     }
     responses: {
       200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      401: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          "application/json": components["schemas"]["AccessTokenResponse"]
         }
       }
-    }
-  }
-  UsersLoginApple: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["LoginWithAppleCommand"]
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
-      }
-      401: {
+      400: {
         headers: {
           [name: string]: unknown
         }
         content: {
-          "application/json": components["schemas"]["ProblemDetails"]
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
         }
-      }
-    }
-  }
-  UsersLoginFacebook: {
-    parameters: {
-      query?: never
-      header?: never
-      path?: never
-      cookie?: never
-    }
-    requestBody: {
-      content: {
-        "application/json": components["schemas"]["LoginWithFacebookCommand"]
-      }
-    }
-    responses: {
-      200: {
-        headers: {
-          [name: string]: unknown
-        }
-        content?: never
       }
       401: {
         headers: {
@@ -3006,6 +2642,12 @@ export interface operations {
           "application/json": components["schemas"]["AccessTokenResponse"]
         }
       }
+      401: {
+        headers: {
+          [name: string]: unknown
+        }
+        content?: never
+      }
     }
   }
   GetApiUsersConfirmEmail: {
@@ -3021,7 +2663,7 @@ export interface operations {
     }
     requestBody?: never
     responses: {
-      200: {
+      401: {
         headers: {
           [name: string]: unknown
         }
@@ -3047,6 +2689,14 @@ export interface operations {
           [name: string]: unknown
         }
         content?: never
+      }
+      400: {
+        headers: {
+          [name: string]: unknown
+        }
+        content: {
+          "application/json": components["schemas"]["HttpValidationProblemDetails"]
+        }
       }
     }
   }
