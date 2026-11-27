@@ -2,8 +2,8 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { FormCard } from "@/components/FormCard"
+import { useDisplayNameQuery, useUpdateDisplayName } from "@/hooks/queries/useDisplayNameQuery"
 import { translate } from "@/i18n"
-import { useAuthStore } from "@/stores/authStore"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
@@ -17,16 +17,13 @@ const isValidDisplayName = (input: string) => {
 
 export default function SetDisplayName() {
   const [isSubmitted, setIsSubmitted] = useState(false)
-  const [localDisplayName, setLocalDisplayName] = useState(
-    () => useAuthStore.getState().displayName,
-  )
+  const [localDisplayName, setLocalDisplayName] = useState("")
   const [result, setResult] = useState("")
   const [isSaving, setIsSaving] = useState(false)
   const isSavingRef = useRef(false)
   const userEdited = useRef(false)
-  const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
-  const fetchDisplayName = useAuthStore((s) => s.fetchDisplayName)
-  const displayName = useAuthStore((s) => s.displayName)
+  const updateDisplayName = useUpdateDisplayName()
+  const { data: displayName = "" } = useDisplayNameQuery()
 
   const getValidationError = useCallback((name: string) => {
     if (name.length === 0) return translate("setDisplayNameScreen:validation.cantBeBlank")
@@ -41,21 +38,8 @@ export default function SetDisplayName() {
   )
 
   useEffect(() => {
-    let active = true
-    setIsSubmitted(false)
-    setResult("")
-
-    const load = async () => {
-      const name = await fetchDisplayName()
-      if (active && !userEdited.current) setLocalDisplayName(name)
-    }
-    void load()
-
-    return () => {
-      active = false
-      setResult("")
-    }
-  }, [fetchDisplayName])
+    if (!userEdited.current) setLocalDisplayName(displayName)
+  }, [displayName])
 
   const handleSave = useCallback(async () => {
     if (isSavingRef.current) return

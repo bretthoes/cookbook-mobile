@@ -15,7 +15,7 @@ import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { useImageCropSession } from "@/hooks/useImageCropSession"
 import { translate } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
-import type { CookbookToAddSnapshotIn } from "@/types/cookbook"
+import type { CookbookToAdd } from "@/types/cookbook"
 import { spacing } from "@/theme"
 import { useHeader } from "@/utils/useHeader"
 import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
@@ -123,7 +123,7 @@ export default function AddCookbookScreen() {
   const onPressSend = useCallback(
     async (formData: CookbookFormInputs) => {
       setCreateError(null)
-      const newCookbook: CookbookToAddSnapshotIn = {
+      const newCookbook: CookbookToAdd = {
         title: formData.title.trim(),
         image: formData.image,
       }
@@ -145,13 +145,9 @@ export default function AddCookbookScreen() {
     [createCookbook, cookbookTotalCount, previewGettingStarted, userId],
   )
 
-  const onError = useCallback((errors: unknown) => {
-    console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
-  }, [])
-
   const handleSave = useCallback(() => {
-    handleSubmit((data) => run(() => onPressSend(data)), onError)()
-  }, [handleSubmit, onPressSend, onError, run])
+    handleSubmit((data) => run(() => onPressSend(data)))()
+  }, [handleSubmit, onPressSend, run])
 
   useHeader(
     {

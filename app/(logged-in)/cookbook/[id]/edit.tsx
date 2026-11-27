@@ -71,10 +71,6 @@ export default function EditCookbookScreen() {
     }
   }, [selected, setValue])
 
-  const onError = useCallback((errors: unknown) => {
-    console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
-  }, [])
-
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync()
     if (status !== "granted") {
@@ -148,8 +144,8 @@ export default function EditCookbookScreen() {
   )
 
   const handleSave = useCallback(() => {
-    handleSubmit((data) => run(() => onPressSend(data)), onError)()
-  }, [handleSubmit, onPressSend, onError, run])
+    handleSubmit((data) => run(() => onPressSend(data)))()
+  }, [handleSubmit, onPressSend, run])
 
   useHeader(
     {

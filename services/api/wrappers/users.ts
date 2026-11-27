@@ -1,4 +1,4 @@
-import type { AuthResultSnapshotIn } from "@/types/auth"
+import type { AuthResult } from "@/types/auth"
 import type { components } from "@/services/api/generated/schema"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
@@ -14,7 +14,7 @@ const { client } = apiClientInstance
 export async function login(
   email: string,
   password: string,
-): Promise<ApiResult<{ authResult: AuthResultSnapshotIn }>> {
+): Promise<ApiResult<{ authResult: AuthResult }>> {
   try {
     const { data, error, response } = await client.POST("/api/Users/login", {
       body: { email, password },
@@ -37,7 +37,7 @@ export type ExternalLoginProvider = components["schemas"]["ExternalLoginProvider
 export async function loginWithProvider(
   provider: ExternalLoginProvider,
   token: string,
-): Promise<ApiResult<{ authResult: AuthResultSnapshotIn }>> {
+): Promise<ApiResult<{ authResult: AuthResult }>> {
   try {
     const { data, error, response } = await client.POST("/api/Users/login-external", {
       body: { provider, token },

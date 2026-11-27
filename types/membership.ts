@@ -1,4 +1,5 @@
 import type { components } from "@/services/api/generated/schema"
+import type { PaginatedList } from "@/types/pagination"
 
 export type MembershipTier = components["schemas"]["MembershipTier"]
 
@@ -7,6 +8,4 @@ export type Membership = components["schemas"]["MembershipDto"] & {
   tier: MembershipTier
 }
 
-export type MembershipSnapshotIn = Pick<Membership, "id" | "tier">
-export type MembershipSnapshotOut = Membership
-export type MembershipListSnapshotIn = import("@/types/pagination").PaginatedList<Membership>
+export type MembershipList = PaginatedList<Membership>

@@ -1,6 +1,6 @@
 import { EmptyState } from "@/components/EmptyState"
 import { PaginationControls } from "@/components/PaginationControls"
-import { RecipeListItem } from "@/components/Recipe/RecipeListItem"
+import { RecipeListItem } from "@/components/recipe/RecipeListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
@@ -11,7 +11,7 @@ import type { Membership } from "@/types/membership"
 import { isOwnerTier } from "@/utils/membershipTier"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
 import React, { useCallback, useEffect, useState } from "react"
@@ -25,7 +25,7 @@ export default function Cookbook() {
   const fetch = useMembershipStore((s) => s.fetch)
   const { selected } = useSelectedCookbook()
   const id = selected?.id ?? ""
-  const { themed } = useAppTheme()
+  
 
   const [isLoading, setIsLoading] = useState(false)
   const { refreshing, onRefresh } = useManualRefresh(
@@ -35,12 +35,12 @@ export default function Cookbook() {
     ),
   )
 
-  const $themedEmptyState = React.useMemo(() => themed($emptyState), [themed])
-  const $themedEmptyStateImage = React.useMemo(() => themed($emptyStateImage), [themed])
-  const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
-  const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
-  const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
-  const $themedRoot = React.useMemo(() => themed($root), [themed])
+  const $themedEmptyState = useThemedStyles($emptyState)
+  const $themedEmptyStateImage = useThemedStyles($emptyStateImage)
+  const $themedBorderTop = useThemedStyles($borderTop)
+  const $themedBorderBottom = useThemedStyles($borderBottom)
+  const $themedListItemStyle = useThemedStyles($listItemStyle)
+  const $themedRoot = useThemedStyles($root)
 
   useHeader({
     leftIcon: "back",

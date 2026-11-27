@@ -1,10 +1,4 @@
-import type {
-  RecipeBriefItem,
-  RecipeDetail,
-  RecipeListPage,
-  RecipeSnapshotIn,
-  RecipeToAddSnapshotIn,
-} from "@/types/recipe"
+import type { RecipeBriefItem, RecipeDetail, RecipeListPage, RecipeToAdd } from "@/types/recipe"
 import type { GeneralApiProblem } from "@/services/api/apiProblem"
 import { api } from "@/services/api"
 import { getRecipe, getRecipes, recordRecipeMade } from "@/services/api/wrappers/recipes"
@@ -110,7 +104,7 @@ export function useRecipeQuery(recipeId: string) {
 export function useCreateRecipeMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (recipe: RecipeToAddSnapshotIn) => {
+    mutationFn: async (recipe: RecipeToAdd) => {
       const result = await api.createRecipe(recipe)
       return unwrapApiResult(result)
     },
@@ -127,7 +121,7 @@ export function useCreateRecipeMutation() {
 export function useUpdateRecipeMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (recipe: RecipeSnapshotIn) => {
+    mutationFn: async (recipe: RecipeDetail) => {
       const result = await api.updateRecipe(recipe)
       if (result.kind !== "ok") throw new Error(result.kind)
       return recipe

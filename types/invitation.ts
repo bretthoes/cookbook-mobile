@@ -10,9 +10,7 @@ export type Invitation = {
   created: string
 }
 
-export type InvitationSnapshotIn = Invitation
-export type InvitationSnapshotOut = Invitation
-export type InvitationListSnapshotIn = PaginatedList<Invitation>
+export type InvitationList = PaginatedList<Invitation>
 
 export enum CookbookInvitationStatus {
   Error = 0,

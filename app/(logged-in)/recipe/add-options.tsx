@@ -1,4 +1,4 @@
-import { GettingStartedGuide, useGuideAnchor } from "@/components/cookbooks/GettingStartedGuide"
+import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
@@ -12,14 +12,10 @@ import {
 } from "@/stores/uiStore"
 import type { ThemedStyle } from "@/theme"
 import { colors } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
+import { useRecipeOptionsTour } from "@/hooks/useGettingStartedScreenTour"
 import { useHeader } from "@/utils/useHeader"
-import {
-  advanceGettingStartedTour,
-  getGettingStartedTour,
-  leaveGettingStartedTour,
-  useGettingStartedTour,
-} from "@/utils/gettingStartedTour"
 import { useFocusEffect } from "expo-router/react-navigation"
 import { router } from "expo-router"
 import { useCallback, useEffect, useMemo, type RefObject } from "react"
@@ -55,14 +51,7 @@ export default function AddRecipeOptionsScreen() {
   const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
   const weeklyImportWeekStart = useUiStore((s) => s.weeklyImportWeekStart)
   const isPro = useSubscriptionStore((s) => s.isPro)
-  const tour = useGettingStartedTour()
-  const manualAnchor = useGuideAnchor(tour?.step === "recipe" && tour.phase === "options")
-
-  useFocusEffect(
-    useCallback(() => {
-      if (getGettingStartedTour()?.step === "recipe") advanceGettingStartedTour("options")
-    }, []),
-  )
+  const { active: showOptionsGuide, manualAnchor, leaveTour } = useRecipeOptionsTour()
 
   const handleBack = useCallback(() => {
     if (router.canGoBack()) {
@@ -171,8 +160,8 @@ export default function AddRecipeOptionsScreen() {
     return [...baseOptions, draftOption]
   }, [setSelectedById, latestDraft])
 
-  const $themedScreenContainer = useMemo(() => themed($screenContainer), [themed])
-  const $themedList = useMemo(() => themed($list), [themed])
+  const $themedScreenContainer = useThemedStyles($screenContainer)
+  const $themedList = useThemedStyles($list)
 
   return (
     <Screen preset="scroll" contentContainerStyle={$themedScreenContainer}>
@@ -209,11 +198,11 @@ export default function AddRecipeOptionsScreen() {
           isAtLimit={isAtLimit}
         />
       )}
-      {tour?.step === "recipe" && tour.phase === "options" ? (
+      {showOptionsGuide ? (
         <GettingStartedGuide
           messageTx="gettingStarted:guideRecipeOptions"
           target={manualAnchor.target}
-          onClose={leaveGettingStartedTour}
+          onClose={leaveTour}
         />
       ) : null}
     </Screen>
@@ -297,9 +286,9 @@ function OptionRow({
   onPress,
 }: OptionRowProps) {
   const { themed, theme } = useAppTheme()
-  const $themedIconBox = useMemo(() => themed($iconBox), [themed])
-  const $themedTitle = useMemo(() => themed($rowTitle), [themed])
-  const $themedDescription = useMemo(() => themed($rowDescription), [themed])
+  const $themedIconBox = useThemedStyles($iconBox)
+  const $themedTitle = useThemedStyles($rowTitle)
+  const $themedDescription = useThemedStyles($rowDescription)
 
   const rowStyle = useMemo(
     () => [themed($row), isPremium && themed($rowPremium), isDisabled && themed($rowDisabled)],

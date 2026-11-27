@@ -2,6 +2,7 @@ import { Text } from "@/components/Text"
 import type { RecipeDetail } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import React from "react"
 import { useTranslation } from "react-i18next"
@@ -134,12 +135,12 @@ export default function RecipeSummary({ recipe }: RecipeSummaryProps) {
   const displaySummary =
     isExpanded || !shouldTruncate ? summary : summary.substring(0, MAX_SUMMARY_LENGTH) + "..."
 
-  const $themedTitleContainer = React.useMemo(() => themed($titleContainer), [themed])
-  const $themedSubtitleContainer = React.useMemo(() => themed($subtitleContainer), [themed])
-  const $themedDetailsContainer = React.useMemo(() => themed($detailsContainer), [themed])
-  const $themedTimeItemContainer = React.useMemo(() => themed($timeItemContainer), [themed])
-  const $defaultTagChip = React.useMemo(() => themed($tagChip), [themed])
-  const $defaultTagChipText = React.useMemo(() => themed($tagChipText), [themed])
+  const $themedTitleContainer = useThemedStyles($titleContainer)
+  const $themedSubtitleContainer = useThemedStyles($subtitleContainer)
+  const $themedDetailsContainer = useThemedStyles($detailsContainer)
+  const $themedTimeItemContainer = useThemedStyles($timeItemContainer)
+  const $defaultTagChip = useThemedStyles($tagChip)
+  const $defaultTagChipText = useThemedStyles($tagChipText)
 
   return (
     <View>

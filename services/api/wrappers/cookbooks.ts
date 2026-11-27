@@ -1,7 +1,7 @@
 import type {
-  CookbookListSnapshotIn,
-  CookbookSnapshotIn,
-  CookbookToAddSnapshotIn,
+  CookbookList,
+  CookbookItem,
+  CookbookToAdd,
 } from "@/types/cookbook"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
@@ -17,7 +17,7 @@ const { client } = apiClientInstance
 export async function getCookbooks(
   pageNumber = 1,
   pageSize = 10,
-): Promise<ApiResult<{ cookbooks: CookbookListSnapshotIn }>> {
+): Promise<ApiResult<{ cookbooks: CookbookList }>> {
   try {
     const { data, error, response } = await client.GET("/api/Cookbooks", {
       params: { query: { PageNumber: pageNumber, PageSize: pageSize } },
@@ -25,14 +25,14 @@ export async function getCookbooks(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ cookbooks: data as CookbookListSnapshotIn })
+    return toOkResult({ cookbooks: data as CookbookList })
   } catch (e) {
     return toProblemFromError(e)
   }
 }
 
 export async function createCookbook(
-  cookbook: CookbookToAddSnapshotIn,
+  cookbook: CookbookToAdd,
 ): Promise<ApiResult<{ cookbookId: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/Cookbooks", {
@@ -48,7 +48,7 @@ export async function createCookbook(
 }
 
 export async function updateCookbook(
-  cookbook: CookbookSnapshotIn,
+  cookbook: CookbookItem,
 ): Promise<{ kind: "ok" } | GeneralApiProblem> {
   try {
     const { error, response } = await client.PUT("/api/Cookbooks/{id}", {

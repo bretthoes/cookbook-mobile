@@ -1,6 +1,6 @@
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
-import { useEffect, useMemo } from "react"
+import { useThemedStyles } from "@/theme/useThemedStyles"
+import { useEffect} from "react"
 import { View, ViewStyle } from "react-native"
 import Animated, {
   Easing,
@@ -39,7 +39,7 @@ export function CircularProgress({
   strokeWidth = 5,
   accessibilityLabel,
 }: CircularProgressProps) {
-  const { themed } = useAppTheme()
+  
   const progress = useSharedValue(0)
 
   useEffect(() => {
@@ -73,8 +73,8 @@ export function CircularProgress({
     borderWidth: strokeWidth,
   }
 
-  const $themedTrack = useMemo(() => themed($track), [themed])
-  const $themedFill = useMemo(() => themed($fill), [themed])
+  const $themedTrack = useThemedStyles($track)
+  const $themedFill = useThemedStyles($fill)
 
   return (
     <View

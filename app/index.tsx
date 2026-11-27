@@ -2,6 +2,7 @@
 import { Button } from "@/components/Button"
 import { useIsAuthenticated } from "@/stores/authStore"
 import { type ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { useSafeAreaInsetsStyle } from "@/utils/useSafeAreaInsetsStyle"
 import { Redirect, useRouter } from "expo-router"
@@ -21,16 +22,16 @@ const welcomeLogo = require("../assets/images/logo.png")
 // @mst replace-next-line export default function WelcomeScreen() {
 export default function WelcomeScreen() {
   const isAuthenticated = useIsAuthenticated()
-  const { themed, theme } = useAppTheme()
+  const { theme } = useAppTheme()
   const { width: winWidth, height: winHeight } = useWindowDimensions()
   const $bottomContainerInsets = useSafeAreaInsetsStyle(["bottom"])
   const router = useRouter()
 
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedCenter = useMemo(() => themed($centerArea), [themed])
-  const $themedBottom = useMemo(() => themed($bottomArea), [themed])
-  const $themedLoginButton = useMemo(() => themed($loginButton), [themed])
-  const $themedLoginButtonPressed = useMemo(() => themed($loginButtonPressed), [themed])
+  const $themedContainer = useThemedStyles($container)
+  const $themedCenter = useThemedStyles($centerArea)
+  const $themedBottom = useThemedStyles($bottomArea)
+  const $themedLoginButton = useThemedStyles($loginButton)
+  const $themedLoginButtonPressed = useThemedStyles($loginButtonPressed)
 
   const logoSize = useMemo(() => {
     const w = Math.min(winWidth * 0.9, 420)

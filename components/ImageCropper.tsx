@@ -2,6 +2,7 @@ import { Button } from "@/components/Button"
 import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { imageCropRect, containScale, frameInsideImage } from "@/utils/imageCrop"
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator"
@@ -126,10 +127,10 @@ export function ImageCropper({
     ],
   }))
 
-  const $themedFrame = useMemo(() => themed($frame), [themed])
-  const $themedActions = useMemo(() => themed($actions), [themed])
-  const $themedError = useMemo(() => themed($error), [themed])
-  const $themedAction = useMemo(() => themed($action), [themed])
+  const $themedFrame = useThemedStyles($frame)
+  const $themedActions = useThemedStyles($actions)
+  const $themedError = useThemedStyles($error)
+  const $themedAction = useThemedStyles($action)
 
   const onUsePhoto = useCallback(async () => {
     if (saving || !layout || size.width <= 0 || size.height <= 0) return

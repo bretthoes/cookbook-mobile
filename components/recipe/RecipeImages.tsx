@@ -1,7 +1,7 @@
 import { AutoImage } from "@/components/AutoImage"
 import type { RecipeImage } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import React, { useState } from "react"
 import {
   Dimensions,
@@ -20,14 +20,14 @@ export interface RecipeImagesProps {
 
 export function RecipeImages(props: RecipeImagesProps) {
   const { data } = props
-  const { themed } = useAppTheme()
+  
   const shouldShowPagination = data.length > 1
   const [activeIndex, setActiveIndex] = useState(0)
 
-  const $themedDotContainer = React.useMemo(() => themed($dotContainer), [themed])
-  const $themedDot = React.useMemo(() => themed($dot), [themed])
-  const $themedActiveDot = React.useMemo(() => themed($activeDot), [themed])
-  const $themedInactiveDot = React.useMemo(() => themed($inactiveDot), [themed])
+  const $themedDotContainer = useThemedStyles($dotContainer)
+  const $themedDot = useThemedStyles($dot)
+  const $themedActiveDot = useThemedStyles($activeDot)
+  const $themedInactiveDot = useThemedStyles($inactiveDot)
 
   // Handle scroll event to update the active dot based on the current image
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {

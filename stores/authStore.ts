@@ -1,4 +1,4 @@
-import type { AuthResultSnapshotIn } from "@/types/auth"
+import type { AuthResult } from "@/types/auth"
 import { translate, type TxKeyPath } from "@/i18n"
 import { api } from "@/services/api"
 import type { ExternalLoginProvider } from "@/services/api/wrappers/users"
@@ -36,7 +36,7 @@ function getEmailSendErrorTxKey(problem: GeneralApiProblem): TxKeyPath {
 
 async function writeSessionTokens(
   authEmail: string,
-  authResult: AuthResultSnapshotIn,
+  authResult: AuthResult,
   set: (patch: Partial<AuthState>) => void,
 ) {
   bumpAuthSession()
@@ -77,14 +77,11 @@ export interface AuthState {
   userId?: string
   authEmail: string
   result: string
-  displayName: string
-  authResult?: AuthResultSnapshotIn
+  authResult?: AuthResult
 
   setAuthToken: (value?: string) => void
   setAuthEmail: (value: string) => void
   setResult: (value: string) => void
-  fetchDisplayName: () => Promise<string>
-  updateDisplayName: (name?: string) => Promise<boolean>
   logout: () => Promise<void>
   /** `silent` (used while waiting for email verification) shows no messages and doesn't resend the confirmation email. */
   login: (password: string, silent?: boolean) => Promise<boolean>
@@ -103,7 +100,6 @@ export const useAuthStore = create<AuthState>()(
       userId: undefined,
       authEmail: "",
       result: "",
-      displayName: "",
       authResult: undefined,
 
       setAuthToken: (value) => {
@@ -126,29 +122,6 @@ export const useAuthStore = create<AuthState>()(
 
       setResult: (value) => set({ result: value }),
 
-      fetchDisplayName: async () => {
-        const response = await api.getDisplayName()
-        if (response.kind !== "ok") {
-          console.error(`Error fetching display name: ${JSON.stringify(response)}`)
-          return get().displayName
-        }
-        const displayName = response.displayName ?? ""
-        set({ displayName })
-        return displayName
-      },
-
-      updateDisplayName: async (name) => {
-        const displayName = name ?? get().displayName
-        const response = await api.updateUser(displayName)
-        if (response.kind !== "ok") {
-          console.error(`Error updating user: ${JSON.stringify(response)}`)
-          set({ result: "loginScreen:errors.updateFailed" })
-          return false
-        }
-        set({ displayName })
-        return true
-      },
-
       logout: async () => {
         bumpAuthSession()
         clearQueryClient()
@@ -158,7 +131,6 @@ export const useAuthStore = create<AuthState>()(
           userId: undefined,
           authEmail: "",
           authResult: undefined,
-          displayName: "",
         })
         useSubscriptionStore.getState().reset()
         await SecureStore.deleteItemAsync("accessToken")
@@ -271,7 +243,6 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => zustandPersistStorage),
       partialize: (state) => ({
         authEmail: state.authEmail,
-        displayName: state.displayName,
         userId: state.userId,
       }),
     },

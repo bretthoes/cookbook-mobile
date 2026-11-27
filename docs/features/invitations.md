@@ -8,7 +8,7 @@ Who can send is `canSendInvite` in [membershipTier.ts](../../utils/membershipTie
 
 Send Invite on the cookbook opens [add-link.tsx](<../../app/(logged-in)/invitation/add-link.tsx>) with a link already minted. Invite by email is a quieter row under that card and opens [add-email.tsx](<../../app/(logged-in)/invitation/add-email.tsx>). Back from email returns to the link.
 
-**Email** ([add-email.tsx](<../../app/(logged-in)/invitation/add-email.tsx>)). The address is checked on the device: non-empty, at least 6 characters, and a single `@` with a dot in the domain. The store turns the API result into a message on the screen:
+**Email** ([add-email.tsx](<../../app/(logged-in)/invitation/add-email.tsx>)). The address is checked on the device: non-empty, at least 6 characters, and a single `@` with a dot in the domain. `sendInvitationEmail` turns the API result into a message on the screen:
 
 | API result    | Message                                         | Getting-started invite step |
 | ------------- | ----------------------------------------------- | --------------------------- |
@@ -17,7 +17,7 @@ Send Invite on the cookbook opens [add-link.tsx](<../../app/(logged-in)/invitati
 | conflict      | "They've already been invited."                 | Unchanged                   |
 | anything else | "Something went wrong, please try again later." | Unchanged                   |
 
-The field clears after every response. Those four strings are fixed in [invitationStore.ts](../../stores/invitationStore.ts).
+The field clears after every response. Those four strings are fixed in [useInvitationsQuery.ts](../../hooks/queries/useInvitationsQuery.ts).
 
 **Link** ([add-link.tsx](<../../app/(logged-in)/invitation/add-link.tsx>)). Opening the screen mints one token for the selected cookbook. The box shows `sharedcookbook.com/invite/…` (`inviteLinkPreview`). Copy and share still use the full `https://sharedcookbook.com/invite/?t=` URL (`INVITE_BASE_URL` in [config.base.ts](../../config/config.base.ts)). The copy icon puts that URL on the clipboard and marks the getting-started invite step done. Share sends that same URL and marks the step done only when the share sheet reports `Share.sharedAction`. A cancelled sheet on iOS does not. Minting again is a new token; the previous one stays redeemable until it expires.
 
@@ -43,7 +43,7 @@ The login button pushes `/login-options` and does not store the token. After sig
 
 ## Pending email invites
 
-Profile → pending invitations opens [invitation/index.tsx](<../../app/(logged-in)/invitation/index.tsx>). The list is email invites for the signed-in account (`GET` invitations), not share links. Accept and Reject call `respond` with the invitation id. A success drops that row from the in-memory list. The header back button replaces to Cookbooks.
+Profile → pending invitations opens [invitation/index.tsx](<../../app/(logged-in)/invitation/index.tsx>). The list is email invites for the signed-in account (`GET` invitations), not share links. Accept and Reject call `useRespondToInvitation` with the invitation id. A success drops that row from the query cache. The header back button replaces to Cookbooks. The profile badge and both tab bars read `useInvitationsQuery`.
 
 ## Where to look in code
 
@@ -52,5 +52,5 @@ Profile → pending invitations opens [invitation/index.tsx](<../../app/(logged-
 | Email, link, and the pending list | [app/(logged-in)/invitation/](<../../app/(logged-in)/invitation/>)                               |
 | Link entry and the token screen   | [app/invite/index.tsx](../../app/invite/index.tsx), [app/i/[token].tsx](../../app/i/[token].tsx) |
 | Invite URL and email check        | [utils/invitations.ts](../../utils/invitations.ts)                                               |
-| Send, mint, accept, decline       | [stores/invitationStore.ts](../../stores/invitationStore.ts)                                     |
+| Send, mint, accept, decline       | [hooks/queries/useInvitationsQuery.ts](../../hooks/queries/useInvitationsQuery.ts)               |
 | Card copy on the pending list     | [utils/invitationFormat.ts](../../utils/invitationFormat.ts)                                     |

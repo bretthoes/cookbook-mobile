@@ -1,7 +1,9 @@
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
+import { Image, type ImageSource } from "expo-image"
 import { ReactElement } from "react"
 import {
+  ImageStyle,
   StyleProp,
   TextStyle,
   TouchableOpacity,
@@ -20,8 +22,9 @@ export interface HeaderProps {
    * The layout of the title relative to the action components.
    * - `center` will force the title to always be centered relative to the header. If the title or the action buttons are too long, the title will be cut off.
    * - `flex` will attempt to center the title relative to the action buttons. If the action buttons are different widths, the title will be off-center relative to the header.
+   * - `left` places the title immediately beside the left action. A long title truncates before the right action.
    */
-  titleMode?: "center" | "flex"
+  titleMode?: "center" | "flex" | "left"
   /**
    * Optional title style override.
    */
@@ -55,6 +58,11 @@ export interface HeaderProps {
    * as well as explicitly setting locale or translation fallbacks.
    */
   titleTxOptions?: TextProps["txOptions"]
+  /**
+   * Small image shown in `left` title mode, between the left action and the title.
+   * Same source the cookbook list already rendered, so expo-image serves it from cache.
+   */
+  titleImageSource?: ImageSource | number
   /**
    * Icon that should appear on the left.
    * Can be used with `onLeftPress`.
@@ -169,6 +177,7 @@ export function Header(props: HeaderProps) {
     safeAreaEdges = ["top"],
     title,
     titleMode = "flex",
+    titleImageSource,
     titleTx,
     titleTxOptions,
     titleContainerStyle: $titleContainerStyleOverride,
@@ -180,37 +189,65 @@ export function Header(props: HeaderProps) {
   const $containerInsets = useSafeAreaInsetsStyle(safeAreaEdges)
 
   const titleContent = titleTx ? translate(titleTx, titleTxOptions) : title
+  const titleInline = titleMode === "left"
+
+  const leftAction = (
+    <HeaderAction
+      tx={leftTx}
+      text={leftText}
+      icon={leftIcon}
+      iconColor={leftIconColor || colors.text}
+      onPress={onLeftPress}
+      txOptions={leftTxOptions}
+      backgroundColor={backgroundColor}
+      ActionComponent={LeftActionComponent}
+    />
+  )
+
+  const titleNode = !!titleContent && (
+    <Text
+      weight="medium"
+      preset="subheading"
+      text={titleContent}
+      numberOfLines={1}
+      style={[$title, titleInline && $titleInlineText, $titleStyleOverride]}
+    />
+  )
 
   return (
     <View style={[$container, $containerInsets, { backgroundColor }, $containerStyleOverride]}>
       <View style={[$styles.row, $wrapper, $styleOverride]}>
-        <HeaderAction
-          tx={leftTx}
-          text={leftText}
-          icon={leftIcon}
-          iconColor={leftIconColor || colors.text}
-          onPress={onLeftPress}
-          txOptions={leftTxOptions}
-          backgroundColor={backgroundColor}
-          ActionComponent={LeftActionComponent}
-        />
-
-        {!!titleContent && (
-          <View
-            style={[
-              titleMode === "center" && themed($titleWrapperCenter),
-              titleMode === "flex" && $titleWrapperFlex,
-              $titleContainerStyleOverride,
-            ]}
-            pointerEvents="none"
-          >
-            <Text
-              weight="medium"
-              preset="subheading"
-              text={titleContent}
-              style={[$title, $titleStyleOverride]}
-            />
+        {titleInline ? (
+          <View style={[$titleInlineCluster, $titleContainerStyleOverride]}>
+            {leftAction}
+            {titleImageSource != null && (
+              <Image
+                source={titleImageSource}
+                style={themed($titleInlineImage)}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                transition={0}
+                accessible={false}
+              />
+            )}
+            {titleNode}
           </View>
+        ) : (
+          <>
+            {leftAction}
+            {!!titleContent && (
+              <View
+                style={[
+                  titleMode === "center" && themed($titleWrapperCenter),
+                  titleMode === "flex" && $titleWrapperFlex,
+                  $titleContainerStyleOverride,
+                ]}
+                pointerEvents="none"
+              >
+                {titleNode}
+              </View>
+            )}
+          </>
         )}
 
         <HeaderAction
@@ -334,3 +371,23 @@ const $titleWrapperFlex: ViewStyle = {
   justifyContent: "center",
   flexGrow: 1,
 }
+
+const $titleInlineCluster: ViewStyle = {
+  flexDirection: "row",
+  alignItems: "center",
+  flexGrow: 1,
+  flexShrink: 1,
+  minWidth: 0,
+}
+
+const $titleInlineText: TextStyle = {
+  flexShrink: 1,
+  marginRight: 8,
+}
+
+const $titleInlineImage: ThemedStyle<ImageStyle> = ({ spacing }) => ({
+  width: 22,
+  height: 30,
+  borderRadius: 4,
+  marginRight: spacing.xs,
+})

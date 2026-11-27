@@ -17,6 +17,8 @@ Key shape:
 - Recipes list: `["recipes", "list", cookbookId, search]`
 - Recipe detail: `["recipes", "detail", recipeId]`
 - Notifications list / latest: `["notifications", "list"]` and `["notifications", "latest"]`
+- Invitations list / token: `["invitations", "list"]` and `["invitations", "token", token]`
+- Display name: `["user", "displayName"]`
 
 Persistence keeps successful list queries only. Detail queries are fetched again when the screen opens. Pending and error queries are left out so a deleted recipe is not restored as a failure.
 

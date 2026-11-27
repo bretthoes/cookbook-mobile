@@ -6,7 +6,7 @@
     "experimentalDecorators": true,
     "strict": true,
     "jsx": "react-native",
-    "customConditions": ["react-native"],
+    "customConditions": ["react-native", "react-native-legacy-deep-imports"],
     "module": "esnext",
     "moduleResolution": "bundler",
     "sourceMap": true,

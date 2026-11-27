@@ -2,6 +2,7 @@ import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { translate, type TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { timing } from "@/theme/timing"
 import { useAppTheme } from "@/theme/context"
 import { GETTING_STARTED_STEPS, type GettingStartedStep } from "@/utils/gettingStarted"
@@ -63,12 +64,12 @@ export function GettingStartedCard({
   const expandedProgress = useSharedValue(expanded ? 1 : 0)
   const bodyHeight = useSharedValue(0)
 
-  const $themedCard = useMemo(() => themed($card), [themed])
-  const $themedHeader = useMemo(() => themed($header), [themed])
-  const $themedDescription = useMemo(() => themed($description), [themed])
-  const $themedDismiss = useMemo(() => themed($dismiss), [themed])
-  const $themedPending = useMemo(() => themed($pending), [themed])
-  const $themedPendingText = useMemo(() => themed($pendingText), [themed])
+  const $themedCard = useThemedStyles($card)
+  const $themedHeader = useThemedStyles($header)
+  const $themedDescription = useThemedStyles($description)
+  const $themedDismiss = useThemedStyles($dismiss)
+  const $themedPending = useThemedStyles($pending)
+  const $themedPendingText = useThemedStyles($pendingText)
   const animatedStyle = useAnimatedStyle(() => {
     if (collapsing.value === 0) return { opacity: opacity.value }
     return {
@@ -196,10 +197,10 @@ function StepRow({
   onPress: () => void
 }) {
   const { themed, theme } = useAppTheme()
-  const $themedStep = useMemo(() => themed($step), [themed])
+  const $themedStep = useThemedStyles($step)
   const $themedBadge = useMemo(() => themed(done ? $stepBadgeDone : $stepBadge), [themed, done])
-  const $themedCopy = useMemo(() => themed($stepCopy), [themed])
-  const $themedLockedText = useMemo(() => themed($stepLockedText), [themed])
+  const $themedCopy = useThemedStyles($stepCopy)
+  const $themedLockedText = useThemedStyles($stepLockedText)
 
   return (
     <Pressable

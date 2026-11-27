@@ -7,7 +7,7 @@ import { markFeedSeen } from "@/hooks/useFeedUnseen"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import type { NotificationItem } from "@/types/notification"
 import { groupActivityFeed, isUnseenActivity, type ActivityFeedSection } from "@/utils/activityFeed"
 import { useFocusEffect } from "expo-router/react-navigation"
@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from "react"
 import { ActivityIndicator, Platform, SectionList, TextStyle, View, ViewStyle } from "react-native"
 
 export default function FeedScreen() {
-  const { themed } = useAppTheme()
+  
   const userId = useAuthStore((s) => s.userId)
   const { notifications, isListPending, listHasNextPage, isLoadingMore, refetch, fetchNextPage } =
     useNotificationsList()
@@ -43,10 +43,10 @@ export default function FeedScreen() {
 
   const sections = useMemo(() => groupActivityFeed(notifications, new Date()), [notifications])
 
-  const $themedHeading = useMemo(() => themed($heading), [themed])
-  const $themedSubtitle = useMemo(() => themed($subtitle), [themed])
-  const $themedSectionTitle = useMemo(() => themed($sectionTitle), [themed])
-  const $themedList = useMemo(() => themed($listContent), [themed])
+  const $themedHeading = useThemedStyles($heading)
+  const $themedSubtitle = useThemedStyles($subtitle)
+  const $themedSectionTitle = useThemedStyles($sectionTitle)
+  const $themedList = useThemedStyles($listContent)
 
   const renderItem = useCallback(
     ({ item }: { item: NotificationItem }) => (

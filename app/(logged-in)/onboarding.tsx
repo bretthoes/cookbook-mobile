@@ -6,11 +6,13 @@ import { StepIndicator } from "@/components/StepIndicator"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import { Switch } from "@/components/Toggle"
+import { useUpdateDisplayName } from "@/hooks/queries/useDisplayNameQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate, type TxKeyPath } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { remove, storage } from "@/utils/storage"
 import { useHeader } from "@/utils/useHeader"
@@ -46,7 +48,7 @@ export default function OnboardingScreen() {
   const { themed, themeContext, setThemeContextOverride, largeFontEnabled, setLargeFontEnabled } =
     useAppTheme()
 
-  const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
+  const updateDisplayName = useUpdateDisplayName()
   const result = useAuthStore((s) => s.result)
   const setResult = useAuthStore((s) => s.setResult)
   const { isInFlight, run } = useInFlightAction()
@@ -90,12 +92,14 @@ export default function OnboardingScreen() {
       if (success) {
         setIsSubmitted(false)
         advanceStep()
+      } else {
+        setResult("loginScreen:errors.updateFailed")
       }
     })
   }, [displayNameError, localDisplayName, updateDisplayName, setResult, advanceStep, run])
 
   // Header title per step
-  const headerTitle = useMemo(() => {
+  const headerTitle = useMemo((): TxKeyPath => {
     if (!skipDisplayName && currentStep === STEP_DISPLAY_NAME)
       return "onboardingScreen:displayNameTitle"
     if (currentStep === STEP_DARK_MODE) return "onboardingScreen:darkModeTitle"
@@ -125,14 +129,14 @@ export default function OnboardingScreen() {
 
   useHeader(
     {
-      titleTx: headerTitle as any,
+      titleTx: headerTitle,
       leftIcon: "back",
       onLeftPress: handleBack,
     },
     [currentStep, headerTitle],
   )
 
-  const $themedToggleRow = useMemo(() => themed($toggleRow), [themed])
+  const $themedToggleRow = useThemedStyles($toggleRow)
 
   // Done step — full-screen loading screen
   if (currentStep === STEP_DONE) {

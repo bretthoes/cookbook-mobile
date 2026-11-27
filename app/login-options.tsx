@@ -8,10 +8,10 @@ import type { TxKeyPath } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useHeader } from "@/utils/useHeader"
 import { router } from "expo-router"
-import { useCallback, useMemo } from "react"
+import { useCallback} from "react"
 import { useTranslation } from "react-i18next"
 import { Platform, TextStyle, View, ViewStyle } from "react-native"
 
@@ -20,7 +20,7 @@ const facebookLogo = require("@/assets/images/facebook.png")
 const googleLogo = require("@/assets/images/google.png")
 
 export default function LoginOptionsScreen() {
-  const { themed } = useAppTheme()
+  
   const { t } = useTranslation()
   const result = useAuthStore((s) => s.result)
   const navigateAfterAuth = useNavigateAfterAuth()
@@ -34,9 +34,9 @@ export default function LoginOptionsScreen() {
     onLeftPress: () => (router.canGoBack() ? router.back() : router.replace("/")),
   })
 
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedListContainer = useMemo(() => themed($listContainer), [themed])
-  const $themedErrorText = useMemo(() => themed($errorText), [themed])
+  const $themedContainer = useThemedStyles($container)
+  const $themedListContainer = useThemedStyles($listContainer)
+  const $themedErrorText = useThemedStyles($errorText)
 
   if (isSsoLoading) {
     return <CircularProgressScreen accessibilityLabel={t("common:signingIn")} />

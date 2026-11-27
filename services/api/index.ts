@@ -6,20 +6,15 @@
  * documentation for more details.
  */
 import type { components } from "@/services/api/generated/schema"
-import type { AuthResultSnapshotIn } from "@/types/auth"
+import type { AuthResult } from "@/types/auth"
 import type {
-  CookbookListSnapshotIn,
-  CookbookSnapshotIn,
-  CookbookToAddSnapshotIn,
+  CookbookList,
+  CookbookItem,
+  CookbookToAdd,
 } from "@/types/cookbook"
-import type { InvitationListSnapshotIn, InvitationSnapshotOut } from "@/types/invitation"
-import type { MembershipListSnapshotIn, MembershipSnapshotOut } from "@/types/membership"
-import type {
-  RecipeListSnapshotIn,
-  RecipeSnapshotIn,
-  RecipeSnapshotOut,
-  RecipeToAddSnapshotIn,
-} from "@/types/recipe"
+import type { InvitationList, Invitation } from "@/types/invitation"
+import type { MembershipList, Membership } from "@/types/membership"
+import type { RecipeList, RecipeDetail, RecipeToAdd } from "@/types/recipe"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import * as cookbookWrappers from "@/services/api/wrappers/cookbooks"
@@ -53,7 +48,7 @@ export class Api {
   async getCookbooks(
     pageNumber = 1,
     pageSize = 10,
-  ): Promise<{ kind: "ok"; cookbooks: CookbookListSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; cookbooks: CookbookList } | GeneralApiProblem> {
     return cookbookWrappers.getCookbooks(pageNumber, pageSize)
   }
 
@@ -61,7 +56,7 @@ export class Api {
    * Saves a new cookbook to the database.
    */
   async createCookbook(
-    cookbook: CookbookToAddSnapshotIn,
+    cookbook: CookbookToAdd,
   ): Promise<{ kind: "ok"; cookbookId: string } | GeneralApiProblem> {
     return cookbookWrappers.createCookbook(cookbook)
   }
@@ -76,12 +71,12 @@ export class Api {
   /**
    * Gets a list of memberships matching a cookbookId with pagination.
    */
-  async GetMemberships(
+  async getMemberships(
     cookbookId: string,
     pageNumber: number,
     pageSize: number,
-  ): Promise<{ kind: "ok"; memberships: MembershipListSnapshotIn } | GeneralApiProblem> {
-    return membershipWrappers.GetMemberships(cookbookId, pageNumber, pageSize)
+  ): Promise<{ kind: "ok"; memberships: MembershipList } | GeneralApiProblem> {
+    return membershipWrappers.getMemberships(cookbookId, pageNumber, pageSize)
   }
 
   /**
@@ -89,35 +84,35 @@ export class Api {
    */
   async getMembership(
     cookbookId: string,
-  ): Promise<{ kind: "ok"; membership: MembershipSnapshotOut } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; membership: Membership } | GeneralApiProblem> {
     return membershipWrappers.getMembership(cookbookId)
   }
 
   /**
    * Gets a single invitation token by its token.
    */
-  async GetInvitationToken(
+  async getInvitationToken(
     token: string,
-  ): Promise<{ kind: "ok"; invitation: InvitationSnapshotOut } | GeneralApiProblem> {
-    return invitationWrappers.GetInvitationToken(token)
+  ): Promise<{ kind: "ok"; invitation: Invitation } | GeneralApiProblem> {
+    return invitationWrappers.getInvitationToken(token)
   }
 
   /**
    * Gets a list of invitations.
    */
-  async GetInvitations(
+  async getInvitations(
     pageNumber: number,
     pageSize: number,
     status: string = "Active",
-  ): Promise<{ kind: "ok"; invitations: InvitationListSnapshotIn } | GeneralApiProblem> {
-    return invitationWrappers.GetInvitations(pageNumber, pageSize, status)
+  ): Promise<{ kind: "ok"; invitations: InvitationList } | GeneralApiProblem> {
+    return invitationWrappers.getInvitations(pageNumber, pageSize, status)
   }
 
   /**
    * Gets a count of invitations.
    */
-  async GetInvitationCount(): Promise<{ kind: "ok"; count: number } | GeneralApiProblem> {
-    return invitationWrappers.GetInvitationCount()
+  async getInvitationCount(): Promise<{ kind: "ok"; count: number } | GeneralApiProblem> {
+    return invitationWrappers.getInvitationCount()
   }
 
   /**
@@ -128,7 +123,7 @@ export class Api {
     search: string,
     pageNumber: number,
     pageSize: number,
-  ): Promise<{ kind: "ok"; recipes: RecipeListSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipes: RecipeList } | GeneralApiProblem> {
     return recipeWrappers.getRecipes(cookbookId, search, pageNumber, pageSize)
   }
 
@@ -137,7 +132,7 @@ export class Api {
    */
   async getRecipe(
     recipeId: string,
-  ): Promise<{ kind: "ok"; recipe: RecipeSnapshotOut } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipe: RecipeDetail } | GeneralApiProblem> {
     return recipeWrappers.getRecipe(recipeId)
   }
 
@@ -152,13 +147,13 @@ export class Api {
    * Saves a new recipe to the database.
    */
   async createRecipe(
-    recipe: RecipeToAddSnapshotIn,
+    recipe: RecipeToAdd,
   ): Promise<{ kind: "ok"; recipeId: string } | GeneralApiProblem> {
     return recipeWrappers.createRecipe(recipe)
   }
 
   async updateRecipe(
-    recipe: RecipeSnapshotIn,
+    recipe: RecipeDetail,
   ): Promise<{ kind: "ok"; recipeId: string } | GeneralApiProblem> {
     return recipeWrappers.updateRecipe(recipe)
   }
@@ -186,11 +181,11 @@ export class Api {
   /**
    * Updates an invitation token by its token string.
    */
-  async UpdateInvitationToken(
+  async updateInvitationToken(
     token: string,
     accepted: boolean,
   ): Promise<{ kind: "ok"; invitationId: string } | GeneralApiProblem> {
-    return invitationWrappers.UpdateInvitationToken(token, accepted)
+    return invitationWrappers.updateInvitationToken(token, accepted)
   }
 
   /**
@@ -204,25 +199,25 @@ export class Api {
 
   async extractRecipeFromUrl(
     url: string,
-  ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipe: RecipeToAdd } | GeneralApiProblem> {
     return recipeWrappers.extractRecipeFromUrl(url)
   }
 
   async extractRecipeFromVoice(
     transcript: string,
-  ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipe: RecipeToAdd } | GeneralApiProblem> {
     return recipeWrappers.extractRecipeFromVoice(transcript)
   }
 
   async extractRecipeFromSocialUrl(
     url: string,
-  ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipe: RecipeToAdd } | GeneralApiProblem> {
     return recipeWrappers.extractRecipeFromSocialUrl(url)
   }
 
   async extractRecipeFromImage(
     image: ImagePickerAsset,
-  ): Promise<{ kind: "ok"; recipe: RecipeToAddSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; recipe: RecipeToAdd } | GeneralApiProblem> {
     return recipeWrappers.extractRecipeFromImage(image)
   }
 
@@ -267,14 +262,14 @@ export class Api {
   async login(
     email: string,
     password: string,
-  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; authResult: AuthResult } | GeneralApiProblem> {
     return userWrappers.login(email, password)
   }
 
   async loginWithProvider(
     provider: userWrappers.ExternalLoginProvider,
     token: string,
-  ): Promise<{ kind: "ok"; authResult: AuthResultSnapshotIn } | GeneralApiProblem> {
+  ): Promise<{ kind: "ok"; authResult: AuthResult } | GeneralApiProblem> {
     return userWrappers.loginWithProvider(provider, token)
   }
 
@@ -315,7 +310,7 @@ export class Api {
     return membershipWrappers.deleteMembership(membershipId)
   }
 
-  async updateCookbook(cookbook: CookbookSnapshotIn): Promise<{ kind: "ok" } | GeneralApiProblem> {
+  async updateCookbook(cookbook: CookbookItem): Promise<{ kind: "ok" } | GeneralApiProblem> {
     return cookbookWrappers.updateCookbook(cookbook)
   }
 }

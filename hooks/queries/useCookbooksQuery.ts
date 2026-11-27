@@ -3,12 +3,7 @@ import { invalidateCookbookLists } from "@/services/query/invalidateQueries"
 import { queryKeys } from "@/services/query/queryKeys"
 import { unwrapApiResult } from "@/services/query/unwrapApiResult"
 import { api } from "@/services/api"
-import type {
-  CookbookItem,
-  CookbookListPage,
-  CookbookSnapshotIn,
-  CookbookToAddSnapshotIn,
-} from "@/types/cookbook"
+import type { CookbookItem, CookbookListPage, CookbookToAdd } from "@/types/cookbook"
 import {
   useInfiniteQuery,
   useMutation,
@@ -122,7 +117,7 @@ export function useCreateCookbookMutation() {
   const setSelectedCookbookId = useUiStore((s) => s.setSelectedCookbookId)
 
   return useMutation({
-    mutationFn: async (cookbook: CookbookToAddSnapshotIn) => {
+    mutationFn: async (cookbook: CookbookToAdd) => {
       const result = await api.createCookbook(cookbook)
       return unwrapApiResult(result)
     },
@@ -136,7 +131,7 @@ export function useCreateCookbookMutation() {
 export function useUpdateCookbookMutation() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async (cookbook: CookbookSnapshotIn) => {
+    mutationFn: async (cookbook: CookbookItem) => {
       const result = await api.updateCookbook(cookbook)
       if (result.kind !== "ok") throw new Error(result.kind)
       return cookbook

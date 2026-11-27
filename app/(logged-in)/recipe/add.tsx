@@ -1,10 +1,10 @@
 import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
-import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/Recipe/RecipeAiEditDialog"
-import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
+import { useAddRecipeTour } from "@/hooks/useGettingStartedScreenTour"
+import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/recipe/RecipeAiEditDialog"
+import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
-import { useAuthStore } from "@/stores/authStore"
 import {
   useApplyRecipeEditFromPromptMutation,
   useCreateRecipeMutation,
@@ -12,37 +12,21 @@ import {
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import { getEffectiveWeeklyImportCount, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
-import type { RecipeToAddSnapshotIn } from "@/types/recipe"
+import type { RecipeToAdd } from "@/types/recipe"
 import { draftItemHasContent, hasDraftContent } from "@/utils/recipeDraftHelpers"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 import { formInputsToAiRecipeDto, updateDtoToFormInputs } from "@/utils/recipeFormMappers"
 import { normalizeRouteParam } from "@/utils/routeParams"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { getCookbookImage } from "@/utils/cookbookImages"
-import {
-  advanceGettingStartedTour,
-  completeGettingStartedTour,
-  endGettingStartedTour,
-  getGettingStartedTour,
-  markGettingStartedStepDone,
-  useGettingStartedTour,
-} from "@/utils/gettingStartedTour"
 import { router, useLocalSearchParams } from "expo-router"
-import { useFocusEffect } from "expo-router/react-navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
 
 export default function AddRecipeScreen() {
-  const userId = useAuthStore((s) => s.userId)
-  const tour = useGettingStartedTour()
-
-  useFocusEffect(
-    useCallback(() => {
-      if (getGettingStartedTour()?.step === "recipe") advanceGettingStartedTour("screen")
-    }, []),
-  )
+  const { active: showRecipeGuide, complete, dismiss, markDone } = useAddRecipeTour()
   const recipeToAdd = useUiStore((s) => s.recipeToAdd)
   const clearRecipeToAdd = useUiStore((s) => s.clearRecipeToAdd)
   const saveDraft = useUiStore((s) => s.saveDraft)
@@ -52,7 +36,7 @@ export default function AddRecipeScreen() {
   const createRecipeMutation = useCreateRecipeMutation()
   const applyAiEdit = useApplyRecipeEditFromPromptMutation()
   const { selected: selectedCookbook, selectedCookbookId } = useSelectedCookbook()
-  const { themed } = useAppTheme()
+  
   const { t } = useTranslation()
   const isPro = useSubscriptionStore((s) => s.isPro)
   const weeklyImportCount = useUiStore((s) => s.weeklyImportCount)
@@ -81,10 +65,10 @@ export default function AddRecipeScreen() {
   // Prevents unmount cleanup from re-saving a draft after successful submit
   const submittedSuccessfullyRef = useRef(false)
 
-  const $themedCookbookLabel = useMemo(() => themed($cookbookLabel), [themed])
-  const $themedCookbookHeader = useMemo(() => themed($cookbookHeader), [themed])
-  const $themedCookbookImage = useMemo(() => themed($cookbookImage), [themed])
-  const $themedCookbookTitle = useMemo(() => themed($cookbookTitle), [themed])
+  const $themedCookbookLabel = useThemedStyles($cookbookLabel)
+  const $themedCookbookHeader = useThemedStyles($cookbookHeader)
+  const $themedCookbookImage = useThemedStyles($cookbookImage)
+  const $themedCookbookTitle = useThemedStyles($cookbookTitle)
 
   const cookbookImageSource = useMemo(() => {
     if (!selectedCookbook) return null
@@ -283,7 +267,7 @@ export default function AddRecipeScreen() {
           ordinal: index + 1,
         }))
 
-      const newRecipe: RecipeToAddSnapshotIn = {
+      const newRecipe: RecipeToAdd = {
         title: formData.title.trim(),
         cookbookId: selectedCookbook.id,
         summary: formData.summary?.trim() || null,
@@ -314,7 +298,7 @@ export default function AddRecipeScreen() {
       try {
         await createRecipeMutation.mutateAsync(newRecipe)
         submittedSuccessfullyRef.current = true
-        markGettingStartedStepDone(userId, "recipe")
+        markDone()
         deleteDraft(selectedCookbook.id)
         router.dismissTo("/(logged-in)/(tabs)/cookbooks")
         router.push(`/(logged-in)/cookbook/${selectedCookbook.id}`)
@@ -331,12 +315,8 @@ export default function AddRecipeScreen() {
         alert(translate("recipeAddScreen:createFailed"))
       }
     },
-    [createRecipeMutation, deleteDraft, saveDraft, selectedCookbook, userId],
+    [createRecipeMutation, deleteDraft, markDone, saveDraft, selectedCookbook],
   )
-
-  const onError = (errors: any) => {
-    console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
-  }
 
   return (
     <View style={$screenRoot}>
@@ -354,7 +334,6 @@ export default function AddRecipeScreen() {
           key={formKey}
           onSubmit={onPressSend}
           formValues={appliedFormValues ?? resolvedFormValues}
-          onError={onError}
           formRef={formRef}
         />
       </Screen>
@@ -366,13 +345,13 @@ export default function AddRecipeScreen() {
         onDismiss={() => setDialogVisible(false)}
         onApply={handleApplyAiEdit}
       />
-      {tour?.step === "recipe" && tour.phase === "screen" ? (
+      {showRecipeGuide ? (
         <GettingStartedGuide
           revealScreen
           messageTx="gettingStarted:guideRecipeScreen"
           primaryTx="gettingStarted:gotIt"
-          onPrimary={() => completeGettingStartedTour(userId)}
-          onClose={endGettingStartedTour}
+          onPrimary={complete}
+          onClose={dismiss}
         />
       ) : null}
     </View>

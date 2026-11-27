@@ -1,4 +1,4 @@
-import type { IngredientSectionSnapshotIn } from "@/types/recipe"
+import type { IngredientSection } from "@/types/recipe"
 import { hasMeaningfulText } from "@/utils/hasMeaningfulText"
 
 /** Matches SharedCookbook.Domain.Entities.Recipe.Constraints */
@@ -19,7 +19,7 @@ export type IngredientSectionFormRow = {
 export function formDataToIngredientSectionsSnapshot(
   formData: { ingredientSections: IngredientSectionFormRow[] },
   _options?: { sectionIds?: "preserve" | "reset" },
-): IngredientSectionSnapshotIn[] {
+): IngredientSection[] {
   return formData.ingredientSections
     .map((sec, sIdx) => ({
       title: hasMeaningfulText(sec.title) ? sec.title.replace(/\u00A0/g, " ").trim() : "",

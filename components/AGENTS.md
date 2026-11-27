@@ -7,7 +7,7 @@ Conventions for a new component: `.cursor/skills/add-component/SKILL.md`. Themed
 ## Layout
 
 - One component per file. There is no barrel `index.ts`. Import `@/components/Button`.
-- A subfolder is only for a tight family: `Recipe/`, `Toggle/`, `subscription/`, `activity/`, `cookbooks/`, `Membership/`, `ErrorBoundary/`.
+- A subfolder is only for a tight family: `recipe/`, `Toggle/`, `subscription/`, `activity/`, `cookbooks/`, `membership/`, `ErrorBoundary/`.
 - Styles stay in the component file, prefixed with `$`, typed as `ThemedStyle`.
 
 ## What screens use

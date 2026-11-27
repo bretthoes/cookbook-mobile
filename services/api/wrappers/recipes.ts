@@ -1,11 +1,6 @@
 import Config from "@/config"
 import type { components } from "@/services/api/generated/schema"
-import type {
-  RecipeListSnapshotIn,
-  RecipeSnapshotIn,
-  RecipeSnapshotOut,
-  RecipeToAddSnapshotIn,
-} from "@/types/recipe"
+import type { RecipeList, RecipeDetail, RecipeToAdd } from "@/types/recipe"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {
@@ -30,7 +25,7 @@ export async function getRecipes(
   search: string,
   pageNumber: number,
   pageSize: number,
-): Promise<ApiResult<{ recipes: RecipeListSnapshotIn }>> {
+): Promise<ApiResult<{ recipes: RecipeList }>> {
   try {
     const { data, error, response } = await client.GET("/api/Recipes", {
       params: {
@@ -45,7 +40,7 @@ export async function getRecipes(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipes: data as RecipeListSnapshotIn })
+    return toOkResult({ recipes: data as RecipeList })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -53,7 +48,7 @@ export async function getRecipes(
 
 export async function getRecipe(
   recipeId: string,
-): Promise<ApiResult<{ recipe: RecipeSnapshotOut }>> {
+): Promise<ApiResult<{ recipe: RecipeDetail }>> {
   try {
     const { data, error, response } = await client.GET("/api/Recipes/{id}", {
       params: { path: { id: recipeId } },
@@ -61,14 +56,14 @@ export async function getRecipe(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipe: data as RecipeSnapshotOut })
+    return toOkResult({ recipe: data as RecipeDetail })
   } catch (e) {
     return toProblemFromError(e)
   }
 }
 
 export async function createRecipe(
-  recipe: RecipeToAddSnapshotIn,
+  recipe: RecipeToAdd,
 ): Promise<ApiResult<{ recipeId: string }>> {
   try {
     const { data, error, response } = await client.POST("/api/Recipes", {
@@ -89,7 +84,7 @@ export async function createRecipe(
 }
 
 export async function updateRecipe(
-  recipe: RecipeSnapshotIn,
+  recipe: RecipeDetail,
 ): Promise<ApiResult<{ recipeId: string }>> {
   try {
     const { error, response } = await client.PUT("/api/Recipes/{id}", {
@@ -136,7 +131,7 @@ export async function deleteRecipe(recipeId: string): Promise<{ kind: "ok" } | G
 
 export async function extractRecipeFromUrl(
   url: string,
-): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+): Promise<ApiResult<{ recipe: RecipeToAdd }>> {
   try {
     const { data, error, response } = await client.POST("/api/Recipes/parse-from-url", {
       body: { url },
@@ -145,7 +140,7 @@ export async function extractRecipeFromUrl(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipe: data as unknown as RecipeToAddSnapshotIn })
+    return toOkResult({ recipe: data as unknown as RecipeToAdd })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -153,7 +148,7 @@ export async function extractRecipeFromUrl(
 
 export async function extractRecipeFromVoice(
   transcript: string,
-): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+): Promise<ApiResult<{ recipe: RecipeToAdd }>> {
   try {
     const { data, error, response } = await client.POST("/api/Recipes/parse-from-voice", {
       body: { transcript },
@@ -162,7 +157,7 @@ export async function extractRecipeFromVoice(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipe: data as unknown as RecipeToAddSnapshotIn })
+    return toOkResult({ recipe: data as unknown as RecipeToAdd })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -188,7 +183,7 @@ export async function applyRecipeEditFromPrompt(
 
 export async function extractRecipeFromSocialUrl(
   url: string,
-): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+): Promise<ApiResult<{ recipe: RecipeToAdd }>> {
   const baseUrl = Config.API_URL.replace(/\/api\/?$/, "")
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), RECIPE_AI_IMPORT_TIMEOUT_MS)
@@ -210,7 +205,7 @@ export async function extractRecipeFromSocialUrl(
     if (!response.ok) return toProblemFromResponse(response, null)
     const data = await response.json()
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipe: data as RecipeToAddSnapshotIn })
+    return toOkResult({ recipe: data as RecipeToAdd })
   } catch (e) {
     clearTimeout(timeoutId)
     return toProblemFromError(e)
@@ -219,7 +214,7 @@ export async function extractRecipeFromSocialUrl(
 
 export async function extractRecipeFromImage(
   image: ImagePickerAsset,
-): Promise<ApiResult<{ recipe: RecipeToAddSnapshotIn }>> {
+): Promise<ApiResult<{ recipe: RecipeToAdd }>> {
   const baseUrl = Config.API_URL.replace(/\/api\/?$/, "")
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), RECIPE_AI_IMPORT_TIMEOUT_MS)
@@ -248,7 +243,7 @@ export async function extractRecipeFromImage(
     if (!response.ok) return toProblemFromResponse(response, null)
     const data = await response.json()
     if (!data) return { kind: "not-found" }
-    return toOkResult({ recipe: data as unknown as RecipeToAddSnapshotIn })
+    return toOkResult({ recipe: data as unknown as RecipeToAdd })
   } catch (e) {
     clearTimeout(timeoutId)
     return toProblemFromError(e)

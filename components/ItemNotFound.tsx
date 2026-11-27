@@ -3,9 +3,9 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import type { TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { router } from "expo-router"
-import React, { useMemo } from "react"
+import React from "react"
 import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
 
@@ -47,16 +47,16 @@ export function ItemNotFound({
   onButtonPress = () => router.back(),
   style,
 }: ItemNotFoundProps) {
-  const { themed } = useAppTheme()
+  
   const { t } = useTranslation()
 
   const displayMessage = message ?? (messageTx ? t(messageTx) : t("itemNotFound:message"))
   const displayButtonText = buttonText ?? (buttonTx ? t(buttonTx) : t("common:goBack"))
 
-  const $themedRoot = useMemo(() => themed($root), [themed])
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedMessage = useMemo(() => themed($message), [themed])
-  const $themedButton = useMemo(() => themed($button), [themed])
+  const $themedRoot = useThemedStyles($root)
+  const $themedContainer = useThemedStyles($container)
+  const $themedMessage = useThemedStyles($message)
+  const $themedButton = useThemedStyles($button)
 
   return (
     <Screen preset="scroll" style={[$themedRoot, style]}>

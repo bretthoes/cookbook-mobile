@@ -7,8 +7,9 @@ import { SectionCard } from "@/components/SectionCard"
 import { translate } from "@/i18n"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useAuthStore } from "@/stores/authStore"
-import { useInvitationStore } from "@/stores/invitationStore"
+import { createInvitationLink } from "@/hooks/queries/useInvitationsQuery"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import {
   advanceGettingStartedTour,
@@ -26,7 +27,6 @@ import { useFocusEffect } from "expo-router/react-navigation"
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -37,8 +37,7 @@ import { ActivityIndicator, Pressable, Share, TextStyle, View, ViewStyle } from 
 export default function AddInvitationLinkScreen() {
   const { selected } = useSelectedCookbook()
   const userId = useAuthStore((s) => s.userId)
-  const link = useInvitationStore((s) => s.link)
-  const { themed, theme } = useAppTheme()
+  const { theme } = useAppTheme()
   const tour = useGettingStartedTour()
   const showGuide = tour?.step === "invite" && tour.phase === "screen"
   const linkAnchor = useGuideAnchor(showGuide)
@@ -72,7 +71,7 @@ export default function AddInvitationLinkScreen() {
     setInviteUrl(null)
     setLinkMsg("")
     setIsMinting(true)
-    link(cookbookId)
+    createInvitationLink(cookbookId)
       .then((res) => {
         if (cancelled) return
         if ("message" in res) {
@@ -87,7 +86,7 @@ export default function AddInvitationLinkScreen() {
     return () => {
       cancelled = true
     }
-  }, [selected?.id, link])
+  }, [selected?.id])
 
   useEffect(() => {
     return () => {
@@ -110,17 +109,17 @@ export default function AddInvitationLinkScreen() {
     if (shared.action === Share.sharedAction) markGettingStartedStepDone(userId, "invite")
   }, [inviteUrl, isMinting, userId])
 
-  const $themedIntro = useMemo(() => themed($intro), [themed])
-  const $themedLinkHeader = useMemo(() => themed($linkHeader), [themed])
-  const $themedLinkBox = useMemo(() => themed($linkBox), [themed])
-  const $themedGeneratingRow = useMemo(() => themed($generatingRow), [themed])
-  const $themedLinkText = useMemo(() => themed($linkText), [themed])
-  const $themedPlaceholderText = useMemo(() => themed($placeholderText), [themed])
-  const $themedShareButton = useMemo(() => themed($shareButton), [themed])
-  const $themedHelper = useMemo(() => themed($helper), [themed])
-  const $themedOr = useMemo(() => themed($or), [themed])
-  const $themedEmailRow = useMemo(() => themed($emailRow), [themed])
-  const $themedEmailDescription = useMemo(() => themed($emailDescription), [themed])
+  const $themedIntro = useThemedStyles($intro)
+  const $themedLinkHeader = useThemedStyles($linkHeader)
+  const $themedLinkBox = useThemedStyles($linkBox)
+  const $themedGeneratingRow = useThemedStyles($generatingRow)
+  const $themedLinkText = useThemedStyles($linkText)
+  const $themedPlaceholderText = useThemedStyles($placeholderText)
+  const $themedShareButton = useThemedStyles($shareButton)
+  const $themedHelper = useThemedStyles($helper)
+  const $themedOr = useThemedStyles($or)
+  const $themedEmailRow = useThemedStyles($emailRow)
+  const $themedEmailDescription = useThemedStyles($emailDescription)
 
   return (
     <View style={$root}>

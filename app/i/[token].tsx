@@ -4,18 +4,18 @@ import { Header } from "@/components/Header"
 import { CircularProgressScreen } from "@/components/CircularProgressScreen"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useInvitationTokenQuery, useRespondToInvitation } from "@/hooks/queries/useInvitationsQuery"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { isRTL, translate } from "@/i18n"
 import { useIsAuthenticated } from "@/stores/authStore"
-import { useInvitationStore } from "@/stores/invitationStore"
-import type { Invitation } from "@/types/invitation"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { Image } from "expo-image"
 import { router, useLocalSearchParams } from "expo-router"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useMemo, useState } from "react"
 import {
   ActivityIndicator,
   Alert,
@@ -27,23 +27,28 @@ import {
 
 export default function InvitationTokenScreen() {
   const { token } = useLocalSearchParams<{ token: string }>()
+  const tokenValue = token ?? ""
   const isAuthenticated = useIsAuthenticated()
-  const loadInvitationByToken = useInvitationStore((s) => s.single)
-  const respondToInvitation = useInvitationStore((s) => s.respond)
-  const { themed, theme } = useAppTheme()
+  const invitationQuery = useInvitationTokenQuery(tokenValue, isAuthenticated)
+  const respondToInvitation = useRespondToInvitation()
+  const { theme } = useAppTheme()
 
-  const [isLoading, setIsLoading] = useState(true)
+  const invitation = invitationQuery.data ?? null
+  const isLoading = tokenValue.length > 0 && isAuthenticated && invitationQuery.isPending
+  const error = !tokenValue
+    ? translate("invitationLinkScreen:invalidLink")
+    : !isAuthenticated || invitationQuery.isPending || invitation
+      ? null
+      : translate("invitationLinkScreen:vanished")
   const { isInFlight, run } = useInFlightAction()
-  const [error, setError] = useState<string | null>(null)
-  const [invitation, setInvitation] = useState<Invitation | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [acceptedSuccessfully, setAcceptedSuccessfully] = useState(false)
   const [declinedSuccessfully, setDeclinedSuccessfully] = useState(false)
 
-  const $themedEmptyState = useMemo(() => themed($emptyState), [themed])
-  const $themedEmptyStateImage = useMemo(() => themed($emptyStateImage), [themed])
-  const $themedCookbookImage = useMemo(() => themed($cookbookImage), [themed])
-  const $themedCookbookTitle = useMemo(() => themed($cookbookTitle), [themed])
+  const $themedEmptyState = useThemedStyles($emptyState)
+  const $themedEmptyStateImage = useThemedStyles($emptyStateImage)
+  const $themedCookbookImage = useThemedStyles($cookbookImage)
+  const $themedCookbookTitle = useThemedStyles($cookbookTitle)
 
   const cookbookImageSource = useMemo(() => {
     if (invitation?.cookbookImage) {
@@ -54,41 +59,6 @@ export default function InvitationTokenScreen() {
     }
     return null
   }, [invitation?.cookbookImage, invitation?.cookbookId])
-
-  useEffect(() => {
-    const loadInvitation = async () => {
-      if (!token) {
-        setError(translate("invitationLinkScreen:invalidLink"))
-        setIsLoading(false)
-        return
-      }
-
-      // If not authenticated, we can't load the invitation yet
-      // The user will need to log in first
-      if (!isAuthenticated) {
-        setIsLoading(false)
-        setError(null) // Don't show error, just prompt for login
-        return
-      }
-
-      try {
-        await loadInvitationByToken(token)
-        const loaded = useInvitationStore.getState().invitation
-        if (loaded) {
-          setInvitation(loaded)
-        } else {
-          setError(translate("invitationLinkScreen:vanished"))
-        }
-      } catch (err) {
-        setError(translate("invitationLinkScreen:vanished"))
-        console.error("Error loading invitation:", err)
-      } finally {
-        setIsLoading(false)
-      }
-    }
-
-    loadInvitation()
-  }, [token, isAuthenticated, loadInvitationByToken])
 
   const handleAccept = useCallback(() => {
     run(async () => {

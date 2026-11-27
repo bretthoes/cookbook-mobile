@@ -24,7 +24,9 @@ Pure helpers stay in `utils/`. `useHeader` is the exception: the implementation 
 
 ## Query hooks
 
-One file per resource: `useCookbooksQuery.ts`, `useRecipesQuery.ts`, `useNotificationsQuery.ts`, `useLatestActivityQuery.ts`.
+One file per resource: `useCookbooksQuery.ts`, `useRecipesQuery.ts`, `useNotificationsQuery.ts`, `useLatestActivityQuery.ts`, `useInvitationsQuery.ts`, `useDisplayNameQuery.ts`.
+
+`useGettingStartedScreenTour.ts` owns the getting-started phase checks for the cookbooks tab, cookbook detail, recipe options, and the add-recipe screen.
 
 1. Call `api` or a function in `services/api/wrappers/`.
 2. Pass the result through `unwrapApiResult`. A non-ok result throws `ApiQueryError`.

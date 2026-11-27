@@ -1,4 +1,4 @@
-import type { NotificationItem, NotificationListSnapshotIn } from "@/types/notification"
+import type { NotificationItem, NotificationList } from "@/types/notification"
 import { apiClientInstance } from "@/services/api/client"
 import {
   ApiResult,
@@ -12,7 +12,7 @@ const { client } = apiClientInstance
 export async function getNotifications(
   pageNumber: number,
   pageSize: number,
-): Promise<ApiResult<{ notifications: NotificationListSnapshotIn }>> {
+): Promise<ApiResult<{ notifications: NotificationList }>> {
   try {
     const { data, error, response } = await client.GET("/api/Notifications", {
       params: { query: { PageNumber: pageNumber, PageSize: pageSize } },
@@ -20,7 +20,7 @@ export async function getNotifications(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ notifications: data as NotificationListSnapshotIn })
+    return toOkResult({ notifications: data as NotificationList })
   } catch (e) {
     return toProblemFromError(e)
   }

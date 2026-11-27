@@ -1,22 +1,25 @@
 import { AutoImage } from "@/components/AutoImage"
 import { Button } from "@/components/Button"
+import { RecipePhotoField } from "@/components/recipe/RecipePhotoField"
+import { RecipeTimeFields } from "@/components/recipe/RecipeTimeFields"
 import { Divider } from "@/components/Divider"
 import { ImageCropper } from "@/components/ImageCropper"
 import { PressableIcon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
-import { IngredientSectionEditor } from "@/components/Recipe/IngredientSectionEditor"
+import { IngredientSectionEditor } from "@/components/recipe/IngredientSectionEditor"
 import { SectionCard } from "@/components/SectionCard"
 import {
   getRecipeTagChipColor,
   RECIPE_TAG_CHIP_TEXT_COLOR,
-} from "@/components/Recipe/recipeTagColors"
+} from "@/components/recipe/recipeTagColors"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { useImageCropSession } from "@/hooks/useImageCropSession"
 import { translate } from "@/i18n"
 import { api } from "@/services/api"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { useHeader } from "@/utils/useHeader"
 import { getImageUploadErrorMessage } from "@/utils/getImageUploadErrorMessage"
@@ -55,14 +58,6 @@ const defaultIngredientSection = (): IngredientSectionForm => ({
     { name: "", optional: null },
   ],
 })
-
-const parseNullableInteger = (value: string): number | null => {
-  const trimmed = value.trim()
-  if (!trimmed) return null
-
-  const parsed = Number.parseInt(trimmed, 10)
-  return Number.isNaN(parsed) ? null : parsed
-}
 
 export interface RecipeFormInputs {
   title: string
@@ -125,7 +120,7 @@ export interface RecipeFormHandle {
 export interface RecipeFormProps {
   formValues?: RecipeFormInputs
   onSubmit: (formData: RecipeFormInputs) => void
-  onError: (errors: any) => void
+  onError?: (errors: unknown) => void
   isEdit?: boolean
   formRef?: React.RefObject<RecipeFormHandle | null>
 }
@@ -139,13 +134,10 @@ export function RecipeForm(props: RecipeFormProps) {
   const [isUploading, setIsUploading] = useState(false)
   const crop = useImageCropSession()
 
-  const $themedButtonHeightOverride = React.useMemo(() => themed($buttonHeightOverride), [themed])
-  const $themedDirectionItemContainer = React.useMemo(
-    () => themed($directionItemContainer),
-    [themed],
-  )
-  const $themedDirectionIndex = React.useMemo(() => themed($directionIndex), [themed])
-  const $themedTextFieldContainer = React.useMemo(() => themed($textFieldContainer), [themed])
+  const $themedButtonHeightOverride = useThemedStyles($buttonHeightOverride)
+  const $themedDirectionItemContainer = useThemedStyles($directionItemContainer)
+  const $themedDirectionIndex = useThemedStyles($directionIndex)
+  const $themedTextFieldContainer = useThemedStyles($textFieldContainer)
 
   const {
     control,
@@ -309,40 +301,13 @@ export function RecipeForm(props: RecipeFormProps) {
             : translate("recipeFormScreen:descriptionNew")
         }
       >
-        {isUploading && <ActivityIndicator />}
-        {currentImages.length > 0 && (
-          <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center" }}>
-            {currentImages.map((imageUri, index) => (
-              <View key={index} style={{ margin: 5 }}>
-                <AutoImage
-                  source={{ uri: getImageDisplayUri(imageUri) }}
-                  style={{ width: 100, height: 100 }}
-                />
-                <View
-                  style={{
-                    position: "absolute",
-                    top: 4,
-                    right: 4,
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                    borderRadius: 12,
-                    padding: 2,
-                  }}
-                >
-                  <PressableIcon icon="x" onPress={() => removeImage(index)} color="#fff" />
-                </View>
-              </View>
-            ))}
-          </View>
-        )}
-
-        <Button
-          text={
-            isEdit
-              ? translate("recipeFormScreen:addPhotos", { current: currentImages.length })
-              : translate("recipeFormScreen:addPhotosMax")
-          }
-          onPress={pickImage}
-          disabled={isUploading || currentImages.length >= 6}
+        <RecipePhotoField
+          images={currentImages}
+          isEdit={isEdit}
+          isUploading={isUploading}
+          imageUri={getImageDisplayUri}
+          onPick={pickImage}
+          onRemove={removeImage}
         />
 
         <Divider size={spacing.lg} />
@@ -383,79 +348,7 @@ export function RecipeForm(props: RecipeFormProps) {
 
         <Divider size={spacing.xxl} line />
 
-        <Controller
-          name={"preparationTimeInMinutes"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value != null ? String(value) : ""}
-              onChangeText={(text) => onChange(parseNullableInteger(text))}
-              helper={errors.preparationTimeInMinutes?.message ?? ""}
-              placeholderTx="recipeFormScreen:zeroPlaceholder"
-              status="error"
-              labelTx="recipeFormScreen:prepLabel"
-              inputMode="numeric"
-              keyboardType="numeric"
-            />
-          )}
-        />
-
-        <Divider size={spacing.lg} />
-
-        <Controller
-          name={"cookingTimeInMinutes"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value != null ? String(value) : ""}
-              onChangeText={(text) => onChange(parseNullableInteger(text))}
-              helper={errors.cookingTimeInMinutes?.message ?? ""}
-              placeholderTx="recipeFormScreen:zeroPlaceholder"
-              status="error"
-              labelTx="recipeFormScreen:cookLabel"
-              inputMode="numeric"
-              keyboardType="numeric"
-            />
-          )}
-        />
-
-        <Divider size={spacing.lg} />
-
-        <Controller
-          name={"bakingTimeInMinutes"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value != null ? String(value) : ""}
-              onChangeText={(text) => onChange(parseNullableInteger(text))}
-              helper={errors.bakingTimeInMinutes?.message ?? ""}
-              placeholderTx="recipeFormScreen:zeroPlaceholder"
-              status="error"
-              labelTx="recipeFormScreen:bakeLabel"
-              inputMode="numeric"
-              keyboardType="numeric"
-            />
-          )}
-        />
-
-        <Divider size={spacing.lg} />
-
-        <Controller
-          name={"servings"}
-          control={control}
-          render={({ field: { onChange, value } }) => (
-            <TextField
-              value={value != null ? String(value) : ""}
-              onChangeText={(text) => onChange(parseNullableInteger(text))}
-              helper={errors.servings?.message ?? ""}
-              placeholderTx="recipeFormScreen:zeroPlaceholder"
-              status="error"
-              labelTx="recipeFormScreen:servingsLabel"
-              inputMode="numeric"
-              keyboardType="numeric"
-            />
-          )}
-        />
+        <RecipeTimeFields control={control} errors={errors} />
 
         <Divider size={spacing.xxl} line />
 

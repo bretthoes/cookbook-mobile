@@ -1,14 +1,13 @@
 import { Text } from "@/components/Text"
 import type { NotificationItem } from "@/types/notification"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import {
   getActivityFeedMessageKey,
   getActivityFeedMessageOptions,
 } from "@/utils/activityFeedMessage"
 import { formatActivityTimeAgo } from "@/utils/formatActivityTimeAgo"
 import { useRouter } from "expo-router"
-import { useMemo } from "react"
 import { Pressable, TextStyle, View, ViewStyle } from "react-native"
 
 interface FeedPostItemProps {
@@ -18,15 +17,15 @@ interface FeedPostItemProps {
 }
 
 export function FeedPostItem({ item, isNew = false }: FeedPostItemProps) {
-  const { themed } = useAppTheme()
+  
   const router = useRouter()
   const messageKey = getActivityFeedMessageKey(item)
   const isImportant = item.isImportant ?? false
   const canOpenRecipe = item.recipeId != null
-  const $themedPost = useMemo(() => themed($post), [themed])
-  const $themedPostImportant = useMemo(() => themed($postImportant), [themed])
-  const $themedNewPill = useMemo(() => themed($newPill), [themed])
-  const $themedNewText = useMemo(() => themed($newText), [themed])
+  const $themedPost = useThemedStyles($post)
+  const $themedPostImportant = useThemedStyles($postImportant)
+  const $themedNewPill = useThemedStyles($newPill)
+  const $themedNewText = useThemedStyles($newText)
 
   const handlePress = () => {
     if (canOpenRecipe) router.push(`/(logged-in)/recipe/${item.recipeId}`)

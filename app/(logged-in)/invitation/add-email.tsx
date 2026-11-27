@@ -7,9 +7,9 @@ import { useInFlightAction } from "@/hooks/useInFlightAction"
 import { translate } from "@/i18n"
 import { useAuthStore } from "@/stores/authStore"
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
-import { useInvitationStore } from "@/stores/invitationStore"
+import { sendInvitationEmail } from "@/hooks/queries/useInvitationsQuery"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { validateInviteEmail } from "@/utils/invitations"
 import { useHeader } from "@/utils/useHeader"
 import { markGettingStartedStepDone } from "@/utils/gettingStartedTour"
@@ -20,8 +20,7 @@ import { TextStyle, View, ViewStyle } from "react-native"
 export default function AddInvitationEmailScreen() {
   const userId = useAuthStore((s) => s.userId)
   const { selected } = useSelectedCookbook()
-  const invite = useInvitationStore((s) => s.invite)
-  const { themed } = useAppTheme()
+  
   const { isInFlight, run } = useInFlightAction()
 
   const [inviteEmail, setInviteEmail] = useState("")
@@ -50,19 +49,19 @@ export default function AddInvitationEmailScreen() {
       }
 
       const cookbookId = selected?.id ?? ""
-      const res = await invite(cookbookId, inviteEmail.trim())
+      const res = await sendInvitationEmail(cookbookId, inviteEmail.trim())
       setIsSubmitted(false)
       if (res.sent) markGettingStartedStepDone(userId, "invite")
 
       setEmailMsg(res.message)
       setInviteEmail("")
     })
-  }, [inviteEmail, invite, selected?.id, run, userId])
+  }, [inviteEmail, selected?.id, run, userId])
 
-  const $themedIntro = useMemo(() => themed($intro), [themed])
-  const $themedSection = useMemo(() => themed($section), [themed])
-  const $themedHelper = useMemo(() => themed($helper), [themed])
-  const $themedButton = useMemo(() => themed($buttonSpacer), [themed])
+  const $themedIntro = useThemedStyles($intro)
+  const $themedSection = useThemedStyles($section)
+  const $themedHelper = useThemedStyles($helper)
+  const $themedButton = useThemedStyles($buttonSpacer)
 
   return (
     <View style={$root}>

@@ -4,5 +4,3 @@ export type AuthResult = {
   expiresIn: number
   refreshToken: string
 }
-
-export type AuthResultSnapshotIn = AuthResult

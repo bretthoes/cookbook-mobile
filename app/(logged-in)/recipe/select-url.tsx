@@ -1,6 +1,6 @@
 import { FormCard } from "@/components/FormCard"
 import { LoadingScreen } from "@/components/LoadingScreen"
-import { SupportedRecipeSites } from "@/components/Recipe/SupportedRecipeSites"
+import { SupportedRecipeSites } from "@/components/recipe/SupportedRecipeSites"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"

@@ -4,6 +4,7 @@ import { Text } from "@/components/Text"
 import { TextField } from "@/components/TextField"
 import type { TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import {
   convertMeasurement,
@@ -116,17 +117,17 @@ export function MeasurementConverterDialog({
   const keyboardLift = keyboardHeight > 0 ? keyboardHeight : insets.bottom
   const maxDialogHeight = Math.max(220, windowHeight - keyboardLift - insets.top - theme.spacing.lg)
 
-  const $themedOverlay = useMemo(() => themed($overlay), [themed])
-  const $themedDialog = useMemo(() => themed($dialog), [themed])
-  const $themedDialogContent = useMemo(() => themed($dialogContent), [themed])
-  const $themedTitle = useMemo(() => themed($title), [themed])
-  const $themedFamilyRow = useMemo(() => themed($familyRow), [themed])
-  const $themedAmountInput = useMemo(() => themed($amountInput), [themed])
-  const $themedFieldGroup = useMemo(() => themed($fieldGroup), [themed])
-  const $themedChipRow = useMemo(() => themed($chipRow), [themed])
-  const $themedSwapButton = useMemo(() => themed($swapButton), [themed])
-  const $themedResultBox = useMemo(() => themed($resultBox), [themed])
-  const $themedEmptyResult = useMemo(() => themed($emptyResult), [themed])
+  const $themedOverlay = useThemedStyles($overlay)
+  const $themedDialog = useThemedStyles($dialog)
+  const $themedDialogContent = useThemedStyles($dialogContent)
+  const $themedTitle = useThemedStyles($title)
+  const $themedFamilyRow = useThemedStyles($familyRow)
+  const $themedAmountInput = useThemedStyles($amountInput)
+  const $themedFieldGroup = useThemedStyles($fieldGroup)
+  const $themedChipRow = useThemedStyles($chipRow)
+  const $themedSwapButton = useThemedStyles($swapButton)
+  const $themedResultBox = useThemedStyles($resultBox)
+  const $themedEmptyResult = useThemedStyles($emptyResult)
 
   const dismiss = () => {
     Keyboard.dismiss()

@@ -1,6 +1,6 @@
-import type { RecipeFormInputs } from "@/components/Recipe/RecipeForm"
+import type { RecipeFormInputs } from "@/components/recipe/RecipeForm"
 import type { components } from "@/services/api/generated/schema"
-import type { RecipeToAddSnapshotIn } from "@/types/recipe"
+import type { RecipeToAdd } from "@/types/recipe"
 import { formDataToIngredientSectionsSnapshot } from "@/utils/recipeIngredientSections"
 
 type RecipeLike = {
@@ -117,6 +117,6 @@ export function updateDtoToFormInputs(dto: RecipeLike): RecipeFormInputs {
   return recipeLikeToFormInputs(dto)
 }
 
-export function recipeToAddToFormInputs(recipe: RecipeToAddSnapshotIn): RecipeFormInputs {
+export function recipeToAddToFormInputs(recipe: RecipeToAdd): RecipeFormInputs {
   return recipeLikeToFormInputs(recipe)
 }

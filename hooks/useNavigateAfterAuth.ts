@@ -21,6 +21,6 @@ export function useNavigateAfterAuth() {
       return
     }
     storage.set("onboarding.skipDisplayName", !needsDisplayName)
-    router.replace({ pathname: "/(logged-in)/onboarding" as any })
+    router.replace("/(logged-in)/onboarding")
   }, [])
 }

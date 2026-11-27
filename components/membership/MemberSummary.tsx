@@ -2,8 +2,7 @@ import { Text } from "@/components/Text"
 import type { TxKeyPath } from "@/i18n"
 import type { TranslationOptions } from "@/i18n/translate"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
-import { useMemo } from "react"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { View, type TextStyle, type ViewStyle } from "react-native"
 
 export interface MemberSummaryProps {
@@ -13,9 +12,8 @@ export interface MemberSummaryProps {
 }
 
 export function MemberSummary({ name, captionTx, captionTxOptions }: MemberSummaryProps) {
-  const { themed } = useAppTheme()
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedCaption = useMemo(() => themed($caption), [themed])
+  const $themedContainer = useThemedStyles($container)
+  const $themedCaption = useThemedStyles($caption)
 
   return (
     <View style={$themedContainer}>

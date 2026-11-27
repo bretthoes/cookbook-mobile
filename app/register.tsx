@@ -11,6 +11,7 @@ import { Text } from "@/components/Text"
 import { TextField, TextFieldAccessoryProps } from "@/components/TextField"
 import { translate, type TxKeyPath } from "@/i18n"
 import { getActiveLanguageCode, setAppLanguage, type SupportedLanguageCode } from "@/i18n/language"
+import { useUpdateDisplayName } from "@/hooks/queries/useDisplayNameQuery"
 import { getAuthEmailValidationError, useAuthStore } from "@/stores/authStore"
 import { useEmailVerificationPolling } from "@/hooks/useEmailVerificationPolling"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
@@ -59,7 +60,7 @@ export default function Register() {
   const resendConfirmationEmail = useAuthStore((s) => s.resendConfirmationEmail)
   const authEmail = useAuthStore((s) => s.authEmail)
   const setAuthEmail = useAuthStore((s) => s.setAuthEmail)
-  const updateDisplayName = useAuthStore((s) => s.updateDisplayName)
+  const updateDisplayName = useUpdateDisplayName()
   const result = useAuthStore((s) => s.result)
   const setResult = useAuthStore((s) => s.setResult)
   const validationError = getAuthEmailValidationError(authEmail)
@@ -170,6 +171,8 @@ export default function Register() {
       const success = await updateDisplayName(localDisplayName.trim())
       if (success) {
         advanceFrom(5)
+      } else {
+        setResult("loginScreen:errors.updateFailed")
       }
       setIsSubmitted(false)
     })

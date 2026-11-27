@@ -1,6 +1,6 @@
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/Recipe/RecipeAiEditDialog"
-import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/Recipe/RecipeForm"
+import { RecipeAiEditDialog, RecipeAiEditFab } from "@/components/recipe/RecipeAiEditDialog"
+import { RecipeForm, RecipeFormHandle, RecipeFormInputs } from "@/components/recipe/RecipeForm"
 import { Screen } from "@/components/Screen"
 import { translate } from "@/i18n"
 import {
@@ -11,7 +11,7 @@ import {
 import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useSubscriptionStore } from "@/stores/subscriptionStore"
 import { getEffectiveWeeklyImportCount, useUiStore, WEEKLY_IMPORT_LIMIT } from "@/stores/uiStore"
-import type { RecipeSnapshotIn } from "@/types/recipe"
+import type { RecipeDetail } from "@/types/recipe"
 import {
   formInputsToAiRecipeDto,
   recipeLikeToFormInputs,
@@ -99,7 +99,7 @@ export default function EditRecipe() {
   )
 
   const onPressSend = async (formData: RecipeFormInputs) => {
-    const updatedRecipe: RecipeSnapshotIn = {
+    const updatedRecipe: RecipeDetail = {
       id: selected?.id ?? "",
       title: formData.title?.trim() ?? "",
       summary: formData.summary?.trim() ?? "",
@@ -148,10 +148,6 @@ export default function EditRecipe() {
     }
   }
 
-  const onError = (errors: unknown) => {
-    console.debug("Form validation errors:", JSON.stringify(errors, null, 2))
-  }
-
   if (!selected) return <ItemNotFound message={translate("recipeEditScreen:notFound")} />
 
   return (
@@ -160,7 +156,6 @@ export default function EditRecipe() {
         <RecipeForm
           key={formKey}
           onSubmit={onPressSend}
-          onError={onError}
           formValues={resolveFormValues}
           isEdit={true}
           formRef={formRef}

@@ -1,6 +1,6 @@
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import type { ThemedStyle } from "@/theme"
-import { ReactNode, useMemo } from "react"
+import { ReactNode} from "react"
 import { View, ViewStyle } from "react-native"
 
 export interface FormCardProps {
@@ -12,8 +12,8 @@ export interface FormCardProps {
  * production-ready form grouping without demo-style subheadings.
  */
 export function FormCard({ children }: FormCardProps) {
-  const { themed } = useAppTheme()
-  const $themedContainer = useMemo(() => themed($container), [themed])
+  
+  const $themedContainer = useThemedStyles($container)
 
   return <View style={$themedContainer}>{children}</View>
 }

@@ -3,8 +3,8 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
-import { useAppTheme } from "@/theme/context"
-import { useEffect, useMemo } from "react"
+import { useThemedStyles } from "@/theme/useThemedStyles"
+import { useEffect} from "react"
 import { View, ViewStyle } from "react-native"
 import Animated, {
   cancelAnimation,
@@ -34,7 +34,7 @@ export interface RecipeDetailsSkeletonProps {
  * itself is the waiting state.
  */
 export function RecipeDetailsSkeleton({ title, hasImages, onBack }: RecipeDetailsSkeletonProps) {
-  const { themed } = useAppTheme()
+  
   const opacity = useSharedValue(0.55)
 
   const $pulse = useAnimatedStyle(() => ({
@@ -48,21 +48,21 @@ export function RecipeDetailsSkeleton({ title, hasImages, onBack }: RecipeDetail
     }
   }, [opacity])
 
-  const $hero = useMemo(() => themed($heroStyle), [themed])
-  const $rule = useMemo(() => themed($ruleStyle), [themed])
-  const $bar = useMemo(() => themed($barStyle), [themed])
-  const $titleBar = useMemo(() => themed($titleBarStyle), [themed])
-  const $authorBar = useMemo(() => themed($authorBarStyle), [themed])
-  const $metaCard = useMemo(() => themed($metaCardStyle), [themed])
-  const $metaBlock = useMemo(() => themed($metaBlockStyle), [themed])
-  const $summary = useMemo(() => themed($summaryStyle), [themed])
-  const $summaryWithoutImage = useMemo(() => themed($summaryWithoutImageStyle), [themed])
-  const $section = useMemo(() => themed($sectionStyle), [themed])
-  const $group = useMemo(() => themed($groupStyle), [themed])
-  const $line = useMemo(() => themed($lineStyle), [themed])
-  const $dividedLine = useMemo(() => themed($dividedLineStyle), [themed])
-  const $mark = useMemo(() => themed($markStyle), [themed])
-  const $action = useMemo(() => themed($actionStyle), [themed])
+  const $hero = useThemedStyles($heroStyle)
+  const $rule = useThemedStyles($ruleStyle)
+  const $bar = useThemedStyles($barStyle)
+  const $titleBar = useThemedStyles($titleBarStyle)
+  const $authorBar = useThemedStyles($authorBarStyle)
+  const $metaCard = useThemedStyles($metaCardStyle)
+  const $metaBlock = useThemedStyles($metaBlockStyle)
+  const $summary = useThemedStyles($summaryStyle)
+  const $summaryWithoutImage = useThemedStyles($summaryWithoutImageStyle)
+  const $section = useThemedStyles($sectionStyle)
+  const $group = useThemedStyles($groupStyle)
+  const $line = useThemedStyles($lineStyle)
+  const $dividedLine = useThemedStyles($dividedLineStyle)
+  const $mark = useThemedStyles($markStyle)
+  const $action = useThemedStyles($actionStyle)
 
   const knownTitle = title?.trim() ? title : undefined
   const showHero = hasImages !== false

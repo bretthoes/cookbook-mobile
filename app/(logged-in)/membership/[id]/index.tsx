@@ -1,17 +1,17 @@
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { MemberSummary } from "@/components/Membership/MemberSummary"
+import { MemberSummary } from "@/components/membership/MemberSummary"
 import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { translate } from "@/i18n"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { canManageMembers, tierDescriptionTx, tierIcon, tierLabelTx } from "@/utils/membershipTier"
 import { useHeader } from "@/utils/useHeader"
 import { useActionSheet } from "@/hooks/useActionSheet"
 import { router, useLocalSearchParams } from "expo-router"
-import React, { useCallback, useMemo } from "react"
+import React, { useCallback} from "react"
 import { Alert, TextStyle, View } from "react-native"
 
 export default function MembershipScreen() {
@@ -23,14 +23,14 @@ export default function MembershipScreen() {
   const ownMembership = useMembershipStore((s) => s.ownMembership)
   const deleteMembership = useMembershipStore((s) => s.delete)
   const { showActionSheetWithOptions } = useActionSheet()
-  const { themed } = useAppTheme()
+  
 
   const isViewingOwnMembership = ownMembership?.id === membershipId
   const canShowActions = canManageMembers(ownMembership?.tier) && !isViewingOwnMembership
 
-  const $themedSectionLabel = useMemo(() => themed($sectionLabel), [themed])
-  const $themedListContainer = useMemo(() => themed($listContainer), [themed])
-  const $themedEditHint = useMemo(() => themed($editHint), [themed])
+  const $themedSectionLabel = useThemedStyles($sectionLabel)
+  const $themedListContainer = useThemedStyles($listContainer)
+  const $themedEditHint = useThemedStyles($editHint)
 
   const handlePressEdit = useCallback(() => {
     router.push(`/(logged-in)/membership/${id}/edit`)

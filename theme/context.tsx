@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import {
   createContext,
   FC,
@@ -78,6 +79,20 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     },
     [setThemeScheme],
   )
+
+  // Older builds stored the override in AsyncStorage. MMKV is the source of truth now.
+  useEffect(() => {
+    if (themeScheme !== undefined) return
+    let cancelled = false
+    void AsyncStorage.getItem("themeContext").then((value) => {
+      if (cancelled) return
+      if (value === "light" || value === "dark") setThemeScheme(value)
+      if (value !== null) void AsyncStorage.removeItem("themeContext")
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [themeScheme, setThemeScheme])
 
   /**
    * initialContext is the theme context passed in from the app.tsx file and always takes precedence.

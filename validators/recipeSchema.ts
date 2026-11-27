@@ -1,4 +1,4 @@
-import { RecipeFormInputs } from "@/components/Recipe/RecipeForm"
+import { RecipeFormInputs } from "@/components/recipe/RecipeForm"
 import { translate } from "@/i18n"
 import { MAX_INGREDIENT_SECTIONS } from "@/utils/recipeIngredientSections"
 import * as yup from "yup"

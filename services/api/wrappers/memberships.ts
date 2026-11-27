@@ -1,4 +1,4 @@
-import type { MembershipListSnapshotIn, MembershipTier } from "@/types/membership"
+import type { MembershipList, MembershipTier } from "@/types/membership"
 import { GeneralApiProblem } from "@/services/api/apiProblem"
 import { apiClientInstance } from "@/services/api/client"
 import {
@@ -10,11 +10,11 @@ import {
 
 const { client } = apiClientInstance
 
-export async function GetMemberships(
+export async function getMemberships(
   cookbookId: string,
   pageNumber: number,
   pageSize: number,
-): Promise<ApiResult<{ memberships: MembershipListSnapshotIn }>> {
+): Promise<ApiResult<{ memberships: MembershipList }>> {
   try {
     const { data, error, response } = await client.GET("/api/Memberships", {
       params: {
@@ -28,7 +28,7 @@ export async function GetMemberships(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ memberships: data as MembershipListSnapshotIn })
+    return toOkResult({ memberships: data as MembershipList })
   } catch (e) {
     return toProblemFromError(e)
   }
@@ -36,7 +36,7 @@ export async function GetMemberships(
 
 export async function getMembership(
   cookbookId: string,
-): Promise<ApiResult<{ membership: import("@/types/membership").MembershipSnapshotOut }>> {
+): Promise<ApiResult<{ membership: import("@/types/membership").Membership }>> {
   try {
     const { data, error, response } = await client.GET(
       "/api/Memberships/by-cookbook/{cookbookId}",
@@ -47,7 +47,7 @@ export async function getMembership(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ membership: data as import("@/types/membership").MembershipSnapshotOut })
+    return toOkResult({ membership: data as import("@/types/membership").Membership })
   } catch (e) {
     return toProblemFromError(e)
   }

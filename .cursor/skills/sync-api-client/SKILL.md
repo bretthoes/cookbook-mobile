@@ -65,15 +65,15 @@ Compare the old and new `schema.d.ts` to find added or changed fields. Then chec
 
 | Area                                    | What to check                                             |
 | --------------------------------------- | --------------------------------------------------------- |
-| `types/recipe.ts` (etc.)                | DTO aliases and snapshot types                            |
+| `types/recipe.ts` (etc.)                | DTO aliases (`RecipeDetail`, `RecipeToAdd`, list types)  |
 | `hooks/queries/useRecipesQuery.ts`      | Query/mutation payloads and cache updates                 |
-| `components/Recipe/RecipeForm.tsx`      | `RecipeFormInputs` interface, `defaultForm`, field arrays |
+| `components/recipe/RecipeForm.tsx`      | `RecipeFormInputs` interface, `defaultForm`, field arrays |
 | `validators/recipeSchema.ts`            | Yup schema entries                                        |
 | `i18n/en.ts` (+ `fr.ts`, `ko.ts`)       | Translation keys for new labels                           |
 | `app/(logged-in)/recipe/add.tsx`        | `mapRecipeToFormInputs`, create payload                   |
 | `app/(logged-in)/recipe/[id]/edit.tsx`  | `mapRecipeToFormInputs`, update payload                   |
 | `app/(logged-in)/recipe/[id]/index.tsx` | Detail view display                                       |
-| `components/Recipe/RecipeSummary.tsx`   | Summary display                                           |
+| `components/recipe/RecipeSummary.tsx`   | Summary display                                           |
 
 ---
 

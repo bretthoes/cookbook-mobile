@@ -5,7 +5,8 @@ import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { CookbookCard } from "@/components/cookbooks/CookbookCard"
 import { GettingStartedCard } from "@/components/cookbooks/GettingStartedCard"
-import { GettingStartedGuide, useGuideAnchor } from "@/components/cookbooks/GettingStartedGuide"
+import { GettingStartedGuide } from "@/components/cookbooks/GettingStartedGuide"
+import { useCookbooksTabTour } from "@/hooks/useGettingStartedScreenTour"
 import { useCookbooksList } from "@/hooks/queries/useCookbooksQuery"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL } from "@/i18n"
@@ -19,7 +20,6 @@ import {
   accountHasCookbook,
   allGettingStartedStepsSeen,
   canStartGettingStartedGuide,
-  cookbooksTabTourPhase,
   gettingStartedDismissedKey,
   gettingStartedStepKey,
   isCookbookStepDone,
@@ -28,16 +28,10 @@ import {
   shouldShowGettingStarted,
   type GettingStartedStep,
 } from "@/utils/gettingStarted"
-import {
-  advanceGettingStartedTour,
-  getGettingStartedTour,
-  leaveGettingStartedTour,
-  startGettingStartedTour,
-  useGettingStartedTour,
-} from "@/utils/gettingStartedTour"
+import { startGettingStartedTour } from "@/utils/gettingStartedTour"
 import { storage } from "@/utils/storage"
 import { useBottomTabBarHeight } from "expo-router/js-tabs"
-import { useFocusEffect, useIsFocused } from "expo-router/react-navigation"
+import { useIsFocused } from "expo-router/react-navigation"
 import { useRouter } from "expo-router"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useMMKVBoolean } from "react-native-mmkv"
@@ -98,18 +92,14 @@ export default function CookbooksScreen(_props: void) {
     if (hasCookbook && !seenCookbook) setSeenCookbook(true)
   }, [hasCookbook, seenCookbook, setSeenCookbook])
 
-  const tour = useGettingStartedTour()
-  const showFabGuide = isFocused && tour?.step === "cookbook" && tour.phase === "fab"
-  const showChooseGuide = isFocused && tour?.phase === "choose"
-  const fabAnchor = useGuideAnchor(showFabGuide)
-  const firstCookbookAnchor = useGuideAnchor(showChooseGuide)
-
-  useFocusEffect(
-    useCallback(() => {
-      const current = getGettingStartedTour()
-      if (current) advanceGettingStartedTour(cookbooksTabTourPhase(current.step))
-    }, []),
-  )
+  const {
+    showFabGuide,
+    showChooseGuide,
+    fabAnchor,
+    firstCookbookAnchor,
+    chooseMessageTx,
+    leaveTour,
+  } = useCookbooksTabTour()
 
   const cookbooksForList = useMemo(() => getCookbooksForList(cookbooks), [cookbooks])
   const [leavingGettingStarted, setLeavingGettingStarted] = useState(false)
@@ -249,18 +239,14 @@ export default function CookbooksScreen(_props: void) {
           messageTx="gettingStarted:guideCookbookFab"
           target={fabAnchor.target}
           placeAbove
-          onClose={leaveGettingStartedTour}
+          onClose={leaveTour}
         />
       ) : null}
       {showChooseGuide ? (
         <GettingStartedGuide
-          messageTx={
-            tour?.step === "invite"
-              ? "gettingStarted:guideInviteChoose"
-              : "gettingStarted:guideRecipeChoose"
-          }
+          messageTx={chooseMessageTx}
           target={firstCookbookAnchor.target}
-          onClose={leaveGettingStartedTour}
+          onClose={leaveTour}
         />
       ) : null}
     </View>

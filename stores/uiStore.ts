@@ -1,4 +1,4 @@
-import type { RecipeToAddSnapshotIn } from "@/types/recipe"
+import type { RecipeToAdd } from "@/types/recipe"
 import type { RecipeDraftItem } from "@/types/recipeDraft"
 import {
   buildDraftFieldsFromFormData,
@@ -30,13 +30,13 @@ function makeDraftId(): string {
 export interface UiState {
   selectedCookbookId: string | null
   drafts: RecipeDraftItem[]
-  recipeToAdd: RecipeToAddSnapshotIn | null
+  recipeToAdd: RecipeToAdd | null
   weeklyImportCount: number
   weeklyImportWeekStart: string
 
   setSelectedCookbookId: (id: string | null) => void
 
-  setRecipeToAdd: (recipe: RecipeToAddSnapshotIn | null) => void
+  setRecipeToAdd: (recipe: RecipeToAdd | null) => void
   clearRecipeToAdd: () => void
   incrementImportCount: () => void
 
@@ -56,7 +56,7 @@ export type LegacyUiSnapshot = {
   }
   recipeStore?: {
     drafts?: RecipeDraftItem[]
-    recipeToAdd?: RecipeToAddSnapshotIn
+    recipeToAdd?: RecipeToAdd
     weeklyImportCount?: number
     weeklyImportWeekStart?: string
   }
@@ -162,7 +162,7 @@ export const useUiStore = create<UiState>()(
           if (Array.isArray(rs.drafts) && rs.drafts.length > 0) {
             patch.drafts = (rs.drafts as RecipeDraftItem[]).filter((d) => draftItemHasContent(d))
           }
-          if (rs.recipeToAdd) patch.recipeToAdd = rs.recipeToAdd as RecipeToAddSnapshotIn
+          if (rs.recipeToAdd) patch.recipeToAdd = rs.recipeToAdd as RecipeToAdd
           if (typeof rs.weeklyImportCount === "number")
             patch.weeklyImportCount = rs.weeklyImportCount
           if (typeof rs.weeklyImportWeekStart === "string") {

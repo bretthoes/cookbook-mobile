@@ -12,7 +12,7 @@ Light and dark design tokens. `ThemeProvider` in `context.tsx` follows the syste
 | `theme.ts`, `index.ts` | `lightTheme`, `darkTheme`, and `ThemedStyle<T>` (`(theme) => style`). |
 | `styles.ts` | Shared snippets on `$styles`. |
 
-Style a component with `ThemedStyle` and `themed()`:
+Style a component with `ThemedStyle`. Resolve a stable style with `useThemedStyles` from `@/theme/useThemedStyles` instead of `useMemo(() => themed($style), [themed])`. `themed()` is still there for one-off calls:
 
 ```tsx
 const $container: ThemedStyle<ViewStyle> = (theme) => ({

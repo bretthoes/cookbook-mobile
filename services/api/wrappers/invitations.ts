@@ -1,7 +1,7 @@
 import {
   CookbookInvitationStatus,
-  type InvitationListSnapshotIn,
-  type InvitationSnapshotOut,
+  type InvitationList,
+  type Invitation,
 } from "@/types/invitation"
 import { apiClientInstance } from "@/services/api/client"
 import {
@@ -13,9 +13,9 @@ import {
 
 const { client } = apiClientInstance
 
-export async function GetInvitationToken(
+export async function getInvitationToken(
   token: string,
-): Promise<ApiResult<{ invitation: InvitationSnapshotOut }>> {
+): Promise<ApiResult<{ invitation: Invitation }>> {
   try {
     const { data, error, response } = await client.GET("/api/InvitationTokens/{token}", {
       params: { path: { token } },
@@ -23,17 +23,17 @@ export async function GetInvitationToken(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ invitation: data as InvitationSnapshotOut })
+    return toOkResult({ invitation: data as Invitation })
   } catch (e) {
     return toProblemFromError(e)
   }
 }
 
-export async function GetInvitations(
+export async function getInvitations(
   pageNumber: number,
   pageSize: number,
   status: string | number = "Active",
-): Promise<ApiResult<{ invitations: InvitationListSnapshotIn }>> {
+): Promise<ApiResult<{ invitations: InvitationList }>> {
   try {
     const statusNum =
       typeof status === "string"
@@ -53,13 +53,13 @@ export async function GetInvitations(
     if (!response.ok)
       return toProblemFromResponse(response, (error ?? null) as { detail?: string } | null)
     if (!data) return { kind: "not-found" }
-    return toOkResult({ invitations: data as InvitationListSnapshotIn })
+    return toOkResult({ invitations: data as InvitationList })
   } catch (e) {
     return toProblemFromError(e)
   }
 }
 
-export async function GetInvitationCount(
+export async function getInvitationCount(
   status: number = CookbookInvitationStatus.Active,
 ): Promise<ApiResult<{ count: number }>> {
   try {
@@ -124,7 +124,7 @@ export async function updateInvite(
   }
 }
 
-export async function UpdateInvitationToken(
+export async function updateInvitationToken(
   token: string,
   accepted: boolean,
 ): Promise<ApiResult<{ invitationId: string }>> {

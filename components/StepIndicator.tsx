@@ -1,7 +1,7 @@
 import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
-import { useEffect, useMemo } from "react"
+import { useThemedStyles } from "@/theme/useThemedStyles"
+import { useEffect} from "react"
 import { LayoutAnimation, View, ViewStyle } from "react-native"
 
 export interface StepIndicatorProps {
@@ -15,15 +15,15 @@ export interface StepIndicatorProps {
  * Progress indicator for multi-step flows. Shows current step within total.
  */
 export function StepIndicator({ currentStep, totalSteps, variant = "dots" }: StepIndicatorProps) {
-  const { themed } = useAppTheme()
+  
 
   useEffect(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
   }, [currentStep])
 
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedDot = useMemo(() => themed($dot), [themed])
-  const $themedDotActive = useMemo(() => themed($dotActive), [themed])
+  const $themedContainer = useThemedStyles($container)
+  const $themedDot = useThemedStyles($dot)
+  const $themedDotActive = useThemedStyles($dotActive)
 
   if (variant === "text") {
     return (

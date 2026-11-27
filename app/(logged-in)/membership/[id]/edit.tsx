@@ -1,5 +1,5 @@
 import { ItemNotFound } from "@/components/ItemNotFound"
-import { MemberSummary } from "@/components/Membership/MemberSummary"
+import { MemberSummary } from "@/components/membership/MemberSummary"
 import { OptionListItem, $listContainer } from "@/components/OptionListItem"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
@@ -8,7 +8,7 @@ import { useSelectedCookbook } from "@/hooks/useSelectedCookbook"
 import { useMembershipStore } from "@/stores/membershipStore"
 import type { MembershipTier } from "@/types/membership"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useInFlightAction } from "@/hooks/useInFlightAction"
 import {
   ALL_MEMBERSHIP_TIERS,
@@ -22,7 +22,7 @@ import {
 } from "@/utils/membershipTier"
 import { useHeader } from "@/utils/useHeader"
 import { router, useLocalSearchParams } from "expo-router"
-import React, { useCallback, useEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import { Alert, TextStyle, View } from "react-native"
 
 export default function MembershipEditScreen() {
@@ -39,18 +39,18 @@ export default function MembershipEditScreen() {
   const [selectedTier, setSelectedTier] = useState<MembershipTier | null>(null)
   const [resultMessage, setResultMessage] = useState<string | null>(null)
   const [resultIsSuccess, setResultIsSuccess] = useState(false)
-  const { themed } = useAppTheme()
+  
   const { isInFlight, run } = useInFlightAction()
 
   const cookbookId = selectedCookbook?.id ?? ""
 
-  const $themedSectionLabel = useMemo(() => themed($sectionLabel), [themed])
-  const $themedCurrentRole = useMemo(() => themed($currentRole), [themed])
-  const $themedUnsavedChanges = useMemo(() => themed($unsavedChanges), [themed])
-  const $themedListContainer = useMemo(() => themed($listContainer), [themed])
-  const $themedResultMessage = useMemo(() => themed($resultMessage), [themed])
-  const $themedSuccessMessage = useMemo(() => themed($successMessage), [themed])
-  const $themedErrorMessage = useMemo(() => themed($errorMessage), [themed])
+  const $themedSectionLabel = useThemedStyles($sectionLabel)
+  const $themedCurrentRole = useThemedStyles($currentRole)
+  const $themedUnsavedChanges = useThemedStyles($unsavedChanges)
+  const $themedListContainer = useThemedStyles($listContainer)
+  const $themedResultMessage = useThemedStyles($resultMessage)
+  const $themedSuccessMessage = useThemedStyles($successMessage)
+  const $themedErrorMessage = useThemedStyles($errorMessage)
 
   useEffect(() => {
     if (!cookbookId || loadedCookbookId === cookbookId) return

@@ -2,8 +2,8 @@ import { Text } from "@/components/Text"
 import { Checkbox } from "@/components/Toggle"
 import type { RecipeIngredient } from "@/types/recipe"
 import type { ThemedStyle } from "@/theme"
-import { useAppTheme } from "@/theme/context"
-import React, { useMemo, useState } from "react"
+import { useThemedStyles } from "@/theme/useThemedStyles"
+import React, { useState } from "react"
 import { Pressable, View, ViewStyle } from "react-native"
 
 interface IngredientItemProps {
@@ -15,15 +15,15 @@ interface IngredientItemProps {
 
 export const IngredientItem = ({ ingredient, index, isFirst, isLast }: IngredientItemProps) => {
   const [isChecked, setIsChecked] = useState(false)
-  const { themed } = useAppTheme()
+  
 
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedCheckboxContainer = useMemo(() => themed($checkboxContainer), [themed])
-  const $themedTextContainer = useMemo(() => themed($textContainer), [themed])
-  const $themedItemStyle = useMemo(() => themed($itemStyle), [themed])
-  const $themedBorderTop = useMemo(() => themed($borderTop), [themed])
-  const $themedBorderBottom = useMemo(() => themed($borderBottom), [themed])
-  const $themedSeparator = useMemo(() => themed($separator), [themed])
+  const $themedContainer = useThemedStyles($container)
+  const $themedCheckboxContainer = useThemedStyles($checkboxContainer)
+  const $themedTextContainer = useThemedStyles($textContainer)
+  const $themedItemStyle = useThemedStyles($itemStyle)
+  const $themedBorderTop = useThemedStyles($borderTop)
+  const $themedBorderBottom = useThemedStyles($borderBottom)
+  const $themedSeparator = useThemedStyles($separator)
 
   const handleValueChange = (value: boolean) => {
     setIsChecked(value)

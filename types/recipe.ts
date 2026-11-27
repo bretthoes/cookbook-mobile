@@ -1,9 +1,7 @@
 import type { components } from "@/services/api/generated/schema"
+import type { PaginatedList } from "@/types/pagination"
 
 export type RecipeDetail = components["schemas"]["RecipeDetailedDto"]
-
-export type RecipeSnapshotIn = RecipeDetail
-export type RecipeSnapshotOut = RecipeDetail
 
 export type RecipeBriefItem = components["schemas"]["RecipeBriefDto"] & {
   id: string
@@ -11,15 +9,14 @@ export type RecipeBriefItem = components["schemas"]["RecipeBriefDto"] & {
 }
 
 export type RecipeListPage = components["schemas"]["PaginatedListOfRecipeBriefDto"]
-export type RecipeListSnapshotIn = import("@/types/pagination").PaginatedList<RecipeBriefItem>
+export type RecipeList = PaginatedList<RecipeBriefItem>
 
 export type RecipeDirection = components["schemas"]["RecipeDirectionDto"]
 export type RecipeImage = components["schemas"]["RecipeImageDto"]
 export type RecipeIngredient = components["schemas"]["RecipeIngredientDto"]
 export type IngredientSection = components["schemas"]["IngredientSectionDto"]
-export type IngredientSectionSnapshotIn = IngredientSection
 
-export type RecipeToAddSnapshotIn = {
+export type RecipeToAdd = {
   title: string
   cookbookId: string
   summary?: string | null

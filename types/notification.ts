@@ -15,4 +15,4 @@ export const NotificationActionTypeValues = {
 
 export type NotificationListPage = components["schemas"]["PaginatedListOfNotificationDto"]
 
-export type NotificationListSnapshotIn = PaginatedList<NotificationItem>
+export type NotificationList = PaginatedList<NotificationItem>

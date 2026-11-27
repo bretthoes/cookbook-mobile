@@ -1,6 +1,6 @@
-import { useAppTheme } from "@/theme/context"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import type { ThemedStyle } from "@/theme/types"
-import React, { useMemo } from "react"
+import React from "react"
 import { StyleProp, View, ViewStyle } from "react-native"
 
 interface DividerProps {
@@ -16,10 +16,10 @@ interface DividerProps {
  */
 export function Divider(props: DividerProps) {
   const { type = "horizontal", size = 10, line = false, style: $styleOverride } = props
-  const { themed } = useAppTheme()
+  
 
-  const $themedDivider = useMemo(() => themed($divider), [themed])
-  const $themedLine = useMemo(() => themed($line), [themed])
+  const $themedDivider = useThemedStyles($divider)
+  const $themedLine = useThemedStyles($line)
 
   return (
     <View

@@ -6,12 +6,13 @@ import { PressableIcon } from "@/components/Icon"
 import { ItemNotFound } from "@/components/ItemNotFound"
 import { MoreButton } from "@/components/MoreButton"
 import { Popover } from "@/components/Popover"
-import { DirectionText } from "@/components/Recipe/DirectionText"
-import { IngredientItem } from "@/components/Recipe/IngredientItem"
-import { MeasurementConverterDialog } from "@/components/Recipe/MeasurementConverterDialog"
-import { RecipeDetailsSkeleton } from "@/components/Recipe/RecipeDetailsSkeleton"
-import { RecipeImages } from "@/components/Recipe/RecipeImages"
-import RecipeSummary from "@/components/Recipe/RecipeSummary"
+import { DirectionText } from "@/components/recipe/DirectionText"
+import { IngredientItem } from "@/components/recipe/IngredientItem"
+import { MeasurementConverterDialog } from "@/components/recipe/MeasurementConverterDialog"
+import { RecipeDetailsSkeleton } from "@/components/recipe/RecipeDetailsSkeleton"
+import { MadeCountLabel } from "@/components/recipe/MadeCountLabel"
+import { RecipeImages } from "@/components/recipe/RecipeImages"
+import RecipeSummary from "@/components/recipe/RecipeSummary"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { Switch } from "@/components/Toggle"
@@ -29,23 +30,15 @@ import { canDeleteAnyRecipe, canEditAnyRecipe } from "@/utils/membershipTier"
 import { getRecipeMadeHoursAgo } from "@/utils/recipeMadeCooldown"
 import type { ThemedStyle } from "@/theme"
 import { spacing } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import * as Haptics from "expo-haptics"
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake"
 import { useQueryClient } from "@tanstack/react-query"
 import { router, useLocalSearchParams } from "expo-router"
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from "react"
+import React, { useCallback, useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Alert, ImageStyle, TextStyle, TouchableOpacity, View, ViewStyle } from "react-native"
-import Animated, {
-  cancelAnimation,
-  Easing,
-  runOnJS,
-  useAnimatedStyle,
-  useSharedValue,
-  withDelay,
-  withTiming,
-} from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export default function RecipeScreen() {
@@ -72,19 +65,19 @@ export default function RecipeScreen() {
   const canDelete = isRecipeAuthor || canDeleteAnyRecipe(ownMembership?.tier)
   const recipeHasImages = selected?.images?.[0]
 
-  const $themedListItemStyle = React.useMemo(() => themed($listItemStyle), [themed])
-  const $themedBorderTop = React.useMemo(() => themed($borderTop), [themed])
-  const $themedBorderBottom = React.useMemo(() => themed($borderBottom), [themed])
-  const $themedSeparator = React.useMemo(() => themed($separator), [themed])
-  const $themedDirectionsContainer = React.useMemo(() => themed($directionsContainer), [themed])
-  const $themedIngredientsContainer = React.useMemo(() => themed($ingredientsContainer), [themed])
+  const $themedListItemStyle = useThemedStyles($listItemStyle)
+  const $themedBorderTop = useThemedStyles($borderTop)
+  const $themedBorderBottom = useThemedStyles($borderBottom)
+  const $themedSeparator = useThemedStyles($separator)
+  const $themedDirectionsContainer = useThemedStyles($directionsContainer)
+  const $themedIngredientsContainer = useThemedStyles($ingredientsContainer)
   const $themedSeparatorAboveIngredients = React.useMemo(
     () => themed($separatorAboveIngredients),
     [themed],
   )
-  const $themedSeparatorBelowImages = React.useMemo(() => themed($separatorBelowImages), [themed])
-  const $themedMadeSection = React.useMemo(() => themed($madeSection), [themed])
-  const $themedMadeThisAgo = React.useMemo(() => themed($madeThisAgo), [themed])
+  const $themedSeparatorBelowImages = useThemedStyles($separatorBelowImages)
+  const $themedMadeSection = useThemedStyles($madeSection)
+  const $themedMadeThisAgo = useThemedStyles($madeThisAgo)
   const [cookMode, setCookMode] = useState(false)
   const [converterVisible, setConverterVisible] = useState(false)
   const [completedDirections, setCompletedDirections] = useState<Set<number>>(new Set())
@@ -349,9 +342,6 @@ export default function RecipeScreen() {
   )
 }
 
-const MADE_COUNT_TICK_MS = 200
-const MADE_COUNT_TICK_DELAY_MS = 220
-
 function madeThisAgoTx(hoursAgo: number): { tx: TxKeyPath; txOptions?: { count: number } } {
   if (hoursAgo < 1) return { tx: "recipeDetailsScreen:madeThisLessThanHourAgo" }
   return {
@@ -361,89 +351,6 @@ function madeThisAgoTx(hoursAgo: number): { tx: TxKeyPath; txOptions?: { count: 
         : "recipeDetailsScreen:madeThisHoursAgo_plural",
     txOptions: { count: hoursAgo },
   }
-}
-
-function splitMadeCountLabel(label: string, count: number) {
-  const countLabel = String(count)
-  const countIndex = label.indexOf(countLabel)
-  if (countIndex < 0) return null
-  return {
-    before: label.slice(0, countIndex),
-    after: label.slice(countIndex + countLabel.length),
-  }
-}
-
-function MadeCountLabel({ count, recipeId }: { count: number; recipeId: string }) {
-  const { t } = useTranslation()
-  const label = t("recipeDetailsScreen:madeCount", { count })
-  const parts = splitMadeCountLabel(label, count)
-
-  if (!parts) {
-    return <Text tx="recipeDetailsScreen:madeCount" txOptions={{ count }} style={$madeCountText} />
-  }
-
-  return (
-    <View accessible accessibilityRole="text" accessibilityLabel={label} style={$madeCountRow}>
-      {parts.before ? <Text text={parts.before} /> : null}
-      <RollingNumber key={recipeId} value={count} />
-      {parts.after ? <Text text={parts.after} /> : null}
-    </View>
-  )
-}
-
-function RollingNumber({ value }: { value: number }) {
-  const [from, setFrom] = useState(value)
-  const [lineHeight, setLineHeight] = useState(0)
-  const offset = useSharedValue(0)
-
-  useLayoutEffect(() => {
-    if (from === value) return
-    if (lineHeight <= 0) {
-      setFrom(value)
-      return
-    }
-    offset.value = 0
-    offset.value = withDelay(
-      MADE_COUNT_TICK_DELAY_MS,
-      withTiming(
-        -lineHeight,
-        { duration: MADE_COUNT_TICK_MS, easing: Easing.out(Easing.cubic) },
-        (finished) => {
-          if (finished) runOnJS(setFrom)(value)
-        },
-      ),
-    )
-    return () => {
-      cancelAnimation(offset)
-    }
-  }, [from, lineHeight, offset, value])
-
-  const $tick = useAnimatedStyle(() => ({
-    transform: [{ translateY: offset.value }],
-  }))
-
-  const onMeasure = (height: number) => {
-    const next = Math.ceil(height)
-    setLineHeight((current) => (current === next ? current : next))
-  }
-
-  if (lineHeight <= 0) {
-    return (
-      <Text text={String(value)} onLayout={(event) => onMeasure(event.nativeEvent.layout.height)} />
-    )
-  }
-
-  return (
-    <View style={[$tickWindow, { height: lineHeight }]} collapsable={false}>
-      <Animated.View style={[$tickColumn, $tick]}>
-        <Text
-          text={String(from)}
-          onLayout={(event) => onMeasure(event.nativeEvent.layout.height)}
-        />
-        <Text text={String(value)} />
-      </Animated.View>
-    </View>
-  )
 }
 
 // #region Styles
@@ -547,23 +454,5 @@ const $madeThisAgo: ThemedStyle<TextStyle> = (theme) => ({
   color: theme.colors.textDim,
   textAlign: "center",
 })
-
-const $madeCountRow: ViewStyle = {
-  flexDirection: "row",
-  alignItems: "center",
-  justifyContent: "center",
-}
-
-const $tickWindow: ViewStyle = {
-  overflow: "hidden",
-}
-
-const $tickColumn: ViewStyle = {
-  alignItems: "center",
-}
-
-const $madeCountText: TextStyle = {
-  textAlign: "center",
-}
 
 // #endregion

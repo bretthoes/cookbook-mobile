@@ -1,8 +1,8 @@
 import { Icon } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
-import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { TextStyle, View, ViewStyle } from "react-native"
 
@@ -23,11 +23,11 @@ export interface PasswordRequirementsProps {
  * Real-time password requirement checklist. Shows checkmarks as requirements are met.
  */
 export function PasswordRequirements({ password }: PasswordRequirementsProps) {
-  const { themed, theme } = useAppTheme()
+  const { theme } = useAppTheme()
   const { t } = useTranslation()
-  const $themedContainer = useMemo(() => themed($container), [themed])
-  const $themedRow = useMemo(() => themed($row), [themed])
-  const $themedLabel = useMemo(() => themed($labelText), [themed])
+  const $themedContainer = useThemedStyles($container)
+  const $themedRow = useThemedStyles($row)
+  const $themedLabel = useThemedStyles($labelText)
 
   return (
     <View

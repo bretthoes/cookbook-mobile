@@ -2,8 +2,9 @@ import { guideCaptionFitsBelow } from "@/components/cookbooks/guideCaptionFitsBe
 import { Text } from "@/components/Text"
 import type { TxKeyPath } from "@/i18n"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
-import { useCallback, useEffect, useMemo, useRef, useState, type RefObject } from "react"
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
 import {
   Pressable,
   StyleSheet,
@@ -79,22 +80,22 @@ export function GettingStartedGuide({
   onPrimary?: () => void
   onClose: () => void
 }) {
-  const { themed, theme } = useAppTheme()
+  const { theme } = useAppTheme()
   const { width: windowWidth, height: windowHeight } = useWindowDimensions()
   const insets = useSafeAreaInsets()
   const rootRef = useRef<View>(null)
   const [frame, setFrame] = useState({ x: 0, y: 0, height: 0 })
   const pulse = useSharedValue(0)
-  const $themedDim = useMemo(() => themed($dim), [themed])
-  const $themedScrim = useMemo(() => themed($scrim), [themed])
-  const $themedCaption = useMemo(() => themed($caption), [themed])
-  const $themedCopy = useMemo(() => themed($copy), [themed])
-  const $themedArrowUp = useMemo(() => themed($arrowUp), [themed])
-  const $themedArrowDown = useMemo(() => themed($arrowDown), [themed])
-  const $themedAction = useMemo(() => themed($action), [themed])
-  const $themedActionText = useMemo(() => themed($actionText), [themed])
-  const $themedRing = useMemo(() => themed($ring), [themed])
-  const $themedPulse = useMemo(() => themed($pulse), [themed])
+  const $themedDim = useThemedStyles($dim)
+  const $themedScrim = useThemedStyles($scrim)
+  const $themedCaption = useThemedStyles($caption)
+  const $themedCopy = useThemedStyles($copy)
+  const $themedArrowUp = useThemedStyles($arrowUp)
+  const $themedArrowDown = useThemedStyles($arrowDown)
+  const $themedAction = useThemedStyles($action)
+  const $themedActionText = useThemedStyles($actionText)
+  const $themedRing = useThemedStyles($ring)
+  const $themedPulse = useThemedStyles($pulse)
 
   const measureOrigin = useCallback((event?: LayoutChangeEvent) => {
     // `top` is relative to this view's layout box. measureInWindow's height can

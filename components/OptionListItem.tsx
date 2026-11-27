@@ -1,8 +1,8 @@
 import { Icon, type IconTypes } from "@/components/Icon"
 import { Text } from "@/components/Text"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
-import { useMemo } from "react"
 import {
   Image,
   TouchableOpacity,
@@ -43,11 +43,11 @@ export function OptionListItem({
     themed,
   } = useAppTheme()
 
-  const $themedItemContainer = useMemo(() => themed($itemContainer), [themed])
-  const $themedIconContainer = useMemo(() => themed($iconContainer), [themed])
-  const $themedTextContainer = useMemo(() => themed($textContainer), [themed])
-  const $themedItemTitle = useMemo(() => themed($itemTitle), [themed])
-  const $themedItemDescription = useMemo(() => themed($itemDescription), [themed])
+  const $themedItemContainer = useThemedStyles($itemContainer)
+  const $themedIconContainer = useThemedStyles($iconContainer)
+  const $themedTextContainer = useThemedStyles($textContainer)
+  const $themedItemTitle = useThemedStyles($itemTitle)
+  const $themedItemDescription = useThemedStyles($itemDescription)
 
   const hasLeftContent = leftIcon ?? leftImage
   if (!hasLeftContent) {

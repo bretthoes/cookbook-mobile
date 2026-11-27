@@ -4,9 +4,9 @@ import { EmptyState } from "@/components/EmptyState"
 import { Icon } from "@/components/Icon"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
+import { useInvitationsQuery, useRespondToInvitation } from "@/hooks/queries/useInvitationsQuery"
 import { useManualRefresh } from "@/hooks/useManualRefresh"
 import { isRTL, translate } from "@/i18n"
-import { useInvitationStore } from "@/stores/invitationStore"
 import type { Invitation } from "@/types/invitation"
 import {
   getInvitationSenderInfo,
@@ -14,7 +14,7 @@ import {
   getParsedInvitationMessage,
 } from "@/utils/invitationFormat"
 import { colors, spacing } from "@/theme"
-import React, { ComponentType, useCallback, useEffect, useMemo, useState } from "react"
+import React, { ComponentType, useCallback, useMemo } from "react"
 import { Image, type ImageSource } from "expo-image"
 import {
   AccessibilityProps,
@@ -37,6 +37,7 @@ import Animated, {
 } from "react-native-reanimated"
 
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { getCookbookImage } from "@/utils/cookbookImages"
 import { useHeader } from "@/utils/useHeader"
@@ -45,29 +46,16 @@ import { router } from "expo-router"
 const ICON_SIZE = 14
 
 export default function Invitations() {
-  const invitationItems = useInvitationStore((s) => s.invitations.items)
-  const fetchInvitations = useInvitationStore((s) => s.fetch)
+  const { data, isPending, refetch } = useInvitationsQuery()
+  const invitationItems = data?.items ?? []
 
-  const [isLoading, setIsLoading] = useState(false)
-
-  const { refreshing, onRefresh } = useManualRefresh(
-    useCallback(() => fetchInvitations(), [fetchInvitations]),
-  )
+  const { refreshing, onRefresh } = useManualRefresh(useCallback(() => refetch(), [refetch]))
 
   useHeader({
     leftIcon: "back",
     titleTx: "invitationScreen:title",
     onLeftPress: () => router.replace("/(logged-in)/(tabs)/cookbooks"),
   })
-
-  // initially, kick off a background refresh without the refreshing UI
-  useEffect(() => {
-    ;(async function load() {
-      setIsLoading(true)
-      await fetchInvitations()
-      setIsLoading(false)
-    })()
-  }, [fetchInvitations])
 
   return (
     <Screen preset="fixed" style={$root}>
@@ -85,7 +73,7 @@ export default function Invitations() {
         refreshing={refreshing}
         onRefresh={onRefresh}
         ListEmptyComponent={
-          isLoading ? (
+          isPending ? (
             <ActivityIndicator />
           ) : (
             <EmptyState
@@ -130,7 +118,7 @@ function InvitationCard({
   isFavorite: boolean
   isDark: boolean
 }) {
-  const respond = useInvitationStore((s) => s.respond)
+  const respond = useRespondToInvitation()
   const { themed } = useAppTheme()
   const acceptPressed = useSharedValue(0)
   const rejectPressed = useSharedValue(0)
@@ -288,15 +276,15 @@ function InvitationCard({
     [isDark, animatedRejectButtonStyles, animatedRejectPressedStyles, themed],
   )
 
-  const $themedItem = useMemo(() => themed($item), [themed])
-  const $themedItemThumbnail = useMemo(() => themed($itemThumbnail), [themed])
-  const $themedCardCopy = useMemo(() => themed($cardCopy), [themed])
-  const $themedMetadata = useMemo(() => themed($metadata), [themed])
-  const $themedMetadataText = useMemo(() => themed($metadataText), [themed])
-  const $themedActionButton = useMemo(() => themed($actionButton), [themed])
-  const $themedActionButtonText = useMemo(() => themed($actionButtonText), [themed])
-  const $themedAcceptButton = useMemo(() => themed($acceptButton), [themed])
-  const $themedRejectButton = useMemo(() => themed($rejectButton), [themed])
+  const $themedItem = useThemedStyles($item)
+  const $themedItemThumbnail = useThemedStyles($itemThumbnail)
+  const $themedCardCopy = useThemedStyles($cardCopy)
+  const $themedMetadata = useThemedStyles($metadata)
+  const $themedMetadataText = useThemedStyles($metadataText)
+  const $themedActionButton = useThemedStyles($actionButton)
+  const $themedActionButtonText = useThemedStyles($actionButtonText)
+  const $themedAcceptButton = useThemedStyles($acceptButton)
+  const $themedRejectButton = useThemedStyles($rejectButton)
 
   return (
     <Animated.View style={animatedCardStyle}>

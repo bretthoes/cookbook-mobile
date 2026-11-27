@@ -1,6 +1,6 @@
 import { Text } from "@/components/Text"
 import { useFeedHasUnseen } from "@/hooks/useFeedUnseen"
-import { useInvitationStore } from "@/stores/invitationStore"
+import { useInvitationsQuery } from "@/hooks/queries/useInvitationsQuery"
 import type { ThemedStyle } from "@/theme"
 import { useAppTheme } from "@/theme/context"
 import type { BottomTabBarProps } from "expo-router/tabs"
@@ -12,10 +12,11 @@ import { Badge } from "./Badge"
 const TAB_BAR_HEIGHT = 56
 
 export function AndroidTabBar(props: BottomTabBarProps) {
-  const { state, descriptors, navigation } = props
+  const { state, descriptors, emitter, navigateToTab } = props
   const { themed, theme } = useAppTheme()
   const { bottom } = useSafeAreaInsets()
-  const invitationTotalCount = useInvitationStore((s) => s.invitations.totalCount)
+  const { data: invitations } = useInvitationsQuery()
+  const invitationTotalCount = invitations?.totalCount ?? 0
   const feedHasUnseen = useFeedHasUnseen(state.routes[state.index]?.name ?? "")
 
   return (
@@ -43,19 +44,19 @@ export function AndroidTabBar(props: BottomTabBarProps) {
           : null
 
         const onPress = () => {
-          const event = navigation.emit({
+          const event = emitter.emit({
             type: "tabPress",
             target: route.key,
             canPreventDefault: true,
           })
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params)
+            navigateToTab(route.key)
           }
         }
 
         const onLongPress = () => {
-          navigation.emit({
+          emitter.emit({
             type: "tabLongPress",
             target: route.key,
           })

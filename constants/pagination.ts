@@ -1,3 +1,5 @@
 export const COOKBOOK_LIST_PAGE_SIZE = 25
 
 export const NOTIFICATION_LIST_PAGE_SIZE = 20
+
+export const INVITATION_LIST_PAGE_SIZE = 10

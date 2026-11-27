@@ -2,6 +2,7 @@ import { isRTL, TxKeyPath } from "@/i18n"
 import { ListItem } from "@/components/ListItem"
 import type { IconTypes } from "@/components/Icon"
 import type { ThemedStyle } from "@/theme"
+import { useThemedStyles } from "@/theme/useThemedStyles"
 import { useAppTheme } from "@/theme/context"
 import { useEffect, useMemo } from "react"
 import { Modal, Pressable, TextStyle, ViewStyle } from "react-native"
@@ -46,11 +47,11 @@ export function Popover(props: PopoverProps) {
   const popoverOpacity = useSharedValue(0)
   const popoverTranslateY = useSharedValue(-8)
 
-  const $themedOverlay = useMemo(() => themed($overlay), [themed])
-  const $themedPopover = useMemo(() => themed($popover), [themed])
-  const $themedPopoverItem = useMemo(() => themed($popoverItem), [themed])
-  const $themedPopoverItemDestructive = useMemo(() => themed($popoverItemDestructive), [themed])
-  const $themedPopoverItemHighlight = useMemo(() => themed($popoverItemHighlight), [themed])
+  const $themedOverlay = useThemedStyles($overlay)
+  const $themedPopover = useThemedStyles($popover)
+  const $themedPopoverItem = useThemedStyles($popoverItem)
+  const $themedPopoverItemDestructive = useThemedStyles($popoverItemDestructive)
+  const $themedPopoverItemHighlight = useThemedStyles($popoverItemHighlight)
   const $themedDestructiveText = useMemo(
     () => themed($destructiveText(theme.colors.error)),
     [themed, theme.colors.error],

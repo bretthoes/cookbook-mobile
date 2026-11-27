@@ -96,7 +96,6 @@ export async function setupApp() {
       if (legacy.authenticationStore?.authEmail && !useAuthStore.getState().authEmail) {
         useAuthStore.setState({
           authEmail: legacy.authenticationStore.authEmail,
-          displayName: legacy.authenticationStore.displayName ?? "",
           userId: legacy.authenticationStore.userId,
         })
       }
@@ -107,9 +106,6 @@ export async function setupApp() {
   }
 
   await syncAuthFromSecureStore()
-  if (useAuthStore.getState().authToken) {
-    void useAuthStore.getState().fetchDisplayName()
-  }
 
   setRevenueCatCustomerInfoHandler((customerInfo) => {
     useSubscriptionStore.getState().setIsPro(hasProEntitlement(customerInfo))

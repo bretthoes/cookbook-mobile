@@ -74,7 +74,7 @@ export const useMembershipStore = create<MembershipState>((set, get) => ({
 
   fetch: async (cookbookId, pageNumber = 1, pageSize = 10) => {
     const requestId = ++membershipListRequest
-    const response = await api.GetMemberships(cookbookId, pageNumber, pageSize)
+    const response = await api.getMemberships(cookbookId, pageNumber, pageSize)
     if (requestId !== membershipListRequest) return
 
     if (response.kind === "ok") {
